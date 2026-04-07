@@ -1,15 +1,26 @@
-# Previsao de Vencedores do UFC com Machine Learning
+# 🥊 UFC Predictor
 
-Projeto de machine learning para prever vencedores de lutas do UFC utilizando atributos pre-luta dos atletas, engenharia de features, divisao temporal dos dados e uma aplicacao interativa com Streamlit.
+Machine Learning project to predict UFC fight winners using pre-fight fighter attributes, feature engineering, temporal data splitting, and an interactive Streamlit application.
 
-## Objetivos
+## 📌 Overview
 
-- Treinar um modelo supervisionado para prever o vencedor da luta.
-- Evitar vazamento de informacao com divisao temporal dos dados.
-- Construir features derivadas de diferencas entre os dois lutadores.
-- Disponibilizar uma interface para explorar metricas e fazer novas previsoes.
+This project builds a complete ML pipeline to predict the outcome of UFC fights based on structured fighter data available before each match.
 
-## Estrutura
+It focuses on:
+
+Realistic evaluation using temporal splits
+Feature engineering based on fighter differences
+Model interpretability and reproducibility
+Interactive exploration through a Streamlit app
+
+## 🚀 Features
+- Supervised classification model for fight outcome prediction
+- Temporal train/test split to prevent data leakage
+- Feature engineering with fighter comparisons
+- Model evaluation with standard ML metrics
+- Interactive UI for predictions using Streamlit
+
+# 📁 Project Structure
 
 ```text
 .
@@ -31,9 +42,11 @@ Projeto de machine learning para prever vencedores de lutas do UFC utilizando at
         `-- train.py
 ```
 
-## Formato esperado dos dados
+## 📊 Data Format
 
-O pipeline espera um CSV em `data/raw/ufc_fights.csv` com pelo menos estas colunas:
+Expected dataset location: `data/raw/ufc_fights.csv` 
+
+Required columns:
 
 - `fight_date`
 - `fighter_red`
@@ -48,38 +61,30 @@ O pipeline espera um CSV em `data/raw/ufc_fights.csv` com pelo menos estas colun
 - `red_takedown_acc`, `blue_takedown_acc`
 - `red_stance`, `blue_stance`
 
-Se esse arquivo nao existir, o projeto gera uma base sintetica para demonstracao.
+If the dataset is not found, the project automatically generates a synthetic dataset for demonstration purposes.
 
-## Como rodar
+## Installation
 
-1. Instale as dependencias:
+1. 
 
-```bash
 pip install -r requirements.txt
-```
 
-2. Treine o modelo:
+2.  Training
 
-```bash
 python -m src.ufc_predictor.train
-```
 
-3. Inicie a aplicacao:
+3. Running the App
 
-```bash
 streamlit run app.py
-```
 
-## Publicacao
+
+## Deployment
 
 ### GitHub
 
-1. Crie um novo repositorio no GitHub.
-2. Na pasta do projeto, execute:
-
 ```bash
 git add .
-git commit -m "Projeto inicial de previsao UFC"
+git commit -m "UFC Predictor"
 git branch -M main
 git remote add origin <URL_DO_REPOSITORIO>
 git push -u origin main
@@ -87,24 +92,49 @@ git push -u origin main
 
 ### Streamlit Community Cloud
 
-1. Publique o codigo no GitHub.
-2. Acesse o Streamlit Community Cloud.
-3. Escolha o repositorio e selecione `app.py` como arquivo principal.
-4. O app cria os artefatos automaticamente se `models/` ainda nao existir.
+Push your project to GitHub
+Go to Streamlit Community Cloud
+Connect your repository
+Select app.py as the entry point
 
-Isso permite manter o repositorio mais limpo, sem precisar versionar modelo treinado e arquivos processados.
+The app automatically generates model artifacts if models/ does not exist.
 
-## Pipeline
+## ML Pipeline
 
-1. Carregamento dos dados e normalizacao basica.
-2. Ordenacao temporal por `fight_date`.
-3. Engenharia de features baseada em diferencas, razoes e indicadores de stance.
-4. Split temporal em treino e teste.
-5. Treinamento com `HistGradientBoostingClassifier`.
-6. Geracao de metricas, artefatos do modelo e relatorio simples.
+1. Data loading and preprocessing
+2. Temporal sorting (fight_date)
+3. Feature engineering
+- Fighter differences
+- Ratios and derived stats
+- Stance encoding
+4. Temporal train/test split
+5. Model training (HistGradientBoostingClassifier)
+6. Evaluation and reporting
+7 Model persistence
 
-## Observacoes
+## Model Details
 
-- O alvo e binario: `1` quando o lutador do canto vermelho vence, `0` quando o azul vence.
-- O split temporal ajuda a simular melhor o cenario real de previsao.
-- Para producao ou TCC, vale enriquecer os dados com estatisticas historicas acumuladas por lutador.
+- Problem type: Binary Classification
+- Target:
+1 → Red corner wins
+0 → Blue corner wins
+
+## ⚠️ Notes
+
+- Temporal splitting is used to simulate real-world prediction scenarios
+- Prevents data leakage from future fights
+- Designed to be easily extensible
+
+## 🔮 Future Improvements
+
+- Hyperparameter tuning
+- Advanced feature engineering (fighter history aggregation)
+- Additional models (LightGBM, Neural Networks)
+- API integration for real-time data
+- Cloud deployment (AWS / GCP)
+
+  ## 🎥 Demo
+
+<p align="center">
+  <img src="[https://link-do-gif.gif](https://media.giphy.com/media/0LadR6PhPoiFukYAlb/giphy.gif)" width="700"/>
+</p>
