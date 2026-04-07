@@ -2,6 +2,10 @@
 
 Machine Learning project to predict UFC fight winners using pre-fight fighter attributes, feature engineering, temporal data splitting, and an interactive Streamlit application.
 
+<p align="center">
+  <img src="https://media.giphy.com/media/0LadR6PhPoiFukYAlb/giphy.gif" width="700"/>
+</p>
+
 ## 📌 Overview
 
 This project builds a complete ML pipeline to predict the outcome of UFC fights based on structured fighter data available before each match.
@@ -132,9 +136,3 @@ The app automatically generates model artifacts if models/ does not exist.
 - Additional models (LightGBM, Neural Networks)
 - API integration for real-time data
 - Cloud deployment (AWS / GCP)
-
-  ## 🎥 Demo
-
-<p align="center">
-  <img src="[https://link-do-gif.gif](https://media.giphy.com/media/0LadR6PhPoiFukYAlb/giphy.gif)" width="700"/>
-</p>
