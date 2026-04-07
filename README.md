@@ -1,15 +1,30 @@
-# Previsão de Vencedores do UFC com Machine Learning
+# 🥊 Previsão de Vencedores do UFC com Machine Learning
 
 Projeto de machine learning para prever vencedores de lutas do UFC utilizando atributos pré-luta dos atletas, engenharia de features, divisão temporal dos dados e uma aplicação interativa com Streamlit.
 
-## Objetivos
+<p align="center">
+  <img src="https://media.giphy.com/media/0LadR6PhPoiFukYAlb/giphy.gif" width="700"/>
+</p>
 
-- Treinar um modelo supervisionado para prever o vencedor da luta.
-- Evitar vazamento de informação com divisão temporal dos dados.
-- Construir features derivadas de diferenças entre os dois lutadores.
-- Disponibilizar uma interface para explorar métricas e fazer novas previsões.
+## 📌 Visão Geral
 
-## Estrutura
+Pipeline completo de ML para prever o resultado de lutas do UFC com base em dados estruturados dos lutadores disponíveis antes de cada confronto.
+
+Foco em:
+- Avaliação realista com split temporal
+- Engenharia de features baseada em diferenças entre lutadores
+- Reprodutibilidade e interpretabilidade do modelo
+- Exploração interativa via Streamlit
+
+## 🚀 Funcionalidades
+
+- Modelo de classificação supervisionado para prever o vencedor
+- Split temporal treino/teste para evitar vazamento de dados
+- Engenharia de features com comparações entre lutadores
+- Avaliação com métricas padrão de ML (Acurácia, ROC AUC, Log Loss)
+- Interface interativa para previsões com Streamlit
+
+## 📁 Estrutura do Projeto
 
 ```text
 .
@@ -31,7 +46,7 @@ Projeto de machine learning para prever vencedores de lutas do UFC utilizando at
         `-- train.py
 ```
 
-## Formato esperado dos dados
+## 📊 Formato dos Dados
 
 O pipeline espera um CSV em `data/raw/ufc_fights.csv` com pelo menos estas colunas:
 
@@ -50,7 +65,7 @@ O pipeline espera um CSV em `data/raw/ufc_fights.csv` com pelo menos estas colun
 
 Se esse arquivo não existir, o projeto gera uma base sintética para demonstração.
 
-## Como rodar
+## ⚙️ Como Rodar
 
 1. Instale as dependências:
 
@@ -70,12 +85,9 @@ python -m src.ufc_predictor.train
 streamlit run app.py
 ```
 
-## Publicação
+## 🚢 Publicação
 
 ### GitHub
-
-1. Crie um novo repositório no GitHub.
-2. Na pasta do projeto, execute:
 
 ```bash
 git add .
@@ -88,22 +100,22 @@ git push -u origin main
 ### Streamlit Community Cloud
 
 1. Publique o código no GitHub.
-2. Acesse o Streamlit Community Cloud.
+2. Acesse o [Streamlit Community Cloud](https://streamlit.io/cloud).
 3. Escolha o repositório e selecione `app.py` como arquivo principal.
 4. O app cria os artefatos automaticamente se `models/` ainda não existir.
 
 Isso permite manter o repositório mais limpo, sem precisar versionar modelo treinado e arquivos processados.
 
-## Pipeline
+## 🔧 Pipeline de ML
 
-1. Carregamento dos dados e normalização básica.
-2. Ordenação temporal por `fight_date`.
-3. Engenharia de features baseada em diferenças, razões e indicadores de stance.
-4. Split temporal em treino e teste.
-5. Treinamento com `HistGradientBoostingClassifier`.
-6. Geração de métricas, artefatos do modelo e relatório simples.
+1. Carregamento dos dados e normalização básica
+2. Ordenação temporal por `fight_date`
+3. Engenharia de features: diferenças, razões e codificação de stance
+4. Split temporal em treino e teste
+5. Treinamento com `HistGradientBoostingClassifier`
+6. Geração de métricas, artefatos do modelo e relatório
 
-## Interface
+## 🖥️ Interface
 
 A aplicação Streamlit conta com três abas:
 
@@ -111,8 +123,16 @@ A aplicação Streamlit conta com três abas:
 - **Base Processada** — visualize as primeiras linhas do dataset e a distribuição de resultados.
 - **Relatório** — métricas de treinamento com opção de download.
 
-## Observações
+## ⚠️ Observações
 
 - O alvo é binário: `1` quando o lutador do canto vermelho vence, `0` quando o azul vence.
-- O split temporal ajuda a simular melhor o cenário real de previsão.
+- O split temporal simula melhor o cenário real de previsão e evita vazamento de dados futuros.
 - Para produção ou TCC, vale enriquecer os dados com estatísticas históricas acumuladas por lutador.
+
+## 🔮 Melhorias Futuras
+
+- Tuning de hiperparâmetros
+- Engenharia de features avançada (histórico acumulado por lutador)
+- Modelos adicionais (LightGBM, Redes Neurais)
+- Integração com API para dados em tempo real
+- Deploy em nuvem (AWS / GCP)
