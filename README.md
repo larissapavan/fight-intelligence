@@ -1,13 +1,13 @@
-# Previsao de Vencedores do UFC com Machine Learning
+# Previsão de Vencedores do UFC com Machine Learning
 
-Projeto de machine learning para prever vencedores de lutas do UFC utilizando atributos pre-luta dos atletas, engenharia de features, divisao temporal dos dados e uma aplicacao interativa com Streamlit.
+Projeto de machine learning para prever vencedores de lutas do UFC utilizando atributos pré-luta dos atletas, engenharia de features, divisão temporal dos dados e uma aplicação interativa com Streamlit.
 
 ## Objetivos
 
 - Treinar um modelo supervisionado para prever o vencedor da luta.
-- Evitar vazamento de informacao com divisao temporal dos dados.
-- Construir features derivadas de diferencas entre os dois lutadores.
-- Disponibilizar uma interface para explorar metricas e fazer novas previsoes.
+- Evitar vazamento de informação com divisão temporal dos dados.
+- Construir features derivadas de diferenças entre os dois lutadores.
+- Disponibilizar uma interface para explorar métricas e fazer novas previsões.
 
 ## Estrutura
 
@@ -48,11 +48,11 @@ O pipeline espera um CSV em `data/raw/ufc_fights.csv` com pelo menos estas colun
 - `red_takedown_acc`, `blue_takedown_acc`
 - `red_stance`, `blue_stance`
 
-Se esse arquivo nao existir, o projeto gera uma base sintetica para demonstracao.
+Se esse arquivo não existir, o projeto gera uma base sintética para demonstração.
 
 ## Como rodar
 
-1. Instale as dependencias:
+1. Instale as dependências:
 
 ```bash
 pip install -r requirements.txt
@@ -64,22 +64,22 @@ pip install -r requirements.txt
 python -m src.ufc_predictor.train
 ```
 
-3. Inicie a aplicacao:
+3. Inicie a aplicação:
 
 ```bash
 streamlit run app.py
 ```
 
-## Publicacao
+## Publicação
 
 ### GitHub
 
-1. Crie um novo repositorio no GitHub.
+1. Crie um novo repositório no GitHub.
 2. Na pasta do projeto, execute:
 
 ```bash
 git add .
-git commit -m "Projeto inicial de previsao UFC"
+git commit -m "Projeto inicial de previsão UFC"
 git branch -M main
 git remote add origin <URL_DO_REPOSITORIO>
 git push -u origin main
@@ -87,24 +87,32 @@ git push -u origin main
 
 ### Streamlit Community Cloud
 
-1. Publique o codigo no GitHub.
+1. Publique o código no GitHub.
 2. Acesse o Streamlit Community Cloud.
-3. Escolha o repositorio e selecione `app.py` como arquivo principal.
-4. O app cria os artefatos automaticamente se `models/` ainda nao existir.
+3. Escolha o repositório e selecione `app.py` como arquivo principal.
+4. O app cria os artefatos automaticamente se `models/` ainda não existir.
 
-Isso permite manter o repositorio mais limpo, sem precisar versionar modelo treinado e arquivos processados.
+Isso permite manter o repositório mais limpo, sem precisar versionar modelo treinado e arquivos processados.
 
 ## Pipeline
 
-1. Carregamento dos dados e normalizacao basica.
-2. Ordenacao temporal por `fight_date`.
-3. Engenharia de features baseada em diferencas, razoes e indicadores de stance.
+1. Carregamento dos dados e normalização básica.
+2. Ordenação temporal por `fight_date`.
+3. Engenharia de features baseada em diferenças, razões e indicadores de stance.
 4. Split temporal em treino e teste.
 5. Treinamento com `HistGradientBoostingClassifier`.
-6. Geracao de metricas, artefatos do modelo e relatorio simples.
+6. Geração de métricas, artefatos do modelo e relatório simples.
 
-## Observacoes
+## Interface
 
-- O alvo e binario: `1` quando o lutador do canto vermelho vence, `0` quando o azul vence.
-- O split temporal ajuda a simular melhor o cenario real de previsao.
-- Para producao ou TCC, vale enriquecer os dados com estatisticas historicas acumuladas por lutador.
+A aplicação Streamlit conta com três abas:
+
+- **Nova Previsão** — preencha os atributos dos dois lutadores e veja o vencedor previsto com probabilidade, barra comparativa e tabela de vantagens por atributo.
+- **Base Processada** — visualize as primeiras linhas do dataset e a distribuição de resultados.
+- **Relatório** — métricas de treinamento com opção de download.
+
+## Observações
+
+- O alvo é binário: `1` quando o lutador do canto vermelho vence, `0` quando o azul vence.
+- O split temporal ajuda a simular melhor o cenário real de previsão.
+- Para produção ou TCC, vale enriquecer os dados com estatísticas históricas acumuladas por lutador.

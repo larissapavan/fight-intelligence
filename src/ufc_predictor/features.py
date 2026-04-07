@@ -31,8 +31,8 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
 
     frame["same_stance"] = (frame["red_stance"] == frame["blue_stance"]).astype(int)
 
-    red_stance_dummies = pd.get_dummies(frame["red_stance"], prefix="red_stance")
-    blue_stance_dummies = pd.get_dummies(frame["blue_stance"], prefix="blue_stance")
+    red_stance_dummies = pd.get_dummies(frame["red_stance"], prefix="red_stance").astype(int)
+    blue_stance_dummies = pd.get_dummies(frame["blue_stance"], prefix="blue_stance").astype(int)
     frame = pd.concat([frame, red_stance_dummies, blue_stance_dummies], axis=1)
 
     frame["fight_month"] = pd.to_datetime(frame[DATE_COLUMN]).dt.month
