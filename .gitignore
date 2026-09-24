@@ -2,6 +2,7 @@
 venv/
 env/
 __pycache__/
+<<<<<<< HEAD
 *.pyc
 *.pyo
 *.pyd
@@ -11,5 +12,19 @@ __pycache__/
 models/
 reports/
 data/processed/
+=======
+scripts/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.pytest_cache/
+.mypy_cache/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+backend/__pycache__/
+reports/
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 project_zip/
 *.zip

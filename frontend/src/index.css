@@ -1,0 +1,359 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-octagon-bg: #000000;
+  --color-octagon-card: #141414;
+  --color-octagon-red: #e81b23;
+  --color-octagon-blue: #2f5fa8;
+  --color-octagon-text: #ffffff;
+  --color-octagon-muted: #999999;
+  --font-ui: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --surface-1: #0a0a0a;
+  --surface-2: #141414;
+  --surface-3: rgba(255, 255, 255, 0.045);
+  --line-soft: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --text-main: #ffffff;
+  --text-muted: #999999;
+  --text-soft: #cccccc;
+  --app-background: #000000;
+  --grid-pattern:
+    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%);
+  --hero-bg: #0d0d0d;
+  --card-bg: #141414;
+  --tile-bg: #1a1a1a;
+  --tile-hover-bg: #202020;
+  --input-bg: #1a1a1a;
+  --input-hover-bg: #1f1f1f;
+  --action-bg: #1a1a1a;
+  --action-hover-bg: #202020;
+  --option-bg: #161616;
+  --option-hover-bg: #1f1f1f;
+  --chip-bg: rgba(255, 255, 255, 0.05);
+  --modal-backdrop: rgba(0, 0, 0, 0.82);
+  --shadow-soft: rgba(0, 0, 0, 0.5);
+  --shadow-page: rgba(0, 0, 0, 0.5);
+  --avatar-bg: #1a1a1a;
+  --logo-bg: #000000;
+  --accent-red: #e81b23;
+  --accent-blue: #2f5fa8;
+  --accent-green: #2e9e5b;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --surface-1: #ffffff;
+  --surface-2: #f5f5f5;
+  --surface-3: rgba(15, 23, 42, 0.045);
+  --line-soft: rgba(15, 23, 42, 0.12);
+  --line-strong: rgba(15, 23, 42, 0.2);
+  --text-main: #111111;
+  --text-muted: #5c5c5c;
+  --text-soft: #3a3a3a;
+  --app-background: #f4f4f4;
+  --grid-pattern:
+    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent 44%);
+  --hero-bg: #ffffff;
+  --card-bg: #ffffff;
+  --tile-bg: #fafafa;
+  --tile-hover-bg: #efefef;
+  --input-bg: #ffffff;
+  --input-hover-bg: #fafafa;
+  --action-bg: #ffffff;
+  --action-hover-bg: #efefef;
+  --option-bg: #ffffff;
+  --option-hover-bg: #efefef;
+  --chip-bg: rgba(15, 23, 42, 0.05);
+  --modal-backdrop: rgba(15, 23, 42, 0.55);
+  --shadow-soft: rgba(15, 23, 42, 0.1);
+  --shadow-page: rgba(15, 23, 42, 0.1);
+  --avatar-bg: #ededed;
+  --logo-bg: #111111;
+  --accent-red: #d0121a;
+  --accent-blue: #29508c;
+  --accent-green: #157a41;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--app-background);
+  color: var(--text-main);
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--grid-pattern);
+  background-size: 56px 56px, 56px 56px, 100% 100%;
+  mask-image: linear-gradient(180deg, black 0%, rgba(0, 0, 0, 0.7) 54%, transparent 100%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(232, 27, 35, 0.32);
+  color: var(--text-main);
+}
+
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dashboard-shell {
+  position: relative;
+}
+
+.page-hero {
+  background: var(--hero-bg);
+  border: 1px solid var(--line-soft);
+  border-top: 2px solid var(--accent-red);
+}
+
+.surface-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line-soft);
+}
+
+.control-room-card,
+.panel-card,
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line-soft);
+}
+
+.metric-tile {
+  background: var(--tile-bg);
+  border: 1px solid var(--line-soft);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.metric-tile:hover {
+  border-color: var(--line-strong);
+  background: var(--tile-hover-bg);
+}
+
+.broadcast-label {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.data-value {
+  font-family: var(--font-ui);
+  letter-spacing: 0;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.primary-action {
+  background: var(--accent-red);
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.primary-action:hover {
+  background: #ff2731;
+  transform: translateY(-1px);
+}
+
+.primary-action:active {
+  background: #b0141a;
+  transform: translateY(0);
+}
+
+.ghost-action {
+  background: var(--action-bg);
+  border: 1px solid var(--line-soft);
+  transition:
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.ghost-action:hover {
+  background: var(--action-hover-bg);
+  border-color: var(--line-strong);
+}
+
+.soft-input {
+  background: var(--input-bg);
+  border: 1px solid var(--line-soft);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.soft-input:focus-within,
+.soft-input:focus {
+  background: var(--input-hover-bg);
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 3px rgba(232, 27, 35, 0.18);
+}
+
+.progress-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='light'] .progress-track {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.chart-tooltip {
+  background: #141414 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 6px !important;
+  color: var(--text-main) !important;
+}
+
+.theme-text {
+  color: var(--text-main);
+}
+
+.theme-muted {
+  color: var(--text-muted);
+}
+
+.theme-soft-text {
+  color: var(--text-soft);
+}
+
+.selector-backdrop {
+  background: var(--modal-backdrop);
+}
+
+.selector-option {
+  background: var(--option-bg);
+  border-color: var(--line-soft);
+  color: var(--text-main);
+}
+
+.selector-option:hover,
+.selector-option-active {
+  background: var(--option-hover-bg);
+  border-color: var(--accent-red);
+}
+
+.selector-chip {
+  border: 1px solid var(--line-soft);
+  background: var(--chip-bg);
+  border-radius: 4px;
+  padding: 0.25rem 0.625rem;
+}
+
+select.soft-input {
+  color: var(--text-main);
+}
+
+select.soft-input option {
+  background: var(--surface-1);
+  color: var(--text-main);
+}
+
+.soft-input input,
+.soft-input select {
+  color: var(--text-main);
+}
+
+:root[data-theme='light'] .text-\[\#FFFFFF\],
+:root[data-theme='light'] .text-\[\#E5E5E5\],
+:root[data-theme='light'] .text-\[\#CCCCCC\] {
+  color: var(--text-main) !important;
+}
+
+:root[data-theme='light'] .text-\[\#999999\] {
+  color: var(--text-muted) !important;
+}
+
+:root[data-theme='light'] .border-white\/8,
+:root[data-theme='light'] .border-white\/10,
+:root[data-theme='light'] .border-white\/12,
+:root[data-theme='light'] .border-white\/14,
+:root[data-theme='light'] .border-white\/16,
+:root[data-theme='light'] .border-white\/18,
+:root[data-theme='light'] .hover\:border-white\/14:hover,
+:root[data-theme='light'] .hover\:border-white\/16:hover {
+  border-color: var(--line-soft) !important;
+}
+
+:root[data-theme='light'] .bg-white\/\[0\.025\],
+:root[data-theme='light'] .bg-white\/\[0\.03\],
+:root[data-theme='light'] .bg-white\/\[0\.035\],
+:root[data-theme='light'] .bg-white\/\[0\.04\],
+:root[data-theme='light'] .bg-white\/\[0\.045\],
+:root[data-theme='light'] .bg-white\/\[0\.055\] {
+  background-color: var(--surface-3) !important;
+}
+
+:root[data-theme='light'] .hover\:bg-white\/7:hover,
+:root[data-theme='light'] .hover\:bg-white\/\[0\.055\]:hover,
+:root[data-theme='light'] .hover\:bg-white\/\[0\.065\]:hover,
+:root[data-theme='light'] .hover\:bg-white\/\[0\.075\]:hover {
+  background-color: var(--option-hover-bg) !important;
+}
+
+:root[data-theme='light'] .hover\:text-white:hover,
+:root[data-theme='light'] .group:hover .group-hover\:text-\[\#FFFFFF\] {
+  color: var(--text-main) !important;
+}
+
+:root[data-theme='light'] .bg-black\/15,
+:root[data-theme='light'] .bg-black\/16,
+:root[data-theme='light'] .bg-black\/18,
+:root[data-theme='light'] .bg-black\/24 {
+  background-color: var(--surface-3) !important;
+}
+
+.fade-up {
+  animation: fadeUp 0.5s ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

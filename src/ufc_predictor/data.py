@@ -1,11 +1,50 @@
+<<<<<<< HEAD
 from __future__ import annotations
 
 from dataclasses import dataclass
+=======
+"""Training-data loading for the UFC winner model.
+
+KNOWN LIMITATION (data provenance): the model currently deployed at
+backend/model/model.pkl was trained on a Kaggle-style dataset
+(data/raw/ufc_fights.csv or data/raw/UFC.csv) that is NOT checked into this
+repository, so `python -m src.ufc_predictor.train` cannot reproduce it today.
+If neither file is present, load_or_create_dataset() falls back to
+generate_synthetic_dataset() below, which is randomly generated and NOT
+representative of real fights.
+
+data/raw/{fighters,fights,fighter_career_stats}.csv (populated by
+scripts/scraper_ufcstats.py and scripts/scrape_fighter_career_stats.py) are
+real, comprehensive, and used to power the live fighter catalog and
+inference-time features. They are NOT yet wired into this training pipeline:
+fights.csv has no declared winner and no point-in-time fighter stats, so
+building a leakage-free training set from it (per-fight snapshots rather than
+each fighter's current career totals) is a separate, non-trivial project
+of its own, not attempted here.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+import shutil
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
 import numpy as np
 import pandas as pd
 
+<<<<<<< HEAD
 from .config import DATE_COLUMN, RAW_DATA_PATH, REQUIRED_COLUMNS, TARGET_COLUMN, ensure_directories
+=======
+from .config import (
+    DATE_COLUMN,
+    EXTERNAL_KAGGLE_FILES,
+    KAGGLE_UFC_DATA_PATH,
+    RAW_DATA_PATH,
+    REQUIRED_COLUMNS,
+    TARGET_COLUMN,
+    ensure_directories,
+)
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
 
 STANCE_VALUES = ["Orthodox", "Southpaw", "Switch", "Open Stance"]
@@ -19,11 +58,23 @@ class DatasetBundle:
 
 def load_or_create_dataset() -> DatasetBundle:
     ensure_directories()
+<<<<<<< HEAD
     if RAW_DATA_PATH.exists():
         raw_df = pd.read_csv(RAW_DATA_PATH, parse_dates=[DATE_COLUMN])
     else:
         raw_df = generate_synthetic_dataset()
         raw_df.to_csv(RAW_DATA_PATH, index=False)
+=======
+    raw_df = load_standardized_dataset()
+    if raw_df is None:
+        kaggle_df = load_kaggle_dataset()
+        if kaggle_df is not None:
+            raw_df = transform_kaggle_dataset(kaggle_df)
+            raw_df.to_csv(RAW_DATA_PATH, index=False)
+        else:
+            raw_df = generate_synthetic_dataset()
+            raw_df.to_csv(RAW_DATA_PATH, index=False)
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
     validate_columns(raw_df)
     modeling_df = prepare_target(raw_df)
@@ -31,11 +82,35 @@ def load_or_create_dataset() -> DatasetBundle:
     return DatasetBundle(raw=raw_df, modeling=modeling_df)
 
 
+<<<<<<< HEAD
+=======
+def load_standardized_dataset() -> pd.DataFrame | None:
+    if not RAW_DATA_PATH.exists():
+        return None
+    df = pd.read_csv(RAW_DATA_PATH, parse_dates=[DATE_COLUMN])
+    return df if all(column in df.columns for column in REQUIRED_COLUMNS) else None
+
+
+def load_kaggle_dataset() -> pd.DataFrame | None:
+    candidate_paths = [KAGGLE_UFC_DATA_PATH, EXTERNAL_KAGGLE_FILES["ufc"]]
+    for source_path in candidate_paths:
+        if source_path.exists():
+            if source_path != KAGGLE_UFC_DATA_PATH:
+                shutil.copy2(source_path, KAGGLE_UFC_DATA_PATH)
+            return pd.read_csv(source_path)
+    return None
+
+
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 def validate_columns(df: pd.DataFrame) -> None:
     missing = [column for column in REQUIRED_COLUMNS if column not in df.columns]
     if missing:
         raise ValueError(
+<<<<<<< HEAD
             "Colunas obrigatorias ausentes no dataset: " + ", ".join(missing)
+=======
+            "Required columns missing from dataset: " + ", ".join(missing)
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
         )
 
 
@@ -48,6 +123,73 @@ def prepare_target(df: pd.DataFrame) -> pd.DataFrame:
     return frame
 
 
+<<<<<<< HEAD
+=======
+def transform_kaggle_dataset(df: pd.DataFrame) -> pd.DataFrame:
+    frame = df.copy()
+    fight_dates = pd.to_datetime(frame["date"], errors="coerce")
+    red_dob = pd.to_datetime(frame["r_dob"], errors="coerce")
+    blue_dob = pd.to_datetime(frame["b_dob"], errors="coerce")
+
+    transformed = pd.DataFrame(
+        {
+            DATE_COLUMN: fight_dates,
+            "fighter_red": frame["r_name"],
+            "fighter_blue": frame["b_name"],
+            "winner": infer_corner_winner(frame),
+            "red_age": compute_age(fight_dates, red_dob),
+            "blue_age": compute_age(fight_dates, blue_dob),
+            "red_height_cm": pd.to_numeric(frame["r_height"], errors="coerce"),
+            "blue_height_cm": pd.to_numeric(frame["b_height"], errors="coerce"),
+            "red_reach_cm": pd.to_numeric(frame["r_reach"], errors="coerce"),
+            "blue_reach_cm": pd.to_numeric(frame["b_reach"], errors="coerce"),
+            "red_wins": pd.to_numeric(frame["r_wins"], errors="coerce"),
+            "blue_wins": pd.to_numeric(frame["b_wins"], errors="coerce"),
+            "red_losses": pd.to_numeric(frame["r_losses"], errors="coerce"),
+            "blue_losses": pd.to_numeric(frame["b_losses"], errors="coerce"),
+            "red_sig_str_acc": normalize_percent_column(frame["r_str_acc"]),
+            "blue_sig_str_acc": normalize_percent_column(frame["b_str_acc"]),
+            "red_takedown_acc": normalize_percent_column(frame["r_td_avg_acc"]),
+            "blue_takedown_acc": normalize_percent_column(frame["b_td_avg_acc"]),
+            "red_stance": frame["r_stance"].fillna("Unknown"),
+            "blue_stance": frame["b_stance"].fillna("Unknown"),
+        }
+    )
+    return transformed.dropna(subset=[DATE_COLUMN, "winner"]).reset_index(drop=True)
+
+
+def infer_corner_winner(df: pd.DataFrame) -> pd.Series:
+    winner_id = df["winner_id"].astype(str)
+    red_id = df["r_id"].astype(str)
+    blue_id = df["b_id"].astype(str)
+    winner_name = df["winner"].astype(str).str.strip()
+    red_name = df["r_name"].astype(str).str.strip()
+    blue_name = df["b_name"].astype(str).str.strip()
+
+    return pd.Series(
+        np.select(
+            [
+                winner_id.eq(red_id) | winner_name.eq(red_name),
+                winner_id.eq(blue_id) | winner_name.eq(blue_name),
+            ],
+            ["red", "blue"],
+            default=None,
+        ),
+        index=df.index,
+    )
+
+
+def compute_age(fight_date: pd.Series, dob: pd.Series) -> pd.Series:
+    age_days = (fight_date - dob).dt.days
+    return (age_days / 365.25).round(2)
+
+
+def normalize_percent_column(series: pd.Series) -> pd.Series:
+    numeric = pd.to_numeric(series, errors="coerce")
+    return numeric.where(numeric <= 1, numeric / 100.0)
+
+
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 def generate_synthetic_dataset(n_rows: int = 1200, seed: int = 42) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     dates = pd.date_range("2016-01-01", periods=n_rows, freq="3D")

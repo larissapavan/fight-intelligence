@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ufc-fight-predictor-api
+    runtime: python
+    plan: free
+    rootDir: .
+    autoDeploy: true
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: FRONTEND_ORIGINS
+        sync: false

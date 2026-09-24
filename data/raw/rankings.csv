@@ -1,0 +1,207 @@
+category,is_p4p,rank,fighter,rank_change,athlete_url
+Pound-for-Pound (Men's),True,1,Islam Makhachev,,/athlete/islam-makhachev
+Pound-for-Pound (Men's),True,2,Alexander Volkanovski,,/athlete/alexander-volkanovski
+Pound-for-Pound (Men's),True,3,Justin Gaethje,up,/athlete/justin-gaethje
+Pound-for-Pound (Men's),True,4,Petr Yan,down,/athlete/petr-yan
+Pound-for-Pound (Men's),True,5,Ilia Topuria,,/athlete/ilia-topuria
+Pound-for-Pound (Men's),True,6,Joshua Van,up,/athlete/joshua-van
+Pound-for-Pound (Men's),True,7,Sean Strickland,,/athlete/sean-strickland
+Pound-for-Pound (Men's),True,8,Tom Aspinall,down,/athlete/tom-aspinall
+Pound-for-Pound (Men's),True,9,Merab Dvalishvili,down,/athlete/merab-dvalishvili
+Pound-for-Pound (Men's),True,10,Alex Pereira,down,/athlete/alex-pereira
+Pound-for-Pound (Men's),True,11,Ciryl Gane,down,/athlete/ciryl-gane
+Pound-for-Pound (Men's),True,12,Khamzat Chimaev,,/athlete/khamzat-chimaev
+Pound-for-Pound (Men's),True,13,Arman Tsarukyan,up,/athlete/arman-tsarukyan
+Pound-for-Pound (Men's),True,14,Alexandre Pantoja,down,/athlete/alexandre-pantoja
+Pound-for-Pound (Men's),True,15,Carlos Ulberg,NR,/athlete/carlos-ulberg
+Flyweight,False,0,Joshua Van,,/athlete/joshua-van
+Flyweight,False,1,Alexandre Pantoja,,/athlete/alexandre-pantoja
+Flyweight,False,2,Manel Kape,,/athlete/manel-kape
+Flyweight,False,3,Brandon Royval,,/athlete/brandon-royval
+Flyweight,False,4,Tatsuro Taira,,/athlete/tatsuro-taira
+Flyweight,False,5,Kyoji Horiguchi,,/athlete/kyoji-horiguchi
+Flyweight,False,6,Lone’er Kavanagh,,/athlete/loneer-kavanagh
+Flyweight,False,7,Asu Almabayev,,/athlete/assu-almabayev
+Flyweight,False,8,Brandon Moreno,,/athlete/brandon-moreno
+Flyweight,False,9,Amir Albazi,,/athlete/amir-albazi
+Flyweight,False,10,Ramazan Temirov,,/athlete/ramazan-temirov
+Flyweight,False,11,Tim Elliott,,/athlete/tim-elliott
+Flyweight,False,12,Steve Erceg,,/athlete/steve-erceg
+Flyweight,False,13,Sumudaerji,,/athlete/su-mudaerji
+Flyweight,False,14,Tagir Ulanbekov,,/athlete/tagir-ulanbekov
+Flyweight,False,15,Alex Perez,,/athlete/alex-perez
+Bantamweight,False,0,Petr Yan,,/athlete/petr-yan
+Bantamweight,False,1,Merab Dvalishvili,,/athlete/merab-dvalishvili
+Bantamweight,False,2,Sean O'Malley,,/athlete/sean-omalley
+Bantamweight,False,3,Song Yadong,,/athlete/yadong-song
+Bantamweight,False,4,Umar Nurmagomedov,,/athlete/umar-nurmagomedov
+Bantamweight,False,5,Mario Bautista,,/athlete/mario-bautista
+Bantamweight,False,6,Cory Sandhagen,,/athlete/cory-sandhagen
+Bantamweight,False,7,Aiemann Zahabi,,/athlete/aiemann-zahabi
+Bantamweight,False,8,David Martinez,,/athlete/david-martinez
+Bantamweight,False,9,Deiveson Figueiredo,,/athlete/deiveson-figueiredo
+Bantamweight,False,10,Marlon Vera,,/athlete/marlon-vera
+Bantamweight,False,11,Payton Talbott,,/athlete/payton-talbott
+Bantamweight,False,12,Raul Rosas Jr.,,/athlete/raul-rosas-jr
+Bantamweight,False,13,Raoni Barcelos,,/athlete/raoni-barcelos
+Bantamweight,False,14,Farid Basharat,,/athlete/farid-basharat
+Bantamweight,False,15,Marcus McGhee,,/athlete/marcus-mcghee
+Featherweight,False,0,Alexander Volkanovski,,/athlete/alexander-volkanovski
+Featherweight,False,1,Movsar Evloev,,/athlete/movsar-evloev
+Featherweight,False,2,Diego Lopes,,/athlete/diego-lopes
+Featherweight,False,3,Lerone Murphy,,/athlete/lerone-murphy
+Featherweight,False,4,Aljamain Sterling,,/athlete/aljamain-sterling
+Featherweight,False,5,Jean Silva,,/athlete/jean-silva-lord
+Featherweight,False,6,Yair Rodriguez,,/athlete/yair-rodriguez
+Featherweight,False,7,Arnold Allen,,/athlete/arnold-allen
+Featherweight,False,8,Youssef Zalal,,/athlete/youssef-zalal
+Featherweight,False,9,Kevin Vallejos,,/athlete/kevin-vallejos
+Featherweight,False,10,Steve Garcia,,/athlete/steve-garcia
+Featherweight,False,11,Aaron Pico,up,/athlete/aaron-pico
+Featherweight,False,12,Melquizael Costa,up,/athlete/melquizael-costa
+Featherweight,False,13,Brian Ortega,down,/athlete/brian-ortega
+Featherweight,False,14,Patricio Pitbull,up,/athlete/patricio-pitbull-freire
+Featherweight,False,15,David Onama,down,/athlete/david-onama
+Lightweight,False,0,Justin Gaethje,,/athlete/justin-gaethje
+Lightweight,False,1,Ilia Topuria,,/athlete/ilia-topuria
+Lightweight,False,2,Arman Tsarukyan,,/athlete/arman-tsarukyan
+Lightweight,False,3,Charles Oliveira,,/athlete/charles-oliveira
+Lightweight,False,4,Max Holloway,,/athlete/max-holloway
+Lightweight,False,5,Paddy Pimblett,,/athlete/paddy-pimblett
+Lightweight,False,6,Benoit Saint Denis,,/athlete/benoit-saint-denis
+Lightweight,False,7,Quillan Salkilld,up,/athlete/quillan-salkilld
+Lightweight,False,8,Mauricio Ruffy,down,/athlete/mauricio-ruffy
+Lightweight,False,9,Salahdine Parnasse,,/athlete/salahdine-parnasse
+Lightweight,False,10,Mateusz Gamrot,up,/athlete/mateusz-gamrot
+Lightweight,False,11,Renato Moicano,,/athlete/renato-moicano
+Lightweight,False,11,Rafael Fiziev,down,/athlete/rafael-fiziev
+Lightweight,False,13,Dan Hooker,,/athlete/dan-hooker
+Lightweight,False,14,Tom Nolan,,/athlete/tom-nolan
+Lightweight,False,15,Beneil Dariush,,/athlete/beneil-dariush
+Welterweight,False,0,Islam Makhachev,,/athlete/islam-makhachev
+Welterweight,False,1,Ian Machado Garry,,/athlete/ian-garry
+Welterweight,False,2,Carlos Prates,,/athlete/carlos-prates
+Welterweight,False,3,Michael Morales,,/athlete/michael-morales
+Welterweight,False,4,Jack Della Maddalena,,/athlete/jack-della-maddalena
+Welterweight,False,5,Gabriel Bonfim,,/athlete/gabriel-bonfim
+Welterweight,False,6,Sean Brady,,/athlete/sean-brady
+Welterweight,False,7,Belal Muhammad,,/athlete/belal-muhammad
+Welterweight,False,8,Leon Edwards,,/athlete/leon-edwards
+Welterweight,False,9,Kamaru Usman,,/athlete/kamaru-usman
+Welterweight,False,10,Joaquin Buckley,,/athlete/joaquin-buckley
+Welterweight,False,11,Yaroslav Amosov,,/athlete/yaroslav-amosov
+Welterweight,False,12,Uros Medic,,/athlete/uros-medic
+Welterweight,False,13,Mike Malott,,/athlete/mike-malott
+Welterweight,False,14,Daniel Rodriguez,,/athlete/daniel-rodriguez
+Welterweight,False,15,Neil Magny,,/athlete/neil-magny
+Middleweight,False,0,Sean Strickland,,/athlete/sean-strickland
+Middleweight,False,1,Khamzat Chimaev,,/athlete/khamzat-chimaev
+Middleweight,False,2,Dricus Du Plessis,,/athlete/dricus-du-plessis
+Middleweight,False,3,Nassourdine Imavov,,/athlete/nassourdine-imavov
+Middleweight,False,4,Brendan Allen,,/athlete/brendan-allen
+Middleweight,False,5,Caio Borralho,,/athlete/caio-borralho
+Middleweight,False,6,Joe Pyfer,,/athlete/joe-pyfer
+Middleweight,False,7,Gregory Rodrigues,,/athlete/gregory-rodrigues
+Middleweight,False,8,Anthony Hernandez,,/athlete/anthony-hernandez
+Middleweight,False,9,Israel Adesanya,,/athlete/israel-adesanya
+Middleweight,False,10,Christian Leroy Duncan,,/athlete/christian-leroy-duncan
+Middleweight,False,11,Jared Cannonier,,/athlete/jared-cannonier
+Middleweight,False,12,Abus Magomedov,,/athlete/abus-magomedov
+Middleweight,False,13,Ikram Aliskerov,,/athlete/ikram-aliskerov
+Middleweight,False,14,Bo Nickal,,/athlete/bo-nickal
+Middleweight,False,15,Shara Magomedov,,/athlete/shara-magomedov
+Light Heavyweight,False,0,Carlos Ulberg,,/athlete/carlos-ulberg
+Light Heavyweight,False,1,Magomed Ankalaev,,/athlete/magomed-ankalaev
+Light Heavyweight,False,2,Jiří Procházka,,/athlete/jiri-prochazka
+Light Heavyweight,False,3,Alex Pereira,,/athlete/alex-pereira
+Light Heavyweight,False,4,Khalil Rountree Jr.,,/athlete/khalil-rountree-jr
+Light Heavyweight,False,5,Navajo Stirling,,/athlete/navajo-stirling
+Light Heavyweight,False,6,Paulo Costa,,/athlete/paulo-costa
+Light Heavyweight,False,7,Jamahal Hill,,/athlete/jamahal-hill
+Light Heavyweight,False,8,Azamat Murzakanov,,/athlete/azamat-murzakanov
+Light Heavyweight,False,9,Jan Blachowicz,,/athlete/jan-blachowicz
+Light Heavyweight,False,10,Dominick Reyes,,/athlete/dominick-reyes
+Light Heavyweight,False,11,Bogdan Guskov,,/athlete/bogdan-guskov
+Light Heavyweight,False,12,Robert Whittaker,,/athlete/robert-whittaker
+Light Heavyweight,False,13,Johnny Walker,,/athlete/johnny-walker
+Light Heavyweight,False,14,Alonzo Menifield,,/athlete/alonzo-menifield
+Light Heavyweight,False,15,Nikita Krylov,,/athlete/nikita-krylov
+Heavyweight,False,0,Ciryl Gane,,/athlete/ciryl-gane
+Heavyweight,False,1,Tom Aspinall,down,/athlete/tom-aspinall
+Heavyweight,False,2,Alexander Volkov,,/athlete/alexander-volkov
+Heavyweight,False,3,Sergei Pavlovich,,/athlete/sergei-pavlovich
+Heavyweight,False,4,Josh Hokit,,/athlete/josh-hokit
+Heavyweight,False,5,Curtis Blaydes,,/athlete/curtis-blaydes
+Heavyweight,False,6,Waldo Cortes Acosta,,/athlete/waldo-cortes-acosta
+Heavyweight,False,7,Rizvan Kuniev,,/athlete/rizvan-kuniev
+Heavyweight,False,8,Vitor Petrino,,/athlete/vitor-petrino
+Heavyweight,False,9,Serghei Spivac,,/athlete/sergey-spivak-0
+Heavyweight,False,10,Ante Delija,,/athlete/ante-delija
+Heavyweight,False,11,Valter Walker,,/athlete/valter-walker
+Heavyweight,False,12,Tyrell Fortune,,/athlete/tyrell-fortune
+Heavyweight,False,13,Derrick Lewis,,/athlete/derrick-lewis
+Heavyweight,False,14,Mario Pinto,,/athlete/mario-pinto
+Heavyweight,False,15,Aleksandar Rakic,,/athlete/aleksandar-rakic
+Pound-for-Pound (Women's),True,1,Valentina Shevchenko,,/athlete/valentina-shevchenko
+Pound-for-Pound (Women's),True,2,Kayla Harrison,,/athlete/kayla-harrison
+Pound-for-Pound (Women's),True,3,Zhang Weili,,/athlete/weili-zhang
+Pound-for-Pound (Women's),True,4,Natalia Silva,,/athlete/natalia-silva
+Pound-for-Pound (Women's),True,5,Mackenzie Dern,,/athlete/mackenzie-dern
+Pound-for-Pound (Women's),True,6,Alexa Grasso,,/athlete/alexa-grasso
+Pound-for-Pound (Women's),True,7,Manon Fiorot,,/athlete/manon-fiorot
+Pound-for-Pound (Women's),True,8,Erin Blanchfield,,/athlete/erin-blanchfield
+Pound-for-Pound (Women's),True,9,Tatiana Suarez,,/athlete/tatiana-suarez
+Pound-for-Pound (Women's),True,10,Julianna Peña,,/athlete/julianna-pena
+Pound-for-Pound (Women's),True,11,Virna Jandiroba,,/athlete/virna-jandiroba
+Pound-for-Pound (Women's),True,12,Rose Namajunas,,/athlete/rose-namajunas
+Pound-for-Pound (Women's),True,12,Raquel Pennington,,/athlete/raquel-pennington
+Pound-for-Pound (Women's),True,14,Denise Gomes,,/athlete/denise-gomes
+Pound-for-Pound (Women's),True,15,Maycee Barber,,/athlete/maycee-barber
+Women's Strawweight,False,0,Mackenzie Dern,,/athlete/mackenzie-dern
+Women's Strawweight,False,1,Zhang Weili,,/athlete/weili-zhang
+Women's Strawweight,False,2,Tatiana Suarez,,/athlete/tatiana-suarez
+Women's Strawweight,False,3,Virna Jandiroba,,/athlete/virna-jandiroba
+Women's Strawweight,False,4,Denise Gomes,,/athlete/denise-gomes
+Women's Strawweight,False,5,Gillian Robertson,,/athlete/gillian-robertson
+Women's Strawweight,False,6,Yan Xiaonan,,/athlete/xiaonan-yan
+Women's Strawweight,False,7,Fatima Kline,,/athlete/fatima-kline
+Women's Strawweight,False,8,Loopy Godinez,,/athlete/loopy-godinez
+Women's Strawweight,False,9,Alexia Thainara,,/athlete/alexia-thainara
+Women's Strawweight,False,10,Jéssica Andrade,,/athlete/jessica-andrade
+Women's Strawweight,False,11,Tabatha Ricci,,/athlete/tabatha-ricci
+Women's Strawweight,False,12,Amanda Lemos,,/athlete/amanda-lemos
+Women's Strawweight,False,13,Amanda Ribas,,/athlete/amanda-ribas
+Women's Strawweight,False,14,Angela Hill,,/athlete/angela-hill
+Women's Strawweight,False,15,Mizuki,,/athlete/mizuki
+Women's Flyweight,False,0,Valentina Shevchenko,,/athlete/valentina-shevchenko
+Women's Flyweight,False,1,Natalia Silva,,/athlete/natalia-silva
+Women's Flyweight,False,2,Alexa Grasso,,/athlete/alexa-grasso
+Women's Flyweight,False,3,Manon Fiorot,,/athlete/manon-fiorot
+Women's Flyweight,False,4,Erin Blanchfield,,/athlete/erin-blanchfield
+Women's Flyweight,False,5,Rose Namajunas,,/athlete/rose-namajunas
+Women's Flyweight,False,6,Maycee Barber,,/athlete/maycee-barber
+Women's Flyweight,False,7,Jasmine Jasudavicius,,/athlete/jasmine-jasudavicius
+Women's Flyweight,False,8,Wang Cong,,/athlete/wang-cong
+Women's Flyweight,False,9,Tracy Cortez,,/athlete/tracy-cortez
+Women's Flyweight,False,10,Miranda Maverick,,/athlete/miranda-maverick
+Women's Flyweight,False,11,Karine Silva,,/athlete/karine-silva
+Women's Flyweight,False,12,Casey O'Neill,,/athlete/casey-oneill
+Women's Flyweight,False,13,Eduarda Moura,,/athlete/eduarda-moura
+Women's Flyweight,False,14,Gabriella Fernandes,,/athlete/gabriella-fernandes
+Women's Flyweight,False,15,Regina Tarin,,/athlete/regina-malpica-rivera
+Women's Bantamweight,False,0,Kayla Harrison,,/athlete/kayla-harrison
+Women's Bantamweight,False,1,Julianna Peña,,/athlete/julianna-pena
+Women's Bantamweight,False,2,Raquel Pennington,,/athlete/raquel-pennington
+Women's Bantamweight,False,3,Joselyne Edwards,,/athlete/joselyne-edwards
+Women's Bantamweight,False,4,Norma Dumont,,/athlete/norma-dumont
+Women's Bantamweight,False,5,Ailin Perez,,/athlete/ailin-perez
+Women's Bantamweight,False,6,Yana Santos,,/athlete/yana-santos
+Women's Bantamweight,False,7,Luana Santos,,/athlete/luana-santos
+Women's Bantamweight,False,8,Macy Chiasson,,/athlete/macy-chiasson
+Women's Bantamweight,False,9,Jacqueline Cavalcanti,,/athlete/jacqueline-cavalcanti
+Women's Bantamweight,False,10,Karol Rosa,,/athlete/karol-rosa
+Women's Bantamweight,False,11,Bia Mesquita,,/athlete/bia-mesquita
+Women's Bantamweight,False,12,Michelle Montague,,/athlete/michelle-montague
+Women's Bantamweight,False,13,Nora Cornolle,,/athlete/nora-cornolle
+Women's Bantamweight,False,14,Miesha Tate,,/athlete/miesha-tate
+Women's Bantamweight,False,15,Melissa Croden,,/athlete/melissa-croden

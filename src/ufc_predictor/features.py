@@ -53,12 +53,22 @@ def get_feature_columns(df: pd.DataFrame) -> list[str]:
 
 
 def build_inference_frame(**kwargs) -> pd.DataFrame:
+<<<<<<< HEAD
+=======
+    """Build a single-row dataframe and apply the same feature engineering used in training."""
+
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
     frame = pd.DataFrame([kwargs])
     enriched = build_features(frame)
     return enriched
 
 
 def align_feature_columns(df: pd.DataFrame, feature_columns: list[str]) -> pd.DataFrame:
+<<<<<<< HEAD
+=======
+    """Ensure inference data matches the exact training feature set."""
+
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
     aligned = df.copy()
     for column in feature_columns:
         if column not in aligned.columns:

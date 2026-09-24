@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 numpy==2.2.5
 pandas==2.2.3
 scikit-learn==1.6.1
@@ -5,3 +6,14 @@ joblib==1.4.2
 streamlit==1.44.1
 matplotlib==3.10.1
 seaborn==0.13.2
+=======
+# Full environment for local development: model training, data scraping, notebooks.
+# The deployed API only needs backend/requirements.txt (smaller, faster Render builds).
+-r backend/requirements.txt
+requests==2.32.3
+beautifulsoup4==4.12.3
+matplotlib==3.10.1
+seaborn==0.13.2
+pytest==8.3.4
+httpx==0.28.1
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b

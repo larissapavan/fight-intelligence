@@ -4,18 +4,37 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+<<<<<<< HEAD
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, log_loss, roc_auc_score
 from sklearn.pipeline import Pipeline
+=======
+from sklearn.dummy import DummyClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, log_loss, roc_auc_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
 from .config import TARGET_COLUMN
 
 
 @dataclass
 class TrainResult:
+<<<<<<< HEAD
     model: Pipeline
     metrics: dict
+=======
+    """Container for trained model artifacts and evaluation results."""
+
+    model: Pipeline
+    metrics: dict
+    baseline_metrics: dict[str, dict]
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
     train_rows: int
     test_rows: int
 
@@ -56,6 +75,7 @@ def train_model(
     )
 
     model.fit(X_train, y_train)
+<<<<<<< HEAD
     probabilities = model.predict_proba(X_test)[:, 1]
     predictions = (probabilities >= 0.5).astype(int)
 
@@ -71,3 +91,59 @@ def train_model(
         train_rows=len(train_df),
         test_rows=len(test_df),
     )
+=======
+    metrics = evaluate_model(model, X_test, y_test)
+
+    baselines = {
+        "dummy_most_frequent": Pipeline(
+            steps=[
+                ("imputer", SimpleImputer(strategy="median")),
+                ("classifier", DummyClassifier(strategy="most_frequent")),
+            ]
+        ),
+        "logistic_regression": Pipeline(
+            steps=[
+                ("imputer", SimpleImputer(strategy="median")),
+                ("scaler", StandardScaler()),
+                ("classifier", LogisticRegression(max_iter=3000, random_state=42)),
+            ]
+        ),
+        "random_forest": Pipeline(
+            steps=[
+                ("imputer", SimpleImputer(strategy="median")),
+                (
+                    "classifier",
+                    RandomForestClassifier(
+                        n_estimators=300,
+                        max_depth=10,
+                        random_state=42,
+                        n_jobs=-1,
+                    ),
+                ),
+            ]
+        ),
+    }
+
+    baseline_metrics: dict[str, dict] = {}
+    for baseline_name, baseline_model in baselines.items():
+        baseline_model.fit(X_train, y_train)
+        baseline_metrics[baseline_name] = evaluate_model(baseline_model, X_test, y_test)
+
+    return TrainResult(
+        model=model,
+        metrics=metrics,
+        baseline_metrics=baseline_metrics,
+        train_rows=len(train_df),
+        test_rows=len(test_df),
+    )
+
+
+def evaluate_model(model: Pipeline, X_test: pd.DataFrame, y_test: pd.Series) -> dict:
+    probabilities = model.predict_proba(X_test)[:, 1]
+    predictions = (probabilities >= 0.5).astype(int)
+    return {
+        "accuracy": float(accuracy_score(y_test, predictions)),
+        "roc_auc": float(roc_auc_score(y_test, probabilities)),
+        "log_loss": float(log_loss(y_test, np.clip(probabilities, 1e-6, 1 - 1e-6))),
+    }
+>>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
