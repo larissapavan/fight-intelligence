@@ -4,12 +4,6 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
-<<<<<<< HEAD
-from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.impute import SimpleImputer
-from sklearn.metrics import accuracy_score, log_loss, roc_auc_score
-from sklearn.pipeline import Pipeline
-=======
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -18,23 +12,17 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, log_loss, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
 from .config import TARGET_COLUMN
 
 
 @dataclass
 class TrainResult:
-<<<<<<< HEAD
-    model: Pipeline
-    metrics: dict
-=======
     """Container for trained model artifacts and evaluation results."""
 
     model: Pipeline
     metrics: dict
     baseline_metrics: dict[str, dict]
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
     train_rows: int
     test_rows: int
 
@@ -75,23 +63,6 @@ def train_model(
     )
 
     model.fit(X_train, y_train)
-<<<<<<< HEAD
-    probabilities = model.predict_proba(X_test)[:, 1]
-    predictions = (probabilities >= 0.5).astype(int)
-
-    metrics = {
-        "accuracy": float(accuracy_score(y_test, predictions)),
-        "roc_auc": float(roc_auc_score(y_test, probabilities)),
-        "log_loss": float(log_loss(y_test, np.clip(probabilities, 1e-6, 1 - 1e-6))),
-    }
-
-    return TrainResult(
-        model=model,
-        metrics=metrics,
-        train_rows=len(train_df),
-        test_rows=len(test_df),
-    )
-=======
     metrics = evaluate_model(model, X_test, y_test)
 
     baselines = {
@@ -146,4 +117,3 @@ def evaluate_model(model: Pipeline, X_test: pd.DataFrame, y_test: pd.Series) -> 
         "roc_auc": float(roc_auc_score(y_test, probabilities)),
         "log_loss": float(log_loss(y_test, np.clip(probabilities, 1e-6, 1 - 1e-6))),
     }
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b

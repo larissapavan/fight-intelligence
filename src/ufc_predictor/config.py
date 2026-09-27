@@ -9,16 +9,11 @@ MODEL_DIR = BASE_DIR / "models"
 REPORT_DIR = BASE_DIR / "reports"
 
 RAW_DATA_PATH = RAW_DATA_DIR / "ufc_fights.csv"
-<<<<<<< HEAD
-=======
 KAGGLE_UFC_DATA_PATH = RAW_DATA_DIR / "UFC.csv"
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 PROCESSED_DATA_PATH = PROCESSED_DATA_DIR / "modeling_dataset.csv"
 MODEL_PATH = MODEL_DIR / "ufc_winner_model.joblib"
 REPORT_PATH = REPORT_DIR / "training_report.txt"
 
-<<<<<<< HEAD
-=======
 EXTERNAL_KAGGLE_FILES = {
     "event_details": RAW_DATA_DIR / "event_details.csv",
     "fight_details": RAW_DATA_DIR / "fight_details.csv",
@@ -26,7 +21,6 @@ EXTERNAL_KAGGLE_FILES = {
     "ufc": RAW_DATA_DIR / "UFC.csv",
 }
 
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 TARGET_COLUMN = "target_red_win"
 DATE_COLUMN = "fight_date"
 

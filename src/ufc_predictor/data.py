@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-from __future__ import annotations
-
-from dataclasses import dataclass
-=======
 """Training-data loading for the UFC winner model.
 
 KNOWN LIMITATION (data provenance): the model currently deployed at
@@ -27,14 +22,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import shutil
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
 import numpy as np
 import pandas as pd
 
-<<<<<<< HEAD
-from .config import DATE_COLUMN, RAW_DATA_PATH, REQUIRED_COLUMNS, TARGET_COLUMN, ensure_directories
-=======
 from .config import (
     DATE_COLUMN,
     EXTERNAL_KAGGLE_FILES,
@@ -44,7 +35,6 @@ from .config import (
     TARGET_COLUMN,
     ensure_directories,
 )
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
 
 STANCE_VALUES = ["Orthodox", "Southpaw", "Switch", "Open Stance"]
@@ -58,13 +48,6 @@ class DatasetBundle:
 
 def load_or_create_dataset() -> DatasetBundle:
     ensure_directories()
-<<<<<<< HEAD
-    if RAW_DATA_PATH.exists():
-        raw_df = pd.read_csv(RAW_DATA_PATH, parse_dates=[DATE_COLUMN])
-    else:
-        raw_df = generate_synthetic_dataset()
-        raw_df.to_csv(RAW_DATA_PATH, index=False)
-=======
     raw_df = load_standardized_dataset()
     if raw_df is None:
         kaggle_df = load_kaggle_dataset()
@@ -74,7 +57,6 @@ def load_or_create_dataset() -> DatasetBundle:
         else:
             raw_df = generate_synthetic_dataset()
             raw_df.to_csv(RAW_DATA_PATH, index=False)
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
     validate_columns(raw_df)
     modeling_df = prepare_target(raw_df)
@@ -82,8 +64,6 @@ def load_or_create_dataset() -> DatasetBundle:
     return DatasetBundle(raw=raw_df, modeling=modeling_df)
 
 
-<<<<<<< HEAD
-=======
 def load_standardized_dataset() -> pd.DataFrame | None:
     if not RAW_DATA_PATH.exists():
         return None
@@ -101,16 +81,11 @@ def load_kaggle_dataset() -> pd.DataFrame | None:
     return None
 
 
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 def validate_columns(df: pd.DataFrame) -> None:
     missing = [column for column in REQUIRED_COLUMNS if column not in df.columns]
     if missing:
         raise ValueError(
-<<<<<<< HEAD
-            "Colunas obrigatorias ausentes no dataset: " + ", ".join(missing)
-=======
             "Required columns missing from dataset: " + ", ".join(missing)
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
         )
 
 
@@ -123,8 +98,6 @@ def prepare_target(df: pd.DataFrame) -> pd.DataFrame:
     return frame
 
 
-<<<<<<< HEAD
-=======
 def transform_kaggle_dataset(df: pd.DataFrame) -> pd.DataFrame:
     frame = df.copy()
     fight_dates = pd.to_datetime(frame["date"], errors="coerce")
@@ -189,7 +162,6 @@ def normalize_percent_column(series: pd.Series) -> pd.Series:
     return numeric.where(numeric <= 1, numeric / 100.0)
 
 
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 def generate_synthetic_dataset(n_rows: int = 1200, seed: int = 42) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     dates = pd.date_range("2016-01-01", periods=n_rows, freq="3D")

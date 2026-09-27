@@ -17,10 +17,7 @@ def main() -> None:
 
     train_df, test_df = temporal_train_test_split(modeling_df, test_size=0.2)
     result = train_model(train_df=train_df, test_df=test_df, feature_columns=feature_columns)
-<<<<<<< HEAD
-=======
     shap_background = train_df[feature_columns].sample(min(80, len(train_df)), random_state=42)
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 
     modeling_df.to_csv(PROCESSED_DATA_PATH, index=False)
     joblib.dump(
@@ -28,26 +25,12 @@ def main() -> None:
             "model": result.model,
             "feature_columns": feature_columns,
             "metrics": result.metrics,
-<<<<<<< HEAD
-=======
             "baseline_metrics": result.baseline_metrics,
             "shap_background": shap_background,
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
         },
         MODEL_PATH,
     )
 
-<<<<<<< HEAD
-    report = "\n".join(
-        [
-            "Relatorio de treinamento - Previsao UFC",
-            f"Total de linhas: {len(modeling_df)}",
-            f"Linhas treino: {result.train_rows}",
-            f"Linhas teste: {result.test_rows}",
-            f"Acuracia: {result.metrics['accuracy']:.4f}",
-            f"ROC AUC: {result.metrics['roc_auc']:.4f}",
-            f"Log loss: {result.metrics['log_loss']:.4f}",
-=======
     baseline_lines = []
     for baseline_name, baseline_metrics in result.baseline_metrics.items():
         label = baseline_name.replace("_", " ").title()
@@ -72,7 +55,6 @@ def main() -> None:
             "",
             "Baseline comparison",
             *baseline_lines,
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
         ]
     )
     REPORT_PATH.write_text(report, encoding="utf-8")

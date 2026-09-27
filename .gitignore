@@ -2,17 +2,6 @@
 venv/
 env/
 __pycache__/
-<<<<<<< HEAD
-*.pyc
-*.pyo
-*.pyd
-.pytest_cache/
-.mypy_cache/
-.streamlit/secrets.toml
-models/
-reports/
-data/processed/
-=======
 scripts/__pycache__/
 *.pyc
 *.pyo
@@ -25,6 +14,5 @@ frontend/dist/
 frontend/.env
 backend/__pycache__/
 reports/
->>>>>>> bdb4474626da9e3848bca11d5d21a07c9ddfa99b
 project_zip/
 *.zip
