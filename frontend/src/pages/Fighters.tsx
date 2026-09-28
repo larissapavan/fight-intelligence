@@ -926,7 +926,10 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
                 width={32}
                 tickFormatter={(value: number) => `${value}%`}
               />
-              <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number, name: string) => [`${value}%`, name]} />
+              <Tooltip
+                contentStyle={chartTooltipStyle}
+                formatter={(value, name) => [`${Number(value ?? 0)}%`, String(name ?? '')]}
+              />
               <Line type="monotone" dataKey="winRate" name="Win rate" stroke="#E81B23" strokeWidth={2} dot={{ r: 3 }} connectNulls />
               <Line
                 type="monotone"
@@ -1001,7 +1004,10 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
                   width={36}
                   tickFormatter={formatWinTime}
                 />
-                <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [formatWinTime(value), 'Avg win time']} />
+                <Tooltip
+                  contentStyle={chartTooltipStyle}
+                  formatter={(value) => [formatWinTime(Number(value ?? 0)), 'Avg win time']}
+                />
                 <Line type="monotone" dataKey="seconds" stroke="#CCCCCC" strokeWidth={2} dot={{ r: 3 }} />
               </LineChart>
             </ResponsiveContainer>
