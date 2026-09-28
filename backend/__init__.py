@@ -1,1 +1,1 @@
-"""Backend package for the UFC Predictor full stack application."""
+"""Backend package for the UFC Fight Intelligence full stack application."""

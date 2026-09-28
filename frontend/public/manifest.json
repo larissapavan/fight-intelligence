@@ -1,0 +1,16 @@
+{
+  "name": "UFC Fight Intelligence",
+  "short_name": "UFC Intelligence",
+  "description": "Predict UFC fight outcomes with a machine learning model trained on real historical fight data.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}

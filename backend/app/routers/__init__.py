@@ -1,1 +1,1 @@
-"""API routers for the UFC Fight Predictor backend."""
+"""API routers for the UFC Fight Intelligence backend."""

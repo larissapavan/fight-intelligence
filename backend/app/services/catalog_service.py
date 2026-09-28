@@ -73,7 +73,21 @@ def _build_catalog() -> pd.DataFrame:
     return catalog.sort_values("name").drop_duplicates(subset=["profile_key"], keep="last").reset_index(drop=True)
 
 
-CAREER_STATS_COLUMNS = ["fighter_url", "age", "sig_str_acc", "takedown_acc", "wins", "losses", "draws"]
+CAREER_STATS_COLUMNS = [
+    "fighter_url",
+    "age",
+    "sig_str_acc",
+    "takedown_acc",
+    "slpm",
+    "sapm",
+    "str_def",
+    "td_avg",
+    "td_def",
+    "sub_avg",
+    "wins",
+    "losses",
+    "draws",
+]
 
 
 def _load_historical_photos() -> pd.DataFrame:
@@ -104,6 +118,10 @@ def _load_career_stats() -> pd.DataFrame:
     stats_df["age"] = stats_df["dob"].apply(_age_from_dob)
     stats_df["sig_str_acc"] = stats_df["sig_str_acc"].apply(_parse_percent)
     stats_df["takedown_acc"] = stats_df["takedown_acc"].apply(_parse_percent)
+    stats_df["str_def"] = stats_df["str_def"].apply(_parse_percent)
+    stats_df["td_def"] = stats_df["td_def"].apply(_parse_percent)
+    for column in ("slpm", "sapm", "td_avg", "sub_avg"):
+        stats_df[column] = pd.to_numeric(stats_df[column], errors="coerce") if column in stats_df.columns else float("nan")
     for column in ("wins", "losses", "draws"):
         stats_df[column] = (
             pd.to_numeric(stats_df[column], errors="coerce") if column in stats_df.columns else float("nan")
@@ -220,6 +238,12 @@ def _format_profile(record: dict) -> dict:
         "win_rate": _to_float(record.get("win_rate")),
         "sig_str_acc": _to_float(record.get("sig_str_acc")),
         "takedown_acc": _to_float(record.get("takedown_acc")),
+        "sig_strikes_landed_per_min": _to_float(record.get("slpm")),
+        "sig_strikes_absorbed_per_min": _to_float(record.get("sapm")),
+        "striking_defense": _to_float(record.get("str_def")),
+        "takedown_avg_per_15min": _to_float(record.get("td_avg")),
+        "takedown_defense": _to_float(record.get("td_def")),
+        "submission_avg_per_15min": _to_float(record.get("sub_avg")),
         "stance": record.get("stance") or "Unknown",
         "division": _nullable_string(record.get("division")),
         "belt": bool(record.get("belt", False)),

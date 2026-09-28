@@ -12,8 +12,41 @@ from backend.app.services.catalog_service import (
 def test_catalog_has_expected_columns_and_is_not_empty():
     catalog = get_fighter_catalog()
     assert len(catalog) > 1000
-    for column in ("name", "wins", "losses", "age", "sig_str_acc", "takedown_acc", "stance"):
+    for column in (
+        "name",
+        "wins",
+        "losses",
+        "age",
+        "sig_str_acc",
+        "takedown_acc",
+        "slpm",
+        "sapm",
+        "str_def",
+        "td_avg",
+        "td_def",
+        "sub_avg",
+        "stance",
+    ):
         assert column in catalog.columns
+
+
+def test_fighter_profile_exposes_full_career_stat_block():
+    """Regression guard: the striking/grappling stat block (SLpM, Str. Def, TD Def,
+    Sub. Avg, ...) scraped from ufcstats.com must reach the API response, not just
+    live inside the internal dataframe.
+    """
+    catalog = get_fighter_catalog()
+    name = catalog.iloc[0]["name"]
+    profile = get_fighter_profile(name)
+    for field in (
+        "sig_strikes_landed_per_min",
+        "sig_strikes_absorbed_per_min",
+        "striking_defense",
+        "takedown_avg_per_15min",
+        "takedown_defense",
+        "submission_avg_per_15min",
+    ):
+        assert field in profile
 
 
 def test_different_fighters_do_not_all_share_identical_model_inputs():

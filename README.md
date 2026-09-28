@@ -1,83 +1,39 @@
-# UFC Fight Predictor
+# UFC Fight Intelligence
 
-Full stack UFC matchup analysis app. Compares two fighters, shows side-by-side stats, and returns a machine learning prediction with confidence and a SHAP-based explanation.
+A full stack UFC analytics platform: real fighter data, a machine learning model that predicts fight outcomes with explainability, and a live dashboard built around what's actually happening in the UFC right now — not a static demo.
 
-## Tech Stack
+## [→ Try it live](https://ufcfightpredictor.vercel.app)
 
-- **Frontend**: React, TypeScript, Vite, Tailwind CSS, Axios, React Router, Framer Motion, Recharts
-- **Backend**: FastAPI, Uvicorn, Pydantic, SlowAPI (rate limiting)
-- **ML**: scikit-learn, Pandas, NumPy, Joblib, SHAP
-- **Data pipeline**: Requests + BeautifulSoup4 — scrapers for ufcstats.com and ufc.com, including a proof-of-work bot-challenge solver
+Open the link and start exploring, every number on the site is real.
 
-## Features
+---
 
-- Matchup prediction with confidence score and SHAP explanation of the leading factors
-- Fighter database (4,500+ fighters) with official UFC photos, Active/Retired tabs, and per-fighter profiles (method breakdown, weight class history, last results)
-- Head-to-head lookup between any two fighters
-- Event archive (numbered events + Fight Night, searchable, filterable by year/month) plus upcoming confirmed events
-- Official UFC rankings (divisional + pound-for-pound), cross-referenced with real win-rate/last-fight data
-- Fighter Compare with finishing tendencies (avg. time to win, win distribution by round)
+## What's inside
 
-All fighter/event/ranking data is scraped from ufcstats.com and ufc.com and kept current by the scripts in `scripts/` — see "Keeping data fresh" below. The backend reloads it automatically when the CSVs change, no restart needed.
+**Home dashboard**: The next real UFC event, its main event fighters, a live model prediction for that fight, current win/loss momentum, and the pound-for-pound top 3, all pulled fresh from the same data the model predicts from. Every other fight on the card is one click away from its own full breakdown.
 
-## Project Structure
+**Predictor**: Pick any two of 4,500+ fighters and get a win probability with a full SHAP explanation of what drove the model's read: Reach, age, win rate, striking and grappling deltas, ranked by actual contribution.
 
-```text
-.
-├── backend/app/          # FastAPI: routers, schemas, services
-├── backend/model/        # Trained model artifact
-├── frontend/src/         # React + Vite app
-├── tests/                # Pytest suite
-├── data/raw/             # Scraped CSV snapshots
-├── scripts/              # Scrapers + data pipeline
-├── src/ufc_predictor/    # ML feature engineering / training
-├── .github/workflows/    # CI (pytest, frontend lint/build)
-└── render.yaml           # Render deployment config
-```
+**Matchup Intelligence**: A category-by-category breakdown of *why* a matchup is interesting: striking (accuracy, significant strikes/min, defense), grappling (takedown accuracy/defense, submission attempts), physical attributes, and the model's key factors side by side.
 
-## API Endpoints
+**Fighters database**: Every fighter's real record, division, physical stats, striking/grappling numbers, and a full performance history: career timeline (win/loss by year), win rate and finish rate trends, round-by-round distribution, and a similarity search (KNN over physical and performance stats) that surfaces genuinely comparable fighters, not random suggestions.
 
-`/health` · `/fighters` · `/events` · `/events/upcoming` · `/rankings` · `/head-to-head?fighter_a=&fighter_b=` · `/fighters/{name}/performance` · `POST /predict` · `/model-info`
+**Head-to-Head**: Direct fight history between any two fighters, and when they've never actually fought, a real network analysis of common opponents and degrees of separation through the "who fought whom" graph.
 
-## Running Locally
+**Rankings & Events**: Official UFC divisional and pound-for-pound rankings, plus the full event archive (numbered PPVs and Fight Nights) with every result, searchable and filterable.
 
-```bash
-# Backend
-pip install -r backend/requirements.txt
-uvicorn backend.app.main:app --reload   # http://127.0.0.1:8000/docs
+**Champions & Records**: Every UFC title reign in history: current champions per division, the greatest champions ranked by time held, and the record book itself, most title defenses, longest and shortest reigns, most times dethroned, and multi-division champions.
 
-# Frontend
-cd frontend && npm install && npm run dev   # http://127.0.0.1:5173
-```
+**Data Intelligence**: A transparent look at the pipeline itself: where the data comes from, how it's cleaned and engineered into features, and live counts of exactly how many fighters, events, and fights are tracked.
 
-For local frontend API calls, create `frontend/.env` with `VITE_API_URL=http://127.0.0.1:8000`.
+## Real data, not a mock
 
-For scraping/training/tests, install the full dev environment instead: `pip install -r requirements.txt`.
+Every fighter, fight, event, and ranking is scraped from ufcstats.com and ufc.com, there are no placeholder records or synthetic stats anywhere in the app. The prediction model is a real trained classifier (not a random number), explained live with SHAP on every request. Predictions are estimates for portfolio/educational purposes and should never be used for betting decisions.
 
-## Keeping Data Fresh
+## Built with
 
-| Script | Produces | Runtime |
-|---|---|---|
-| `python -m scripts.scraper_ufcstats` | fighters/fights/events base data | — |
-| `python -m scripts.scrape_fighter_career_stats` | age, striking/takedown %, records | ~45-90 min (resumable) |
-| `python -m scripts.scrape_event_cards` | winner, method, round, venue per fight | ~10-15 min (resumable) |
-| `python -m scripts.scrape_rankings` | official UFC rankings | seconds |
-| `python -m scripts.scrape_upcoming_events` | scheduled events | ~2 min |
+React · TypeScript · Vite · Tailwind CSS · FastAPI · scikit-learn · SHAP · Pandas — deployed on Vercel (frontend) and Render (backend).
 
-All handle ufcstats.com's proof-of-work challenge automatically and are safe to re-run. Head-to-head, fighter performance, and finishing tendencies are computed on the fly from `event_cards.csv` — no separate cache.
+---
 
-## Testing
-
-```bash
-pytest -v                                  # backend + ML (44 tests)
-cd frontend && npm run lint && npm run build   # frontend lint + typecheck + build
-```
-
-## Deployment
-
-- **Backend (Render)**: configured via `render.yaml`. Start command: `uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`. Health check: `/health`.
-- **Frontend (Vercel)**: root directory `frontend`, framework `Vite`, build `npm run build`, output `dist`. `frontend/vercel.json` proxies `/api/*` to the Render backend.
-
-## Model Notes
-
-Features are matchup deltas (age, height, reach, win rate, stance, striking/takedown accuracy). Fighter profiles are sourced live from scraped data; the deployed model artifact itself was trained on a separate historical dataset not checked into this repo — see `src/ufc_predictor/data.py` for details. Predictions are for educational/portfolio purposes only, not betting advice.
+**[→ ufcfightpredictor.vercel.app](https://ufcfightpredictor.vercel.app)**

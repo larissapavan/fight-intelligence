@@ -2,6 +2,7 @@ import { useState, type ComponentType } from 'react'
 import { AlertTriangle, Binary, ChartNoAxesCombined, FolderGit2, Globe2, ShieldAlert, Trophy } from 'lucide-react'
 import { motion } from 'framer-motion'
 
+import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 
@@ -24,7 +25,7 @@ const contactLinks = [
 ]
 
 export function AboutModel() {
-  const { modelInfo, error } = useModelInfo()
+  const { modelInfo, error, loading } = useModelInfo()
   const [copiedLink, setCopiedLink] = useState<string | null>(null)
 
   const handleCopyLink = async (href: string) => {
@@ -156,7 +157,12 @@ export function AboutModel() {
         </article>
       </section>
 
-      {modelInfo ? (
+      {loading ? (
+        <section className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
+          <LoadingSkeleton className="h-[180px]" />
+          <LoadingSkeleton className="h-[180px]" />
+        </section>
+      ) : modelInfo ? (
         <section className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
             <p className="broadcast-label text-[10px] text-[#999999]">Technical snapshot</p>

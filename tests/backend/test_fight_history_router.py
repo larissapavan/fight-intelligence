@@ -20,6 +20,18 @@ def test_fighter_performance_known_fighters_return_200(client, fighter_name):
     assert body["total_fights"] >= body["wins"] + body["losses"]
     assert sum(body["method_breakdown"].values()) == body["wins"]
     assert len(body["last_performances"]) <= 5
+    assert len(body["career_timeline"]) == body["total_fights"]
+    dated = [f["date"] for f in body["career_timeline"] if f["date"]]
+    assert dated == sorted(dated)
+
+    years = [trend["year"] for trend in body["yearly_trends"]]
+    assert years == sorted(years)
+    assert sum(trend["fights"] for trend in body["yearly_trends"]) <= body["total_fights"]
+    for trend in body["yearly_trends"]:
+        if trend["win_rate"] is not None:
+            assert 0.0 <= trend["win_rate"] <= 1.0
+        if trend["finish_rate"] is not None:
+            assert 0.0 <= trend["finish_rate"] <= 1.0
 
 
 def test_fighter_performance_covers_entire_catalog(client):
@@ -50,6 +62,34 @@ def test_head_to_head_counts_real_meetings(client, two_fighter_names):
     assert body["fighter_b"] == fighter_b
     total = body["fighter_a_wins"] + body["fighter_b_wins"] + body["no_contests"]
     assert total == len(body["meetings"])
+
+
+def test_head_to_head_finds_real_network_connection_between_strangers(client):
+    """Two fighters who never fought (different eras/divisions) should still resolve
+    a real shortest path through actual common opponents, not just an empty result.
+    """
+    response = client.get(
+        "/head-to-head", params={"fighter_a": "Khabib Nurmagomedov", "fighter_b": "Israel Adesanya"}
+    )
+    assert response.status_code == 200
+    body = response.json()
+
+    assert len(body["meetings"]) == 0
+    assert body["degrees_of_separation"] is not None
+    assert body["degrees_of_separation"] >= 1
+    assert body["network_path"][0] == "Khabib Nurmagomedov"
+    assert body["network_path"][-1] == "Israel Adesanya"
+    assert len(body["network_path"]) == body["degrees_of_separation"] + 1
+
+
+def test_head_to_head_reports_real_common_opponents(client):
+    response = client.get("/head-to-head", params={"fighter_a": "Dustin Poirier", "fighter_b": "Islam Makhachev"})
+    assert response.status_code == 200
+    body = response.json()
+
+    assert len(body["common_opponents"]) > 0
+    for common in body["common_opponents"]:
+        assert common["opponent"] not in ("Dustin Poirier", "Islam Makhachev")
 
 
 def test_head_to_head_unknown_fighter_returns_404(client, two_fighter_names):

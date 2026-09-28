@@ -22,6 +22,12 @@ class FighterSummary(BaseModel):
     win_rate: float | None = None
     sig_str_acc: float | None = None
     takedown_acc: float | None = None
+    sig_strikes_landed_per_min: float | None = None
+    sig_strikes_absorbed_per_min: float | None = None
+    striking_defense: float | None = None
+    takedown_avg_per_15min: float | None = None
+    takedown_defense: float | None = None
+    submission_avg_per_15min: float | None = None
     stance: StanceType = "Unknown"
     division: str | None = None
     belt: bool = False

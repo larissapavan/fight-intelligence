@@ -1,5 +1,7 @@
 import axios from 'axios'
 import type {
+  ChampionsResponse,
+  DataInfo,
   EventSummary,
   FighterPerformance,
   FighterProfile,
@@ -8,6 +10,7 @@ import type {
   ModelInfo,
   PredictionResponse,
   RankingCategory,
+  SimilarFighter,
 } from '../types/api'
 
 const apiBaseURL = import.meta.env.DEV
@@ -39,6 +42,11 @@ export const getRankings = async () => {
   return response.data
 }
 
+export const getChampions = async () => {
+  const response = await api.get<ChampionsResponse>('/champions')
+  return response.data
+}
+
 export const getHeadToHead = async (fighterA: string, fighterB: string) => {
   const response = await api.get<HeadToHeadResponse>('/head-to-head', {
     params: { fighter_a: fighterA, fighter_b: fighterB },
@@ -51,6 +59,13 @@ export const getFighterPerformance = async (fighterName: string) => {
   return response.data
 }
 
+export const getSimilarFighters = async (fighterName: string, limit = 5) => {
+  const response = await api.get<SimilarFighter[]>(`/fighters/${encodeURIComponent(fighterName)}/similar`, {
+    params: { limit },
+  })
+  return response.data
+}
+
 export const getModelInfo = async () => {
   const response = await api.get<ModelInfo>('/model-info')
   return response.data
@@ -58,6 +73,11 @@ export const getModelInfo = async () => {
 
 export const getHealth = async () => {
   const response = await api.get<HealthInfo>('/health')
+  return response.data
+}
+
+export const getDataInfo = async () => {
+  const response = await api.get<DataInfo>('/data-info')
   return response.data
 }
 

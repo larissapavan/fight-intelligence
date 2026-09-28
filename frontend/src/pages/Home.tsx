@@ -1,208 +1,351 @@
 import { motion } from 'framer-motion'
-import { Activity, ArrowRight, CircleDot, Radar, Radio, ShieldCheck, Swords, TrendingUp } from 'lucide-react'
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis } from 'recharts'
+import { ArrowRight, Award, CalendarDays, CircleDot, ListOrdered, ShieldAlert, Swords, TrendingUp, Trophy } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { useFighters } from '../shared/hooks/useFighters'
+import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
+import { usePrediction } from '../shared/hooks/usePrediction'
+import { useRankings } from '../shared/hooks/useRankings'
+import { useUpcomingEvents } from '../shared/hooks/useUpcomingEvents'
+import { getFighterPerformance } from '../shared/services/api'
+import type { EventSummary, FighterPerformance, FightResult } from '../shared/types/api'
 
-const probabilitySeries = [
-  { frame: 'R1', confidence: 51 },
-  { frame: 'R2', confidence: 58 },
-  { frame: 'R3', confidence: 63 },
-  { frame: 'R4', confidence: 69 },
-  { frame: 'R5', confidence: 72 },
-]
-
-const capabilityCards = [
-  {
-    title: 'Machine Learning',
-    description: 'Supervised model tuned for matchup prediction, confidence scoring and feature-based interpretation.',
-    icon: Radio,
-  },
-  {
-    title: 'Fight Analytics',
-    description: 'Side-by-side athlete comparisons focused on measurable edges before the fight happens.',
-    icon: Radar,
-  },
-  {
-    title: 'Prediction Confidence',
-    description: 'Probability output translated into clear signals for fast reading and decision support.',
-    icon: ShieldCheck,
-  },
-]
+type Trend = { streak: number; finishRate: number | null }
 
 export function Home() {
-  const { fighters, loading: fightersLoading } = useFighters()
-  const { modelInfo, health, loading: modelLoading } = useModelInfo()
+  const { health, loading: modelLoading, error: modelError } = useModelInfo()
+  const { events, loading: eventsLoading, error: eventsError } = useUpcomingEvents()
+  const { rankings, loading: rankingsLoading, error: rankingsError } = useRankings()
+  const { prediction, loading: predicting, runPrediction } = usePrediction()
+  const [trends, setTrends] = useState<Record<string, Trend>>({})
 
-  const apiOnline = Boolean(health?.model_loaded)
-  const fighterCountLabel = fightersLoading ? 'Loading...' : fighters.length ? `${fighters.length}` : 'Loading...'
-  const accuracyLabel = modelInfo ? `${(modelInfo.metrics.accuracy * 100).toFixed(1)}%` : '74.7%'
+  const nextEvent = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10)
+    return events.find((event) => event.date && event.date >= today) ?? events[0] ?? null
+  }, [events])
+
+  const mainEvent: FightResult | null = nextEvent?.fights[0] ?? null
+  const fighterA = mainEvent?.fighter_1 ?? null
+  const fighterB = mainEvent?.fighter_2 ?? null
+
+  useEffect(() => {
+    if (!fighterA || !fighterB) return
+
+    void runPrediction(fighterA, fighterB)
+
+    Promise.all([getFighterPerformance(fighterA), getFighterPerformance(fighterB)])
+      .then(([performanceA, performanceB]) => {
+        setTrends({
+          [fighterA]: computeTrend(performanceA),
+          [fighterB]: computeTrend(performanceB),
+        })
+      })
+      .catch((requestError) => {
+        console.error(requestError)
+      })
+  }, [fighterA, fighterB, runPrediction])
+
+  const p4pRankings = rankings.find((category) => category.is_p4p) ?? null
+  const systemError = modelError ?? eventsError
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <section className="page-hero overflow-hidden rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <div className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr] xl:items-stretch">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="flex flex-col justify-between gap-3"
-          >
-            <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#E81B23]/18 bg-[#E81B23]/8 px-3 py-1.5">
-                <Swords className="h-3.5 w-3.5 text-[#E81B23]" />
-                <span className="broadcast-label text-[10px] text-[#E81B23]">Fight intelligence desk</span>
-              </div>
+      {systemError ? (
+        <p className="flex items-center gap-2 rounded-xl border border-[#E81B23]/20 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+          <ShieldAlert className="h-4 w-4 shrink-0 text-[#FF6B6B]" />
+          {systemError}
+        </p>
+      ) : null}
 
-              <div>
-                <h1 className="text-3xl font-bold uppercase leading-[0.92] tracking-[0.02em] text-[#FFFFFF] sm:text-4xl md:text-5xl">
-                  Predict UFC fights
-                  <br />
-                  with machine learning
-                </h1>
-                <p className="mt-2 max-w-xl text-sm leading-6 text-[#E5E5E5]">
-                  Compare fighters, analyze matchup data and generate AI-powered predictions.
-                </p>
-              </div>
+      <motion.section
+        className="page-hero overflow-hidden rounded-[20px] px-3 py-3 sm:px-4 sm:py-4"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#E81B23]/18 bg-[#E81B23]/8 px-3 py-1.5">
+          <Swords className="h-3.5 w-3.5 text-[#E81B23]" />
+          <span className="broadcast-label text-[10px] text-[#E81B23]">Fight intelligence desk</span>
+        </div>
 
-              <div className="flex flex-wrap gap-2.5">
-                <Link
-                  to="/predictor"
-                  className="primary-action inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white sm:px-5 sm:text-sm"
-                >
-                  Start prediction
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  to="/fighters"
-                  className="ghost-action inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#FFFFFF] sm:px-5 sm:text-sm"
-                >
-                  View fighters
-                </Link>
-              </div>
-            </div>
+        <h1 className="mt-2.5 text-3xl font-bold uppercase leading-[0.92] tracking-[0.02em] text-[#FFFFFF] sm:text-4xl">
+          UFC Fight Intelligence
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-[#E5E5E5]">
+          A live look at what's next in the UFC — the upcoming main event, a real model prediction, fighter momentum
+          and the current pound-for-pound picture, all pulled from the same data this platform predicts from.
+        </p>
 
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-              <MiniStat label="Fights analyzed" value={health?.fights_tracked ? health.fights_tracked.toLocaleString('en-US') : '—'} icon={Activity} />
-              <MiniStat label="Accuracy" value={accuracyLabel} icon={TrendingUp} />
-              <MiniStat label="Fighters" value={fighterCountLabel} icon={Radio} muted={fightersLoading} />
-              <StatusStat online={apiOnline} loading={modelLoading} />
-            </div>
-          </motion.div>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+          <MiniStat
+            label="Fights analyzed"
+            value={health?.fights_tracked ? health.fights_tracked.toLocaleString('en-US') : '—'}
+            icon={Award}
+          />
+          <MiniStat label="Fighters tracked" value={health?.fighters_loaded ? `${health.fighters_loaded}` : '—'} icon={Swords} />
+          <StatusStat online={Boolean(health?.model_loaded)} loading={modelLoading} />
+          <MiniStat label="Next event" value={eventsLoading ? 'Loading...' : nextEvent ? formatShortDate(nextEvent.date) : '—'} icon={CalendarDays} />
+        </div>
+      </motion.section>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.06 }}
-            className="grid gap-3 lg:grid-cols-[1.05fr_0.95fr]"
-          >
-            <div className="surface-card rounded-[20px] p-3 sm:p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="broadcast-label text-[10px] text-[#999999]">AI prediction</p>
-                  <h2 className="mt-1 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
-                    Pereira vs Gane
-                  </h2>
-                </div>
-                <span className="rounded-full border border-[#E81B23]/20 bg-[#E81B23]/8 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#FF6B6B]">
-                  Live model
-                </span>
-              </div>
+      <section className="grid gap-3 xl:grid-cols-[1.3fr_1fr]">
+        <MainEventCard
+          loading={eventsLoading}
+          error={eventsError}
+          nextEvent={nextEvent}
+          mainEvent={mainEvent}
+          predictedWinner={prediction?.predicted_winner ?? null}
+          probabilityA={prediction?.fighter_a_probability ?? null}
+          probabilityB={prediction?.fighter_b_probability ?? null}
+          predicting={predicting}
+        />
 
-              <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                <FighterPreview corner="Red" fighter="Alex Pereira" detail="Higher striking pressure" />
-                <div className="rounded-full border border-[#E81B23]/20 bg-[#E81B23]/8 px-2.5 py-1.5 text-xl font-bold uppercase tracking-[0.12em] text-[#E81B23]">
-                  VS
-                </div>
-                <FighterPreview corner="Blue" fighter="Ciryl Gane" detail="Reach and movement" />
-              </div>
-
-              <div className="mt-3 rounded-2xl border border-white/8 bg-black/18 p-3">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <p className="broadcast-label text-[10px] text-[#999999]">Win probability</p>
-                    <p className="data-value mt-1 text-3xl font-bold text-[#FFFFFF] sm:text-4xl">72%</p>
-                  </div>
-                  <div className="sm:text-right">
-                    <p className="broadcast-label text-[10px] text-[#999999]">Projected winner</p>
-                    <p className="mt-1 text-base font-semibold text-[#FFFFFF]">Ciryl Gane</p>
-                  </div>
-                </div>
-                <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-[#262626]">
-                  <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-[#A5151C] to-[#E81B23]" />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid gap-3">
-              <div className="surface-card rounded-[20px] p-3 sm:p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="broadcast-label text-[10px] text-[#999999]">Probability trend</p>
-                    <h3 className="mt-1 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
-                      Confidence build
-                    </h3>
-                  </div>
-                  <TrendingUp className="h-4 w-4 text-[#E81B23]" />
-                </div>
-                <div className="mt-2 h-28 min-w-0 sm:h-32">
-                  <ResponsiveContainer width="100%" height="100%" minWidth={240}>
-                    <AreaChart data={probabilitySeries}>
-                      <defs>
-                        <linearGradient id="homeConfidenceFill" x1="0" x2="0" y1="0" y2="1">
-                          <stop offset="5%" stopColor="#E81B23" stopOpacity={0.42} />
-                          <stop offset="95%" stopColor="#E81B23" stopOpacity={0.02} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                      <XAxis dataKey="frame" tick={{ fill: '#999999', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip
-                        contentStyle={{
-                          background: '#141414',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                          borderRadius: '16px',
-                          color: '#FFFFFF',
-                        }}
-                      />
-                      <Area type="monotone" dataKey="confidence" stroke="#E81B23" strokeWidth={2.5} fill="url(#homeConfidenceFill)" />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="surface-card rounded-[20px] p-3 sm:p-4">
-                <p className="broadcast-label text-[10px] text-[#999999]">Quick signals</p>
-                <div className="mt-3 space-y-2">
-                  <SignalRow label="Reach advantage" value="+8 cm" width="62%" color="bg-[#E81B23]" />
-                  <SignalRow label="Recent momentum" value="3 wins" width="74%" color="bg-[#E81B23]" />
-                  <SignalRow label="Win rate edge" value="Higher" width="58%" color="bg-[#2F5FA8]" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
+        <div className="grid gap-3">
+          <TrendingCard mainEvent={mainEvent} trends={trends} />
+          <RankingsCard category={p4pRankings} loading={rankingsLoading} error={rankingsError} />
         </div>
       </section>
 
-      <section className="grid gap-3 lg:grid-cols-3">
-        {capabilityCards.map(({ title, description, icon: Icon }, index) => (
-          <motion.article
-            key={title}
-            className="surface-card rounded-[20px] p-3.5 transition duration-300 hover:-translate-y-0.5 hover:border-white/16"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.1 + index * 0.06 }}
-          >
-            <div className="inline-flex rounded-xl bg-[#E81B23]/10 p-2.5 text-[#E81B23]">
-              <Icon className="h-4 w-4" />
-            </div>
-            <h2 className="mt-3 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{title}</h2>
-            <p className="mt-1.5 text-xs leading-5 text-[#999999]">{description}</p>
-          </motion.article>
-        ))}
-      </section>
+      <FullCardSection nextEvent={nextEvent} />
     </div>
+  )
+}
+
+function computeTrend(performance: FighterPerformance): Trend {
+  let streak = 0
+  for (let index = performance.career_timeline.length - 1; index >= 0; index -= 1) {
+    if (performance.career_timeline[index].result === 'win') {
+      streak += 1
+    } else {
+      break
+    }
+  }
+
+  const finishes = (performance.method_breakdown['KO/TKO'] ?? 0) + (performance.method_breakdown['Submission'] ?? 0)
+  const finishRate = performance.wins > 0 ? finishes / performance.wins : null
+
+  return { streak, finishRate }
+}
+
+function formatShortDate(date: string | null) {
+  if (!date) return '—'
+  return new Date(`${date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function formatFullDate(date: string | null) {
+  if (!date) return 'Date TBA'
+  return new Date(`${date}T00:00:00`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+}
+
+function MainEventCard({
+  loading,
+  error,
+  nextEvent,
+  mainEvent,
+  predictedWinner,
+  probabilityA,
+  probabilityB,
+  predicting,
+}: {
+  loading: boolean
+  error: string | null
+  nextEvent: { name: string; date: string | null; fight_count: number } | null
+  mainEvent: FightResult | null
+  predictedWinner: string | null
+  probabilityA: number | null
+  probabilityB: number | null
+  predicting: boolean
+}) {
+  if (loading) return <LoadingSkeleton className="h-[340px] rounded-[20px]" />
+
+  if (error || !nextEvent || !mainEvent) {
+    return (
+      <div className="surface-card rounded-[20px] p-4 text-center">
+        <p className="text-sm leading-6 text-[#999999]">
+          {error ?? 'No upcoming UFC events are scheduled right now.'}
+        </p>
+      </div>
+    )
+  }
+
+  const winnerIsA = predictedWinner === mainEvent.fighter_1
+
+  return (
+    <article className="surface-card rounded-[20px] p-3 sm:p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="broadcast-label text-[10px] text-[#999999]">Upcoming event</p>
+          <h2 className="mt-1 truncate text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{nextEvent.name}</h2>
+          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#999999]">
+            <CalendarDays className="h-3.5 w-3.5" />
+            {formatFullDate(nextEvent.date)} • {nextEvent.fight_count} fights
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-2xl border border-white/8 bg-black/18 p-3">
+        <p className="broadcast-label text-[10px] text-[#E81B23]">Main event</p>
+
+        <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <p className="truncate text-right text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_1}</p>
+          <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] font-bold text-[#999999]">VS</span>
+          <p className="truncate text-left text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_2}</p>
+        </div>
+        {mainEvent.weight_class ? (
+          <p className="mt-1 text-center text-[10px] uppercase tracking-[0.12em] text-[#999999]">{mainEvent.weight_class}</p>
+        ) : null}
+
+        {predicting ? (
+          <div className="mt-3">
+            <LoadingSkeleton className="h-[52px]" />
+          </div>
+        ) : probabilityA != null && probabilityB != null ? (
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-sm font-bold">
+              <span className={winnerIsA ? 'text-[#E81B23]' : 'text-[#FFFFFF]'}>{Math.round(probabilityA * 100)}%</span>
+              <span className={!winnerIsA ? 'text-[#8FB3E8]' : 'text-[#FFFFFF]'}>{Math.round(probabilityB * 100)}%</span>
+            </div>
+            <div className="mt-1.5 flex h-2.5 overflow-hidden rounded-full bg-[#262626]">
+              <div className="h-full bg-gradient-to-r from-[#A5151C] to-[#E81B23]" style={{ width: `${probabilityA * 100}%` }} />
+              <div className="h-full bg-gradient-to-r from-[#1c3c6e] to-[#2F5FA8]" style={{ width: `${probabilityB * 100}%` }} />
+            </div>
+            <p className="mt-2 text-center text-xs text-[#999999]">
+              Model favors <span className="font-semibold text-[#FFFFFF]">{predictedWinner}</span>
+            </p>
+          </div>
+        ) : null}
+      </div>
+
+      <Link
+        to={`/matchup-intelligence?a=${encodeURIComponent(mainEvent.fighter_1)}&b=${encodeURIComponent(mainEvent.fighter_2)}`}
+        className="primary-action mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
+      >
+        Analyze matchup
+        <ArrowRight className="h-4 w-4" />
+      </Link>
+    </article>
+  )
+}
+
+function FullCardSection({ nextEvent }: { nextEvent: EventSummary | null }) {
+  if (!nextEvent || nextEvent.fights.length <= 1) return null
+
+  const restOfCard = nextEvent.fights.slice(1)
+
+  return (
+    <section className="surface-card rounded-[20px] p-3 sm:p-4">
+      <div className="flex items-center gap-2 text-[#E81B23]">
+        <ListOrdered className="h-4 w-4" />
+        <p className="broadcast-label text-[10px]">
+          Rest of the card • {restOfCard.length} {restOfCard.length === 1 ? 'fight' : 'fights'}
+        </p>
+      </div>
+      <div className="mt-2.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+        {restOfCard.map((fight, index) => (
+          <FightCardRow key={index} fight={fight} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function FightCardRow({ fight }: { fight: FightResult }) {
+  return (
+    <Link
+      to={`/matchup-intelligence?a=${encodeURIComponent(fight.fighter_1)}&b=${encodeURIComponent(fight.fighter_2)}`}
+      className="group flex w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2.5 transition hover:border-[#E81B23]/25 hover:bg-white/[0.05]"
+    >
+      <div className="min-w-0">
+        <p className="truncate text-sm font-semibold text-[#FFFFFF]">
+          {fight.fighter_1} <span className="text-[#999999]">vs</span> {fight.fighter_2}
+        </p>
+        {fight.weight_class ? (
+          <p className="mt-0.5 text-[10px] uppercase tracking-[0.1em] text-[#999999]">{fight.weight_class}</p>
+        ) : null}
+      </div>
+      <ArrowRight className="h-4 w-4 shrink-0 text-[#666666] transition group-hover:text-[#E81B23]" />
+    </Link>
+  )
+}
+
+function TrendingCard({ mainEvent, trends }: { mainEvent: FightResult | null; trends: Record<string, Trend> }) {
+  if (!mainEvent) return null
+
+  return (
+    <article className="surface-card rounded-[20px] p-3 sm:p-4">
+      <div className="flex items-center gap-2 text-[#E81B23]">
+        <TrendingUp className="h-4 w-4" />
+        <p className="broadcast-label text-[10px]">Trending</p>
+      </div>
+      <div className="mt-2.5 space-y-1.5">
+        <TrendRow name={mainEvent.fighter_1} trend={trends[mainEvent.fighter_1]} />
+        <TrendRow name={mainEvent.fighter_2} trend={trends[mainEvent.fighter_2]} />
+      </div>
+    </article>
+  )
+}
+
+function TrendRow({ name, trend }: { name: string; trend: Trend | undefined }) {
+  if (!trend) return <LoadingSkeleton className="h-[52px]" />
+
+  return (
+    <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
+      <p className="truncate text-xs font-semibold text-[#FFFFFF]">{name}</p>
+      <p className="mt-0.5 text-[11px] leading-4 text-[#999999]">
+        {trend.streak > 0 ? (
+          <span className="text-[#E81B23]">↑ {trend.streak}-fight win streak</span>
+        ) : (
+          <span>Coming off a loss</span>
+        )}
+        {trend.finishRate != null ? ` • ${Math.round(trend.finishRate * 100)}% finish rate` : ''}
+      </p>
+    </div>
+  )
+}
+
+function RankingsCard({
+  category,
+  loading,
+  error,
+}: {
+  category: { entries: { rank: number; fighter: string }[] } | null
+  loading: boolean
+  error: string | null
+}) {
+  return (
+    <article className="surface-card rounded-[20px] p-3 sm:p-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-[#E81B23]">
+          <Trophy className="h-4 w-4" />
+          <p className="broadcast-label text-[10px]">Pound-for-pound</p>
+        </div>
+        <Link to="/rankings" className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#999999] transition hover:text-white">
+          View all
+        </Link>
+      </div>
+
+      {loading ? (
+        <div className="mt-2.5 space-y-1.5">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <LoadingSkeleton key={index} className="h-[40px]" />
+          ))}
+        </div>
+      ) : error ? (
+        <p className="mt-2.5 text-xs text-[#999999]">{error}</p>
+      ) : category ? (
+        <div className="mt-2.5 space-y-1.5">
+          {category.entries.slice(0, 3).map((entry) => (
+            <div key={entry.rank} className="flex items-center gap-2.5 rounded-xl border border-white/6 bg-black/18 px-3 py-2">
+              <span className="data-value w-5 shrink-0 text-sm font-bold text-[#E81B23]">{entry.rank}</span>
+              <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-2.5 text-xs text-[#999999]">Rankings unavailable right now.</p>
+      )}
+    </article>
   )
 }
 
@@ -210,12 +353,10 @@ function MiniStat({
   label,
   value,
   icon: Icon,
-  muted = false,
 }: {
   label: string
   value: string
   icon: React.ComponentType<{ className?: string }>
-  muted?: boolean
 }) {
   return (
     <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
@@ -223,7 +364,7 @@ function MiniStat({
         <Icon className="h-3.5 w-3.5" />
         <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
       </div>
-      <p className={`data-value mt-1 text-xl font-bold ${muted ? 'text-[#E5E5E5]' : 'text-[#FFFFFF]'}`}>{value}</p>
+      <p className="data-value mt-1 text-xl font-bold text-[#FFFFFF]">{value}</p>
     </div>
   )
 }
@@ -239,52 +380,6 @@ function StatusStat({ online, loading }: { online: boolean; loading: boolean }) 
         <span className={`text-xs font-semibold uppercase tracking-[0.16em] ${loading ? 'text-[#CCCCCC]' : online ? 'text-[#E81B23]' : 'text-[#999999]'}`}>
           {loading ? 'Checking...' : online ? 'Live' : 'Offline'}
         </span>
-      </div>
-    </div>
-  )
-}
-
-function FighterPreview({
-  corner,
-  fighter,
-  detail,
-}: {
-  corner: 'Red' | 'Blue'
-  fighter: string
-  detail: string
-}) {
-  const accent = corner === 'Red' ? '#E81B23' : '#2F5FA8'
-
-  return (
-    <div className="rounded-2xl border border-white/6 bg-black/16 p-2.5">
-      <p className="broadcast-label text-[10px]" style={{ color: accent }}>
-        {corner} corner
-      </p>
-      <h3 className="mt-1.5 text-base font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{fighter}</h3>
-      <p className="mt-1 text-xs leading-4 text-[#999999]">{detail}</p>
-    </div>
-  )
-}
-
-function SignalRow({
-  label,
-  value,
-  width,
-  color,
-}: {
-  label: string
-  value: string
-  width: string
-  color: string
-}) {
-  return (
-    <div className="rounded-2xl border border-white/6 bg-black/18 p-2.5">
-      <div className="flex items-center justify-between gap-4">
-        <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
-        <span className="text-xs font-semibold text-[#FFFFFF]">{value}</span>
-      </div>
-      <div className="mt-2 h-2 rounded-full bg-[#262626]">
-        <div className={`h-full rounded-full ${color}`} style={{ width }} />
       </div>
     </div>
   )

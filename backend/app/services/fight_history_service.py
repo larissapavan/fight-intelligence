@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from collections import deque
+
 import pandas as pd
 
-from backend.app.services.catalog_service import _normalize_name
+from backend.app.services.catalog_service import _normalize_name, get_fighter_catalog
 from src.ufc_predictor.config import RAW_DATA_DIR
+
+MAX_NETWORK_DEPTH = 6
 
 EVENT_CARDS_SOURCE_PATH = RAW_DATA_DIR / "event_cards.csv"
 
@@ -82,6 +86,8 @@ def get_head_to_head(fighter_a: str, fighter_b: str) -> dict:
     key_b = _normalize_name(fighter_b)
     meetings = [fight for fight in fights_a if _normalize_name(fight["opponent"]) == key_b]
 
+    network = get_network_path(fighter_a, fighter_b)
+
     return {
         "fighter_a": fighter_a,
         "fighter_b": fighter_b,
@@ -89,7 +95,102 @@ def get_head_to_head(fighter_a: str, fighter_b: str) -> dict:
         "fighter_b_wins": sum(1 for m in meetings if m["result"] == "loss"),
         "no_contests": sum(1 for m in meetings if m["result"] is None),
         "meetings": meetings,
+        "common_opponents": get_common_opponents(fighter_a, fighter_b),
+        "network_path": network["path"],
+        "degrees_of_separation": network["degrees_of_separation"],
     }
+
+
+_graph_cache: dict = {"signature": None, "adjacency": None}
+
+
+def _build_fight_graph() -> dict[str, set[str]]:
+    """Undirected graph of the real 'who fought whom' network (event_cards.csv).
+
+    Used for common-opponents lookups and shortest-path (degrees of separation)
+    between two fighters who never fought each other directly.
+    """
+    signature = _source_signature()
+    if _graph_cache["signature"] != signature:
+        df = _load_fight_history()
+        adjacency: dict[str, set[str]] = {}
+        if not df.empty:
+            for key_1, key_2 in zip(df["key_1"], df["key_2"]):
+                if not key_1 or not key_2 or key_1 == key_2:
+                    continue
+                adjacency.setdefault(key_1, set()).add(key_2)
+                adjacency.setdefault(key_2, set()).add(key_1)
+        _graph_cache["adjacency"] = adjacency
+        _graph_cache["signature"] = signature
+    return _graph_cache["adjacency"]
+
+
+def get_common_opponents(fighter_a: str, fighter_b: str) -> list[dict]:
+    """Opponents both fighters have faced, with each fighter's result against them."""
+    adjacency = _build_fight_graph()
+    key_a = _normalize_name(fighter_a)
+    key_b = _normalize_name(fighter_b)
+    shared_keys = adjacency.get(key_a, set()) & adjacency.get(key_b, set())
+    if not shared_keys:
+        return []
+
+    fights_a = {_normalize_name(fight["opponent"]): fight for fight in get_fights_for_fighter(fighter_a)}
+    fights_b = {_normalize_name(fight["opponent"]): fight for fight in get_fights_for_fighter(fighter_b)}
+
+    common = []
+    for key in shared_keys:
+        fight_a = fights_a.get(key)
+        fight_b = fights_b.get(key)
+        if not fight_a or not fight_b:
+            continue
+        common.append(
+            {
+                "opponent": fight_a["opponent"],
+                "fighter_a_result": fight_a["result"],
+                "fighter_b_result": fight_b["result"],
+            }
+        )
+    common.sort(key=lambda item: item["opponent"])
+    return common
+
+
+def get_network_path(fighter_a: str, fighter_b: str) -> dict:
+    """Shortest chain of common opponents connecting two fighters (BFS), capped at
+    MAX_NETWORK_DEPTH hops so the result stays meaningful ('how are they connected'
+    stops being interesting well before 6+ degrees).
+    """
+    adjacency = _build_fight_graph()
+    key_a = _normalize_name(fighter_a)
+    key_b = _normalize_name(fighter_b)
+
+    if key_a == key_b:
+        return {"path": [fighter_a], "degrees_of_separation": 0}
+    if key_a not in adjacency or key_b not in adjacency:
+        return {"path": [], "degrees_of_separation": None}
+
+    visited = {key_a}
+    queue: deque[tuple[str, list[str]]] = deque([(key_a, [key_a])])
+
+    while queue:
+        current, path = queue.popleft()
+        if len(path) - 1 >= MAX_NETWORK_DEPTH:
+            continue
+        for neighbor in adjacency.get(current, set()):
+            if neighbor in visited:
+                continue
+            next_path = [*path, neighbor]
+            if neighbor == key_b:
+                return {"path": _resolve_display_names(next_path), "degrees_of_separation": len(next_path) - 1}
+            visited.add(neighbor)
+            queue.append((neighbor, next_path))
+
+    return {"path": [], "degrees_of_separation": None}
+
+
+def _resolve_display_names(profile_keys: list[str]) -> list[str]:
+    catalog = get_fighter_catalog()
+    lookup = dict(zip(catalog["profile_key"], catalog["name"]))
+    return [lookup.get(key, key) for key in profile_keys]
 
 
 def get_fighter_performance(name: str) -> dict:
@@ -129,7 +230,55 @@ def get_fighter_performance(name: str) -> dict:
         "avg_win_time_seconds": avg_win_seconds,
         "weight_class_history": weight_class_history,
         "last_performances": fights[:5],
+        "career_timeline": list(reversed(fights)),  # oldest first, for chronological display
+        "yearly_trends": _build_yearly_trends(fights),
     }
+
+
+def _build_yearly_trends(fights: list[dict]) -> list[dict]:
+    """Year-by-year trend lines, built only from what event_cards.csv actually records
+    (date, result, method, round, time) — no striking/takedown stats are available per fight.
+    """
+    fights_by_year: dict[int, list[dict]] = {}
+    for fight in fights:
+        if not fight["date"]:
+            continue
+        year = int(fight["date"][:4])
+        fights_by_year.setdefault(year, []).append(fight)
+
+    trends: list[dict] = []
+    for year in sorted(fights_by_year):
+        year_fights = fights_by_year[year]
+        wins = [fight for fight in year_fights if fight["result"] == "win"]
+        losses = [fight for fight in year_fights if fight["result"] == "loss"]
+        decided = len(wins) + len(losses)
+
+        finishes = [
+            fight for fight in wins if METHOD_BUCKETS.get(fight["method"] or "", "Other") in ("KO/TKO", "Submission")
+        ]
+
+        round_distribution: dict[int, int] = {}
+        finish_seconds: list[int] = []
+        for fight in wins:
+            if fight["round"]:
+                round_distribution[fight["round"]] = round_distribution.get(fight["round"], 0) + 1
+            seconds = _time_to_seconds(fight["time"], fight["round"])
+            if seconds is not None:
+                finish_seconds.append(seconds)
+
+        trends.append(
+            {
+                "year": year,
+                "fights": len(year_fights),
+                "wins": len(wins),
+                "losses": len(losses),
+                "win_rate": round(len(wins) / decided, 4) if decided else None,
+                "finish_rate": round(len(finishes) / len(wins), 4) if wins else None,
+                "avg_win_time_seconds": round(sum(finish_seconds) / len(finish_seconds)) if finish_seconds else None,
+                "round_distribution": round_distribution,
+            }
+        )
+    return trends
 
 
 def _time_to_seconds(time_text: str | None, round_number: int | None) -> int | None:

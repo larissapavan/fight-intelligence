@@ -33,6 +33,7 @@ export function Events() {
   const [yearFilter, setYearFilter] = useState(ALL_YEARS)
   const [monthFilter, setMonthFilter] = useState(ALL_MONTHS)
   const [openEvents, setOpenEvents] = useState<Set<string>>(new Set())
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set())
 
   const years = useMemo(() => {
     const found = new Set<string>()
@@ -74,6 +75,15 @@ export function Events() {
 
   const toggleEvent = (key: string) => {
     setOpenEvents((current) => {
+      const next = new Set(current)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }
+
+  const toggleGroup = (key: string) => {
+    setOpenGroups((current) => {
       const next = new Set(current)
       if (next.has(key)) next.delete(key)
       else next.add(key)
@@ -153,16 +163,22 @@ export function Events() {
       ) : visibleEvents.length ? (
         <div className="space-y-3 sm:space-y-4">
           <EventGroup
+            groupKey="numbered"
             title="UFC Numbered Events"
             icon={Hash}
             events={numberedEvents}
+            isOpen={openGroups.has('numbered')}
+            onToggleGroup={toggleGroup}
             openEvents={openEvents}
             onToggle={toggleEvent}
           />
           <EventGroup
+            groupKey="fight-night"
             title="UFC Fight Night"
             icon={Swords}
             events={fightNightEvents}
+            isOpen={openGroups.has('fight-night')}
+            onToggleGroup={toggleGroup}
             openEvents={openEvents}
             onToggle={toggleEvent}
           />
@@ -205,7 +221,7 @@ function UpcomingEventsSection({
         <h2 className="broadcast-label text-xs text-[#FFFFFF]">Upcoming Confirmed Events</h2>
         <span className="theme-muted text-xs">({events.length})</span>
       </div>
-      <div className="grid gap-2.5">
+      <div className="grid gap-1.5">
         {events.map((event) => {
           const key = event.event_url ?? event.name
           return <EventCard key={key} event={event} isOpen={openEvents.has(key)} onToggle={() => onToggle(key)} />
@@ -216,79 +232,93 @@ function UpcomingEventsSection({
 }
 
 function EventGroup({
+  groupKey,
   title,
   icon: Icon,
   events,
+  isOpen,
+  onToggleGroup,
   openEvents,
   onToggle,
 }: {
+  groupKey: string
   title: string
   icon: React.ComponentType<{ className?: string }>
   events: EventSummary[]
+  isOpen: boolean
+  onToggleGroup: (key: string) => void
   openEvents: Set<string>
   onToggle: (key: string) => void
 }) {
   return (
-    <section>
-      <div className="mb-2 flex items-center gap-2 px-1">
+    <section className="surface-card overflow-hidden rounded-[20px]">
+      <button
+        type="button"
+        onClick={() => onToggleGroup(groupKey)}
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
+        aria-expanded={isOpen}
+      >
         <Icon className="h-4 w-4 text-[#E81B23]" />
         <h2 className="broadcast-label text-xs text-[#FFFFFF]">{title}</h2>
         <span className="theme-muted text-xs">({events.length})</span>
-      </div>
+        <ChevronDown className={`theme-muted ml-auto h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
 
-      {events.length ? (
-        <div className="grid gap-2.5">
-          {events.map((event) => {
-            const key = event.event_url ?? event.name
-            return (
-              <EventCard key={key} event={event} isOpen={openEvents.has(key)} onToggle={() => onToggle(key)} />
-            )
-          })}
+      {isOpen ? (
+        <div className="border-t border-[var(--line-soft)] px-3 py-3 sm:px-4">
+          {events.length ? (
+            <div className="grid gap-1.5">
+              {events.map((event) => {
+                const key = event.event_url ?? event.name
+                return (
+                  <EventCard key={key} event={event} isOpen={openEvents.has(key)} onToggle={() => onToggle(key)} />
+                )
+              })}
+            </div>
+          ) : (
+            <div className="rounded-[16px] px-4 py-4 text-center text-sm text-[#999999]">
+              No matches in this section.
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="surface-card rounded-[16px] px-4 py-4 text-center text-sm text-[#999999]">
-          No matches in this section.
-        </div>
-      )}
+      ) : null}
     </section>
   )
 }
 
 function EventCard({ event, isOpen, onToggle }: { event: EventSummary; isOpen: boolean; onToggle: () => void }) {
   return (
-    <article className="surface-card overflow-hidden rounded-[18px]">
+    <article className="surface-card overflow-hidden rounded-xl">
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full flex-col gap-2 px-3 py-3 text-left transition duration-150 hover:bg-white/[0.03] sm:flex-row sm:items-center sm:justify-between sm:px-4"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition duration-150 hover:bg-white/[0.03]"
         aria-expanded={isOpen}
       >
-        <div className="min-w-0">
-          <h2 className="truncate text-lg font-bold uppercase tracking-[0.02em] text-[#FFFFFF] sm:text-xl">
-            {event.name}
-          </h2>
-          <div className="theme-muted mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays className="h-3.5 w-3.5" />
+        <div className="min-w-0 flex-1">
+          <h2 className="truncate text-sm font-bold uppercase tracking-[0.02em] text-[#FFFFFF]">{event.name}</h2>
+          <div className="theme-muted mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[11px]">
+            <span className="inline-flex items-center gap-1">
+              <CalendarDays className="h-3 w-3" />
               {formatEventDate(event.date)}
             </span>
-            {event.location ? (
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" />
-                {event.location}
-              </span>
-            ) : null}
-            <span className="inline-flex items-center gap-1.5">
-              <Swords className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-1">
+              <Swords className="h-3 w-3" />
               {event.fight_count} {event.fight_count === 1 ? 'fight' : 'fights'}
             </span>
           </div>
         </div>
-        <ChevronDown className={`theme-muted h-5 w-5 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`theme-muted h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen ? (
-        <div className="border-t border-[var(--line-soft)] px-3 py-3 sm:px-4">
+        <div className="border-t border-[var(--line-soft)] px-3 py-3">
+          {event.location ? (
+            <p className="theme-muted mb-2.5 flex items-center gap-1.5 text-xs">
+              <MapPin className="h-3.5 w-3.5" />
+              {event.location}
+            </p>
+          ) : null}
           {event.fights.length ? (
             <div className="grid gap-2">
               {event.fights.map((fight, index) => (

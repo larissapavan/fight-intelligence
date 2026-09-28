@@ -12,6 +12,12 @@ export interface FighterProfile {
   win_rate: number | null
   sig_str_acc: number | null
   takedown_acc: number | null
+  sig_strikes_landed_per_min: number | null
+  sig_strikes_absorbed_per_min: number | null
+  striking_defense: number | null
+  takedown_avg_per_15min: number | null
+  takedown_defense: number | null
+  submission_avg_per_15min: number | null
   stance: string
   division: string | null
   belt: boolean
@@ -19,6 +25,14 @@ export interface FighterProfile {
   rank_signal: string | null
   image_url: string | null
   fighter_url: string | null
+}
+
+export interface DataInfo {
+  last_updated: string | null
+  fighters_count: number
+  events_count: number
+  fights_count: number
+  sources: string[]
 }
 
 export interface MainFactor {
@@ -110,6 +124,12 @@ export interface FightRecord {
   time: string | null
 }
 
+export interface CommonOpponent {
+  opponent: string
+  fighter_a_result: 'win' | 'loss' | null
+  fighter_b_result: 'win' | 'loss' | null
+}
+
 export interface HeadToHeadResponse {
   fighter_a: string
   fighter_b: string
@@ -117,6 +137,82 @@ export interface HeadToHeadResponse {
   fighter_b_wins: number
   no_contests: number
   meetings: FightRecord[]
+  common_opponents: CommonOpponent[]
+  network_path: string[]
+  degrees_of_separation: number | null
+}
+
+export interface SimilarFighter {
+  name: string
+  similarity: number
+  division: string | null
+  wins: number
+  losses: number
+  draws: number
+  image_url: string | null
+}
+
+export interface YearlyTrend {
+  year: number
+  fights: number
+  wins: number
+  losses: number
+  win_rate: number | null
+  finish_rate: number | null
+  avg_win_time_seconds: number | null
+  round_distribution: Record<string, number>
+}
+
+export interface TitleReign {
+  division: string
+  title_type: 'undisputed' | 'interim'
+  champion: string
+  fighter_url: string | null
+  fighter_reign_index: number
+  won_how: string | null
+  opponent_beaten: string | null
+  event: string | null
+  location: string | null
+  date_won: string | null
+  days_held: number | null
+  is_current: boolean
+  defenses_count: number
+  defenses_detail: string | null
+  end_reason: string
+}
+
+export interface ChampionSummary {
+  champion: string
+  fighter_url: string | null
+  divisions: string[]
+  total_reigns: number
+  total_defenses: number
+  total_days_as_champion: number
+  longest_reign_days: number
+  is_current_champion: boolean
+}
+
+export interface RecordEntry {
+  rank: number
+  champion: string
+  fighter_url: string | null
+  division: string | null
+  value: number
+  detail: string | null
+}
+
+export interface RecordCategory {
+  key: string
+  label: string
+  kind: 'positive' | 'negative'
+  unit: string
+  entries: RecordEntry[]
+}
+
+export interface ChampionsResponse {
+  current_champions: TitleReign[]
+  greatest_champions: ChampionSummary[]
+  records: RecordCategory[]
 }
 
 export interface FighterPerformance {
@@ -129,4 +225,6 @@ export interface FighterPerformance {
   avg_win_time_seconds: number | null
   weight_class_history: string[]
   last_performances: FightRecord[]
+  career_timeline: FightRecord[]
+  yearly_trends: YearlyTrend[]
 }

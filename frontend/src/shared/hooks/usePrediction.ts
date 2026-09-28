@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { predictFight } from '../services/api'
 import type { PredictionResponse } from '../types/api'
@@ -8,7 +8,7 @@ export function usePrediction() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const runPrediction = async (fighterA: string, fighterB: string) => {
+  const runPrediction = useCallback(async (fighterA: string, fighterB: string) => {
     try {
       setLoading(true)
       setError(null)
@@ -21,7 +21,7 @@ export function usePrediction() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   return { prediction, loading, error, runPrediction, setPrediction }
 }

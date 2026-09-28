@@ -11,6 +11,8 @@
   --font-ui: "Oswald", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-display: "Bebas Neue", "Oswald", sans-serif;
+  --breakpoint-xs: 30rem; /* 480px */
+  --breakpoint-3xl: 90rem; /* 1440px */
 }
 
 :root,
@@ -536,6 +538,28 @@ select.soft-input option {
 :root[data-theme='light'] .bg-black\/18,
 :root[data-theme='light'] .bg-black\/24 {
   background-color: var(--surface-3) !important;
+}
+
+.pill-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.pill-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.pill-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+:root[data-theme='light'] .pill-scroll {
+  scrollbar-color: rgba(15, 23, 42, 0.18) transparent;
+}
+
+:root[data-theme='light'] .pill-scroll::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.18);
 }
 
 .fade-up {

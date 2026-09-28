@@ -3,26 +3,26 @@ import { AnimatePresence, motion } from 'framer-motion'
 import {
   Award,
   CalendarDays,
-  ChevronDown,
   ExternalLink,
-  Folder,
   Radio,
   Search,
   Shield,
+  Sparkles,
   Trophy,
-  Users,
   Weight,
   X,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { isKnownRetired } from '../shared/data/fighterStatusOverrides'
 import { useFighters } from '../shared/hooks/useFighters'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages, type FighterImageRecord } from '../shared/hooks/useFighterImages'
-import { getFighterPerformance } from '../shared/services/api'
-import type { FighterPerformance, FighterProfile } from '../shared/types/api'
+import { getFighterPerformance, getSimilarFighters } from '../shared/services/api'
+import type { FighterPerformance, FighterProfile, FightRecord, SimilarFighter, YearlyTrend } from '../shared/types/api'
 
 type ActiveFilter = 'all' | 'active' | 'retired'
 
@@ -124,11 +124,11 @@ export function Fighters() {
   const [query, setQuery] = useState('')
   const [stanceFilter, setStanceFilter] = useState('All stances')
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>('all')
-  const [openDivision, setOpenDivision] = useState('lightweight')
+  const [activeDivision, setActiveDivision] = useState('lightweight')
   const [selectedFighter, setSelectedFighter] = useState<string | null>(null)
 
   const isActiveFighter = useCallback(
-    (fighter: FighterProfile) => imageByName.has(normalizeFighterName(fighter.name)),
+    (fighter: FighterProfile) => imageByName.has(normalizeFighterName(fighter.name)) && !isKnownRetired(fighter.name),
     [imageByName],
   )
 
@@ -167,34 +167,34 @@ export function Fighters() {
     return groups
   }, [visibleFighters])
 
-  const featuredGroup = divisionGroups.find((group) => group.key === openDivision) ?? divisionGroups[0]
+  const featuredGroup = divisionGroups.find((group) => group.key === activeDivision) ?? divisionGroups[0]
   const featuredFighters = groupedFighters.get(featuredGroup.key) ?? []
   const hasAnyResults = visibleFighters.length > 0
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
+      <section className="page-hero rounded-[20px] px-3 py-3 xs:px-4 xs:py-3.5 md:px-5 md:py-5 lg:px-6 lg:py-6">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
           <SectionHeading
             eyebrow="Fighter database"
-            title="Division folders"
+            title="Weight classes"
             description="Browse athletes by UFC weight class, inspect scouting profiles and jump quickly to source data."
           />
 
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 xs:grid-cols-2">
             <SummaryTile label="Fighters" value={`${visibleFighters.length}`} />
-            <SummaryTile label="Folders" value={`${divisionGroups.length}`} />
+            <SummaryTile label="Divisions" value={`${divisionGroups.length}`} />
           </div>
         </div>
 
-        <div className="mt-3 grid gap-2.5 lg:grid-cols-[1fr_220px]">
-          <div className="soft-input flex items-center gap-2.5 rounded-xl px-3 py-2.5">
-            <Search className="h-4 w-4 text-[#E81B23]" />
+        <div className="mt-3 grid gap-2.5 md:grid-cols-[1fr_220px]">
+          <div className="soft-input flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5">
+            <Search className="h-4 w-4 shrink-0 text-[#E81B23]" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search fighter or nickname"
-              className="theme-text w-full bg-transparent outline-none placeholder:text-[var(--text-muted)]"
+              className="theme-text w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-[var(--text-muted)] md:min-w-[300px]"
             />
           </div>
           <select
@@ -210,7 +210,7 @@ export function Fighters() {
           </select>
         </div>
 
-        <div className="mt-2.5 inline-flex rounded-full border border-white/8 bg-white/[0.035] p-0.5">
+        <div className="mt-2.5 inline-flex w-full overflow-x-auto rounded-full border border-white/8 bg-white/[0.035] p-0.5 xs:w-auto">
           <ActiveTabButton active={activeFilter === 'all'} onClick={() => setActiveFilter('all')}>
             All ({fighters.length})
           </ActiveTabButton>
@@ -226,46 +226,40 @@ export function Fighters() {
       {error ? <p className="rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       {loading ? (
-        <section className="grid gap-3 md:grid-cols-3 xl:grid-cols-4">
+        <section className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 6 }).map((_, index) => (
             <LoadingSkeleton key={index} className="h-[210px]" />
           ))}
         </section>
       ) : hasAnyResults ? (
-        <section className="grid gap-3 xl:grid-cols-[300px_1fr]">
-          <aside className="surface-card h-fit rounded-[20px] p-2.5 sm:p-3 xl:sticky xl:top-24">
-            <div className="mb-2 flex items-center justify-between gap-3 px-1.5">
-              <div>
-                <p className="broadcast-label text-[10px] text-[#999999]">Folders</p>
-                <h2 className="mt-0.5 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
-                  Divisions
-                </h2>
-              </div>
-              <Users className="h-4 w-4 text-[#E81B23]" />
-            </div>
+        <div className="space-y-3">
+          <nav
+            aria-label="Weight class filter"
+            className="pill-scroll flex gap-1.5 overflow-x-auto rounded-2xl border border-white/8 bg-black/20 p-1.5 lg:flex-wrap lg:overflow-visible"
+          >
+            {divisionGroups.map((group) => (
+              <DivisionPill
+                key={group.key}
+                group={group}
+                count={groupedFighters.get(group.key)?.length ?? 0}
+                isActive={activeDivision === group.key}
+                onClick={() => setActiveDivision(group.key)}
+              />
+            ))}
+          </nav>
 
-            <div className="grid gap-1.5">
-              {divisionGroups.map((group) => (
-                <DivisionFolderButton
-                  key={group.key}
-                  group={group}
-                  count={groupedFighters.get(group.key)?.length ?? 0}
-                  isOpen={openDivision === group.key}
-                  onClick={() => setOpenDivision((current) => (current === group.key ? 'open-class' : group.key))}
-                />
-              ))}
-            </div>
-          </aside>
-
-          <main className="min-w-0">
-            <DivisionPanel
-              group={featuredGroup}
-              fighters={featuredFighters}
-              imageByName={imageByName}
-              onSelectFighter={setSelectedFighter}
-            />
-          </main>
-        </section>
+          <div className="min-w-0">
+            <AnimatePresence mode="wait">
+              <DivisionPanel
+                key={featuredGroup.key}
+                group={featuredGroup}
+                fighters={featuredFighters}
+                imageByName={imageByName}
+                onSelectFighter={setSelectedFighter}
+              />
+            </AnimatePresence>
+          </div>
+        </div>
       ) : (
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
           <p className="text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No fighters found</p>
@@ -274,7 +268,12 @@ export function Fighters() {
       )}
 
       {selectedFighter ? (
-        <FighterProfileModal key={selectedFighter} name={selectedFighter} onClose={() => setSelectedFighter(null)} />
+        <FighterProfileModal
+          key={selectedFighter}
+          name={selectedFighter}
+          onClose={() => setSelectedFighter(null)}
+          onSelectFighter={setSelectedFighter}
+        />
       ) : null}
     </div>
   )
@@ -285,7 +284,7 @@ function ActiveTabButton({ active, onClick, children }: { active: boolean; onCli
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
         active ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#999999] hover:text-white'
       }`}
     >
@@ -309,20 +308,20 @@ function DivisionPanel({
 
   return (
     <motion.section
-      key={group.key}
       className="surface-card overflow-hidden rounded-[20px]"
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28 }}
+      initial={{ opacity: 0, x: 10 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -10 }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
     >
-      <div className="flex w-full flex-col gap-3 px-3 py-3 text-left sm:flex-row sm:items-center sm:justify-between sm:px-4">
+      <div className="flex w-full flex-col gap-3 px-3 py-3 text-left xs:px-4 sm:flex-row sm:items-center sm:justify-between md:px-5">
         <div className="flex items-center gap-3">
           <div className={`rounded-xl border p-2 ${styles.border} ${styles.bg} ${styles.text}`}>
-            <Folder className="h-4 w-4" />
+            <Weight className="h-4 w-4" />
           </div>
           <div>
             <p className="broadcast-label text-[10px] text-[#999999]">Active division</p>
-            <h2 className="mt-0.5 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
+            <h2 className="mt-0.5 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF] sm:text-2xl">
               {group.label}
             </h2>
             <p className="mt-1 text-xs text-[#999999]">
@@ -335,55 +334,44 @@ function DivisionPanel({
         </span>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`${group.key}-content`}
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.28, ease: 'easeOut' }}
-          className="overflow-hidden"
-        >
-          <div className="max-h-[72vh] overflow-y-auto border-t border-white/8 px-3 py-3 pr-2 sm:px-4 xl:max-h-[calc(100vh-240px)]">
-            {fighters.length ? (
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                {fighters.map((fighter, index) => (
-                  <FighterDivisionCard
-                    key={fighter.name}
-                    fighter={fighter}
-                    group={group}
-                    index={index}
-                    imageUrl={getFighterImageUrl(fighter.name, imageByName, fighter.image_url)}
-                    onSelect={() => onSelectFighter(fighter.name)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed border-white/12 bg-white/[0.03] px-4 py-7 text-center">
-                <p className="text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
-                  No athletes in this folder
-                </p>
-                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#999999]">
-                  The current search or stance filter has no matching fighters in {group.label}.
-                </p>
-              </div>
-            )}
+      <div className="max-h-[72vh] overflow-y-auto border-t border-white/8 px-3 py-3 pr-2 xs:px-4 md:px-5 xl:max-h-[calc(100vh-240px)]">
+        {fighters.length ? (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+            {fighters.map((fighter, index) => (
+              <FighterDivisionCard
+                key={fighter.name}
+                fighter={fighter}
+                group={group}
+                index={index}
+                imageUrl={getFighterImageUrl(fighter.name, imageByName, fighter.image_url)}
+                onSelect={() => onSelectFighter(fighter.name)}
+              />
+            ))}
           </div>
-        </motion.div>
-      </AnimatePresence>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-white/12 bg-white/[0.03] px-4 py-7 text-center">
+            <p className="text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
+              No athletes in this division
+            </p>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#999999]">
+              The current search or stance filter has no matching fighters in {group.label}.
+            </p>
+          </div>
+        )}
+      </div>
     </motion.section>
   )
 }
 
-function DivisionFolderButton({
+function DivisionPill({
   group,
   count,
-  isOpen,
+  isActive,
   onClick,
 }: {
   group: DivisionGroup
   count: number
-  isOpen: boolean
+  isActive: boolean
   onClick: () => void
 }) {
   const styles = toneStyles[group.tone]
@@ -392,21 +380,31 @@ function DivisionFolderButton({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={isActive}
       className={[
-        'group flex w-full items-center justify-between gap-2 rounded-xl border px-2.5 py-2 text-left transition duration-200',
-        isOpen ? `${styles.border} ${styles.bg} ${styles.glow}` : 'border-white/8 bg-white/[0.025] hover:border-white/14 hover:bg-white/[0.055]',
+        'relative shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] transition duration-200 md:px-3.5 md:py-2 md:text-sm',
+        isActive
+          ? `${styles.border} ${styles.bg} ${styles.text} ${styles.glow}`
+          : 'border-transparent text-[#999999] hover:bg-white/[0.06] hover:text-white',
       ].join(' ')}
     >
-      <span className="flex min-w-0 items-center gap-2">
-        <span className={`shrink-0 rounded-xl border p-1.5 ${isOpen ? `${styles.border} ${styles.text}` : 'border-white/8 text-[#999999]'}`}>
-          <Folder className="h-3.5 w-3.5" />
-        </span>
-        <span className="min-w-0">
-          <span className="block truncate text-sm font-semibold text-[#FFFFFF]">{group.label}</span>
-          <span className="mt-0.5 block text-xs text-[#999999]">{group.limit} • {count} fighters</span>
-        </span>
+      <span className="hidden sm:inline">{group.label}</span>
+      <span className="sm:hidden">{group.shortLabel}</span>
+      <span
+        className={[
+          'ml-1.5 inline-flex min-w-[1.4em] items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-bold',
+          isActive ? 'bg-black/25' : 'bg-white/8',
+        ].join(' ')}
+      >
+        {count}
       </span>
-      <ChevronDown className={`h-4 w-4 shrink-0 text-[#999999] transition ${isOpen ? 'rotate-180' : ''}`} />
+      {isActive ? (
+        <motion.span
+          layoutId="division-pill-indicator"
+          className={`absolute inset-x-2 -bottom-1 h-0.5 rounded-full ${styles.bar}`}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        />
+      ) : null}
     </button>
   )
 }
@@ -601,10 +599,20 @@ function formatPercent(value: number | null | undefined) {
   return `${(value * 100).toFixed(1)}%`
 }
 
-function FighterProfileModal({ name, onClose }: { name: string; onClose: () => void }) {
+function FighterProfileModal({
+  name,
+  onClose,
+  onSelectFighter,
+}: {
+  name: string
+  onClose: () => void
+  onSelectFighter: (name: string) => void
+}) {
   const [performance, setPerformance] = useState<FighterPerformance | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [similarFighters, setSimilarFighters] = useState<SimilarFighter[]>([])
+  const [similarLoading, setSimilarLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
@@ -627,6 +635,25 @@ function FighterProfileModal({ name, onClose }: { name: string; onClose: () => v
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [name])
+
+  useEffect(() => {
+    let cancelled = false
+
+    getSimilarFighters(name)
+      .then((data) => {
+        if (!cancelled) setSimilarFighters(data)
+      })
+      .catch((requestError) => {
+        console.error(requestError)
+      })
+      .finally(() => {
+        if (!cancelled) setSimilarLoading(false)
       })
 
     return () => {
@@ -680,6 +707,10 @@ function FighterProfileModal({ name, onClose }: { name: string; onClose: () => v
                 <MiniStat label="Wins" value={`${performance.wins}`} />
                 <MiniStat label="Losses" value={`${performance.losses}`} />
               </div>
+
+              <CareerTimeline fights={performance.career_timeline} />
+
+              <FighterTrends trends={performance.yearly_trends} />
 
               {performance.weight_class_history.length > 0 ? (
                 <div className="metric-tile rounded-2xl p-3">
@@ -744,10 +775,240 @@ function FighterProfileModal({ name, onClose }: { name: string; onClose: () => v
               ) : null}
             </div>
           ) : null}
+
+          {similarLoading ? (
+            <LoadingSkeleton className="mt-3 h-[180px]" />
+          ) : similarFighters.length > 0 ? (
+            <div className="metric-tile mt-3 rounded-2xl p-3">
+              <div className="mb-1.5 flex items-center gap-1.5 text-[#999999]">
+                <Sparkles className="h-3.5 w-3.5 text-[#E81B23]" />
+                <p className="broadcast-label text-[10px]">Similar fighters</p>
+              </div>
+              <div className="grid gap-1.5">
+                {similarFighters.map((fighter, index) => (
+                  <button
+                    key={fighter.name}
+                    type="button"
+                    onClick={() => onSelectFighter(fighter.name)}
+                    className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition hover:bg-white/[0.05]"
+                  >
+                    <span className="broadcast-label w-4 shrink-0 text-[10px] text-[#666666]">{index + 1}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{fighter.name}</span>
+                    {fighter.division ? (
+                      <span className="hidden shrink-0 text-[10px] uppercase tracking-[0.1em] text-[#999999] sm:inline">
+                        {fighter.division}
+                      </span>
+                    ) : null}
+                    <span className="shrink-0 text-xs text-[#999999]">
+                      {fighter.wins}-{fighter.losses}
+                      {fighter.draws ? `-${fighter.draws}` : ''}
+                    </span>
+                    <span className="shrink-0 rounded-full border border-[#E81B23]/25 bg-[#E81B23]/10 px-2 py-0.5 text-xs font-bold text-[#E81B23]">
+                      {Math.round(fighter.similarity * 100)}%
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </motion.section>
     </motion.div>,
     document.body,
+  )
+}
+
+function CareerTimeline({ fights }: { fights: FightRecord[] | undefined }) {
+  if (!fights || fights.length === 0) return null
+
+  const entries = fights.reduce<{
+    items: Array<{ fight: FightRecord; year: string | null; showYear: boolean }>
+    lastYear: string
+  }>(
+    (acc, fight) => {
+      const year = fight.date ? fight.date.slice(0, 4) : null
+      const showYear = year !== null && year !== acc.lastYear
+      return {
+        items: [...acc.items, { fight, year, showYear }],
+        lastYear: showYear ? (year as string) : acc.lastYear,
+      }
+    },
+    { items: [], lastYear: '' },
+  ).items
+
+  return (
+    <div className="metric-tile rounded-2xl p-3">
+      <p className="broadcast-label text-[10px] text-[#999999]">Career timeline</p>
+      <div className="pill-scroll mt-3 overflow-x-auto pb-1">
+        <div className="relative flex min-w-max items-end gap-3 px-1">
+          <div className="pointer-events-none absolute inset-x-1 top-[26px] h-px bg-white/12" />
+          {entries.map(({ fight, year, showYear }, index) => {
+            const isWin = fight.result === 'win'
+            const isLoss = fight.result === 'loss'
+
+            return (
+              <div key={index} className="relative z-10 flex shrink-0 flex-col items-center gap-1">
+                <span className="h-3 whitespace-nowrap text-[9px] font-semibold text-[#666666]">{showYear ? year : ''}</span>
+                <span
+                  title={`${fight.opponent} — ${fight.date ?? 'Date unknown'}`}
+                  className={`grid h-5 w-5 place-items-center rounded-full border text-[9px] font-bold ${
+                    isWin
+                      ? 'border-[#E81B23] bg-[#E81B23] text-white'
+                      : isLoss
+                        ? 'border-white/25 bg-[#1a1a1a] text-[#999999]'
+                        : 'border-white/15 bg-[#1a1a1a] text-[#666666]'
+                  }`}
+                >
+                  {isWin ? 'W' : isLoss ? 'L' : '–'}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ROUND_COLORS = ['#E81B23', '#2F5FA8', '#CCCCCC', '#9c7a25', '#666666']
+
+const chartTooltipStyle = {
+  background: '#141414',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '10px',
+  fontSize: '11px',
+}
+
+function formatWinTime(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`
+}
+
+function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
+  if (!trends || trends.length < 2) return null
+
+  const rateData = trends.map((trend) => ({
+    year: `${trend.year}`,
+    winRate: trend.win_rate != null ? Math.round(trend.win_rate * 1000) / 10 : null,
+    finishRate: trend.finish_rate != null ? Math.round(trend.finish_rate * 1000) / 10 : null,
+  }))
+
+  const timeData = trends
+    .filter((trend) => trend.avg_win_time_seconds != null)
+    .map((trend) => ({ year: `${trend.year}`, seconds: trend.avg_win_time_seconds as number }))
+
+  const rounds = Array.from(new Set(trends.flatMap((trend) => Object.keys(trend.round_distribution).map(Number)))).sort(
+    (a, b) => a - b,
+  )
+  const roundData = trends.map((trend) => {
+    const row: Record<string, number | string> = { year: `${trend.year}` }
+    for (const round of rounds) {
+      row[`R${round}`] = trend.round_distribution[round] ?? 0
+    }
+    return row
+  })
+
+  return (
+    <div className="space-y-3">
+      <div className="metric-tile rounded-2xl p-3">
+        <p className="broadcast-label text-[10px] text-[#999999]">Win rate &amp; finish rate over time</p>
+        <div className="mt-2 h-[140px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={rateData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+              <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
+              <XAxis dataKey="year" tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} />
+              <YAxis
+                domain={[0, 100]}
+                tick={{ fill: '#999999', fontSize: 10 }}
+                axisLine={false}
+                tickLine={false}
+                width={32}
+                tickFormatter={(value: number) => `${value}%`}
+              />
+              <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number, name: string) => [`${value}%`, name]} />
+              <Line type="monotone" dataKey="winRate" name="Win rate" stroke="#E81B23" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+              <Line
+                type="monotone"
+                dataKey="finishRate"
+                name="Finish rate"
+                stroke="#8FB3E8"
+                strokeWidth={2}
+                dot={{ r: 3 }}
+                connectNulls
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="mt-1 flex items-center gap-3 text-[10px] text-[#999999]">
+          <span className="inline-flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#E81B23]" />
+            Win rate
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#8FB3E8]" />
+            Finish rate
+          </span>
+        </div>
+      </div>
+
+      {roundData.length > 0 && rounds.length > 0 ? (
+        <div className="metric-tile rounded-2xl p-3">
+          <p className="broadcast-label text-[10px] text-[#999999]">Round distribution by year (wins)</p>
+          <div className="mt-2 h-[140px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={roundData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
+                <XAxis dataKey="year" tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} width={24} />
+                <Tooltip contentStyle={chartTooltipStyle} />
+                {rounds.map((round, index) => (
+                  <Bar
+                    key={round}
+                    dataKey={`R${round}`}
+                    name={`Round ${round}`}
+                    stackId="rounds"
+                    fill={ROUND_COLORS[index % ROUND_COLORS.length]}
+                    radius={index === rounds.length - 1 ? [4, 4, 0, 0] : undefined}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-1 flex flex-wrap items-center gap-3 text-[10px] text-[#999999]">
+            {rounds.map((round, index) => (
+              <span key={round} className="inline-flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: ROUND_COLORS[index % ROUND_COLORS.length] }} />
+                R{round}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {timeData.length > 1 ? (
+        <div className="metric-tile rounded-2xl p-3">
+          <p className="broadcast-label text-[10px] text-[#999999]">Average win time over time</p>
+          <div className="mt-2 h-[120px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={timeData} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
+                <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
+                <XAxis dataKey="year" tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis
+                  tick={{ fill: '#999999', fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={36}
+                  tickFormatter={formatWinTime}
+                />
+                <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [formatWinTime(value), 'Avg win time']} />
+                <Line type="monotone" dataKey="seconds" stroke="#CCCCCC" strokeWidth={2} dot={{ r: 3 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      ) : null}
+    </div>
   )
 }
 

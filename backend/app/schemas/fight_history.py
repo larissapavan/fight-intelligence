@@ -13,6 +13,12 @@ class FightRecord(BaseModel):
     time: str | None = None
 
 
+class CommonOpponent(BaseModel):
+    opponent: str
+    fighter_a_result: str | None = None
+    fighter_b_result: str | None = None
+
+
 class HeadToHeadResponse(BaseModel):
     fighter_a: str
     fighter_b: str
@@ -20,6 +26,20 @@ class HeadToHeadResponse(BaseModel):
     fighter_b_wins: int
     no_contests: int
     meetings: list[FightRecord]
+    common_opponents: list[CommonOpponent]
+    network_path: list[str]
+    degrees_of_separation: int | None = None
+
+
+class YearlyTrend(BaseModel):
+    year: int
+    fights: int
+    wins: int
+    losses: int
+    win_rate: float | None = None
+    finish_rate: float | None = None
+    avg_win_time_seconds: int | None = None
+    round_distribution: dict[int, int]
 
 
 class FighterPerformance(BaseModel):
@@ -32,3 +52,5 @@ class FighterPerformance(BaseModel):
     avg_win_time_seconds: int | None = None
     weight_class_history: list[str]
     last_performances: list[FightRecord]
+    career_timeline: list[FightRecord]
+    yearly_trends: list[YearlyTrend]

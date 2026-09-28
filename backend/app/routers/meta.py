@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
+from backend.app.schemas.data_info import DataInfoResponse
 from backend.app.schemas.model_info import HealthResponse, ModelInfoResponse
 from backend.app.services.catalog_service import get_total_fights_tracked, list_fighters
+from backend.app.services.data_info_service import get_data_info
 from backend.app.services.prediction_service import PredictionService
 from backend.app.utils.constants import SYSTEM_TAGLINE
 
@@ -14,14 +16,16 @@ def build_meta_router(get_service) -> APIRouter:
     @router.get("/")
     def root() -> dict:
         return {
-            "name": "UFC Fight Predictor API",
+            "name": "UFC Fight Intelligence API",
             "tagline": SYSTEM_TAGLINE,
             "health": "/health",
             "fighters": "/fighters",
             "events": "/events",
             "rankings": "/rankings",
+            "champions": "/champions",
             "predict": "/predict",
             "model_info": "/model-info",
+            "data_info": "/data-info",
         }
 
     @router.get("/health", response_model=HealthResponse)
@@ -42,5 +46,9 @@ def build_meta_router(get_service) -> APIRouter:
         if service is None:
             raise HTTPException(status_code=503, detail="Prediction service not initialized")
         return ModelInfoResponse(**service.model_info())
+
+    @router.get("/data-info", response_model=DataInfoResponse)
+    def data_info() -> DataInfoResponse:
+        return DataInfoResponse(**get_data_info())
 
     return router

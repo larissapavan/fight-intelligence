@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { CalendarDays, LoaderCircle, Swords, Trophy } from 'lucide-react'
+import { Fragment, useState } from 'react'
+import { ArrowRight, CalendarDays, LoaderCircle, Share2, Swords, Trophy, Users } from 'lucide-react'
 
 import { FighterSelect } from '../shared/components/FighterSelect'
 import { SectionHeading } from '../shared/components/SectionHeading'
@@ -108,12 +108,17 @@ export function HeadToHead() {
 function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
   if (result.meetings.length === 0) {
     return (
-      <section className="surface-card rounded-[20px] px-4 py-7 text-center">
-        <p className="text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Never fought</p>
-        <p className="mt-2 text-sm text-[#999999]">
-          {result.fighter_a} and {result.fighter_b} have no recorded UFC meetings.
-        </p>
-      </section>
+      <div className="space-y-3">
+        <section className="surface-card rounded-[20px] px-4 py-7 text-center">
+          <p className="text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Never fought directly</p>
+          <p className="mt-2 text-sm text-[#999999]">
+            {result.fighter_a} and {result.fighter_b} have no recorded UFC meetings.
+          </p>
+        </section>
+
+        {result.network_path.length > 0 ? <NetworkPathCard result={result} /> : null}
+        {result.common_opponents.length > 0 ? <CommonOpponentsCard result={result} /> : null}
+      </div>
     )
   }
 
@@ -138,8 +143,93 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
           <MeetingRow key={`${meeting.event_name}-${index}`} meeting={meeting} fighterA={result.fighter_a} fighterB={result.fighter_b} />
         ))}
       </section>
+
+      {result.common_opponents.length > 0 ? <CommonOpponentsCard result={result} /> : null}
     </div>
   )
+}
+
+function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
+  const degrees = result.degrees_of_separation ?? 0
+
+  return (
+    <article className="surface-card rounded-[20px] p-3 sm:p-4">
+      <div className="flex items-center gap-2 text-[#E81B23]">
+        <Share2 className="h-4 w-4" />
+        <p className="broadcast-label text-[10px]">
+          Connected via the fight network • {degrees} degree{degrees === 1 ? '' : 's'} of separation
+        </p>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+        {result.network_path.map((name, index) => {
+          const isEndpoint = index === 0 || index === result.network_path.length - 1
+          return (
+            <div key={`${name}-${index}`} className="flex items-center gap-1.5">
+              <span
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.06em] ${
+                  isEndpoint ? 'border-[#E81B23]/25 bg-[#E81B23]/10 text-[#FF6B6B]' : 'border-white/10 bg-white/[0.04] text-[#CCCCCC]'
+                }`}
+              >
+                {name}
+              </span>
+              {index < result.network_path.length - 1 ? <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#666666]" /> : null}
+            </div>
+          )
+        })}
+      </div>
+    </article>
+  )
+}
+
+function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
+  return (
+    <article className="surface-card rounded-[20px] p-3 sm:p-4">
+      <div className="flex items-center gap-2 text-[#E81B23]">
+        <Users className="h-4 w-4" />
+        <p className="broadcast-label text-[10px]">Common opponents ({result.common_opponents.length})</p>
+      </div>
+      <div className="mt-2.5 grid grid-cols-[1fr_auto_auto] items-center gap-x-2.5 gap-y-1.5">
+        <span />
+        <span className="text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#FF6B6B]">{lastWord(result.fighter_a)}</span>
+        <span className="text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#8FB3E8]">{lastWord(result.fighter_b)}</span>
+        {result.common_opponents.map((common) => (
+          <Fragment key={common.opponent}>
+            <span className="min-w-0 truncate rounded-xl border border-white/6 bg-black/18 px-3 py-2 text-sm font-semibold text-[#FFFFFF]">
+              {common.opponent}
+            </span>
+            <ResultChip result={common.fighter_a_result} />
+            <ResultChip result={common.fighter_b_result} />
+          </Fragment>
+        ))}
+      </div>
+    </article>
+  )
+}
+
+function ResultChip({ result }: { result: 'win' | 'loss' | null }) {
+  if (result === 'win') {
+    return (
+      <span className="justify-self-end rounded-full border border-[#E81B23]/25 bg-[#E81B23]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#E81B23]">
+        Win
+      </span>
+    )
+  }
+  if (result === 'loss') {
+    return (
+      <span className="justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+        Loss
+      </span>
+    )
+  }
+  return (
+    <span className="justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+      NC
+    </span>
+  )
+}
+
+function lastWord(fullName: string) {
+  return fullName.trim().split(' ').slice(-1)[0] ?? fullName
 }
 
 function MeetingRow({ meeting, fighterA, fighterB }: { meeting: FightRecord; fighterA: string; fighterB: string }) {

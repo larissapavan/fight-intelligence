@@ -4,13 +4,14 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from backend.app.rate_limit import limiter
+from backend.app.routers.champions import router as champions_router
 from backend.app.routers.events import router as events_router
 from backend.app.routers.fight_history import router as fight_history_router
 from backend.app.routers.fighters import router as fighters_router
@@ -61,7 +62,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="UFC Fight Predictor API",
+    title="UFC Fight Intelligence API",
     version="2.0.0",
     description="Backend service for predicting UFC fight outcomes with ML-powered analysis.",
     lifespan=lifespan,
@@ -80,11 +81,25 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
+    expose_headers=["X-Total-Count"],
 )
+
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains"
+    return response
+
 
 app.include_router(build_meta_router(get_prediction_service))
 app.include_router(fighters_router)
 app.include_router(events_router)
 app.include_router(rankings_router)
 app.include_router(fight_history_router)
+app.include_router(champions_router)
 app.include_router(build_prediction_router(get_prediction_service))
