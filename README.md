@@ -1,8 +1,8 @@
-# UFC Fight Intelligence
+# Fight Intelligence
 
 A full stack UFC analytics platform: real fighter data, a machine learning model that predicts fight outcomes with explainability, and a live dashboard built around what's actually happening in the UFC right now — not a static demo.
 
-## [→ Try it live](https://ufcfightpredictor.vercel.app)
+## [→ Try it live](https://fight-intelligence.vercel.app)
 
 Open the link and start exploring, every number on the site is real.
 
@@ -36,4 +36,4 @@ React · TypeScript · Vite · Tailwind CSS · FastAPI · scikit-learn · SHAP �
 
 ---
 
-**[→ ufcfightpredictor.vercel.app](https://ufcfightpredictor.vercel.app)**
+**[→ fight-intelligence.vercel.app](https://fight-intelligence.vercel.app)**
