@@ -25,7 +25,7 @@ export function Rankings() {
   const activeP4p = p4pCategories.find((category) => category.category === selectedP4p) ?? p4pCategories[0] ?? null
 
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-4 sm:space-y-5">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
           eyebrow="Official UFC rankings"
@@ -33,7 +33,7 @@ export function Rankings() {
           description="Sourced live from ufc.com's media panel rankings, cross-referenced with our own win rate and last-fight data."
         />
 
-        <div className="mt-3 inline-flex rounded-full border border-white/8 bg-white/[0.035] p-0.5">
+        <div className="mt-4 inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">
           <TabButton active={tab === 'division'} onClick={() => setTab('division')}>
             Category Ranking
           </TabButton>
@@ -67,8 +67,8 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
-        active ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#999999] hover:text-white'
+      className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition sm:text-[13px] ${
+        active ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#CCCCCC] hover:text-white'
       }`}
     >
       {children}
@@ -94,9 +94,9 @@ function DivisionView({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="surface-card rounded-[18px] p-3">
-        <label className="broadcast-label mb-1.5 block text-[10px] text-[#999999]">Division</label>
+    <div className="space-y-4">
+      <div className="surface-card rounded-[18px] border-white/14 p-3.5">
+        <label className="broadcast-label mb-2 block text-xs text-[#CCCCCC]">Division</label>
         <select
           value={active.category}
           onChange={(event) => onSelect(event.target.value)}
@@ -133,8 +133,8 @@ function P4pView({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
+    <div className="space-y-4">
+      <div className="surface-card flex flex-wrap gap-2 rounded-[18px] border-white/14 p-3">
         {categories.map((category) => (
           <button
             key={category.category}
@@ -167,7 +167,12 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
   const contenders = entries.filter((entry) => entry.rank > 0)
 
   return (
-    <div className="grid gap-2">
+    <section aria-label="Ranked athletes" className="space-y-2.5">
+      <div className="flex items-center justify-between border-b border-white/10 px-1 pb-2">
+        <h2 className="broadcast-label text-xs text-[#FFFFFF]">Ranked athletes</h2>
+        <span className="text-xs text-[#CCCCCC]">{contenders.length + (champion ? 1 : 0)} listed</span>
+      </div>
+      <div className="grid gap-2.5">
       {champion ? <RankingRow entry={champion} imageUrl={imageUrlFor(champion.fighter)} isChampion /> : null}
       {contenders.map((entry) => (
         <RankingRow key={entry.fighter} entry={entry} imageUrl={imageUrlFor(entry.fighter)} />
@@ -177,29 +182,30 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
           No ranked athletes in this category.
         </div>
       ) : null}
-    </div>
+      </div>
+    </section>
   )
 }
 
 function RankingRow({ entry, imageUrl, isChampion = false }: { entry: RankingEntry; imageUrl: string | null; isChampion?: boolean }) {
   return (
-    <article className="metric-tile flex items-center gap-3 rounded-2xl px-3 py-2.5">
+    <article className="metric-tile flex items-center gap-3.5 rounded-2xl px-3.5 py-3">
       <span
-        className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-sm font-bold ${
-          isChampion ? 'bg-[#D32F2F]/12 text-[#D32F2F]' : 'bg-white/[0.05] text-[#999999]'
+        className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl text-base font-bold ${
+          isChampion ? 'bg-[#D32F2F]/15 text-[#FF4D54]' : 'bg-white/[0.07] text-[#D4D4D4]'
         }`}
       >
         {isChampion ? <Crown className="h-4 w-4" /> : entry.rank}
       </span>
 
-      <FighterAvatar name={entry.fighter} imageUrl={imageUrl} highlight={isChampion} className="h-11 w-11" />
+      <FighterAvatar name={entry.fighter} imageUrl={imageUrl} highlight={isChampion} className="h-12 w-12" />
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</p>
-        <div className="theme-muted mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px]">
+        <p className="truncate text-base font-semibold text-[#FFFFFF]">{entry.fighter}</p>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[#CCCCCC]">
           {isChampion ? (
-            <span className="inline-flex items-center gap-1 text-[#D32F2F]">
-              <Trophy className="h-3 w-3" /> Champion
+            <span className="inline-flex items-center gap-1 rounded-full border border-[#E5A93C]/50 bg-[#E5A93C]/10 px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-[#F2C260]">
+              <Trophy className="h-3.5 w-3.5" /> Champion
             </span>
           ) : null}
           {entry.win_rate !== null ? <span>Win rate: {(entry.win_rate * 100).toFixed(1)}%</span> : null}

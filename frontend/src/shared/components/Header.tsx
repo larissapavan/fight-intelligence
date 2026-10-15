@@ -76,14 +76,14 @@ export function Header() {
               {apiLabel}
             </div>
 
-            <nav className="hidden items-center gap-1 rounded-full border border-white/8 bg-white/[0.035] p-1 lg:flex">
+            <nav className="hidden items-center gap-1.5 rounded-full border border-white/14 bg-white/[0.04] p-1 lg:flex">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   className={[
-                    'rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] transition xl:px-3.5 xl:py-2 xl:text-sm xl:tracking-[0.1em]',
-                    isItemActive(item, pathname) ? 'nav-link-active' : 'text-[#999999] hover:bg-white/7 hover:text-white',
+                    'rounded-full px-3 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] transition xl:px-4 xl:py-2.5 xl:text-sm xl:tracking-[0.1em]',
+                    isItemActive(item, pathname) ? 'nav-link-active' : 'text-[#D4D4D4] hover:bg-white/10 hover:text-white',
                   ].join(' ')}
                 >
                   {item.label}
@@ -147,8 +147,8 @@ export function Header() {
                       to={item.to}
                       onClick={() => setMenuOpen(false)}
                       className={[
-                        'rounded-xl px-3 py-2.5 text-sm font-semibold uppercase tracking-[0.1em] transition',
-                        isItemActive(item, pathname) ? 'nav-link-active' : 'text-[#999999] hover:bg-white/7 hover:text-white',
+                        'rounded-xl px-3 py-3 text-sm font-semibold uppercase tracking-[0.1em] transition',
+                        isItemActive(item, pathname) ? 'nav-link-active' : 'text-[#D4D4D4] hover:bg-white/10 hover:text-white',
                       ].join(' ')}
                     >
                       {item.label}

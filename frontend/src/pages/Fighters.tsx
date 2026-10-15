@@ -23,7 +23,7 @@ import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { isKnownActive, isKnownRetired } from '../shared/data/fighterStatusOverrides'
 import { useFighters } from '../shared/hooks/useFighters'
-import { getFighterImageUrl, normalizeFighterName, useFighterImages, type FighterImageRecord } from '../shared/hooks/useFighterImages'
+import { getFighterImageUrl, useFighterImages, type FighterImageRecord } from '../shared/hooks/useFighterImages'
 import { getFighterPerformance, getSimilarFighters } from '../shared/services/api'
 import type { FighterPerformance, FighterProfile, FightRecord, SimilarFighter, YearlyTrend } from '../shared/types/api'
 
@@ -134,8 +134,8 @@ export function Fighters() {
 
   const isActiveFighter = useCallback(
     (fighter: FighterProfile) =>
-      (imageByName.has(normalizeFighterName(fighter.name)) || isKnownActive(fighter.name)) && !isKnownRetired(fighter.name),
-    [imageByName],
+      (fighter.is_active || isKnownActive(fighter.name)) && !isKnownRetired(fighter.name),
+    [],
   )
 
   const stances = useMemo(

@@ -1,10 +1,10 @@
 import { normalizeFighterName } from '../hooks/useFighterImages'
 
 /**
- * Active vs. Retired / Released is inferred from whether a fighter has a headshot in the live
- * api.octagon-api.com roster feed. "Retired / Released" means no longer on the UFC roster: the fighter
- * may have retired, been cut, or moved to another organization. That feed lags real-world changes,
- * so confirmed ones are listed here to override it until the upstream feed catches up.
+ * Active vs. Retired / Released comes from the backend (`is_active`: fought in the last two years, booked on
+ * an upcoming card, or ranked). "Retired / Released" means no longer on the UFC roster: the fighter may have
+ * retired, been cut, or moved to another organization. That inference lags real-world changes, so confirmed
+ * ones are listed here to override it.
  */
 const KNOWN_ACTIVE_FIGHTERS = new Set(
   [

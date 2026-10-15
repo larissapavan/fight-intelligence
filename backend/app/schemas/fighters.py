@@ -9,6 +9,7 @@ StanceType = Literal["Orthodox", "Southpaw", "Switch", "Open Stance", "Unknown"]
 
 class FighterSummary(BaseModel):
     name: str
+    is_active: bool = False
     nickname: str | None = None
     age: float | None = None
     height_cm: float | None = None

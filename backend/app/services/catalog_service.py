@@ -70,6 +70,7 @@ def _build_catalog() -> pd.DataFrame:
     catalog["rank_signal"] = catalog["belt"].map(lambda value: "Champion" if value else "Contender")
 
     catalog["ranking"] = pd.NA
+    catalog["is_active"] = _flag_active(catalog)
 
     historical_photos = _load_historical_photos()
     catalog = catalog.merge(historical_photos, on="profile_key", how="left")
@@ -77,6 +78,27 @@ def _build_catalog() -> pd.DataFrame:
     catalog = catalog.drop(columns=["historical_image_url"])
 
     return catalog.sort_values("name").drop_duplicates(subset=["profile_key"], keep="last").reset_index(drop=True)
+
+
+ACTIVE_WINDOW_DAYS = 730
+
+
+def _names_in_csv(path, columns: list[str]) -> set[str]:
+    if not path.exists():
+        return set()
+    frame = pd.read_csv(path, usecols=lambda column: column in columns, keep_default_na=False)
+    return {_normalize_name(str(name)) for column in frame.columns for name in frame[column] if str(name).strip()}
+
+
+def _flag_active(catalog: pd.DataFrame) -> pd.Series:
+    """Active = fought within the last two years of the dataset, is booked on an upcoming card, or is
+    currently ranked/champion. Derived from our own data so it needs no external roster feed."""
+    last_fight = pd.to_datetime(catalog.get("last_fight_date"), errors="coerce")
+    latest = last_fight.max()
+    recent = last_fight >= (latest - pd.Timedelta(days=ACTIVE_WINDOW_DAYS)) if pd.notna(latest) else last_fight.notna() & False
+    booked = _names_in_csv(RAW_DATA_DIR / "upcoming_events.csv", ["fighter_1", "fighter_2"])
+    ranked = _names_in_csv(RAW_DATA_DIR / "rankings.csv", ["fighter"])
+    return recent.fillna(False) | catalog["profile_key"].isin(booked | ranked) | catalog["belt"]
 
 
 def _current_champion_identifiers() -> tuple[set[str], set[str]]:
@@ -178,7 +200,7 @@ def _parse_percent(value) -> float | None:
 
 
 def _load_fight_summary() -> pd.DataFrame:
-    empty = pd.DataFrame(columns=["profile_key", "division", "tracked_bouts"])
+    empty = pd.DataFrame(columns=["profile_key", "division", "tracked_bouts", "last_fight_date"])
     if not FIGHTS_SOURCE_PATH.exists():
         return empty
 
@@ -195,6 +217,8 @@ def _load_fight_summary() -> pd.DataFrame:
     history["division"] = history["weight_class"].apply(_format_division)
 
     bouts = history.groupby("profile_key").size().rename("tracked_bouts").reset_index()
+    last_fight = history.groupby("profile_key")["event_date"].max().rename("last_fight_date").reset_index()
+    bouts = bouts.merge(last_fight, on="profile_key", how="left")
     latest_division = (
         history.dropna(subset=["event_date"])
         .sort_values("event_date")
@@ -271,6 +295,7 @@ def get_fighter_profile(name: str) -> dict:
 def _format_profile(record: dict) -> dict:
     return {
         "name": record["name"],
+        "is_active": bool(record.get("is_active", False)),
         "nickname": _nullable_string(record.get("nickname")),
         "age": _to_float(record.get("age")),
         "height_cm": _to_float(record.get("height_cm")),

@@ -21,6 +21,7 @@ export interface FighterProfile {
   stance: string
   division: string | null
   belt: boolean
+  is_active?: boolean
   ranking: string | null
   rank_signal: string | null
   image_url: string | null

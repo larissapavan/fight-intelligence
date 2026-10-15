@@ -33,7 +33,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         <Header />
         <motion.main
           id="main-content"
-          className="flex-1 pt-3 sm:pt-4"
+          className="flex-1 border-t border-white/[0.06] mt-4 pt-5 sm:mt-5 sm:pt-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
