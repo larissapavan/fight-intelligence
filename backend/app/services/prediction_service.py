@@ -11,10 +11,10 @@ try:
 except ImportError:  # pragma: no cover
     shap = None
 
+from backend.app.utils.constants import MODEL_HIGHLIGHTS, MODEL_LIMITATIONS, MODEL_NAME
 from src.ufc_predictor.features import align_feature_columns, build_inference_frame
 
 from .catalog_service import get_fighter_profile
-from backend.app.utils.constants import MODEL_HIGHLIGHTS, MODEL_LIMITATIONS, MODEL_NAME
 
 logger = logging.getLogger(__name__)
 

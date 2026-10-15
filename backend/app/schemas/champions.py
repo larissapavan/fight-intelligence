@@ -32,6 +32,21 @@ class ChampionSummary(BaseModel):
     is_current_champion: bool
 
 
+class TitleWin(BaseModel):
+    """How a champion first won the belt in one division, and what they did with it."""
+
+    division: str
+    title_type: Literal["undisputed", "interim"]
+    opponent: str | None = None
+    event: str | None = None
+    date: str | None = None
+    method: str | None = None
+    round: int | None = None
+    won_how: str | None = None
+    defenses: int
+    reigns_in_division: int
+
+
 class RecordEntry(BaseModel):
     rank: int
     champion: str
@@ -39,6 +54,7 @@ class RecordEntry(BaseModel):
     division: str | None = None
     value: int
     detail: str | None = None
+    title_wins: list[TitleWin] | None = None
 
 
 class RecordCategory(BaseModel):

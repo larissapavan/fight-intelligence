@@ -125,9 +125,9 @@ function ComparisonRow({
       </div>
       <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
         <div className="progress-track h-2 overflow-hidden rounded-full">
-          <div className="h-full rounded-full bg-[#E81B23] transition-all duration-500" style={{ width: `${Math.max(Math.min(leftPct, 100), 8)}%` }} />
+          <div className="h-full rounded-full bg-[#D32F2F] transition-all duration-500" style={{ width: `${Math.max(Math.min(leftPct, 100), 8)}%` }} />
         </div>
-        <div className="h-2 w-2 rounded-full bg-[#E81B23]" />
+        <div className="h-2 w-2 rounded-full bg-[#D32F2F]" />
         <div className="progress-track h-2 overflow-hidden rounded-full">
           <div className="ml-auto h-full rounded-full bg-[#2F5FA8] transition-all duration-500" style={{ width: `${Math.max(Math.min(rightPct, 100), 8)}%` }} />
         </div>
@@ -156,7 +156,7 @@ function DeltaCard({
       <p className="broadcast-label text-[10px] text-[#999999]">{title}</p>
       <div className="mt-2 flex items-end justify-between gap-3">
         <p className="data-value text-2xl font-bold text-[#FFFFFF]">{Math.abs(value).toFixed(1)} {unit}</p>
-        <span className="rounded-full border border-[#E81B23]/20 bg-[#E81B23]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#E81B23]">
+        <span className="type-tech rounded-full border border-[#D32F2F]/20 bg-[#D32F2F]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#D32F2F]">
           Edge: {leader}
         </span>
       </div>
@@ -216,7 +216,7 @@ function FighterTendencyColumn({
                 <span className="theme-muted w-6 shrink-0 text-[10px]">R{round}</span>
                 <div className="progress-track h-1.5 flex-1 overflow-hidden rounded-full">
                   <div
-                    className={`h-full rounded-full bg-[#E81B23] ${align === 'right' ? 'ml-auto' : ''}`}
+                    className={`h-full rounded-full bg-[#D32F2F] ${align === 'right' ? 'ml-auto' : ''}`}
                     style={{ width: `${Math.max((count / maxRoundCount) * 100, 10)}%` }}
                   />
                 </div>

@@ -52,7 +52,7 @@ export function Home() {
   return (
     <div className="space-y-3 sm:space-y-4">
       {systemError ? (
-        <p className="flex items-center gap-2 rounded-xl border border-[#E81B23]/20 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+        <p className="flex items-center gap-2 rounded-xl border border-[#D32F2F]/20 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">
           <ShieldAlert className="h-4 w-4 shrink-0 text-[#FF6B6B]" />
           {systemError}
         </p>
@@ -64,13 +64,8 @@ export function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#E81B23]/18 bg-[#E81B23]/8 px-3 py-1.5">
-          <Swords className="h-3.5 w-3.5 text-[#E81B23]" />
-          <span className="broadcast-label text-[10px] text-[#E81B23]">Fight intelligence desk</span>
-        </div>
-
-        <h1 className="mt-2.5 text-3xl font-bold uppercase leading-[0.92] tracking-[0.02em] text-[#FFFFFF] sm:text-4xl">
-          UFC Fight Intelligence
+        <h1 className="text-3xl font-bold uppercase leading-[0.92] tracking-[0.02em] text-[#FFFFFF] sm:text-4xl">
+          Fight Intelligence
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[#E5E5E5]">
           A live look at what's next in the UFC — the upcoming main event, a real model prediction, fighter momentum
@@ -185,15 +180,15 @@ function MainEventCard({
       </div>
 
       <div className="mt-3 rounded-2xl border border-white/8 bg-black/18 p-3">
-        <p className="broadcast-label text-[10px] text-[#E81B23]">Main event</p>
+        <p className="broadcast-label text-[10px] text-[#D32F2F]">Main event</p>
 
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <p className="truncate text-right text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_1}</p>
+          <p className="type-display truncate text-right text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_1}</p>
           <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] font-bold text-[#999999]">VS</span>
-          <p className="truncate text-left text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_2}</p>
+          <p className="type-display truncate text-left text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_2}</p>
         </div>
         {mainEvent.weight_class ? (
-          <p className="mt-1 text-center text-[10px] uppercase tracking-[0.12em] text-[#999999]">{mainEvent.weight_class}</p>
+          <p className="type-tech mt-1 text-center text-[10px] uppercase tracking-[0.12em] text-[#999999]">{mainEvent.weight_class}</p>
         ) : null}
 
         {predicting ? (
@@ -203,11 +198,11 @@ function MainEventCard({
         ) : probabilityA != null && probabilityB != null ? (
           <div className="mt-3">
             <div className="flex items-center justify-between text-sm font-bold">
-              <span className={winnerIsA ? 'text-[#E81B23]' : 'text-[#FFFFFF]'}>{Math.round(probabilityA * 100)}%</span>
+              <span className={winnerIsA ? 'text-[#D32F2F]' : 'text-[#FFFFFF]'}>{Math.round(probabilityA * 100)}%</span>
               <span className={!winnerIsA ? 'text-[#8FB3E8]' : 'text-[#FFFFFF]'}>{Math.round(probabilityB * 100)}%</span>
             </div>
             <div className="mt-1.5 flex h-2.5 overflow-hidden rounded-full bg-[#262626]">
-              <div className="h-full bg-gradient-to-r from-[#A5151C] to-[#E81B23]" style={{ width: `${probabilityA * 100}%` }} />
+              <div className="h-full bg-gradient-to-r from-[#A5151C] to-[#D32F2F]" style={{ width: `${probabilityA * 100}%` }} />
               <div className="h-full bg-gradient-to-r from-[#1c3c6e] to-[#2F5FA8]" style={{ width: `${probabilityB * 100}%` }} />
             </div>
             <p className="mt-2 text-center text-xs text-[#999999]">
@@ -235,7 +230,7 @@ function FullCardSection({ nextEvent }: { nextEvent: EventSummary | null }) {
 
   return (
     <section className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#E81B23]">
+      <div className="flex items-center gap-2 text-[#D32F2F]">
         <ListOrdered className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">
           Rest of the card • {restOfCard.length} {restOfCard.length === 1 ? 'fight' : 'fights'}
@@ -254,17 +249,17 @@ function FightCardRow({ fight }: { fight: FightResult }) {
   return (
     <Link
       to={`/matchup-intelligence?a=${encodeURIComponent(fight.fighter_1)}&b=${encodeURIComponent(fight.fighter_2)}`}
-      className="group flex w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2.5 transition hover:border-[#E81B23]/25 hover:bg-white/[0.05]"
+      className="group flex w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2.5 transition hover:border-[#D32F2F]/25 hover:bg-white/[0.05]"
     >
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold text-[#FFFFFF]">
           {fight.fighter_1} <span className="text-[#999999]">vs</span> {fight.fighter_2}
         </p>
         {fight.weight_class ? (
-          <p className="mt-0.5 text-[10px] uppercase tracking-[0.1em] text-[#999999]">{fight.weight_class}</p>
+          <p className="type-tech mt-0.5 text-[10px] uppercase tracking-[0.1em] text-[#999999]">{fight.weight_class}</p>
         ) : null}
       </div>
-      <ArrowRight className="h-4 w-4 shrink-0 text-[#666666] transition group-hover:text-[#E81B23]" />
+      <ArrowRight className="h-4 w-4 shrink-0 text-[#666666] transition group-hover:text-[#D32F2F]" />
     </Link>
   )
 }
@@ -274,7 +269,7 @@ function TrendingCard({ mainEvent, trends }: { mainEvent: FightResult | null; tr
 
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#E81B23]">
+      <div className="flex items-center gap-2 text-[#D32F2F]">
         <TrendingUp className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">Trending</p>
       </div>
@@ -294,7 +289,7 @@ function TrendRow({ name, trend }: { name: string; trend: Trend | undefined }) {
       <p className="truncate text-xs font-semibold text-[#FFFFFF]">{name}</p>
       <p className="mt-0.5 text-[11px] leading-4 text-[#999999]">
         {trend.streak > 0 ? (
-          <span className="text-[#E81B23]">↑ {trend.streak}-fight win streak</span>
+          <span className="text-[#D32F2F]">↑ {trend.streak}-fight win streak</span>
         ) : (
           <span>Coming off a loss</span>
         )}
@@ -316,11 +311,11 @@ function RankingsCard({
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-[#E81B23]">
+        <div className="flex items-center gap-2 text-[#D32F2F]">
           <Trophy className="h-4 w-4" />
           <p className="broadcast-label text-[10px]">Pound-for-pound</p>
         </div>
-        <Link to="/rankings" className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#999999] transition hover:text-white">
+        <Link to="/rankings" className="type-tech text-[10px] font-semibold uppercase tracking-[0.1em] text-[#999999] transition hover:text-white">
           View all
         </Link>
       </div>
@@ -337,7 +332,7 @@ function RankingsCard({
         <div className="mt-2.5 space-y-1.5">
           {category.entries.slice(0, 3).map((entry) => (
             <div key={entry.rank} className="flex items-center gap-2.5 rounded-xl border border-white/6 bg-black/18 px-3 py-2">
-              <span className="data-value w-5 shrink-0 text-sm font-bold text-[#E81B23]">{entry.rank}</span>
+              <span className="data-value w-5 shrink-0 text-sm font-bold text-[#D32F2F]">{entry.rank}</span>
               <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</span>
             </div>
           ))}
@@ -360,7 +355,7 @@ function MiniStat({
 }) {
   return (
     <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
-      <div className="flex items-center gap-2 text-[#E81B23]">
+      <div className="flex items-center gap-2 text-[#D32F2F]">
         <Icon className="h-3.5 w-3.5" />
         <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
       </div>
@@ -373,11 +368,11 @@ function StatusStat({ online, loading }: { online: boolean; loading: boolean }) 
   return (
     <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
       <div className="flex items-center gap-2">
-        <CircleDot className={`h-3.5 w-3.5 ${online ? 'fill-[#E81B23] text-[#E81B23] animate-pulse' : 'fill-[#999999] text-[#999999]'}`} />
+        <CircleDot className={`h-3.5 w-3.5 ${online ? 'fill-[#D32F2F] text-[#D32F2F] animate-pulse' : 'fill-[#999999] text-[#999999]'}`} />
         <p className="broadcast-label text-[10px] text-[#999999]">API status</p>
       </div>
       <div className="mt-1 inline-flex rounded-full border border-white/8 px-2.5 py-0.5">
-        <span className={`text-xs font-semibold uppercase tracking-[0.16em] ${loading ? 'text-[#CCCCCC]' : online ? 'text-[#E81B23]' : 'text-[#999999]'}`}>
+        <span className={`type-tech text-xs font-semibold uppercase tracking-[0.16em] ${loading ? 'text-[#CCCCCC]' : online ? 'text-[#D32F2F]' : 'text-[#999999]'}`}>
           {loading ? 'Checking...' : online ? 'Live' : 'Offline'}
         </span>
       </div>

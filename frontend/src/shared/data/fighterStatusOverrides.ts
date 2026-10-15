@@ -1,11 +1,17 @@
 import { normalizeFighterName } from '../hooks/useFighterImages'
 
 /**
- * Active/Retired is inferred from whether a fighter has a headshot in the live
- * api.octagon-api.com roster feed. That feed lags real-world retirements, so
- * confirmed retirements are listed here to override it until the upstream
- * feed catches up.
+ * Active vs. Retired / Released is inferred from whether a fighter has a headshot in the live
+ * api.octagon-api.com roster feed. "Retired / Released" means no longer on the UFC roster: the fighter
+ * may have retired, been cut, or moved to another organization. That feed lags real-world changes,
+ * so confirmed ones are listed here to override it until the upstream feed catches up.
  */
+const KNOWN_ACTIVE_FIGHTERS = new Set(
+  [
+    'Amanda Nunes', // Out of retirement; fights Kayla Harrison for the title at UFC 334 (Nov 14, 2026).
+  ].map(normalizeFighterName),
+)
+
 const KNOWN_RETIRED_FIGHTERS = new Set(
   [
     'Dustin Poirier', // Retired after UFC 318 (Jul 19, 2025), trilogy loss to Max Holloway.
@@ -14,9 +20,14 @@ const KNOWN_RETIRED_FIGHTERS = new Set(
     'Gilbert Burns', // Retired in-cage at UFC Fight Night 273 (Apr 18, 2026).
     'Colby Covington', // Notified the UFC of his retirement (May 18, 2026).
     'Irene Aldana', // Retired via social media confirmation (Jul 17, 2026).
+    'Farid Basharat', // Released by the UFC (Oct 2026); undefeated at 15-0, no fight booked.
   ].map(normalizeFighterName),
 )
 
 export function isKnownRetired(name: string) {
   return KNOWN_RETIRED_FIGHTERS.has(normalizeFighterName(name))
+}
+
+export function isKnownActive(name: string) {
+  return KNOWN_ACTIVE_FIGHTERS.has(normalizeFighterName(name))
 }

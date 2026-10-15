@@ -74,6 +74,7 @@ export interface HealthInfo {
   model_loaded: boolean
   fighters_loaded: number
   fights_tracked: number
+  latest_fight_date?: string | null
 }
 
 export interface FightResult {
@@ -192,6 +193,19 @@ export interface ChampionSummary {
   is_current_champion: boolean
 }
 
+export interface TitleWin {
+  division: string
+  title_type: 'undisputed' | 'interim'
+  opponent: string | null
+  event: string | null
+  date: string | null
+  method: string | null
+  round: number | null
+  won_how: string | null
+  defenses: number
+  reigns_in_division: number
+}
+
 export interface RecordEntry {
   rank: number
   champion: string
@@ -199,6 +213,7 @@ export interface RecordEntry {
   division: string | null
   value: number
   detail: string | null
+  title_wins?: TitleWin[] | null
 }
 
 export interface RecordCategory {

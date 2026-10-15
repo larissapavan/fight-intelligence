@@ -35,6 +35,7 @@ def build_allowed_origins() -> list[str]:
         "http://127.0.0.1:5173",
         "https://ufc-predictor.vercel.app",
         "https://ufcfightpredictor.vercel.app",
+        "https://fight-intelligence.vercel.app",
     ]
     return list(dict.fromkeys(defaults + env_origins))
 
@@ -62,7 +63,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="UFC Fight Intelligence API",
+    title="Fight Intelligence API",
     version="2.0.0",
     description="Backend service for predicting UFC fight outcomes with ML-powered analysis.",
     lifespan=lifespan,
@@ -76,8 +77,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=build_allowed_origins(),
     # Scoped to this project's own Vercel preview deployments (e.g.
-    # ufc-predictor-git-<branch>-<team>.vercel.app), not any *.vercel.app site.
-    allow_origin_regex=r"https://(ufc-predictor|ufcfightpredictor)[a-z0-9-]*\.vercel\.app",
+    # ufc-predictor-git-<branch>-<team>.vercel.app, fight-intelligence-git-...), not any *.vercel.app site.
+    allow_origin_regex=r"https://(ufc-predictor|ufcfightpredictor|fight-intelligence)[a-z0-9-]*\.vercel\.app",
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],

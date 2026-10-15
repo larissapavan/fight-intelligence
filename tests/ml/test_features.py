@@ -1,6 +1,10 @@
 import pandas as pd
 
-from src.ufc_predictor.features import align_feature_columns, build_features, get_feature_columns
+from src.ufc_predictor.features import (
+    align_feature_columns,
+    build_features,
+    get_feature_columns,
+)
 
 
 def _sample_frame() -> pd.DataFrame:

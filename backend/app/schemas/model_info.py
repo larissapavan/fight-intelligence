@@ -8,6 +8,7 @@ class HealthResponse(BaseModel):
     model_loaded: bool
     fighters_loaded: int
     fights_tracked: int
+    latest_fight_date: str | None = None
 
 
 class ModelInfoResponse(BaseModel):

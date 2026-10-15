@@ -8,7 +8,6 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup, Tag
 
-
 BASE_URL = "http://ufcstats.com"
 EVENTS_URL = "http://ufcstats.com/statistics/events/completed?page=all"
 RAW_DATA_DIR = Path("data") / "raw"

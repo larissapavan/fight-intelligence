@@ -109,7 +109,7 @@ export function Events() {
 
         <div className="mt-3 grid gap-2.5 lg:grid-cols-[1fr_180px_180px]">
           <div className="soft-input flex items-center gap-2.5 rounded-xl px-3 py-2.5">
-            <Search className="h-4 w-4 text-[#E81B23]" />
+            <Search className="h-4 w-4 text-[#D32F2F]" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -151,7 +151,7 @@ export function Events() {
       />
 
       {error ? (
-        <p className="rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+        <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
       ) : null}
 
       {loading ? (
@@ -185,7 +185,7 @@ export function Events() {
         </div>
       ) : (
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No events found</p>
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No events found</p>
           <p className="mt-2 text-sm text-[#999999]">Adjust the search to find another card.</p>
         </div>
       )}
@@ -217,7 +217,7 @@ function UpcomingEventsSection({
   return (
     <section className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="mb-2 flex items-center gap-2">
-        <CalendarClock className="h-4 w-4 text-[#E81B23]" />
+        <CalendarClock className="h-4 w-4 text-[#D32F2F]" />
         <h2 className="broadcast-label text-xs text-[#FFFFFF]">Upcoming Confirmed Events</h2>
         <span className="theme-muted text-xs">({events.length})</span>
       </div>
@@ -258,7 +258,7 @@ function EventGroup({
         className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
         aria-expanded={isOpen}
       >
-        <Icon className="h-4 w-4 text-[#E81B23]" />
+        <Icon className="h-4 w-4 text-[#D32F2F]" />
         <h2 className="broadcast-label text-xs text-[#FFFFFF]">{title}</h2>
         <span className="theme-muted text-xs">({events.length})</span>
         <ChevronDown className={`theme-muted ml-auto h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
@@ -358,9 +358,9 @@ function FightRow({ fight }: { fight: FightResult }) {
 function FighterName({ name, won, align }: { name: string; won: boolean; align: 'left' | 'right' }) {
   return (
     <span className={`flex min-w-0 items-center gap-1.5 ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}>
-      {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#E81B23]" /> : null}
+      {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#D32F2F]" /> : null}
       <span className={`truncate text-sm ${won ? 'font-bold text-[#FFFFFF]' : 'text-[#999999]'}`}>{name}</span>
-      {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#E81B23]" /> : null}
+      {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#D32F2F]" /> : null}
     </span>
   )
 }

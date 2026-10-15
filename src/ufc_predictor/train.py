@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import joblib
 
-from .config import MODEL_PATH, PROCESSED_DATA_PATH, REPORT_PATH, TARGET_COLUMN, ensure_directories
+from .config import (
+    MODEL_PATH,
+    PROCESSED_DATA_PATH,
+    REPORT_PATH,
+    TARGET_COLUMN,
+    ensure_directories,
+)
 from .data import load_or_create_dataset
 from .features import build_features, get_feature_columns
 from .modeling import temporal_train_test_split, train_model

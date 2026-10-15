@@ -14,7 +14,7 @@ export function ModelExplanation({ factors }: ModelExplanationProps) {
   return (
     <section className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="mb-3 flex items-center gap-2.5">
-        <div className="rounded-xl bg-[#E81B23]/12 p-2 text-[#E81B23]">
+        <div className="rounded-xl bg-[#D32F2F]/12 p-2 text-[#D32F2F]">
           <ListChecks className="h-4 w-4" />
         </div>
         <div>
@@ -25,8 +25,8 @@ export function ModelExplanation({ factors }: ModelExplanationProps) {
 
       {factors.length ? (
         <div className="space-y-3">
-          <div className="rounded-2xl border border-[#E81B23]/18 bg-[#E81B23]/8 p-3">
-            <div className="flex items-center gap-2 text-[#E81B23]">
+          <div className="rounded-2xl border border-[#D32F2F]/18 bg-[#D32F2F]/8 p-3">
+            <div className="flex items-center gap-2 text-[#D32F2F]">
               <Flame className="h-4 w-4" />
               <span className="broadcast-label text-[10px]">Primary drivers</span>
             </div>
@@ -34,7 +34,7 @@ export function ModelExplanation({ factors }: ModelExplanationProps) {
               {topFactors.map((factor) => (
                 <div key={factor.feature} className="rounded-xl border border-white/8 bg-black/15 px-3 py-2.5">
                   <p className="text-xs font-semibold text-[#FFFFFF]">
-                    {factor.feature} favored <span className="text-[#E81B23]">{factor.impact}</span>
+                    {factor.feature} favored <span className="text-[#D32F2F]">{factor.impact}</span>
                   </p>
                   <p className="mt-1 text-xs leading-5 text-[#E5E5E5]">{factor.explanation}</p>
                 </div>
@@ -53,13 +53,13 @@ export function ModelExplanation({ factors }: ModelExplanationProps) {
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <h3 className="text-sm font-semibold text-[#FFFFFF]">{factor.feature}</h3>
-                  <span className="w-fit rounded-full border border-[#E81B23]/18 bg-[#E81B23]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#FF6B6B]">
+                  <span className="type-tech w-fit rounded-full border border-[#D32F2F]/18 bg-[#D32F2F]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#FF6B6B]">
                     {factor.impact}
                   </span>
                 </div>
                 <div className="progress-track mt-2.5 h-2 overflow-hidden rounded-full">
                   <div
-                    className="h-full rounded-full bg-[#E81B23] transition-all duration-500"
+                    className="h-full rounded-full bg-[#D32F2F] transition-all duration-500"
                     style={{ width: `${Math.max((factor.magnitude / maxMagnitude) * 100, 8)}%` }}
                   />
                 </div>

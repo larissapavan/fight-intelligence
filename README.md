@@ -1,39 +1,45 @@
-# Fight Intelligence
+# UFC Fight Intelligence
+ 
+**Explore UFC fighters, matchups and title history with machine learning predictions you can actually understand.**
+ 
+### 👉 [Try the live app: UFC Fight Intelligence](https://fight-intelligence.vercel.app/)
+ 
+## What you can do
+ 
+- **Predict a matchup:** pick any two fighters and get a win probability, plus a SHAP breakdown showing what drove it (reach, age, win rate, striking and grappling differences).
+- **Compare category by category:** striking, grappling, physical attributes and the model's key factors, side by side.
+- **Browse the fighters database:** records, divisions, physical and career stats, performance timelines and a KNN-based "similar fighters" search.
+- **Head-to-Head:** direct fight history, or common opponents and degrees of separation when two fighters never met.
+- **Champions & records:** the current champion of every division, greatest champions by time held, and the record book (most defenses, longest and shortest reigns, most times dethroned, multi-division champions).
+- **Rankings & Events:** divisional and pound-for-pound rankings, the full event archive with results, and upcoming cards.
+- **Data Intelligence / Model pages:** full transparency about the data pipeline, features and model.
+- **Built for everyone:** responsive from 320px to ultrawide, dark and light themes, keyboard-accessible navigation.
 
-A full stack UFC analytics platform: real fighter data, a machine learning model that predicts fight outcomes with explainability, and a live dashboard built around what's actually happening in the UFC right now — not a static demo.
-
-## [→ Try it live](https://fight-intelligence.vercel.app)
-
-Open the link and start exploring, every number on the site is real.
-
----
-
-## What's inside
-
-**Home dashboard**: The next real UFC event, its main event fighters, a live model prediction for that fight, current win/loss momentum, and the pound-for-pound top 3, all pulled fresh from the same data the model predicts from. Every other fight on the card is one click away from its own full breakdown.
-
-**Predictor**: Pick any two of 4,500+ fighters and get a win probability with a full SHAP explanation of what drove the model's read: Reach, age, win rate, striking and grappling deltas, ranked by actual contribution.
-
-**Matchup Intelligence**: A category-by-category breakdown of *why* a matchup is interesting: striking (accuracy, significant strikes/min, defense), grappling (takedown accuracy/defense, submission attempts), physical attributes, and the model's key factors side by side.
-
-**Fighters database**: Every fighter's real record, division, physical stats, striking/grappling numbers, and a full performance history: career timeline (win/loss by year), win rate and finish rate trends, round-by-round distribution, and a similarity search (KNN over physical and performance stats) that surfaces genuinely comparable fighters, not random suggestions.
-
-**Head-to-Head**: Direct fight history between any two fighters, and when they've never actually fought, a real network analysis of common opponents and degrees of separation through the "who fought whom" graph.
-
-**Rankings & Events**: Official UFC divisional and pound-for-pound rankings, plus the full event archive (numbered PPVs and Fight Nights) with every result, searchable and filterable.
-
-**Champions & Records**: Every UFC title reign in history: current champions per division, the greatest champions ranked by time held, and the record book itself, most title defenses, longest and shortest reigns, most times dethroned, and multi-division champions.
-
-**Data Intelligence**: A transparent look at the pipeline itself: where the data comes from, how it's cleaned and engineered into features, and live counts of exactly how many fighters, events, and fights are tracked.
-
-## Real data, not a mock
-
-Every fighter, fight, event, and ranking is scraped from ufcstats.com and ufc.com, there are no placeholder records or synthetic stats anywhere in the app. The prediction model is a real trained classifier (not a random number), explained live with SHAP on every request. Predictions are estimates for portfolio/educational purposes and should never be used for betting decisions.
-
-## Built with
-
-React · TypeScript · Vite · Tailwind CSS · FastAPI · scikit-learn · SHAP · Pandas — deployed on Vercel (frontend) and Render (backend).
-
----
-
-**[→ fight-intelligence.vercel.app](https://fight-intelligence.vercel.app)**
+## Tech stack
+ 
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, React Router, Recharts, Framer Motion, Lucide icons, Axios |
+| Backend | Python 3.12, FastAPI, Uvicorn, Pydantic, SlowAPI (rate limiting) |
+| ML / data | scikit-learn (HistGradientBoosting, Random Forest, Logistic Regression), SHAP, Pandas, NumPy, Joblib |
+| Data collection | Requests, BeautifulSoup scrapers, ESPN and UFC.com feeds |
+| Testing | Pytest, HTTPX |
+| Deploy | Vercel (frontend), Render (backend) |
+ 
+## Data and model
+ 
+Fighter, fight, event and ranking data come from public sources (UFC Stats, ESPN, UFC.com). Title history is compiled from published UFC title histories.
+ 
+The classifier is trained on historical fights using differences between fighter attributes and recent form. Every prediction is explained with SHAP, so you can see *why* the model leans one way instead of just seeing a number.
+ 
+**Limitations:** data may contain errors, delays or gaps, and the statistics shown are not official.
+ 
+## Author
+ 
+Built by **Larissa Pavan** · [GitHub](https://github.com/larissapavan)
+ 
+Found a data error or have feedback? Open an [issue](https://github.com/larissapavan/fight-intelligence/issues).
+ 
+## License and disclaimer
+ 
+This is a personal, non-commercial portfolio project created for learning. It has no relationship with the UFC, Zuffa, TKO, any fighter, brand, organization or employer. UFC and related marks belong to their owners. Predictions are for educational purposes only and are **not** betting advice.

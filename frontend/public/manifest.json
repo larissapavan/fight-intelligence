@@ -1,6 +1,6 @@
 {
-  "name": "UFC Fight Intelligence",
-  "short_name": "UFC Intelligence",
+  "name": "Fight Intelligence",
+  "short_name": "Fight Intel",
   "description": "Predict UFC fight outcomes with a machine learning model trained on real historical fight data.",
   "start_url": "/",
   "display": "standalone",

@@ -3,6 +3,7 @@ import { UserRound } from 'lucide-react'
 
 import { getFighterImageUrl, useFighterImages } from '../hooks/useFighterImages'
 import type { FighterProfile } from '../types/api'
+import { ChampionBelt } from './ChampionBelt'
 
 interface FighterCardProps {
   title: string
@@ -14,7 +15,7 @@ interface FighterCardProps {
 const accentStyles = {
   red: {
     line: 'corner-flag corner-flag--red',
-    badge: 'border-[#E81B23]/30 bg-[#E81B23]/10 text-[#FF6B6B]',
+    badge: 'border-[#D32F2F]/30 bg-[#D32F2F]/10 text-[#FF6B6B]',
     text: 'text-[#FF6B6B]',
   },
   blue: {
@@ -52,13 +53,14 @@ export function FighterCard({ title, accent, fighter, children }: FighterCardPro
             <CornerPortrait fighter={fighter} accent={accent} imageUrl={imageUrl} />
             <div className="min-w-0">
             <p className={`broadcast-label text-[10px] ${styles.text}`}>{title}</p>
-            <h3 className="theme-text mt-1.5 text-xl font-bold uppercase leading-none tracking-[0.03em] sm:text-2xl">
-              {fighter?.name ?? emptyLabel}
+            <h3 className="theme-text mt-1.5 inline-flex max-w-full items-center gap-1.5 text-xl font-bold uppercase leading-none tracking-[0.03em] sm:text-2xl">
+              <span className="min-w-0">{fighter?.name ?? emptyLabel}</span>
+              {fighter?.belt ? <ChampionBelt /> : null}
             </h3>
             {fighter ? <p className="theme-muted mt-1.5 text-xs leading-5">{subtitleParts.join(' • ')}</p> : null}
             </div>
           </div>
-          <span className={`w-fit rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.badge}`}>
+          <span className={`type-tech w-fit rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.badge}`}>
             {accent === 'red' ? 'Red corner' : 'Blue corner'}
           </span>
         </div>
@@ -81,7 +83,7 @@ export function FighterCard({ title, accent, fighter, children }: FighterCardPro
           </div>
         ) : (
           <div className="theme-muted mt-3 flex items-center gap-3 rounded-2xl border border-dashed border-[var(--line-soft)] bg-[var(--surface-3)] px-3 py-4 text-left text-sm">
-            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl border ${accent === 'red' ? 'border-[#E81B23]/20 bg-[#E81B23]/8 text-[#FF6B6B]' : 'border-[#2F5FA8]/20 bg-[#2F5FA8]/8 text-[#8FB3E8]'}`}>
+            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl border ${accent === 'red' ? 'border-[#D32F2F]/20 bg-[#D32F2F]/8 text-[#FF6B6B]' : 'border-[#2F5FA8]/20 bg-[#2F5FA8]/8 text-[#8FB3E8]'}`}>
               <UserRound className="h-5 w-5" />
             </span>
             <span>
@@ -109,7 +111,7 @@ function CornerPortrait({
   const failed = imageState.key === imageKey && imageState.failed
   const loaded = imageState.key === imageKey && imageState.loaded
   const showImage = Boolean(fighter && imageUrl && !failed)
-  const toneClass = accent === 'red' ? 'from-[#E81B23]/34' : 'from-[#2F5FA8]/34'
+  const toneClass = accent === 'red' ? 'from-[#D32F2F]/34' : 'from-[#2F5FA8]/34'
 
   return (
     <span
@@ -128,7 +130,7 @@ function CornerPortrait({
         />
       ) : null}
       {fighter && (!showImage || !loaded) ? (
-        <span className={`text-xl font-bold uppercase ${accent === 'red' ? 'text-[#FF6B6B]' : 'text-[#8FB3E8]'}`}>
+        <span className={`type-display text-xl font-bold uppercase ${accent === 'red' ? 'text-[#FF6B6B]' : 'text-[#8FB3E8]'}`}>
           {getInitials(fighter.name)}
         </span>
       ) : null}
@@ -143,7 +145,7 @@ function Stat({ label, value, accent }: { label: string; value: React.ReactNode;
   return (
     <div className={`metric-tile min-h-[56px] rounded-xl px-2.5 py-2 ${accent === 'blue' ? 'metric-tile--blue' : ''}`}>
       <p className="theme-muted broadcast-label text-[9px]">{label}</p>
-      <p className="theme-text mt-1 truncate text-sm font-semibold">{value}</p>
+      <p className="type-num theme-text mt-1 truncate text-sm font-semibold">{value}</p>
     </div>
   )
 }

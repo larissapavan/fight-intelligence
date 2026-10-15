@@ -14,6 +14,7 @@ def test_health_reports_model_and_fighters_loaded(client):
     assert body["model_loaded"] is True
     assert body["fighters_loaded"] > 0
     assert body["fights_tracked"] > 0
+    assert body["latest_fight_date"]
 
 
 def test_model_info_reports_metrics_and_features(client):

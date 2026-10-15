@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pandas as pd
 
-
 PROCESSED_DATA_DIR = Path("data") / "processed"
 ML_DATA_DIR = Path("data") / "ml"
 

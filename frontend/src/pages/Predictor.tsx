@@ -66,7 +66,7 @@ export function Predictor() {
       <section className="page-hero overflow-hidden rounded-[20px] p-3 sm:p-4">
         <div className="grid gap-3 xl:grid-cols-[1.1fr_0.9fr] xl:items-end">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#E81B23]/20 bg-[#E81B23]/10 px-3 py-1.5 text-[#E81B23]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#D32F2F]/20 bg-[#D32F2F]/10 px-3 py-1.5 text-[#D32F2F]">
               <Radio className="h-3.5 w-3.5" />
               <span className="broadcast-label text-[10px]">Matchup workspace</span>
             </div>
@@ -81,7 +81,7 @@ export function Predictor() {
           <div className="grid gap-2 sm:grid-cols-2">
             {overviewStats.map(({ label, value, icon: Icon }) => (
               <div key={label} className="metric-tile rounded-xl px-2.5 py-2">
-                <div className="flex items-center gap-2 text-[#E81B23]">
+                <div className="flex items-center gap-2 text-[#D32F2F]">
                   <Icon className="h-3.5 w-3.5" />
                   <span className="broadcast-label text-[10px] text-[#999999]">{label}</span>
                 </div>
@@ -92,7 +92,7 @@ export function Predictor() {
         </div>
 
         {systemError ? (
-          <p className="mt-3 flex items-center gap-2 rounded-xl border border-[#E81B23]/20 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+          <p className="mt-3 flex items-center gap-2 rounded-xl border border-[#D32F2F]/20 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">
             <ShieldAlert className="h-4 w-4 text-[#FF6B6B]" />
             {systemError}
           </p>
@@ -207,7 +207,7 @@ export function Predictor() {
                     color: '#FFFFFF',
                   }}
                 />
-                <Bar dataKey="fighterA" fill="#E81B23" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="fighterA" fill="#D32F2F" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="fighterB" fill="#2F5FA8" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

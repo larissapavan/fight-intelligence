@@ -15,7 +15,6 @@ takes seconds, not hours; just re-run it whenever rankings need refreshing.
 from __future__ import annotations
 
 import csv
-import re
 from pathlib import Path
 
 import requests

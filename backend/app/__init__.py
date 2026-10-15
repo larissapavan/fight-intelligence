@@ -1,1 +1,1 @@
-"""FastAPI application package for UFC Fight Intelligence."""
+"""FastAPI application package for Fight Intelligence."""

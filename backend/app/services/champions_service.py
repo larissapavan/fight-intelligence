@@ -1,19 +1,24 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+import re
+import unicodedata
+from datetime import date
 
 import pandas as pd
 
 from src.ufc_predictor.config import RAW_DATA_DIR
 
 TITLE_REIGNS_SOURCE_PATH = RAW_DATA_DIR / "title_reigns.csv"
+FIGHTS_SOURCE_PATH = RAW_DATA_DIR / "fights.csv"
 
 TOP_N_GREATEST_CHAMPIONS = 15
 TOP_N_PER_RECORD = 10
 
 
 def _source_signature() -> tuple:
-    return (TITLE_REIGNS_SOURCE_PATH.stat().st_mtime_ns if TITLE_REIGNS_SOURCE_PATH.exists() else None,)
+    return tuple(
+        path.stat().st_mtime_ns if path.exists() else None for path in (TITLE_REIGNS_SOURCE_PATH, FIGHTS_SOURCE_PATH)
+    )
 
 
 _cache: dict = {"signature": None, "data": None}
@@ -57,7 +62,7 @@ def _build_champions_data() -> dict:
     current_champions.sort(key=lambda r: r["division"])
 
     greatest_champions = _build_greatest_champions(df)
-    records = _build_records(df)
+    records = _build_records(df, _load_fights_df())
 
     return {
         "current_champions": current_champions,
@@ -113,7 +118,7 @@ def _build_greatest_champions(df: pd.DataFrame) -> list[dict]:
     return summaries[:TOP_N_GREATEST_CHAMPIONS]
 
 
-def _build_records(df: pd.DataFrame) -> list[dict]:
+def _build_records(df: pd.DataFrame, fights: pd.DataFrame | None = None) -> list[dict]:
     records = [
         _record_from_reigns(
             df,
@@ -151,7 +156,7 @@ def _build_records(df: pd.DataFrame) -> list[dict]:
             agg_column=None,
             agg="count",
         ),
-        _multi_division_record(df),
+        _multi_division_record(df, fights),
         _record_from_reigns(
             df[(df["title_type"] == "undisputed") & df["days_held"].notna()],
             key="shortest_reign",
@@ -255,14 +260,14 @@ def _record_by_champion(
     return {"key": key, "label": label, "kind": kind, "unit": unit, "entries": entries}
 
 
-def _multi_division_record(df: pd.DataFrame) -> dict:
+def _multi_division_record(df: pd.DataFrame, fights: pd.DataFrame | None = None) -> dict:
     rows = []
     for champion, group in df.groupby("champion"):
         divisions = sorted(group["division"].unique().tolist())
         if len(divisions) < 2:
             continue
         fighter_url = next((u for u in group["fighter_url"] if isinstance(u, str) and u), None)
-        rows.append({"champion": champion, "fighter_url": fighter_url, "divisions": divisions})
+        rows.append({"champion": champion, "fighter_url": fighter_url, "divisions": divisions, "group": group})
 
     rows.sort(key=lambda r: -len(r["divisions"]))
     entries = []
@@ -275,6 +280,7 @@ def _multi_division_record(df: pd.DataFrame) -> dict:
                 "division": ", ".join(row["divisions"]),
                 "value": len(row["divisions"]),
                 "detail": None,
+                "title_wins": _title_wins(row["group"], fights),
             }
         )
     return {
@@ -284,6 +290,90 @@ def _multi_division_record(df: pd.DataFrame) -> dict:
         "unit": "divisions",
         "entries": entries,
     }
+
+
+def _load_fights_df() -> pd.DataFrame:
+    if not FIGHTS_SOURCE_PATH.exists():
+        return pd.DataFrame()
+    return pd.read_csv(FIGHTS_SOURCE_PATH, keep_default_na=False, na_values=[""])
+
+
+def _name_key(value) -> str:
+    text = unicodedata.normalize("NFKD", str(value)).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+
+def _title_wins(group: pd.DataFrame, fights: pd.DataFrame | None) -> list[dict]:
+    """One entry per division: the fight that first won the belt there (undisputed preferred over interim),
+    plus every successful defense made in that division. Opponent/method/round come from fights.csv
+    (matched by event + winner) because title_reigns.csv only records them for some reigns."""
+    wins = []
+    for division, reigns in group.groupby("division"):
+        reigns = reigns.sort_values("date_won")
+        undisputed = reigns[reigns["title_type"] == "undisputed"]
+        first = (undisputed if len(undisputed) else reigns).iloc[0]
+        champion = first["champion"]
+
+        opponent = _nullable_string(first.get("opponent_beaten")) or _opponent_from_won_how(first.get("won_how"))
+        method = round_number = None
+        fight = _find_title_fight(fights, first.get("event"), champion)
+        if fight is not None:
+            opponent = opponent or str(fight["fighter_2"])
+            method = _format_method(fight.get("method"))
+            round_number = _nullable_int(fight.get("round"))
+
+        wins.append(
+            {
+                "division": division,
+                "title_type": first["title_type"],
+                "opponent": opponent,
+                "event": _nullable_string(first.get("event")),
+                "date": _nullable_string(first.get("date_won")),
+                "method": method,
+                "round": round_number,
+                "won_how": _nullable_string(first.get("won_how")),
+                "defenses": int(reigns["defenses_count"].sum()),
+                "reigns_in_division": int(len(reigns)),
+            }
+        )
+    wins.sort(key=lambda w: w["date"] or "")
+    return wins
+
+
+def _opponent_from_won_how(value) -> str | None:
+    match = re.match(r"def\.\s+(?:interim champion\s+)?(.+?)(?:\s+for interim title)?$", _nullable_string(value) or "")
+    return match.group(1) if match else None
+
+
+def _find_title_fight(fights: pd.DataFrame | None, event, champion) -> dict | None:
+    """The bout at `event` (e.g. "UFC 281") won by `champion`; fights.csv lists the winner as fighter_1."""
+    if fights is None or fights.empty or not isinstance(event, str) or not event.strip():
+        return None
+    prefix = event.strip()
+    names = fights["event_name"].astype(str)
+    in_event = fights[(names == prefix) | names.str.startswith(prefix + ":")]
+    key = _name_key(champion)
+    won = in_event[in_event["fighter_1"].map(_name_key) == key]
+    return won.iloc[0].to_dict() if len(won) else None
+
+
+_DECISIONS = {"U-DEC": "Unanimous Decision", "S-DEC": "Split Decision", "M-DEC": "Majority Decision"}
+
+
+def _format_method(raw) -> str | None:
+    text = _nullable_string(raw)
+    if not text:
+        return None
+    if text in _DECISIONS:
+        return _DECISIONS[text]
+    if text.startswith("KO/TKO"):
+        return "KO/TKO"
+    if text.startswith("SUB"):
+        detail = text[3:].strip()
+        return f"Submission ({detail})" if detail else "Submission"
+    if text.startswith("DQ"):
+        return "Disqualification"
+    return text
 
 
 def _nullable_string(value) -> str | None:

@@ -3,7 +3,10 @@ from fastapi import APIRouter, HTTPException, Query, Request, Response
 from backend.app.rate_limit import limiter
 from backend.app.schemas.fight_history import FighterPerformance, HeadToHeadResponse
 from backend.app.services.catalog_service import get_fighter_profile
-from backend.app.services.fight_history_service import get_fighter_performance, get_head_to_head
+from backend.app.services.fight_history_service import (
+    get_fighter_performance,
+    get_head_to_head,
+)
 
 router = APIRouter(tags=["fight-history"])
 

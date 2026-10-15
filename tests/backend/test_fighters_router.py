@@ -27,6 +27,12 @@ def test_fighters_exposes_total_count_header_cross_origin(client):
     assert "x-total-count" in response.headers.get("access-control-expose-headers", "").lower()
 
 
+def test_cors_allows_the_new_vercel_site_and_its_previews(client):
+    for origin in ("https://fight-intelligence.vercel.app", "https://fight-intelligence-git-main-larissapavan.vercel.app"):
+        response = client.get("/fighters", headers={"Origin": origin})
+        assert response.headers.get("access-control-allow-origin") == origin
+
+
 def test_fighters_supports_limit_and_offset(client):
     total = int(client.get("/fighters").headers["x-total-count"])
 

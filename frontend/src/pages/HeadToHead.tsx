@@ -67,7 +67,7 @@ export function HeadToHead() {
           />
 
           <div className="hidden justify-center pb-3.5 lg:flex">
-            <span className="rounded-full border border-[#E81B23]/25 bg-[#E81B23]/10 px-3 py-1.5 text-xl font-bold uppercase text-[#E81B23]">
+            <span className="type-display rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-3 py-1.5 text-xl font-bold uppercase text-[#D32F2F]">
               VS
             </span>
           </div>
@@ -94,7 +94,7 @@ export function HeadToHead() {
         </button>
 
         {error ? (
-          <p className="mt-3 rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+          <p className="mt-3 rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">
             {error}
           </p>
         ) : null}
@@ -110,7 +110,7 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
     return (
       <div className="space-y-3">
         <section className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Never fought directly</p>
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Never fought directly</p>
           <p className="mt-2 text-sm text-[#999999]">
             {result.fighter_a} and {result.fighter_b} have no recorded UFC meetings.
           </p>
@@ -129,12 +129,12 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
           {result.meetings.length} {result.meetings.length === 1 ? 'meeting' : 'meetings'}
         </p>
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <p className="truncate text-right text-lg font-bold uppercase text-[#FFFFFF] sm:text-xl">{result.fighter_a}</p>
-          <p className="data-value text-3xl font-bold text-[#E81B23] sm:text-4xl">
+          <p className="type-display truncate text-right text-lg font-bold uppercase text-[#FFFFFF] sm:text-xl">{result.fighter_a}</p>
+          <p className="data-value text-3xl font-bold text-[#D32F2F] sm:text-4xl">
             {result.fighter_a_wins}-{result.fighter_b_wins}
             {result.no_contests ? `-${result.no_contests}` : ''}
           </p>
-          <p className="truncate text-left text-lg font-bold uppercase text-[#FFFFFF] sm:text-xl">{result.fighter_b}</p>
+          <p className="type-display truncate text-left text-lg font-bold uppercase text-[#FFFFFF] sm:text-xl">{result.fighter_b}</p>
         </div>
       </section>
 
@@ -154,7 +154,7 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
 
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#E81B23]">
+      <div className="flex items-center gap-2 text-[#D32F2F]">
         <Share2 className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">
           Connected via the fight network • {degrees} degree{degrees === 1 ? '' : 's'} of separation
@@ -167,7 +167,7 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
             <div key={`${name}-${index}`} className="flex items-center gap-1.5">
               <span
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.06em] ${
-                  isEndpoint ? 'border-[#E81B23]/25 bg-[#E81B23]/10 text-[#FF6B6B]' : 'border-white/10 bg-white/[0.04] text-[#CCCCCC]'
+                  isEndpoint ? 'border-[#D32F2F]/25 bg-[#D32F2F]/10 text-[#FF6B6B]' : 'border-white/10 bg-white/[0.04] text-[#CCCCCC]'
                 }`}
               >
                 {name}
@@ -184,14 +184,14 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
 function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#E81B23]">
+      <div className="flex items-center gap-2 text-[#D32F2F]">
         <Users className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">Common opponents ({result.common_opponents.length})</p>
       </div>
       <div className="mt-2.5 grid grid-cols-[1fr_auto_auto] items-center gap-x-2.5 gap-y-1.5">
         <span />
-        <span className="text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#FF6B6B]">{lastWord(result.fighter_a)}</span>
-        <span className="text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#8FB3E8]">{lastWord(result.fighter_b)}</span>
+        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#FF6B6B]">{lastWord(result.fighter_a)}</span>
+        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#8FB3E8]">{lastWord(result.fighter_b)}</span>
         {result.common_opponents.map((common) => (
           <Fragment key={common.opponent}>
             <span className="min-w-0 truncate rounded-xl border border-white/6 bg-black/18 px-3 py-2 text-sm font-semibold text-[#FFFFFF]">
@@ -209,20 +209,20 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
 function ResultChip({ result }: { result: 'win' | 'loss' | null }) {
   if (result === 'win') {
     return (
-      <span className="justify-self-end rounded-full border border-[#E81B23]/25 bg-[#E81B23]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#E81B23]">
+      <span className="type-tech justify-self-end rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#D32F2F]">
         Win
       </span>
     )
   }
   if (result === 'loss') {
     return (
-      <span className="justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+      <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
         Loss
       </span>
     )
   }
   return (
-    <span className="justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+    <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
       NC
     </span>
   )
@@ -250,7 +250,7 @@ function MeetingRow({ meeting, fighterA, fighterB }: { meeting: FightRecord; fig
       <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
         {winnerName ? (
           <span className="inline-flex items-center gap-1.5 font-semibold text-[#FFFFFF]">
-            <Trophy className="h-4 w-4 text-[#E81B23]" />
+            <Trophy className="h-4 w-4 text-[#D32F2F]" />
             {winnerName} won
           </span>
         ) : (

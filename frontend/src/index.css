@@ -1,16 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&family=Bebas+Neue&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-octagon-bg: #000000;
   --color-octagon-card: #141414;
-  --color-octagon-red: #e81b23;
+  --color-octagon-red: #d32f2f;
+  --color-brand-red-dark: #b71c1c;
+  --color-brand-ink: #0a0a0a;
+  --color-brand-graphite: #2a2a2a;
   --color-octagon-blue: #2f5fa8;
   --color-octagon-text: #ffffff;
   --color-octagon-muted: #999999;
-  --font-ui: "Oswald", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-display: "Bebas Neue", "Oswald", sans-serif;
+  --font-sports-display: 'Barlow Condensed', sans-serif;
+  --font-sports-ui: 'Barlow', sans-serif;
+  --font-sports-tech: 'Chakra Petch', monospace, sans-serif;
+  /* legacy aliases used throughout this stylesheet */
+  --font-display: var(--font-sports-display);
+  --font-body: var(--font-sports-ui);
+  --font-ui: var(--font-sports-ui);
   --breakpoint-xs: 30rem; /* 480px */
   --breakpoint-3xl: 90rem; /* 1440px */
 }
@@ -47,7 +53,9 @@
   --shadow-page: rgba(0, 0, 0, 0.5);
   --avatar-bg: #1a1a1a;
   --logo-bg: #000000;
-  --accent-red: #e81b23;
+  --accent-red: #d32f2f;
+  --brand-red-dark: #b71c1c;
+  --brand-outline: #000000;
   --accent-blue: #2f5fa8;
   --accent-green: #2e9e5b;
   --accent-gold: #c9a24b;
@@ -85,7 +93,9 @@
   --shadow-page: rgba(15, 23, 42, 0.1);
   --avatar-bg: #ededed;
   --logo-bg: #111111;
-  --accent-red: #d0121a;
+  --accent-red: #b71c1c;
+  --brand-red-dark: #8e1515;
+  --brand-outline: #1a1a1a;
   --accent-blue: #29508c;
   --accent-green: #157a41;
   --accent-gold: #9c7a25;
@@ -150,11 +160,30 @@ select {
   position: relative;
 }
 
+/* Typography system: display (headlines, fighter names) / tech (tags, badges, numbers) / ui (everything else) */
 h1,
 h2,
-h3 {
-  font-family: var(--font-display);
-  font-weight: 400;
+h3,
+.type-display {
+  font-family: var(--font-sports-display);
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+}
+
+.type-tech {
+  font-family: var(--font-sports-tech);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.type-num {
+  font-family: var(--font-sports-tech);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .page-hero {
@@ -200,18 +229,6 @@ h3 {
     0 28px 50px -32px rgba(0, 0, 0, 0.7);
 }
 
-.control-room-card,
-.panel-card,
-.glass-card {
-  background:
-    radial-gradient(140% 160% at 0% 0%, rgba(255, 255, 255, 0.045), transparent 60%),
-    var(--card-bg);
-  border: 1px solid var(--line-soft);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 28px 50px -32px rgba(0, 0, 0, 0.7);
-}
-
 .metric-tile {
   position: relative;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 45%), var(--tile-bg);
@@ -243,14 +260,15 @@ h3 {
 }
 
 .broadcast-label {
-  font-family: var(--font-ui);
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-family: var(--font-sports-tech);
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .data-value {
-  font-family: var(--font-display);
+  font-family: var(--font-sports-tech);
+  font-weight: 700;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
@@ -342,16 +360,7 @@ h3 {
   background: rgba(15, 23, 42, 0.08);
 }
 
-.chart-tooltip {
-  background: #141414 !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 6px !important;
-  color: var(--text-main) !important;
-  font-family: var(--font-ui) !important;
-}
-
-header nav a,
-.nav-shell {
+header nav a {
   font-family: var(--font-ui);
 }
 
@@ -431,7 +440,9 @@ header nav a.nav-link-active {
 .vs-medallion span {
   position: relative;
   z-index: 1;
-  font-family: var(--font-display);
+  font-family: var(--font-sports-display);
+  font-style: italic;
+  font-weight: 900;
   font-size: 1.35rem;
   letter-spacing: 0.06em;
   color: var(--text-main);
@@ -562,6 +573,16 @@ select.soft-input option {
   background: rgba(15, 23, 42, 0.18);
 }
 
+/* Horizontal chip rows: scrollable but without a visible scrollbar. */
+.chip-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 .fade-up {
   animation: fadeUp 0.5s ease forwards;
 }
@@ -586,4 +607,32 @@ select.soft-input option {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Wireframe-3D wordmark (FIGHT INTELLIGENCE): bright sport red for contrast on near-black */
+.brand-wordmark {
+  font-family: "Russo One", var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  color: #ff2b33;
+  -webkit-text-stroke: 0.5px #000;
+  paint-order: stroke fill;
+  text-shadow:
+    1px 1px 0 #8e1515,
+    2px 2px 0 #000,
+    0 0 14px rgba(255, 30, 39, 0.35);
+}
+
+:root[data-theme='light'] .brand-wordmark {
+  color: #d3121a;
+  text-shadow: 1px 1px 0 #7a0e12, 2px 2px 0 rgba(0, 0, 0, 0.55);
+}
+
+/* Grid items default to min-width:auto, so one long unbroken line widens a single-column grid past the
+   viewport on narrow phones. Zero-specificity reset: explicit min-w-* utilities still win. */
+:where(main .grid) > :where(*) {
+  min-width: 0;
 }

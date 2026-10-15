@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <div className="flex min-h-[60vh] items-center justify-center px-3 py-8">
           <div className="surface-card w-full max-w-md rounded-[20px] p-5 text-center">
-            <div className="mx-auto inline-flex rounded-xl bg-[#E81B23]/10 p-3 text-[#FF6B6B]">
+            <div className="mx-auto inline-flex rounded-xl bg-[#D32F2F]/10 p-3 text-[#FF6B6B]">
               <AlertTriangle className="h-6 w-6" />
             </div>
             <h1 className="mt-3 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Something went wrong</h1>

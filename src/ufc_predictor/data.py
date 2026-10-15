@@ -20,8 +20,8 @@ of its own, not attempted here.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import shutil
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -35,7 +35,6 @@ from .config import (
     TARGET_COLUMN,
     ensure_directories,
 )
-
 
 STANCE_VALUES = ["Orthodox", "Southpaw", "Switch", "Open Stance"]
 

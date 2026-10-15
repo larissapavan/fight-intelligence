@@ -9,12 +9,12 @@ import { useModelInfo } from '../shared/hooks/useModelInfo'
 const contactLinks = [
   {
     label: 'GitHub Repository',
-    href: 'https://github.com/lacpavan/ufcpredictor',
+    href: 'https://github.com/larissapavan/fight-intelligence',
     icon: FolderGit2,
   },
   {
     label: 'GitHub Profile',
-    href: 'https://github.com/lacpavan',
+    href: 'https://github.com/larissapavan',
     icon: Globe2,
   },
   {
@@ -52,7 +52,7 @@ export function AboutModel() {
         />
       </section>
 
-      {error ? <p className="rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       <section className="grid gap-3 lg:grid-cols-4">
         <InfoCard
@@ -113,7 +113,7 @@ export function AboutModel() {
                 >
                   <div className="flex items-center justify-between gap-4">
                     <span className="inline-flex items-center gap-2">
-                      <span className="rounded-xl bg-[#E81B23]/10 p-1.5 text-[#FF6B6B]">
+                      <span className="rounded-xl bg-[#D32F2F]/10 p-1.5 text-[#FF6B6B]">
                         <Icon className="h-4 w-4" />
                       </span>
                       {label}
@@ -123,7 +123,7 @@ export function AboutModel() {
                         href={href}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-xs uppercase tracking-[0.14em] text-[#999999] transition hover:text-[#FFFFFF]"
+                        className="type-tech text-xs uppercase tracking-[0.14em] text-[#999999] transition hover:text-[#FFFFFF]"
                       >
                         Open in browser
                       </a>
@@ -131,7 +131,7 @@ export function AboutModel() {
                       <button
                         type="button"
                         onClick={() => handleOpenExternal(href)}
-                        className="text-xs uppercase tracking-[0.14em] text-[#999999] transition hover:text-[#FFFFFF]"
+                        className="type-tech text-xs uppercase tracking-[0.14em] text-[#999999] transition hover:text-[#FFFFFF]"
                       >
                         Open LinkedIn
                       </button>
@@ -144,7 +144,7 @@ export function AboutModel() {
                       <button
                         type="button"
                         onClick={() => void handleCopyLink(href)}
-                        className="ghost-action inline-flex items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#E81B23]"
+                        className="ghost-action inline-flex items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#D32F2F]"
                       >
                         {copiedLink === href ? 'Copied' : 'Copy URL'}
                       </button>
@@ -166,7 +166,7 @@ export function AboutModel() {
         <section className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
             <p className="broadcast-label text-[10px] text-[#999999]">Technical snapshot</p>
-            <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{modelInfo.model_name}</h2>
+            <h2 className="mt-1 break-words text-xl sm:text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{modelInfo.model_name}</h2>
             <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
               <Metric label="Features" value={`${modelInfo.feature_count}`} />
               <Metric label="Accuracy" value={`${(modelInfo.metrics.accuracy * 100).toFixed(1)}%`} />
@@ -177,10 +177,10 @@ export function AboutModel() {
 
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
             <p className="broadcast-label text-[10px] text-[#999999]">Important note</p>
-            <div className="mt-3 rounded-2xl border border-[#E81B23]/20 bg-[#E81B23]/8 p-3">
-              <div className="mb-2 flex items-center gap-2 text-[#E81B23]">
+            <div className="mt-3 rounded-2xl border border-[#D32F2F]/20 bg-[#D32F2F]/8 p-3">
+              <div className="mb-2 flex items-center gap-2 text-[#D32F2F]">
                 <AlertTriangle className="h-4 w-4" />
-                <span className="text-xs font-semibold uppercase tracking-[0.18em]">Use disclaimer</span>
+                <span className="type-tech text-xs font-semibold uppercase tracking-[0.18em]">Use disclaimer</span>
               </div>
               <p className="text-xs leading-5 text-[#FFFFFF]">
                 The platform offers informed estimates generated from historical data and modeling logic. It does not replace expert judgment and should not be used for betting decisions.
@@ -217,7 +217,7 @@ function InfoCard({
 }) {
   return (
     <article className="surface-card rounded-[20px] p-3 transition duration-300 hover:-translate-y-0.5 hover:border-white/16">
-      <div className="inline-flex rounded-xl bg-[#E81B23]/10 p-2.5 text-[#FF6B6B]">
+      <div className="inline-flex rounded-xl bg-[#D32F2F]/10 p-2.5 text-[#FF6B6B]">
         <Icon className="h-4 w-4" />
       </div>
       <h2 className="mt-3 text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{title}</h2>

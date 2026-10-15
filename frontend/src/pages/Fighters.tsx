@@ -1,24 +1,27 @@
 import axios from 'axios'
+import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Award,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   Radio,
   Search,
   Shield,
   Sparkles,
-  Trophy,
   Weight,
   X,
 } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
+import { ChampionBelt } from '../shared/components/ChampionBelt'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
-import { isKnownRetired } from '../shared/data/fighterStatusOverrides'
+import { isKnownActive, isKnownRetired } from '../shared/data/fighterStatusOverrides'
 import { useFighters } from '../shared/hooks/useFighters'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages, type FighterImageRecord } from '../shared/hooks/useFighterImages'
 import { getFighterPerformance, getSimilarFighters } from '../shared/services/api'
@@ -97,9 +100,9 @@ const divisionGroups: DivisionGroup[] = [
 const toneStyles = {
   red: {
     text: 'text-[#FF6B6B]',
-    border: 'border-[#E81B23]/24',
-    bg: 'bg-[#E81B23]/10',
-    bar: 'bg-[#E81B23]',
+    border: 'border-[#D32F2F]/24',
+    bg: 'bg-[#D32F2F]/10',
+    bar: 'bg-[#D32F2F]',
     glow: 'shadow-[0_14px_34px_rgba(232,27,35,0.14)]',
   },
   blue: {
@@ -125,10 +128,13 @@ export function Fighters() {
   const [stanceFilter, setStanceFilter] = useState('All stances')
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>('all')
   const [activeDivision, setActiveDivision] = useState('lightweight')
-  const [selectedFighter, setSelectedFighter] = useState<string | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  // Deep link from other pages (e.g. Champions): /fighters?fighter=<name> opens that profile.
+  const [selectedFighter, setSelectedFighter] = useState<string | null>(() => searchParams.get('fighter'))
 
   const isActiveFighter = useCallback(
-    (fighter: FighterProfile) => imageByName.has(normalizeFighterName(fighter.name)) && !isKnownRetired(fighter.name),
+    (fighter: FighterProfile) =>
+      (imageByName.has(normalizeFighterName(fighter.name)) || isKnownActive(fighter.name)) && !isKnownRetired(fighter.name),
     [imageByName],
   )
 
@@ -189,7 +195,7 @@ export function Fighters() {
 
         <div className="mt-3 grid gap-2.5 md:grid-cols-[1fr_220px]">
           <div className="soft-input flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5">
-            <Search className="h-4 w-4 shrink-0 text-[#E81B23]" />
+            <Search className="h-4 w-4 shrink-0 text-[#D32F2F]" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -210,20 +216,25 @@ export function Fighters() {
           </select>
         </div>
 
-        <div className="mt-2.5 inline-flex w-full overflow-x-auto rounded-full border border-white/8 bg-white/[0.035] p-0.5 xs:w-auto">
-          <ActiveTabButton active={activeFilter === 'all'} onClick={() => setActiveFilter('all')}>
-            All ({fighters.length})
-          </ActiveTabButton>
-          <ActiveTabButton active={activeFilter === 'active'} onClick={() => setActiveFilter('active')}>
-            <Radio className="h-3 w-3" /> Active ({activeCount})
-          </ActiveTabButton>
-          <ActiveTabButton active={activeFilter === 'retired'} onClick={() => setActiveFilter('retired')}>
-            Retired ({fighters.length - activeCount})
-          </ActiveTabButton>
+        <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/8 pt-2.5">
+          <div role="group" aria-label="Fighter status" className="inline-flex max-w-full overflow-x-auto rounded-md border border-white/8 bg-white/[0.035] p-0.5 chip-scroll">
+            <ActiveTabButton active={activeFilter === 'all'} onClick={() => setActiveFilter('all')} count={fighters.length}>
+              All
+            </ActiveTabButton>
+            <ActiveTabButton active={activeFilter === 'active'} onClick={() => setActiveFilter('active')} count={activeCount}>
+              <Radio className="h-3 w-3" /> Active
+            </ActiveTabButton>
+            <ActiveTabButton active={activeFilter === 'retired'} onClick={() => setActiveFilter('retired')} count={fighters.length - activeCount}>
+              Retired / Released
+            </ActiveTabButton>
+          </div>
+          <p className="broadcast-label text-[10px] text-[#999999]">
+            <span className="tabular-nums text-[#FFFFFF]">{visibleFighters.length}</span> shown
+          </p>
         </div>
       </section>
 
-      {error ? <p className="rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       {loading ? (
         <section className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
@@ -233,20 +244,12 @@ export function Fighters() {
         </section>
       ) : hasAnyResults ? (
         <div className="space-y-3">
-          <nav
-            aria-label="Weight class filter"
-            className="pill-scroll flex gap-1.5 overflow-x-auto rounded-2xl border border-white/8 bg-black/20 p-1.5 lg:flex-wrap lg:overflow-visible"
-          >
-            {divisionGroups.map((group) => (
-              <DivisionPill
-                key={group.key}
-                group={group}
-                count={groupedFighters.get(group.key)?.length ?? 0}
-                isActive={activeDivision === group.key}
-                onClick={() => setActiveDivision(group.key)}
-              />
-            ))}
-          </nav>
+          <WeightClassBar
+            groups={divisionGroups}
+            counts={groupedFighters}
+            activeKey={activeDivision}
+            onSelect={setActiveDivision}
+          />
 
           <div className="min-w-0">
             <AnimatePresence mode="wait">
@@ -262,7 +265,7 @@ export function Fighters() {
         </div>
       ) : (
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No fighters found</p>
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No fighters found</p>
           <p className="mt-2 text-sm text-[#999999]">Adjust the search or filter to explore another fighter profile in the database.</p>
         </div>
       )}
@@ -271,7 +274,10 @@ export function Fighters() {
         <FighterProfileModal
           key={selectedFighter}
           name={selectedFighter}
-          onClose={() => setSelectedFighter(null)}
+          onClose={() => {
+            setSelectedFighter(null)
+            if (searchParams.has('fighter')) setSearchParams({}, { replace: true })
+          }}
           onSelectFighter={setSelectedFighter}
         />
       ) : null}
@@ -279,16 +285,130 @@ export function Fighters() {
   )
 }
 
-function ActiveTabButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function ActiveTabButton({
+  active,
+  onClick,
+  count,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  count: number
+  children: React.ReactNode
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition ${
-        active ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#999999] hover:text-white'
+      aria-pressed={active}
+      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
+        active
+          ? 'bg-[#E50914]/14 text-[#E50914] shadow-[inset_0_0_0_1px_rgba(229,9,20,0.45)]'
+          : 'text-[#999999] hover:text-white'
       }`}
     >
       {children}
+      <CountPill active={active}>{count}</CountPill>
+    </button>
+  )
+}
+
+function CountPill({ active, children }: { active: boolean; children: React.ReactNode }) {
+  return (
+    <span
+      className={`inline-flex min-w-[1.6em] items-center justify-center rounded-full px-1.5 py-px text-[10px] font-bold tabular-nums tracking-normal ${
+        active ? 'bg-[#E50914]/20 text-[#E50914]' : 'bg-white/8 text-[#999999]'
+      }`}
+    >
+      {children}
+    </span>
+  )
+}
+
+/** Single-line weight class chips: men | women | other, horizontal scroll with edge fades that appear only when there is more to see. */
+function WeightClassBar({
+  groups,
+  counts,
+  activeKey,
+  onSelect,
+}: {
+  groups: DivisionGroup[]
+  counts: Map<string, FighterProfile[]>
+  activeKey: string
+  onSelect: (key: string) => void
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [edges, setEdges] = useState({ left: false, right: false })
+
+  const updateEdges = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const left = el.scrollLeft > 4
+    const right = el.scrollLeft + el.clientWidth < el.scrollWidth - 4
+    setEdges((prev) => (prev.left === left && prev.right === right ? prev : { left, right }))
+  }, [])
+
+  useEffect(() => {
+    updateEdges()
+    window.addEventListener('resize', updateEdges)
+    return () => window.removeEventListener('resize', updateEdges)
+  }, [updateEdges])
+
+  // Keep the selected chip in view (e.g. after the list re-renders on narrow screens).
+  useEffect(() => {
+    const chip = scrollRef.current?.querySelector<HTMLElement>('[aria-pressed="true"]')
+    chip?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
+  }, [activeKey])
+
+  const scrollByStep = (direction: 1 | -1) =>
+    scrollRef.current?.scrollBy({ left: direction * 250, behavior: 'smooth' })
+
+  const fade = 44
+  const mask = `linear-gradient(to right, ${edges.left ? 'transparent' : '#000'} 0, #000 ${fade}px, #000 calc(100% - ${fade}px), ${edges.right ? 'transparent' : '#000'} 100%)`
+  const sectionOf = (key: string) => (key === 'open-class' ? 2 : key.startsWith('w-') ? 1 : 0)
+
+  return (
+    <nav aria-label="Weight class filter" className="relative rounded-xl border border-white/8 bg-black/20 py-1.5">
+      <ScrollArrow direction="left" visible={edges.left} onClick={() => scrollByStep(-1)} />
+      <ScrollArrow direction="right" visible={edges.right} onClick={() => scrollByStep(1)} />
+      <div
+        ref={scrollRef}
+        onScroll={updateEdges}
+        className="chip-scroll flex items-center gap-1.5 overflow-x-auto whitespace-nowrap px-1.5"
+        style={{ maskImage: mask, WebkitMaskImage: mask }}
+      >
+        {groups.map((group, index) => (
+          <div key={group.key} className="flex shrink-0 items-center gap-1.5">
+            {index > 0 && sectionOf(group.key) !== sectionOf(groups[index - 1].key) ? (
+              <span aria-hidden="true" className="mx-1 h-4 w-px shrink-0 bg-white/14" />
+            ) : null}
+            <DivisionPill
+              group={group}
+              count={counts.get(group.key)?.length ?? 0}
+              isActive={activeKey === group.key}
+              onClick={() => onSelect(group.key)}
+            />
+          </div>
+        ))}
+      </div>
+    </nav>
+  )
+}
+
+function ScrollArrow({ direction, visible, onClick }: { direction: 'left' | 'right'; visible: boolean; onClick: () => void }) {
+  const Icon = direction === 'left' ? ChevronLeft : ChevronRight
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!visible}
+      tabIndex={visible ? 0 : -1}
+      aria-label={direction === 'left' ? 'Scroll weight classes left' : 'Scroll weight classes right'}
+      className={`absolute top-1/2 z-10 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-neutral-900/80 text-[#CCCCCC] backdrop-blur-sm transition hover:text-[#FF1E27] focus-visible:text-[#FF1E27] focus-visible:outline-none ${
+        direction === 'left' ? 'left-1' : 'right-1'
+      } ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+    >
+      <Icon className="h-4 w-4" />
     </button>
   )
 }
@@ -329,7 +449,7 @@ function DivisionPanel({
             </p>
           </div>
         </div>
-        <span className={`w-fit rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.border} ${styles.bg} ${styles.text}`}>
+        <span className={`type-tech w-fit rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.border} ${styles.bg} ${styles.text}`}>
           {group.shortLabel}
         </span>
       </div>
@@ -350,7 +470,7 @@ function DivisionPanel({
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-white/12 bg-white/[0.03] px-4 py-7 text-center">
-            <p className="text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
+            <p className="type-display text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
               No athletes in this division
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#999999]">
@@ -374,37 +494,21 @@ function DivisionPill({
   isActive: boolean
   onClick: () => void
 }) {
-  const styles = toneStyles[group.tone]
-
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={isActive}
       className={[
-        'relative shrink-0 whitespace-nowrap rounded-full border px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] transition duration-200 md:px-3.5 md:py-2 md:text-sm',
+        'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition duration-200 md:px-3 md:text-xs',
         isActive
-          ? `${styles.border} ${styles.bg} ${styles.text} ${styles.glow}`
-          : 'border-transparent text-[#999999] hover:bg-white/[0.06] hover:text-white',
+          ? 'border-[#E50914]/60 bg-[#E50914]/10 text-[#E50914] shadow-[0_0_14px_rgba(229,9,20,0.22)]'
+          : 'border-white/8 bg-white/[0.03] text-[#999999] hover:border-white/16 hover:text-white',
       ].join(' ')}
     >
       <span className="hidden sm:inline">{group.label}</span>
       <span className="sm:hidden">{group.shortLabel}</span>
-      <span
-        className={[
-          'ml-1.5 inline-flex min-w-[1.4em] items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-bold',
-          isActive ? 'bg-black/25' : 'bg-white/8',
-        ].join(' ')}
-      >
-        {count}
-      </span>
-      {isActive ? (
-        <motion.span
-          layoutId="division-pill-indicator"
-          className={`absolute inset-x-2 -bottom-1 h-0.5 rounded-full ${styles.bar}`}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
-        />
-      ) : null}
+      <CountPill active={isActive}>{count}</CountPill>
     </button>
   )
 }
@@ -439,16 +543,11 @@ function FighterDivisionCard({
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <p className={`broadcast-label text-[10px] ${styles.text}`}>{fighter.division ?? group.shortLabel}</p>
-                <h3 className="mt-1 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[#FFFFFF]">
-                  {fighter.name}
+                <h3 className="mt-1 inline-flex max-w-full items-center gap-1.5 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[#FFFFFF]">
+                  <span className="min-w-0">{fighter.name}</span>
+                  {fighter.belt ? <ChampionBelt /> : null}
                 </h3>
               </div>
-              {fighter.belt ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[#E81B23]/25 bg-[#E81B23]/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-[#E81B23]">
-                  <Trophy className="h-3 w-3" />
-                  Champ
-                </span>
-              ) : null}
             </div>
 
             <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#999999]">
@@ -480,7 +579,7 @@ function FighterDivisionCard({
               target="_blank"
               rel="noreferrer"
               onClick={(event) => event.stopPropagation()}
-              className="ghost-action inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#E81B23]"
+              className="ghost-action inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#D32F2F]"
             >
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
@@ -512,7 +611,7 @@ function FighterPortrait({
     .toUpperCase()
   const toneClass =
     tone === 'red'
-      ? 'from-[#E81B23]/34 to-[var(--avatar-bg)]'
+      ? 'from-[#D32F2F]/34 to-[var(--avatar-bg)]'
       : tone === 'blue'
         ? 'from-[#2F5FA8]/34 to-[var(--avatar-bg)]'
         : 'from-white/12 to-[var(--avatar-bg)]'
@@ -539,7 +638,7 @@ function FighterPortrait({
           <div className="absolute left-1/2 top-4 h-7 w-7 -translate-x-1/2 rounded-full bg-white/16" />
           <div className="absolute left-1/2 top-10 h-12 w-11 -translate-x-1/2 rounded-t-[24px] bg-white/12" />
           <div className="absolute inset-0 grid place-items-center">
-            <span className="text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{initials}</span>
+            <span className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{initials}</span>
           </div>
         </>
       ) : null}
@@ -560,9 +659,9 @@ function MiniStat({
     <div className="metric-tile rounded-xl px-2.5 py-2">
       <div className="flex items-center gap-1.5 text-[#999999]">
         {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
-        <span className="text-[10px] uppercase tracking-[0.14em]">{label}</span>
+        <span className="type-tech text-[10px] uppercase tracking-[0.14em]">{label}</span>
       </div>
-      <p className="mt-1 truncate text-xs font-semibold text-[#FFFFFF]">{value}</p>
+      <p className="type-num mt-1 truncate text-xs font-semibold text-[#FFFFFF]">{value}</p>
     </div>
   )
 }
@@ -699,7 +798,7 @@ function FighterProfileModal({
               <LoadingSkeleton className="h-[140px]" />
             </div>
           ) : error ? (
-            <p className="rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+            <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
           ) : performance ? (
             <div className="space-y-3">
               <div className="grid grid-cols-3 gap-2">
@@ -737,11 +836,11 @@ function FighterProfileModal({
                           <span className="w-24 shrink-0 text-xs text-[#999999]">{METHOD_LABELS[method] ?? method}</span>
                           <div className="progress-track h-2 flex-1 overflow-hidden rounded-full">
                             <div
-                              className="h-full rounded-full bg-[#E81B23]"
+                              className="h-full rounded-full bg-[#D32F2F]"
                               style={{ width: `${(count / performance.wins) * 100}%` }}
                             />
                           </div>
-                          <span className="w-5 shrink-0 text-right text-xs font-semibold text-[#FFFFFF]">{count}</span>
+                          <span className="type-num w-5 shrink-0 text-right text-xs font-semibold text-[#FFFFFF]">{count}</span>
                         </div>
                       ))}
                   </div>
@@ -781,7 +880,7 @@ function FighterProfileModal({
           ) : similarFighters.length > 0 ? (
             <div className="metric-tile mt-3 rounded-2xl p-3">
               <div className="mb-1.5 flex items-center gap-1.5 text-[#999999]">
-                <Sparkles className="h-3.5 w-3.5 text-[#E81B23]" />
+                <Sparkles className="h-3.5 w-3.5 text-[#D32F2F]" />
                 <p className="broadcast-label text-[10px]">Similar fighters</p>
               </div>
               <div className="grid gap-1.5">
@@ -795,7 +894,7 @@ function FighterProfileModal({
                     <span className="broadcast-label w-4 shrink-0 text-[10px] text-[#666666]">{index + 1}</span>
                     <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{fighter.name}</span>
                     {fighter.division ? (
-                      <span className="hidden shrink-0 text-[10px] uppercase tracking-[0.1em] text-[#999999] sm:inline">
+                      <span className="type-tech hidden shrink-0 text-[10px] uppercase tracking-[0.1em] text-[#999999] sm:inline">
                         {fighter.division}
                       </span>
                     ) : null}
@@ -803,7 +902,7 @@ function FighterProfileModal({
                       {fighter.wins}-{fighter.losses}
                       {fighter.draws ? `-${fighter.draws}` : ''}
                     </span>
-                    <span className="shrink-0 rounded-full border border-[#E81B23]/25 bg-[#E81B23]/10 px-2 py-0.5 text-xs font-bold text-[#E81B23]">
+                    <span className="shrink-0 rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-2 py-0.5 text-xs font-bold text-[#D32F2F]">
                       {Math.round(fighter.similarity * 100)}%
                     </span>
                   </button>
@@ -853,7 +952,7 @@ function CareerTimeline({ fights }: { fights: FightRecord[] | undefined }) {
                   title={`${fight.opponent} — ${fight.date ?? 'Date unknown'}`}
                   className={`grid h-5 w-5 place-items-center rounded-full border text-[9px] font-bold ${
                     isWin
-                      ? 'border-[#E81B23] bg-[#E81B23] text-white'
+                      ? 'border-[#D32F2F] bg-[#D32F2F] text-white'
                       : isLoss
                         ? 'border-white/25 bg-[#1a1a1a] text-[#999999]'
                         : 'border-white/15 bg-[#1a1a1a] text-[#666666]'
@@ -870,7 +969,7 @@ function CareerTimeline({ fights }: { fights: FightRecord[] | undefined }) {
   )
 }
 
-const ROUND_COLORS = ['#E81B23', '#2F5FA8', '#CCCCCC', '#9c7a25', '#666666']
+const ROUND_COLORS = ['#D32F2F', '#2F5FA8', '#CCCCCC', '#9c7a25', '#666666']
 
 const chartTooltipStyle = {
   background: '#141414',
@@ -930,7 +1029,7 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
                 contentStyle={chartTooltipStyle}
                 formatter={(value, name) => [`${Number(value ?? 0)}%`, String(name ?? '')]}
               />
-              <Line type="monotone" dataKey="winRate" name="Win rate" stroke="#E81B23" strokeWidth={2} dot={{ r: 3 }} connectNulls />
+              <Line type="monotone" dataKey="winRate" name="Win rate" stroke="#D32F2F" strokeWidth={2} dot={{ r: 3 }} connectNulls />
               <Line
                 type="monotone"
                 dataKey="finishRate"
@@ -945,7 +1044,7 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
         </div>
         <div className="mt-1 flex items-center gap-3 text-[10px] text-[#999999]">
           <span className="inline-flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#E81B23]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#D32F2F]" />
             Win rate
           </span>
           <span className="inline-flex items-center gap-1">
@@ -1021,20 +1120,20 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
 function ResultBadge({ result }: { result: 'win' | 'loss' | null }) {
   if (result === 'win') {
     return (
-      <span className="rounded-full border border-[#E81B23]/25 bg-[#E81B23]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#E81B23]">
+      <span className="type-tech rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#D32F2F]">
         Win
       </span>
     )
   }
   if (result === 'loss') {
     return (
-      <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+      <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
         Loss
       </span>
     )
   }
   return (
-    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
       NC
     </span>
   )

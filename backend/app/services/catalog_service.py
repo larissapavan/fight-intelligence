@@ -11,12 +11,13 @@ logger = logging.getLogger(__name__)
 
 from src.ufc_predictor.config import BASE_DIR, RAW_DATA_DIR
 
-
 FIGHTERS_SOURCE_PATH = RAW_DATA_DIR / "fighters.csv"
 FIGHTS_SOURCE_PATH = RAW_DATA_DIR / "fights.csv"
 CAREER_STATS_SOURCE_PATH = RAW_DATA_DIR / "fighter_career_stats.csv"
 HISTORICAL_PHOTOS_SOURCE_PATH = BASE_DIR / "lutadores_historicos.csv"
 HISTORICAL_PHOTOS_URL_PREFIX = "/fighter-photos/"
+PHOTOS_MANIFEST_PATH = RAW_DATA_DIR / "fighter_photos.csv"
+PHOTO_KIND_PRIORITY = {"espn": 1, "champion": 2}
 
 VALID_STANCES = {"Orthodox", "Southpaw", "Switch", "Open Stance", "Unknown"}
 
@@ -44,6 +45,11 @@ def _build_catalog() -> pd.DataFrame:
         {"yes", "true", "1", "belt", "champion"}
     )
     fighters_df["fighter_url"] = fighters_df["fighter_url"].astype(str).str.strip().replace("", pd.NA)
+
+    champion_urls, champion_keys = _current_champion_identifiers()
+    fighters_df["belt"] = (
+        fighters_df["belt"] | fighters_df["fighter_url"].isin(champion_urls) | fighters_df["profile_key"].isin(champion_keys)
+    )
 
     career_stats = _load_career_stats()
     fighters_df = fighters_df.merge(career_stats, on="fighter_url", how="left", suffixes=("", "_live"))
@@ -73,6 +79,20 @@ def _build_catalog() -> pd.DataFrame:
     return catalog.sort_values("name").drop_duplicates(subset=["profile_key"], keep="last").reset_index(drop=True)
 
 
+def _current_champion_identifiers() -> tuple[set[str], set[str]]:
+    """fighter_url / profile_key of today's undisputed champions (title_reigns.csv is the source of truth;
+    fighters.csv has no usable belt column). Interim titles don't count as 'the champion'."""
+    from .champions_service import _load_reigns_df
+
+    reigns = _load_reigns_df()
+    if reigns.empty:
+        return set(), set()
+    current = reigns[reigns["is_current"] & reigns["title_type"].eq("undisputed")]
+    urls = {str(url).strip() for url in current["fighter_url"].dropna() if str(url).strip()}
+    keys = {_normalize_name(name) for name in current["champion"].dropna()}
+    return urls, keys
+
+
 CAREER_STATS_COLUMNS = [
     "fighter_url",
     "age",
@@ -91,21 +111,30 @@ CAREER_STATS_COLUMNS = [
 
 
 def _load_historical_photos() -> pd.DataFrame:
-    """Local headshots recovered for fighters missing from the live Octagon API (retired/historical roster)."""
+    """Local fighter photos: the historical set, ESPN headshots and current-champion belt photos (later wins)."""
     empty = pd.DataFrame(columns=["profile_key", "historical_image_url"])
-    if not HISTORICAL_PHOTOS_SOURCE_PATH.exists():
+    frames = []
+    for path, default_priority in ((HISTORICAL_PHOTOS_SOURCE_PATH, 0), (PHOTOS_MANIFEST_PATH, 1)):
+        if not path.exists():
+            continue
+        photos_df = pd.read_csv(path, keep_default_na=False)
+        photos_df = photos_df[photos_df["local_path"].astype(str).str.strip().ne("")].copy()
+        if photos_df.empty:
+            continue
+        # fighter_photos.csv stores the web path (with a cache-busting version); in the historical CSV
+        # image_url is the original source URL, so there the path is derived from the local file name.
+        stored = photos_df["image_url"] if path == PHOTOS_MANIFEST_PATH else ["" for _ in range(len(photos_df))]
+        photos_df["historical_image_url"] = [
+            url or HISTORICAL_PHOTOS_URL_PREFIX + Path(str(local)).name for url, local in zip(stored, photos_df["local_path"])
+        ]
+        kinds = photos_df["kind"] if "kind" in photos_df.columns else ["" for _ in range(len(photos_df))]
+        photos_df["priority"] = [PHOTO_KIND_PRIORITY.get(kind, default_priority) for kind in kinds]
+        photos_df["profile_key"] = photos_df["name"].apply(_normalize_name)
+        frames.append(photos_df[["profile_key", "historical_image_url", "priority"]])
+    if not frames:
         return empty
-
-    photos_df = pd.read_csv(HISTORICAL_PHOTOS_SOURCE_PATH)
-    photos_df = photos_df[photos_df["local_path"].astype(str).str.strip().ne("")].copy()
-    if photos_df.empty:
-        return empty
-
-    photos_df["profile_key"] = photos_df["name"].apply(_normalize_name)
-    photos_df["historical_image_url"] = photos_df["local_path"].apply(
-        lambda path: HISTORICAL_PHOTOS_URL_PREFIX + Path(str(path)).name
-    )
-    return photos_df[["profile_key", "historical_image_url"]].drop_duplicates(subset=["profile_key"])
+    photos = pd.concat(frames, ignore_index=True).sort_values("priority", kind="stable")
+    return photos.drop_duplicates(subset=["profile_key"], keep="last")[["profile_key", "historical_image_url"]]
 
 
 def _load_career_stats() -> pd.DataFrame:
@@ -180,7 +209,13 @@ _catalog_cache: dict = {"signature": None, "data": None}
 
 
 def _source_signature() -> tuple:
-    paths = [FIGHTERS_SOURCE_PATH, FIGHTS_SOURCE_PATH, CAREER_STATS_SOURCE_PATH, HISTORICAL_PHOTOS_SOURCE_PATH]
+    paths = [
+        FIGHTERS_SOURCE_PATH,
+        FIGHTS_SOURCE_PATH,
+        CAREER_STATS_SOURCE_PATH,
+        HISTORICAL_PHOTOS_SOURCE_PATH,
+        PHOTOS_MANIFEST_PATH,
+    ]
     return tuple(path.stat().st_mtime_ns if path.exists() else None for path in paths)
 
 
@@ -205,8 +240,18 @@ def get_fighter_catalog() -> pd.DataFrame:
 def get_total_fights_tracked() -> int:
     if not FIGHTS_SOURCE_PATH.exists():
         return 0
-    fights_df = pd.read_csv(FIGHTS_SOURCE_PATH, usecols=["fight_url"])
-    return int(fights_df["fight_url"].dropna().nunique())
+    fights_df = pd.read_csv(FIGHTS_SOURCE_PATH, usecols=["fight_url", "fighter_1"])
+    without_url = fights_df["fight_url"].isna() & fights_df["fighter_1"].notna()
+    return int(fights_df["fight_url"].dropna().nunique() + without_url.sum())
+
+
+def get_latest_fight_date() -> str | None:
+    """ISO date of the most recent fight in the dataset (shows how fresh the data is)."""
+    if not FIGHTS_SOURCE_PATH.exists():
+        return None
+    dates = pd.to_datetime(pd.read_csv(FIGHTS_SOURCE_PATH, usecols=["event_date"])["event_date"], errors="coerce")
+    latest = dates.max()
+    return None if pd.isna(latest) else latest.date().isoformat()
 
 
 def list_fighters() -> list[dict]:

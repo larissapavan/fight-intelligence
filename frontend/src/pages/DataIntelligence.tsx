@@ -25,7 +25,7 @@ export function DataIntelligence() {
         />
       </section>
 
-      {error ? <p className="rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       {loading || !dataInfo ? (
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -90,7 +90,7 @@ const PIPELINE_TONE_CLASSES: Record<string, string> = {
   default: 'border-white/10 bg-white/[0.03] text-[#FFFFFF]',
   source: 'border-[#2F5FA8]/25 bg-[#2F5FA8]/10 text-[#8FB3E8]',
   highlight: 'border-white/18 bg-white/[0.06] text-[#FFFFFF]',
-  accent: 'border-[#E81B23]/30 bg-[#E81B23]/10 text-[#FF6B6B]',
+  accent: 'border-[#D32F2F]/30 bg-[#D32F2F]/10 text-[#FF6B6B]',
 }
 
 function PipelineNode({
@@ -104,7 +104,7 @@ function PipelineNode({
 }) {
   return (
     <div className={`w-full max-w-sm rounded-2xl border px-4 py-2.5 text-center ${PIPELINE_TONE_CLASSES[tone]}`}>
-      <p className="text-sm font-bold uppercase tracking-[0.06em]">{label}</p>
+      <p className="type-display text-sm font-bold uppercase tracking-[0.06em]">{label}</p>
       {description ? <p className="mt-1 text-[11px] leading-4 text-[#999999]">{description}</p> : null}
     </div>
   )

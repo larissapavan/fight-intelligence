@@ -4,7 +4,6 @@ import pandas as pd
 
 from .config import DATE_COLUMN
 
-
 BASE_NUMERIC_PAIRS = [
     ("age", "red_age", "blue_age"),
     ("height_cm", "red_height_cm", "blue_height_cm"),

@@ -1,0 +1,49 @@
+name: Update data
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # daily, 07:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Refresh ESPN data and UFC rankings
+        # Photos are skipped: they write binary files that should be reviewed, not auto-committed.
+        run: python -m scripts.update_all --skip-photos
+
+      - name: Validate refreshed data
+        run: python -m scripts.validate_data
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Commit and push changes
+        run: |
+          if git diff --quiet -- data/raw; then
+            echo "No data changes."
+            exit 0
+          fi
+          git config user.name "fight-intelligence-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/raw
+          git commit -m "chore(data): daily refresh $(date -u +%F)"
+          git push

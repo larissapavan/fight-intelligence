@@ -6,7 +6,6 @@ from backend.app.schemas.similarity import SimilarFighter
 from backend.app.services.catalog_service import get_fighter_profile, list_fighters
 from backend.app.services.similarity_service import get_similar_fighters
 
-
 router = APIRouter(tags=["fighters"])
 
 

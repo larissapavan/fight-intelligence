@@ -34,8 +34,11 @@ def _build_events(source_path, *, ascending: bool) -> list[dict]:
     if df.empty:
         return []
 
+    # Events added without a ufcstats URL (announced cards taken from other sources) are grouped by name.
+    df["_group_key"] = df["event_url"].fillna(df["event_name"])
+
     events: list[dict] = []
-    for event_url, group in df.groupby("event_url", sort=False):
+    for _, group in df.groupby("_group_key", sort=False):
         first = group.iloc[0]
         date_parsed = first["event_date_parsed"]
         events.append(
@@ -44,9 +47,9 @@ def _build_events(source_path, *, ascending: bool) -> list[dict]:
                 "date": date_parsed.date().isoformat() if pd.notna(date_parsed) else None,
                 "_sort_date": date_parsed if pd.notna(date_parsed) else pd.Timestamp.min,
                 "location": _nullable_string(first.get("location")),
-                "fight_count": int(group["fight_url"].notna().sum()),
-                "fights": [_format_fight(row) for _, row in group.iterrows() if pd.notna(row.get("fight_url"))],
-                "event_url": _nullable_string(event_url),
+                "fight_count": int(group["fighter_1"].notna().sum()),
+                "fights": [_format_fight(row) for _, row in group.iterrows() if pd.notna(row.get("fighter_1"))],
+                "event_url": _nullable_string(first.get("event_url")),
             }
         )
 

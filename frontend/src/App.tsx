@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import { LoadingSkeleton } from './shared/components/LoadingSkeleton'
+import { TabbedLayout, type SectionTab } from './shared/components/TabbedLayout'
 import { ErrorBoundary } from './shared/components/ErrorBoundary'
 import { MainLayout } from './layouts/MainLayout'
 import { NotFound } from './pages/NotFound'
@@ -14,6 +15,7 @@ const Rankings = lazy(() => import('./pages/Rankings').then((module) => ({ defau
 const Champions = lazy(() => import('./pages/Champions').then((module) => ({ default: module.Champions })))
 const HeadToHead = lazy(() => import('./pages/HeadToHead').then((module) => ({ default: module.HeadToHead })))
 const Model = lazy(() => import('./pages/Model').then((module) => ({ default: module.Model })))
+const About = lazy(() => import('./pages/About').then((module) => ({ default: module.About })))
 const AboutModel = lazy(() => import('./pages/AboutModel').then((module) => ({ default: module.AboutModel })))
 const DataIntelligence = lazy(() =>
   import('./pages/DataIntelligence').then((module) => ({ default: module.DataIntelligence })),
@@ -21,6 +23,18 @@ const DataIntelligence = lazy(() =>
 const MatchupIntelligence = lazy(() =>
   import('./pages/MatchupIntelligence').then((module) => ({ default: module.MatchupIntelligence })),
 )
+
+const matchupTabs: SectionTab[] = [
+  { to: '/predictor', label: 'Predict' },
+  { to: '/head-to-head', label: 'Head-to-Head' },
+  { to: '/matchup-intelligence', label: 'Matchup' },
+]
+
+const aboutTabs: SectionTab[] = [
+  { to: '/about', label: 'About' },
+  { to: '/data', label: 'Data' },
+  { to: '/model', label: 'System' },
+]
 
 function App() {
   return (
@@ -30,16 +44,21 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/predictor" element={<Predictor />} />
+            <Route element={<TabbedLayout label="Matchup tools" tabs={matchupTabs} />}>
+              <Route path="/predictor" element={<Predictor />} />
+              <Route path="/head-to-head" element={<HeadToHead />} />
+              <Route path="/matchup-intelligence" element={<MatchupIntelligence />} />
+            </Route>
             <Route path="/fighters" element={<Fighters />} />
             <Route path="/events" element={<Events />} />
             <Route path="/rankings" element={<Rankings />} />
             <Route path="/champions" element={<Champions />} />
-            <Route path="/head-to-head" element={<HeadToHead />} />
-            <Route path="/matchup-intelligence" element={<MatchupIntelligence />} />
-            <Route path="/model" element={<Model />} />
-            <Route path="/data" element={<DataIntelligence />} />
-            <Route path="/about" element={<AboutModel />} />
+            <Route element={<TabbedLayout label="About this project" tabs={aboutTabs} />}>
+              <Route path="/about" element={<About />} />
+              <Route path="/data" element={<DataIntelligence />} />
+              <Route path="/model" element={<Model />} />
+            </Route>
+            <Route path="/about-model" element={<AboutModel />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

@@ -1,8 +1,11 @@
 import { useMemo, useState } from 'react'
 import { ArrowDown, ArrowUp, Crown, Sparkles, Trophy } from 'lucide-react'
 
+import { FighterAvatar } from '../shared/components/FighterAvatar'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../shared/hooks/useFighterImages'
+import { useFighters } from '../shared/hooks/useFighters'
 import { useRankings } from '../shared/hooks/useRankings'
 import type { RankingCategory, RankingEntry } from '../shared/types/api'
 
@@ -41,7 +44,7 @@ export function Rankings() {
       </section>
 
       {error ? (
-        <p className="rounded-xl border border-[#E81B23]/25 bg-[#E81B23]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+        <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
       ) : null}
 
       {loading ? (
@@ -138,10 +141,10 @@ function P4pView({
             type="button"
             onClick={() => onSelect(category.category)}
             className={`ghost-action inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] ${
-              category.category === active.category ? 'ring-1 ring-[#E81B23]/45' : ''
+              category.category === active.category ? 'ring-1 ring-[#D32F2F]/45' : ''
             }`}
           >
-            <Sparkles className="h-3.5 w-3.5 text-[#E81B23]" />
+            <Sparkles className="h-3.5 w-3.5 text-[#D32F2F]" />
             {category.category.replace('Pound-for-Pound ', '')}
           </button>
         ))}
@@ -153,14 +156,21 @@ function P4pView({
 }
 
 function RankingList({ entries }: { entries: RankingEntry[] }) {
+  const { fighters } = useFighters()
+  const { imageByName } = useFighterImages()
+  const imageUrlFor = useMemo(() => {
+    const profileByName = new Map(fighters.map((fighter) => [normalizeFighterName(fighter.name), fighter]))
+    return (name: string) => getFighterImageUrl(name, imageByName, profileByName.get(normalizeFighterName(name))?.image_url)
+  }, [fighters, imageByName])
+
   const champion = entries.find((entry) => entry.rank === 0)
   const contenders = entries.filter((entry) => entry.rank > 0)
 
   return (
     <div className="grid gap-2">
-      {champion ? <RankingRow entry={champion} isChampion /> : null}
+      {champion ? <RankingRow entry={champion} imageUrl={imageUrlFor(champion.fighter)} isChampion /> : null}
       {contenders.map((entry) => (
-        <RankingRow key={entry.fighter} entry={entry} />
+        <RankingRow key={entry.fighter} entry={entry} imageUrl={imageUrlFor(entry.fighter)} />
       ))}
       {!champion && contenders.length === 0 ? (
         <div className="surface-card rounded-[18px] px-4 py-6 text-center text-sm text-[#999999]">
@@ -171,22 +181,24 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
   )
 }
 
-function RankingRow({ entry, isChampion = false }: { entry: RankingEntry; isChampion?: boolean }) {
+function RankingRow({ entry, imageUrl, isChampion = false }: { entry: RankingEntry; imageUrl: string | null; isChampion?: boolean }) {
   return (
     <article className="metric-tile flex items-center gap-3 rounded-2xl px-3 py-2.5">
       <span
         className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl text-sm font-bold ${
-          isChampion ? 'bg-[#E81B23]/12 text-[#E81B23]' : 'bg-white/[0.05] text-[#999999]'
+          isChampion ? 'bg-[#D32F2F]/12 text-[#D32F2F]' : 'bg-white/[0.05] text-[#999999]'
         }`}
       >
         {isChampion ? <Crown className="h-4 w-4" /> : entry.rank}
       </span>
 
+      <FighterAvatar name={entry.fighter} imageUrl={imageUrl} highlight={isChampion} className="h-11 w-11" />
+
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</p>
         <div className="theme-muted mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px]">
           {isChampion ? (
-            <span className="inline-flex items-center gap-1 text-[#E81B23]">
+            <span className="inline-flex items-center gap-1 text-[#D32F2F]">
               <Trophy className="h-3 w-3" /> Champion
             </span>
           ) : null}
@@ -213,14 +225,14 @@ function RankChangeBadge({ change }: { change: string | null }) {
 
   if (change === 'down') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-[#E81B23]/20 bg-[#E81B23]/10 px-2 py-0.5 text-[10px] font-semibold text-[#E81B23]">
+      <span className="inline-flex items-center gap-1 rounded-full border border-[#D32F2F]/20 bg-[#D32F2F]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D32F2F]">
         <ArrowDown className="h-3 w-3" />
       </span>
     )
   }
 
   return (
-    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-[#999999]">
+    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-[#999999]">
       {change}
     </span>
   )
