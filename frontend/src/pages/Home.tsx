@@ -3,13 +3,20 @@ import { ArrowRight, Award, CalendarDays, CircleDot, ListOrdered, ShieldAlert, S
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { FighterAvatar } from '../shared/components/FighterAvatar'
+import { FighterBadges, FlagList, TitleFightBadge } from '../shared/components/FighterBadges'
+import { LatestNewsCard } from '../shared/components/LatestNewsCard'
+import { PickChip } from '../shared/components/PickChip'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { usePrediction } from '../shared/hooks/usePrediction'
+import { getFighterImageUrl, useFighterImages } from '../shared/hooks/useFighterImages'
+import { useFighterLookup } from '../shared/hooks/useFighterLookup'
 import { useRankings } from '../shared/hooks/useRankings'
+import { useUpcomingPicks } from '../shared/hooks/useUpcomingPicks'
 import { useUpcomingEvents } from '../shared/hooks/useUpcomingEvents'
 import { getFighterPerformance } from '../shared/services/api'
-import type { EventSummary, FighterPerformance, FightResult } from '../shared/types/api'
+import type { EventSummary, FighterPerformance, FightResult, UpcomingPick } from '../shared/types/api'
 
 type Trend = { streak: number; finishRate: number | null }
 
@@ -52,8 +59,8 @@ export function Home() {
   return (
     <div className="space-y-3 sm:space-y-4">
       {systemError ? (
-        <p className="flex items-center gap-2 rounded-xl border border-[#D32F2F]/20 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">
-          <ShieldAlert className="h-4 w-4 shrink-0 text-[#FF6B6B]" />
+        <p className="flex items-center gap-2 rounded-xl border border-[#C8102E]/20 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+          <ShieldAlert className="h-4 w-4 shrink-0 text-[var(--accent-red)]" />
           {systemError}
         </p>
       ) : null}
@@ -103,6 +110,8 @@ export function Home() {
       </section>
 
       <FullCardSection nextEvent={nextEvent} />
+
+      <LatestNewsCard />
     </div>
   )
 }
@@ -180,12 +189,15 @@ function MainEventCard({
       </div>
 
       <div className="mt-3 rounded-2xl border border-white/8 bg-black/18 p-3">
-        <p className="broadcast-label text-[10px] text-[#D32F2F]">Main event</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="broadcast-label text-[10px] text-[#C8102E]">Main event</p>
+          <TitleFightBadge fight={mainEvent} />
+        </div>
 
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-          <p className="type-display truncate text-right text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_1}</p>
+          <MainEventName name={mainEvent.fighter_1} align="right" />
           <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] font-bold text-[#999999]">VS</span>
-          <p className="type-display truncate text-left text-sm font-bold uppercase text-[#FFFFFF] sm:text-base">{mainEvent.fighter_2}</p>
+          <MainEventName name={mainEvent.fighter_2} align="left" />
         </div>
         {mainEvent.weight_class ? (
           <p className="type-tech mt-1 text-center text-[10px] uppercase tracking-[0.12em] text-[#999999]">{mainEvent.weight_class}</p>
@@ -198,11 +210,11 @@ function MainEventCard({
         ) : probabilityA != null && probabilityB != null ? (
           <div className="mt-3">
             <div className="flex items-center justify-between text-sm font-bold">
-              <span className={winnerIsA ? 'text-[#D32F2F]' : 'text-[#FFFFFF]'}>{Math.round(probabilityA * 100)}%</span>
-              <span className={!winnerIsA ? 'text-[#8FB3E8]' : 'text-[#FFFFFF]'}>{Math.round(probabilityB * 100)}%</span>
+              <span className={winnerIsA ? 'text-[#C8102E]' : 'text-[#FFFFFF]'}>{Math.round(probabilityA * 100)}%</span>
+              <span className={!winnerIsA ? 'text-[var(--accent-blue)]' : 'text-[#FFFFFF]'}>{Math.round(probabilityB * 100)}%</span>
             </div>
             <div className="mt-1.5 flex h-2.5 overflow-hidden rounded-full bg-[#262626]">
-              <div className="h-full bg-gradient-to-r from-[#A5151C] to-[#D32F2F]" style={{ width: `${probabilityA * 100}%` }} />
+              <div className="h-full bg-gradient-to-r from-[#A5151C] to-[#C8102E]" style={{ width: `${probabilityA * 100}%` }} />
               <div className="h-full bg-gradient-to-r from-[#1c3c6e] to-[#2F5FA8]" style={{ width: `${probabilityB * 100}%` }} />
             </div>
             <p className="mt-2 text-center text-xs text-[#999999]">
@@ -223,14 +235,43 @@ function MainEventCard({
   )
 }
 
+function MainEventName({ name, align }: { name: string; align: 'left' | 'right' }) {
+  const lookup = useFighterLookup()
+  const { imageByName } = useFighterImages()
+  const fighter = lookup(name)
+  const right = align === 'right'
+
+  // Narrow screens stack the photo above the name; from `sm` up it sits beside it, facing the middle of the card.
+  return (
+    <div className={`flex min-w-0 flex-col items-center gap-2 sm:items-center sm:gap-3 ${right ? 'sm:flex-row-reverse sm:justify-start' : 'sm:flex-row'}`}>
+      <FighterAvatar
+        name={name}
+        imageUrl={getFighterImageUrl(name, imageByName, fighter?.image_url)}
+        highlight
+        className="h-20 w-[4.25rem] shrink-0 sm:h-24 sm:w-20"
+      />
+      <div className={`flex min-w-0 flex-1 flex-col gap-1 ${right ? 'items-end text-right' : 'items-start text-left'} max-sm:w-full max-sm:items-center max-sm:text-center`}>
+        <p className="type-display w-full text-sm font-bold uppercase leading-tight text-[#FFFFFF] sm:text-lg">{name}</p>
+        {fighter ? (
+          <span className={`flex flex-wrap items-center gap-1 ${right ? 'sm:justify-end' : 'sm:justify-start'} max-sm:justify-center`}>
+            <FlagList fighter={fighter} />
+            <FighterBadges badges={fighter.badges} />
+          </span>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 function FullCardSection({ nextEvent }: { nextEvent: EventSummary | null }) {
+  const pickFor = useUpcomingPicks()
   if (!nextEvent || nextEvent.fights.length <= 1) return null
 
   const restOfCard = nextEvent.fights.slice(1)
 
   return (
     <section className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#D32F2F]">
+      <div className="flex items-center gap-2 text-[#C8102E]">
         <ListOrdered className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">
           Rest of the card • {restOfCard.length} {restOfCard.length === 1 ? 'fight' : 'fights'}
@@ -238,28 +279,32 @@ function FullCardSection({ nextEvent }: { nextEvent: EventSummary | null }) {
       </div>
       <div className="mt-2.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
         {restOfCard.map((fight, index) => (
-          <FightCardRow key={index} fight={fight} />
+          <FightCardRow key={index} fight={fight} pick={pickFor(nextEvent.name, fight.fighter_1, fight.fighter_2)} />
         ))}
       </div>
     </section>
   )
 }
 
-function FightCardRow({ fight }: { fight: FightResult }) {
+function FightCardRow({ fight, pick }: { fight: FightResult; pick?: UpcomingPick }) {
   return (
     <Link
       to={`/matchup-intelligence?a=${encodeURIComponent(fight.fighter_1)}&b=${encodeURIComponent(fight.fighter_2)}`}
-      className="group flex w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2.5 transition hover:border-[#D32F2F]/25 hover:bg-white/[0.05]"
+      className="group flex w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2.5 transition hover:border-[#C8102E]/25 hover:bg-white/[0.05]"
     >
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold text-[#FFFFFF]">
           {fight.fighter_1} <span className="text-[#999999]">vs</span> {fight.fighter_2}
         </p>
-        {fight.weight_class ? (
-          <p className="type-tech mt-0.5 text-[10px] uppercase tracking-[0.1em] text-[#999999]">{fight.weight_class}</p>
-        ) : null}
+        <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+          <TitleFightBadge fight={fight} className="!px-1.5 !text-[9px]" />
+          <PickChip pick={pick} />
+          {fight.weight_class ? (
+            <p className="type-tech text-[10px] uppercase tracking-[0.1em] text-[#999999]">{fight.weight_class}</p>
+          ) : null}
+        </div>
       </div>
-      <ArrowRight className="h-4 w-4 shrink-0 text-[#666666] transition group-hover:text-[#D32F2F]" />
+      <ArrowRight className="h-4 w-4 shrink-0 text-[#666666] transition group-hover:text-[#C8102E]" />
     </Link>
   )
 }
@@ -269,7 +314,7 @@ function TrendingCard({ mainEvent, trends }: { mainEvent: FightResult | null; tr
 
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#D32F2F]">
+      <div className="flex items-center gap-2 text-[#C8102E]">
         <TrendingUp className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">Trending</p>
       </div>
@@ -289,7 +334,7 @@ function TrendRow({ name, trend }: { name: string; trend: Trend | undefined }) {
       <p className="truncate text-xs font-semibold text-[#FFFFFF]">{name}</p>
       <p className="mt-0.5 text-[11px] leading-4 text-[#999999]">
         {trend.streak > 0 ? (
-          <span className="text-[#D32F2F]">↑ {trend.streak}-fight win streak</span>
+          <span className="text-[#C8102E]">↑ {trend.streak}-fight win streak</span>
         ) : (
           <span>Coming off a loss</span>
         )}
@@ -308,10 +353,11 @@ function RankingsCard({
   loading: boolean
   error: string | null
 }) {
+  const lookup = useFighterLookup()
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-[#D32F2F]">
+        <div className="flex items-center gap-2 text-[#C8102E]">
           <Trophy className="h-4 w-4" />
           <p className="broadcast-label text-[10px]">Pound-for-pound</p>
         </div>
@@ -332,8 +378,9 @@ function RankingsCard({
         <div className="mt-2.5 space-y-1.5">
           {category.entries.slice(0, 3).map((entry) => (
             <div key={entry.rank} className="flex items-center gap-2.5 rounded-xl border border-white/6 bg-black/18 px-3 py-2">
-              <span className="data-value w-5 shrink-0 text-sm font-bold text-[#D32F2F]">{entry.rank}</span>
+              <span className="data-value w-5 shrink-0 text-sm font-bold text-[#C8102E]">{entry.rank}</span>
               <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</span>
+              {lookup(entry.fighter) ? <FighterBadges badges={lookup(entry.fighter)?.badges} /> : null}
             </div>
           ))}
         </div>
@@ -355,7 +402,7 @@ function MiniStat({
 }) {
   return (
     <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
-      <div className="flex items-center gap-2 text-[#D32F2F]">
+      <div className="flex items-center gap-2 text-[#C8102E]">
         <Icon className="h-3.5 w-3.5" />
         <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
       </div>
@@ -368,11 +415,11 @@ function StatusStat({ online, loading }: { online: boolean; loading: boolean }) 
   return (
     <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
       <div className="flex items-center gap-2">
-        <CircleDot className={`h-3.5 w-3.5 ${online ? 'fill-[#D32F2F] text-[#D32F2F] animate-pulse' : 'fill-[#999999] text-[#999999]'}`} />
+        <CircleDot className={`h-3.5 w-3.5 ${online ? 'fill-[#C8102E] text-[#C8102E] animate-pulse' : 'fill-[#999999] text-[#999999]'}`} />
         <p className="broadcast-label text-[10px] text-[#999999]">API status</p>
       </div>
       <div className="mt-1 inline-flex rounded-full border border-white/8 px-2.5 py-0.5">
-        <span className={`type-tech text-xs font-semibold uppercase tracking-[0.16em] ${loading ? 'text-[#CCCCCC]' : online ? 'text-[#D32F2F]' : 'text-[#999999]'}`}>
+        <span className={`type-tech text-xs font-semibold uppercase tracking-[0.16em] ${loading ? 'text-[#CCCCCC]' : online ? 'text-[#C8102E]' : 'text-[#999999]'}`}>
           {loading ? 'Checking...' : online ? 'Live' : 'Offline'}
         </span>
       </div>

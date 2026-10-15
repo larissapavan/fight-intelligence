@@ -27,6 +27,9 @@ def build_meta_router(get_service) -> APIRouter:
             "events": "/events",
             "rankings": "/rankings",
             "champions": "/champions",
+            "record_book": "/record-book",
+            "news": "/news",
+            "track_record": "/track-record",
             "predict": "/predict",
             "model_info": "/model-info",
             "data_info": "/data-info",
@@ -36,7 +39,7 @@ def build_meta_router(get_service) -> APIRouter:
     def health() -> HealthResponse:
         service: PredictionService | None = get_service()
         loaded = service is not None
-        fighter_count = len(list_fighters()) if loaded else 0
+        fighter_count = len(list_fighters(ufc_only=True)) if loaded else 0
         return HealthResponse(
             status="ok",
             model_loaded=loaded,

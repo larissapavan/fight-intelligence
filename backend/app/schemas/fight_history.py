@@ -11,12 +11,32 @@ class FightRecord(BaseModel):
     method_detail: str | None = None
     round: int | None = None
     time: str | None = None
+    winner: str | None = None
+    location: str | None = None
+    fight_url: str | None = None
+    referee: str | None = None
+    num_rounds: int | None = None
+    title_fight: bool | None = None
+    bmf_title: bool = False
+    outcome: str | None = None
+    result_details: str | None = None
 
 
 class CommonOpponent(BaseModel):
     opponent: str
     fighter_a_result: str | None = None
     fighter_b_result: str | None = None
+
+
+class Opponent(BaseModel):
+    name: str
+    fights: int
+    last_date: str | None = None
+
+
+class OpponentsResponse(BaseModel):
+    fighter: str
+    opponents: list[Opponent]
 
 
 class HeadToHeadResponse(BaseModel):

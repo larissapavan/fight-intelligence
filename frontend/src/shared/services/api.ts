@@ -7,6 +7,11 @@ import type {
   FighterProfile,
   HeadToHeadResponse,
   HealthInfo,
+  UpcomingPick,
+  TrackRecord,
+  NewsResponse,
+  OpponentsResponse,
+  RecordBookResponse,
   ModelInfo,
   PredictionResponse,
   RankingCategory,
@@ -23,7 +28,7 @@ const api = axios.create({
 })
 
 export const getFighters = async () => {
-  const response = await api.get<FighterProfile[]>('/fighters')
+  const response = await api.get<FighterProfile[]>('/fighters', { params: { ufc_only: true } })
   return response.data
 }
 
@@ -42,9 +47,34 @@ export const getRankings = async () => {
   return response.data
 }
 
+export const getUpcomingPicks = async () => {
+  const response = await api.get<UpcomingPick[]>('/predict/upcoming')
+  return response.data
+}
+
+export const getTrackRecord = async () => {
+  const response = await api.get<TrackRecord>('/track-record')
+  return response.data
+}
+
+export const getNews = async (limit = 6) => {
+  const response = await api.get<NewsResponse>('/news', { params: { limit } })
+  return response.data
+}
+
+export const getRecordBook = async () => {
+  const response = await api.get<RecordBookResponse>('/record-book')
+  return response.data
+}
+
 export const getChampions = async () => {
   const response = await api.get<ChampionsResponse>('/champions')
   return response.data
+}
+
+export const getOpponents = async (fighter: string) => {
+  const response = await api.get<OpponentsResponse>(`/fighters/${encodeURIComponent(fighter)}/opponents`)
+  return response.data.opponents
 }
 
 export const getHeadToHead = async (fighterA: string, fighterB: string) => {

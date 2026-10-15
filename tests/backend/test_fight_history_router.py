@@ -113,3 +113,35 @@ def test_fighter_performance_totals_are_consistent(client, two_fighter_names):
 def test_fighter_performance_unknown_fighter_returns_404(client):
     response = client.get("/fighters/Nobody Nonexistent/performance")
     assert response.status_code == 404
+
+
+def test_performance_fights_carry_the_details_needed_to_open_one(client):
+    response = client.get("/fighters/Islam Makhachev/performance")
+    assert response.status_code == 200
+    fights = response.json()["career_timeline"]
+
+    latest_title_fight = next(fight for fight in reversed(fights) if fight["title_fight"])
+    assert latest_title_fight["winner"]
+    assert latest_title_fight["referee"]
+    assert latest_title_fight["num_rounds"] == 5
+    assert latest_title_fight["fight_url"]
+    assert latest_title_fight["opponent"]
+    assert all("winner" in fight for fight in fights)
+
+
+def test_opponents_list_everyone_the_fighter_has_faced_most_recent_first(client):
+    response = client.get("/fighters/Georges St-Pierre/opponents")
+    assert response.status_code == 200
+    opponents = response.json()["opponents"]
+
+    names = [opponent["name"] for opponent in opponents]
+    assert len(names) == len(set(names))  # a rematch is one opponent met several times
+    assert names[0] == "Michael Bisping"  # his last fight
+    hughes = next(opponent for opponent in opponents if opponent["name"] == "Matt Hughes")
+    assert hughes["fights"] == 3
+    dates = [opponent["last_date"] for opponent in opponents]
+    assert dates == sorted(dates, reverse=True)
+
+
+def test_opponents_of_an_unknown_fighter_is_404(client):
+    assert client.get("/fighters/Nobody Atall/opponents").status_code == 404

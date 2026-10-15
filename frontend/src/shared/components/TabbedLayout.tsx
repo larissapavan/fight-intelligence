@@ -10,17 +10,17 @@ export function TabbedLayout({ label, tabs }: { label: string; tabs: SectionTab[
   return (
     <div className="space-y-3 sm:space-y-4">
       <nav aria-label={label} className="flex">
-        <ul className="inline-flex max-w-full overflow-x-auto rounded-full border border-white/8 bg-white/[0.035] p-0.5">
+        <ul className="inline-flex max-w-full overflow-x-auto border-2 border-[var(--rule)] bg-[var(--card-bg)]">
           {tabs.map((tab) => (
             <li key={tab.to} className="shrink-0">
               <NavLink
                 to={tab.to}
                 className={({ isActive }) =>
                   [
-                    'block rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition sm:px-4',
+                    'block px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] transition sm:px-5',
                     isActive
-                      ? 'border-[#D32F2F]/45 bg-[#D32F2F]/14 text-[#FFFFFF]'
-                      : 'border-transparent text-[#999999] hover:text-white',
+                      ? 'bg-[var(--rule)] text-[var(--card-bg)]'
+                      : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
                   ].join(' ')
                 }
               >

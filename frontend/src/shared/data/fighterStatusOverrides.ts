@@ -1,10 +1,9 @@
 import { normalizeFighterName } from '../hooks/useFighterImages'
 
 /**
- * Active vs. Retired / Released comes from the backend (`is_active`: fought in the last two years, booked on
- * an upcoming card, or ranked). "Retired / Released" means no longer on the UFC roster: the fighter may have
- * retired, been cut, or moved to another organization. That inference lags real-world changes, so confirmed
- * ones are listed here to override it.
+ * Active / Former UFC / No UFC fights comes from the backend (`ufc_status`): the fighter is active when booked,
+ * ranked, champion or recently fought and not on roster.watch's former list; former when they fought in the UFC
+ * or are on that list; otherwise "never". These manual lists only correct the cases the data lags on.
  */
 const KNOWN_ACTIVE_FIGHTERS = new Set(
   [

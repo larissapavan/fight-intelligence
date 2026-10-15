@@ -1,11 +1,12 @@
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 
 from backend.app.rate_limit import limiter
-from backend.app.schemas.fight_history import FighterPerformance, HeadToHeadResponse
+from backend.app.schemas.fight_history import FighterPerformance, HeadToHeadResponse, OpponentsResponse
 from backend.app.services.catalog_service import get_fighter_profile
 from backend.app.services.fight_history_service import (
     get_fighter_performance,
     get_head_to_head,
+    get_opponents,
 )
 
 router = APIRouter(tags=["fight-history"])
@@ -41,3 +42,15 @@ def fighter_performance(request: Request, response: Response, name: str) -> Figh
 
     response.headers["Cache-Control"] = "public, max-age=300"
     return FighterPerformance(**get_fighter_performance(name))
+
+
+@router.get("/fighters/{name}/opponents", response_model=OpponentsResponse)
+@limiter.limit("60/minute")
+def fighter_opponents(request: Request, response: Response, name: str) -> OpponentsResponse:
+    try:
+        get_fighter_profile(name)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    response.headers["Cache-Control"] = "public, max-age=300"
+    return OpponentsResponse(fighter=name, opponents=get_opponents(name))

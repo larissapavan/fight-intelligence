@@ -4,12 +4,15 @@ from collections import deque
 
 import pandas as pd
 
+from backend.app.services.bmf_service import BMF_FIGHTS_SOURCE_PATH, is_bmf_title_fight
 from backend.app.services.catalog_service import _normalize_name, get_fighter_catalog
 from src.ufc_predictor.config import RAW_DATA_DIR
 
 MAX_NETWORK_DEPTH = 6
 
 EVENT_CARDS_SOURCE_PATH = RAW_DATA_DIR / "event_cards.csv"
+FIGHT_DETAILS_SOURCE_PATH = RAW_DATA_DIR / "fight_details.csv"
+DETAIL_COLUMNS = ["referee", "num_rounds", "title_fight", "result", "result_details"]
 
 METHOD_BUCKETS = {
     "KO/TKO": "KO/TKO",
@@ -23,10 +26,12 @@ METHOD_BUCKETS = {
 _cache: dict = {"signature": None, "data": None}
 
 
-def _source_signature() -> int | None:
+def _source_signature() -> tuple | None:
     if not EVENT_CARDS_SOURCE_PATH.exists():
         return None
-    return EVENT_CARDS_SOURCE_PATH.stat().st_mtime_ns
+    details = FIGHT_DETAILS_SOURCE_PATH.stat().st_mtime_ns if FIGHT_DETAILS_SOURCE_PATH.exists() else None
+    bmf = BMF_FIGHTS_SOURCE_PATH.stat().st_mtime_ns if BMF_FIGHTS_SOURCE_PATH.exists() else None
+    return (EVENT_CARDS_SOURCE_PATH.stat().st_mtime_ns, details, bmf)
 
 
 def _load_fight_history() -> pd.DataFrame:
@@ -36,6 +41,10 @@ def _load_fight_history() -> pd.DataFrame:
             df = pd.DataFrame()
         else:
             df = pd.read_csv(EVENT_CARDS_SOURCE_PATH)
+            if FIGHT_DETAILS_SOURCE_PATH.exists():
+                details = pd.read_csv(FIGHT_DETAILS_SOURCE_PATH, keep_default_na=False)
+                details = details.drop_duplicates(subset=["fight_url"], keep="last")[["fight_url", *DETAIL_COLUMNS]]
+                df = df.merge(details.rename(columns={"result": "outcome"}), on="fight_url", how="left")
             df["event_date_parsed"] = pd.to_datetime(df["event_date"], format="%B %d, %Y", errors="coerce")
             df["key_1"] = df["fighter_1"].apply(_normalize_name)
             df["key_2"] = df["fighter_2"].apply(_normalize_name)
@@ -76,9 +85,29 @@ def get_fights_for_fighter(name: str) -> list[dict]:
                 "method_detail": _nullable(row.get("method_detail")),
                 "round": _to_int(row.get("round")),
                 "time": _nullable(row.get("time")),
+                "winner": _nullable(winner),
+                "location": _nullable(row.get("location")),
+                "fight_url": _nullable(row.get("fight_url")),
+                "referee": _nullable(row.get("referee")),
+                "num_rounds": _to_int(row.get("num_rounds")),
+                "title_fight": _to_bool(row.get("title_fight")),
+                "bmf_title": is_bmf_title_fight(_nullable(row.get("fight_url"))),
+                "outcome": _nullable(row.get("outcome")),
+                "result_details": _nullable(row.get("result_details")),
             }
         )
     return fights
+
+
+def get_opponents(name: str) -> list[dict]:
+    """Everyone the fighter has faced in the UFC, most recent opponent first, with how many times they met."""
+    fights = get_fights_for_fighter(name) or get_fights_for_fighter(name.replace(".", ""))
+    opponents: dict[str, dict] = {}
+    for fight in fights:  # most recent first, so the first sighting is the latest meeting
+        key = _normalize_name(fight["opponent"])
+        entry = opponents.setdefault(key, {"name": fight["opponent"], "fights": 0, "last_date": fight["date"]})
+        entry["fights"] += 1
+    return list(opponents.values())
 
 
 def get_head_to_head(fighter_a: str, fighter_b: str) -> dict:
@@ -307,3 +336,8 @@ def _to_int(value) -> int | None:
         return int(float(value))
     except (TypeError, ValueError):
         return None
+
+
+def _to_bool(value) -> bool | None:
+    text = _nullable(value)
+    return None if text is None else text.lower() == "true"

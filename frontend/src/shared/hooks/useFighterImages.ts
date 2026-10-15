@@ -40,6 +40,8 @@ export function normalizeFighterName(value: string) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+    // "B.J. Penn" and "BJ Penn" are the same fighter: dots join initials instead of splitting them.
+    .replace(/\./g, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
     .replace(/\s+/g, ' ')

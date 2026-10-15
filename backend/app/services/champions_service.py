@@ -60,6 +60,8 @@ def _build_champions_data() -> dict:
 
     current_champions = [_reign_to_dict(row) for row in df[df["is_current"]].to_dict(orient="records")]
     current_champions.sort(key=lambda r: r["division"])
+    for reign in current_champions:
+        reign["last_fight"] = _last_fight(reign["champion"])
 
     greatest_champions = _build_greatest_champions(df)
     records = _build_records(df, _load_fights_df())
@@ -68,6 +70,20 @@ def _build_champions_data() -> dict:
         "current_champions": current_champions,
         "greatest_champions": greatest_champions,
         "records": records,
+    }
+
+
+def _last_fight(name: str) -> dict | None:
+    """The champion's most recent UFC fight, for the champions page."""
+    from .fight_history_service import get_fights_for_fighter
+
+    fights = get_fights_for_fighter(name)
+    if not fights:
+        return None
+    latest = fights[0]
+    return {
+        "event": latest["event_name"],
+        **{key: latest[key] for key in ("date", "opponent", "result", "method", "round", "time")},
     }
 
 
@@ -271,7 +287,8 @@ def _multi_division_record(df: pd.DataFrame, fights: pd.DataFrame | None = None)
 
     rows.sort(key=lambda r: -len(r["divisions"]))
     entries = []
-    for rank, row in enumerate(rows[:TOP_N_PER_RECORD], start=1):
+    # Every multi-division champion is listed: the card shows each one's whole title history.
+    for rank, row in enumerate(rows, start=1):
         entries.append(
             {
                 "rank": rank,
@@ -281,6 +298,7 @@ def _multi_division_record(df: pd.DataFrame, fights: pd.DataFrame | None = None)
                 "value": len(row["divisions"]),
                 "detail": None,
                 "title_wins": _title_wins(row["group"], fights),
+                "title_fights": _title_fight_timeline(row["champion"], row["group"]),
             }
         )
     return {
@@ -338,6 +356,78 @@ def _title_wins(group: pd.DataFrame, fights: pd.DataFrame | None) -> list[dict]:
         )
     wins.sort(key=lambda w: w["date"] or "")
     return wins
+
+
+def _title_fight_timeline(champion: str, reigns: pd.DataFrame) -> list[dict]:
+    """Every championship bout of a fighter, oldest first: title shots, belt wins, defenses and lost belts.
+
+    Bouts come from the fight history (title_fight flag; BMF bouts are not divisional titles). Each one is
+    labelled against the fighter's own reigns: a win on the day a reign began is a belt win, a win inside a
+    reign is a defense, a loss inside a reign is a lost belt, and anything else is a challenge."""
+    from .fight_history_service import get_fights_for_fighter
+
+    # Reign tables spell some names with dots ("B.J. Penn") that the fight history drops ("BJ Penn").
+    history = get_fights_for_fighter(champion) or get_fights_for_fighter(champion.replace(".", ""))
+    title_bouts = sorted((f for f in history if f["title_fight"] and f["date"]), key=lambda f: f["date"])
+
+    belts = []
+    for reign in reigns.sort_values("date_won").to_dict(orient="records"):
+        start = pd.to_datetime(reign["date_won"], errors="coerce")
+        if pd.isna(start):
+            continue
+        days = reign.get("days_held_effective", reign.get("days_held"))
+        end = start + pd.Timedelta(days=int(days)) if pd.notna(days) else start
+        belts.append({**reign, "start": start.date().isoformat(), "end": end.date().isoformat()})
+
+    defenses_in_reign: dict[int, int] = {}
+    timeline = []
+    for bout in title_bouts:
+        result = bout["result"]
+        if result is None:
+            result = "no_contest" if str(bout.get("outcome") or "").lower().startswith("no") or bout.get("method") == "Overturned" else "draw"
+        # Belts held at the same time in two divisions (e.g. Nunes) must not be mixed up.
+        reign = next(
+            (
+                b
+                for b in belts
+                if b["start"] <= bout["date"] <= b["end"] and _name_key(b["division"]) == _name_key(bout["weight_class"])
+            ),
+            None,
+        )
+
+        title_type = None
+        if result == "win" and reign is not None and bout["date"] == reign["start"]:
+            role, title_type = "won_title", reign["title_type"]
+            label = "Won interim title" if title_type == "interim" else "Won title"
+        elif result == "win" and reign is not None and reign["title_type"] == "undisputed":
+            role, title_type = "defense", reign["title_type"]
+            defenses_in_reign[id(reign)] = defenses_in_reign.get(id(reign), 0) + 1
+            label = f"Title defense #{defenses_in_reign[id(reign)]}"
+        elif result == "loss" and reign is not None and reign["start"] < bout["date"]:
+            role, title_type = "lost_title", reign["title_type"]
+            label = "Lost title"
+        elif result == "win":
+            role, label = "other", "Title fight win"
+        elif result == "loss":
+            role, label = "challenge", "Title shot, lost"
+        else:
+            role, label = "other", "Title fight, draw" if result == "draw" else "Title fight, no contest"
+
+        timeline.append(
+            {
+                "date": bout["date"],
+                "event": bout["event_name"],
+                "division": bout["weight_class"],
+                "opponent": bout["opponent"],
+                "result": result,
+                "role": role,
+                "label": label,
+                "title_type": title_type,
+                "method": _format_method(bout.get("method")),
+                "round": bout.get("round"),
+            }
+        )
+    return timeline
 
 
 def _opponent_from_won_how(value) -> str | None:

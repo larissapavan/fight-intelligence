@@ -1,11 +1,11 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { ArrowRight, CalendarDays, LoaderCircle, Share2, Swords, Trophy, Users } from 'lucide-react'
 
 import { FighterSelect } from '../shared/components/FighterSelect'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useFighters } from '../shared/hooks/useFighters'
-import { getHeadToHead } from '../shared/services/api'
-import type { FightRecord, HeadToHeadResponse } from '../shared/types/api'
+import { getHeadToHead, getOpponents } from '../shared/services/api'
+import type { FightRecord, HeadToHeadResponse, Opponent } from '../shared/types/api'
 
 const METHOD_LABELS: Record<string, string> = {
   'U-DEC': 'Unanimous Decision',
@@ -16,6 +16,26 @@ const METHOD_LABELS: Record<string, string> = {
   DQ: 'Disqualification',
 }
 
+/** Everyone a fighter has faced, most recent first; empty until a fighter is chosen (or if the lookup fails). */
+function useOpponents(fighterName: string): Opponent[] {
+  const [loaded, setLoaded] = useState<{ name: string; opponents: Opponent[] } | null>(null)
+
+  useEffect(() => {
+    if (!fighterName) return
+    let cancelled = false
+    getOpponents(fighterName)
+      .then((opponents) => {
+        if (!cancelled) setLoaded({ name: fighterName, opponents })
+      })
+      .catch((requestError) => console.error(requestError))
+    return () => {
+      cancelled = true
+    }
+  }, [fighterName])
+
+  return loaded && loaded.name === fighterName ? loaded.opponents : []
+}
+
 export function HeadToHead() {
   const { fighters } = useFighters()
   const [fighterAName, setFighterAName] = useState('')
@@ -23,6 +43,17 @@ export function HeadToHead() {
   const [result, setResult] = useState<HeadToHeadResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const opponentsOfA = useOpponents(fighterAName)
+  const opponentsOfB = useOpponents(fighterBName)
+  const suggestionsForB = useMemo(
+    () => (fighterAName && opponentsOfA.length ? { label: fighterAName, opponents: opponentsOfA } : undefined),
+    [fighterAName, opponentsOfA],
+  )
+  const suggestionsForA = useMemo(
+    () => (fighterBName && opponentsOfB.length ? { label: fighterBName, opponents: opponentsOfB } : undefined),
+    [fighterBName, opponentsOfB],
+  )
 
   const canCompare = Boolean(fighterAName && fighterBName && fighterAName !== fighterBName)
 
@@ -63,11 +94,12 @@ export function HeadToHead() {
             fighters={fighters}
             disabledFighterName={fighterBName}
             placeholder="Select first fighter"
+            suggestions={suggestionsForA}
             onChange={setFighterAName}
           />
 
           <div className="hidden justify-center pb-3.5 lg:flex">
-            <span className="type-display rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-3 py-1.5 text-xl font-bold uppercase text-[#D32F2F]">
+            <span className="type-display rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-3 py-1.5 text-xl font-bold uppercase text-[#C8102E]">
               VS
             </span>
           </div>
@@ -79,6 +111,7 @@ export function HeadToHead() {
             fighters={fighters}
             disabledFighterName={fighterAName}
             placeholder="Select second fighter"
+            suggestions={suggestionsForB}
             onChange={setFighterBName}
           />
         </div>
@@ -94,7 +127,7 @@ export function HeadToHead() {
         </button>
 
         {error ? (
-          <p className="mt-3 rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+          <p className="mt-3 rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">
             {error}
           </p>
         ) : null}
@@ -130,7 +163,7 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
         </p>
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <p className="type-display truncate text-right text-lg font-bold uppercase text-[#FFFFFF] sm:text-xl">{result.fighter_a}</p>
-          <p className="data-value text-3xl font-bold text-[#D32F2F] sm:text-4xl">
+          <p className="data-value text-3xl font-bold text-[#C8102E] sm:text-4xl">
             {result.fighter_a_wins}-{result.fighter_b_wins}
             {result.no_contests ? `-${result.no_contests}` : ''}
           </p>
@@ -154,7 +187,7 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
 
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#D32F2F]">
+      <div className="flex items-center gap-2 text-[#C8102E]">
         <Share2 className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">
           Connected via the fight network • {degrees} degree{degrees === 1 ? '' : 's'} of separation
@@ -167,7 +200,7 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
             <div key={`${name}-${index}`} className="flex items-center gap-1.5">
               <span
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.06em] ${
-                  isEndpoint ? 'border-[#D32F2F]/25 bg-[#D32F2F]/10 text-[#FF6B6B]' : 'border-white/10 bg-white/[0.04] text-[#CCCCCC]'
+                  isEndpoint ? 'border-[#C8102E]/25 bg-[#C8102E]/10 text-[var(--accent-red)]' : 'border-white/10 bg-white/[0.04] text-[#CCCCCC]'
                 }`}
               >
                 {name}
@@ -184,14 +217,14 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
 function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#D32F2F]">
+      <div className="flex items-center gap-2 text-[#C8102E]">
         <Users className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">Common opponents ({result.common_opponents.length})</p>
       </div>
       <div className="mt-2.5 grid grid-cols-[1fr_auto_auto] items-center gap-x-2.5 gap-y-1.5">
         <span />
-        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#FF6B6B]">{lastWord(result.fighter_a)}</span>
-        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#8FB3E8]">{lastWord(result.fighter_b)}</span>
+        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-red)]">{lastWord(result.fighter_a)}</span>
+        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-blue)]">{lastWord(result.fighter_b)}</span>
         {result.common_opponents.map((common) => (
           <Fragment key={common.opponent}>
             <span className="min-w-0 truncate rounded-xl border border-white/6 bg-black/18 px-3 py-2 text-sm font-semibold text-[#FFFFFF]">
@@ -209,7 +242,7 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
 function ResultChip({ result }: { result: 'win' | 'loss' | null }) {
   if (result === 'win') {
     return (
-      <span className="type-tech justify-self-end rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#D32F2F]">
+      <span className="type-tech justify-self-end rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#C8102E]">
         Win
       </span>
     )
@@ -250,7 +283,7 @@ function MeetingRow({ meeting, fighterA, fighterB }: { meeting: FightRecord; fig
       <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
         {winnerName ? (
           <span className="inline-flex items-center gap-1.5 font-semibold text-[#FFFFFF]">
-            <Trophy className="h-4 w-4 text-[#D32F2F]" />
+            <Trophy className="h-4 w-4 text-[#C8102E]" />
             {winnerName} won
           </span>
         ) : (

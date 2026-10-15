@@ -52,7 +52,7 @@ export function AboutModel() {
         />
       </section>
 
-      {error ? <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       <section className="grid gap-3 lg:grid-cols-4">
         <InfoCard
@@ -113,7 +113,7 @@ export function AboutModel() {
                 >
                   <div className="flex items-center justify-between gap-4">
                     <span className="inline-flex items-center gap-2">
-                      <span className="rounded-xl bg-[#D32F2F]/10 p-1.5 text-[#FF6B6B]">
+                      <span className="rounded-xl bg-[#C8102E]/10 p-1.5 text-[var(--accent-red)]">
                         <Icon className="h-4 w-4" />
                       </span>
                       {label}
@@ -144,7 +144,7 @@ export function AboutModel() {
                       <button
                         type="button"
                         onClick={() => void handleCopyLink(href)}
-                        className="ghost-action inline-flex items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#D32F2F]"
+                        className="ghost-action inline-flex items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E]"
                       >
                         {copiedLink === href ? 'Copied' : 'Copy URL'}
                       </button>
@@ -177,8 +177,8 @@ export function AboutModel() {
 
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
             <p className="broadcast-label text-[10px] text-[#999999]">Important note</p>
-            <div className="mt-3 rounded-2xl border border-[#D32F2F]/20 bg-[#D32F2F]/8 p-3">
-              <div className="mb-2 flex items-center gap-2 text-[#D32F2F]">
+            <div className="mt-3 rounded-2xl border border-[#C8102E]/20 bg-[#C8102E]/8 p-3">
+              <div className="mb-2 flex items-center gap-2 text-[#C8102E]">
                 <AlertTriangle className="h-4 w-4" />
                 <span className="type-tech text-xs font-semibold uppercase tracking-[0.18em]">Use disclaimer</span>
               </div>
@@ -217,7 +217,7 @@ function InfoCard({
 }) {
   return (
     <article className="surface-card rounded-[20px] p-3 transition duration-300 hover:-translate-y-0.5 hover:border-white/16">
-      <div className="inline-flex rounded-xl bg-[#D32F2F]/10 p-2.5 text-[#FF6B6B]">
+      <div className="inline-flex rounded-xl bg-[#C8102E]/10 p-2.5 text-[var(--accent-red)]">
         <Icon className="h-4 w-4" />
       </div>
       <h2 className="mt-3 text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{title}</h2>

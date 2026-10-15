@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, ChevronDown, Clock3, Lock, Search, UserRound, X } from 'lucide-react'
+import { Check, ChevronDown, Clock3, Lock, Search, Swords, UserRound, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
 
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../hooks/useFighterImages'
-import type { FighterProfile } from '../types/api'
+import type { FighterProfile, Opponent } from '../types/api'
 
 interface FighterSelectProps {
   label: string
@@ -13,6 +13,8 @@ interface FighterSelectProps {
   fighters: FighterProfile[]
   disabledFighterName?: string
   placeholder: string
+  /** Fighters who have already faced `label`'s fighter: listed first so the matchup can be picked straight away. */
+  suggestions?: { label: string; opponents: Opponent[] }
   onChange: (value: string) => void
 }
 
@@ -21,12 +23,12 @@ const RESULT_LIMIT = 48
 
 const cornerStyles = {
   red: {
-    accent: 'text-[#FF6B6B]',
-    border: 'border-[#D32F2F]/24',
-    bar: 'bg-[#D32F2F]',
+    accent: 'text-[var(--accent-red)]',
+    border: 'border-[#C8102E]/24',
+    bar: 'bg-[#C8102E]',
   },
   blue: {
-    accent: 'text-[#8FB3E8]',
+    accent: 'text-[var(--accent-blue)]',
     border: 'border-[#2F5FA8]/24',
     bar: 'bg-[#2F5FA8]',
   },
@@ -39,11 +41,13 @@ export function FighterSelect({
   fighters,
   disabledFighterName,
   placeholder,
+  suggestions,
   onChange,
 }: FighterSelectProps) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [onlyOpponents, setOnlyOpponents] = useState(true)
   const [recentNames, setRecentNames] = useState<string[]>(() => readRecentFighters())
   const searchRef = useRef<HTMLInputElement>(null)
   const componentId = useMemo(() => label.toLowerCase().replace(/[^a-z0-9]+/g, '-'), [label])
@@ -59,8 +63,19 @@ export function FighterSelect({
     return recentNames.map((name) => fighterMap.get(name)).filter(Boolean) as FighterProfile[]
   }, [fighters, recentNames])
 
+  // Opponents of the other corner's fighter, in the order of their meetings (most recent first).
+  const opponentFighters = useMemo(() => {
+    if (!suggestions) return []
+    const byName = new Map(fighters.map((fighter) => [normalizeFighterName(fighter.name), fighter]))
+    return suggestions.opponents
+      .map((opponent) => byName.get(normalizeFighterName(opponent.name)))
+      .filter((fighter): fighter is FighterProfile => Boolean(fighter))
+  }, [fighters, suggestions])
+  const opponentView = opponentFighters.length > 0 && onlyOpponents
+
   const results = useMemo(() => {
-    const source = showRecent && recentFighters.length ? recentFighters : fighters
+    if (opponentView && !normalizedQuery) return opponentFighters
+    const source = opponentView ? opponentFighters : showRecent && recentFighters.length ? recentFighters : fighters
     return source
       .filter((fighter) => {
         if (!normalizedQuery) return true
@@ -84,9 +99,10 @@ export function FighterSelect({
         return firstDisabled + scoreMatch(first, normalizedQuery) - (secondDisabled + scoreMatch(second, normalizedQuery))
       })
       .slice(0, RESULT_LIMIT)
-  }, [disabledFighterName, fighters, normalizedQuery, recentFighters, showRecent])
+  }, [disabledFighterName, fighters, normalizedQuery, opponentFighters, opponentView, recentFighters, showRecent])
 
   const openSearch = () => {
+    setOnlyOpponents(true)
     setQuery('')
     setActiveIndex(0)
     setOpen(true)
@@ -142,32 +158,17 @@ export function FighterSelect({
 
   return (
     <div className="relative z-30 flex flex-col gap-1.5">
-      <span className="broadcast-label text-[10px] text-[#999999]">{label}</span>
       <button
         type="button"
         onClick={openSearch}
-        className={`${corner === 'blue' ? 'soft-input-blue' : 'soft-input'} flex min-h-[54px] w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition duration-200 hover:border-white/16 hover:bg-white/[0.075] ${
-          selectedFighter ? `ring-1 ${styles.border}` : ''
-        }`}
+        aria-label={selectedFighter ? `${label}: ${selectedFighter.name}. Change fighter` : `${label}: search fighter`}
+        className="flex min-h-[52px] w-full items-center gap-3 border-[3px] border-[#0E0E0E] bg-white px-3 py-2 text-left text-[#0E0E0E] shadow-[4px_4px_0_#0E0E0E] outline-none transition hover:translate-x-px hover:translate-y-px hover:shadow-[3px_3px_0_#0E0E0E] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]"
       >
-        <PickerAvatar
-          fighter={selectedFighter}
-          corner={corner}
-          imageUrl={selectedFighter ? getFighterImageUrl(selectedFighter.name, imageByName, selectedFighter.image_url) : null}
-        />
-        <span className="min-w-0 flex-1">
-          <span className={`block truncate text-sm font-semibold ${selectedFighter ? 'theme-text' : 'theme-muted'}`}>
-            {selectedFighter?.name ?? placeholder}
-          </span>
-          <span className="theme-muted mt-0.5 block truncate text-xs">
-            {selectedFighter ? getFighterMeta(selectedFighter) : 'Open fighter search'}
-          </span>
+        <Search className="h-5 w-5 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 flex-1 truncate text-sm font-bold uppercase tracking-wide">
+          {selectedFighter?.name ?? placeholder}
         </span>
-        {selectedFighter ? (
-          <Check className={`h-4 w-4 shrink-0 ${styles.accent}`} />
-        ) : (
-          <ChevronDown className="h-4 w-4 shrink-0 text-[#999999]" />
-        )}
+        <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest">{selectedFighter ? 'Change' : 'Search'}</span>
       </button>
 
       {createPortal(
@@ -234,14 +235,36 @@ export function FighterSelect({
               </div>
 
               <div className="flex shrink-0 items-center justify-between gap-3 px-4 py-2.5 sm:px-5">
-                <div className="theme-muted flex items-center gap-2">
-                  {showRecent && recentFighters.length ? <Clock3 className="h-3.5 w-3.5" /> : <Search className="h-3.5 w-3.5" />}
-                  <span className="broadcast-label text-[9px]">
-                    {showRecent && recentFighters.length ? 'Recent fighters' : `${results.length} results`}
+                <div className="theme-muted flex min-w-0 items-center gap-2">
+                  {opponentView ? (
+                    <Swords className="h-3.5 w-3.5 shrink-0" />
+                  ) : showRecent && recentFighters.length ? (
+                    <Clock3 className="h-3.5 w-3.5 shrink-0" />
+                  ) : (
+                    <Search className="h-3.5 w-3.5 shrink-0" />
+                  )}
+                  <span className="broadcast-label truncate text-[9px]">
+                    {opponentView
+                      ? `${results.length} ${results.length === 1 ? 'opponent' : 'opponents'} of ${suggestions?.label}`
+                      : showRecent && recentFighters.length
+                        ? 'Recent fighters'
+                        : `${results.length} results`}
                   </span>
                 </div>
+                {opponentFighters.length > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOnlyOpponents((value) => !value)
+                      setActiveIndex(0)
+                    }}
+                    className="type-tech ghost-action theme-text shrink-0 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] hover:!bg-[#F2C230] hover:!text-[#0E0E0E]"
+                  >
+                    {onlyOpponents ? 'Show all fighters' : 'Only opponents'}
+                  </button>
+                ) : null}
                 {selectedFighter ? (
-                  <span className={`type-tech rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#D32F2F]/10'} ${styles.accent}`}>
+                  <span className={`type-tech rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
                     Selected: {selectedFighter.name}
                   </span>
                 ) : null}
@@ -273,7 +296,7 @@ export function FighterSelect({
                           onClick={() => selectFighter(fighter)}
                           className={`selector-option group grid w-full grid-cols-[56px_1fr] gap-3 rounded-2xl border px-3 py-3 text-left transition duration-150 sm:grid-cols-[64px_1fr_auto] ${
                             isActive ? 'selector-option-active' : ''
-                          } ${isSelected ? (corner === 'blue' ? 'ring-1 ring-[#2F5FA8]/45' : 'ring-1 ring-[#D32F2F]/45') : ''} ${isDisabled ? 'cursor-not-allowed opacity-45' : ''}`}
+                          } ${isSelected ? (corner === 'blue' ? 'ring-1 ring-[#2F5FA8]/45' : 'ring-1 ring-[#C8102E]/45') : ''} ${isDisabled ? 'cursor-not-allowed opacity-45' : ''}`}
                         >
                           <PickerAvatar
                             fighter={fighter}
@@ -287,7 +310,7 @@ export function FighterSelect({
                                 {fighter.name}
                               </span>
                               {isSelected ? (
-                                <span className={`type-tech rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#D32F2F]/10'} ${styles.accent}`}>
+                                <span className={`type-tech rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
                                   Selected
                                 </span>
                               ) : null}
@@ -299,7 +322,7 @@ export function FighterSelect({
                               <span className="selector-chip">Record: {formatRecord(fighter)}</span>
                               <span className="selector-chip">{fighter.stance || 'Style unavailable'}</span>
                               {ranking ? (
-                                <span className={`rounded-full border px-2.5 py-1 ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#D32F2F]/10'} ${styles.accent}`}>
+                                <span className={`rounded-full border px-2.5 py-1 ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
                                   {ranking}
                                 </span>
                               ) : null}
@@ -357,7 +380,7 @@ function PickerAvatar({
   const loaded = imageState.key === imageKey && imageState.loaded
   const imgUrl = fighter && !failed ? imageUrl : null
   const sizeClass = large ? 'h-14 w-14 sm:h-16 sm:w-16' : 'h-10 w-10'
-  const toneClass = corner === 'red' ? 'from-[#D32F2F]/30' : 'from-[#2F5FA8]/30'
+  const toneClass = corner === 'red' ? 'from-[#C8102E]/30' : 'from-[#2F5FA8]/30'
 
   return (
     <span className={`relative grid shrink-0 place-items-center overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-gradient-to-br ${toneClass} to-[var(--avatar-bg)] ${sizeClass}`}>
@@ -374,7 +397,7 @@ function PickerAvatar({
         />
       ) : null}
       {fighter && (!imgUrl || !loaded || failed) ? (
-        <span className={`type-display text-lg font-bold uppercase ${corner === 'red' ? 'text-[#FF6B6B]' : 'text-[#8FB3E8]'}`}>
+        <span className={`type-display text-lg font-bold uppercase ${corner === 'red' ? 'text-[var(--accent-red)]' : 'text-[var(--accent-blue)]'}`}>
           {getInitials(fighter.name)}
         </span>
       ) : null}
@@ -387,12 +410,6 @@ function PickerAvatar({
 
 function isFighterDisabled(fighter: FighterProfile, disabledFighterName?: string) {
   return Boolean(disabledFighterName && fighter.name === disabledFighterName)
-}
-
-function getFighterMeta(fighter: FighterProfile) {
-  return [fighter.nickname ? `"${fighter.nickname}"` : null, getDivision(fighter), formatRecord(fighter)]
-    .filter(Boolean)
-    .join(' • ')
 }
 
 function getDivision(fighter: FighterProfile) {

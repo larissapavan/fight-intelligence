@@ -108,3 +108,35 @@ def test_age_from_dob_computes_a_plausible_age():
 )
 def test_parse_percent(value, expected):
     assert _parse_percent(value) == expected
+
+
+def test_hand_written_hometowns_override_what_ufc_com_lists(client):
+    fighters = {fighter["name"]: fighter for fighter in client.get("/fighters").json()}
+
+    # ufc.com lists only "Germany" for him; the override file carries the city.
+    assert fighters["Ilia Topuria"]["hometown"] == "Halle, Germany"
+    # The flag is unaffected: he represents Georgia.
+    assert fighters["Ilia Topuria"]["country_code"] == "ge"
+
+
+def test_aliases_fold_a_duplicate_row_into_the_real_fighter(client):
+    fighters = {fighter["name"]: fighter for fighter in client.get("/fighters").json()}
+
+    # ESPN created "Tina Black" from the nickname; she is Valesca Machado. One row remains, with the roster data merged in.
+    assert "Tina Black" not in fighters
+    machado = fighters["Valesca Machado"]
+    assert machado["nickname"] == "Tina Black"
+    assert machado["badges"] and machado["country_code"] == "br"
+    assert machado["ufc_status"] == "active"
+
+
+def test_profiles_and_cards_resolve_alias_spellings(client):
+    # An alias asks for the same profile as the real name.
+    assert client.get("/fighters/Tina Black/performance").status_code == 200
+
+    # Upcoming cards use the catalog spelling, so every fighter on them has a profile and a pick.
+    names = {fighter["name"] for fighter in client.get("/fighters").json()}
+    announced = {name for event in client.get("/events/upcoming").json() for fight in event["fights"] for name in (fight["fighter_1"], fight["fighter_2"]) if name}
+    aliases = {entry for entry in ("Jose Mauro Delano", "Wesley Schultz", "Ko Seok-hyeon", "Lee Jeong-yeong", "Tina Black")}
+    assert not announced & aliases  # the alias spellings never reach the page
+    assert not {name for name in announced if name not in names}  # and every announced fighter has a profile

@@ -7,6 +7,11 @@ from pydantic import BaseModel
 StanceType = Literal["Orthodox", "Southpaw", "Switch", "Open Stance", "Unknown"]
 
 
+class Nationality(BaseModel):
+    name: str
+    code: str | None = None
+
+
 class FighterSummary(BaseModel):
     name: str
     is_active: bool = False
@@ -35,3 +40,12 @@ class FighterSummary(BaseModel):
     rank_signal: str | None = None
     image_url: str | None = None
     fighter_url: str | None = None
+    hometown: str | None = None
+    country: str | None = None
+    country_code: str | None = None
+    ufc_status: Literal["active", "former", "never"] = "never"
+    ufc_debut: str | None = None
+    ufc_last_fight: str | None = None
+    roster_url: str | None = None
+    badges: list[str] = []
+    nationalities: list[Nationality] = []

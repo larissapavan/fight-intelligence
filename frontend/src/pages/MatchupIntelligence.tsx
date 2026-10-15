@@ -83,8 +83,8 @@ export function MatchupIntelligence() {
       </section>
 
       {systemError ? (
-        <p className="flex items-center gap-2 rounded-xl border border-[#D32F2F]/20 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">
-          <ShieldAlert className="h-4 w-4 shrink-0 text-[#FF6B6B]" />
+        <p className="flex items-center gap-2 rounded-xl border border-[#C8102E]/20 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+          <ShieldAlert className="h-4 w-4 shrink-0 text-[var(--accent-red)]" />
           {systemError}
         </p>
       ) : null}
@@ -164,18 +164,18 @@ function StatComparisonCard({
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="mb-3 flex items-center gap-2.5">
-        <div className="rounded-xl bg-[#D32F2F]/12 p-2 text-[#D32F2F]">
+        <div className="rounded-xl bg-[#C8102E]/12 p-2 text-[#C8102E]">
           <Icon className="h-4 w-4" />
         </div>
         <h2 className="text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{title}</h2>
       </div>
 
-      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-x-2.5 gap-y-1">
+      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-x-4 gap-y-1">
         <span />
-        <span className="type-tech truncate text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#FF6B6B]">
+        <span className="type-tech truncate text-right text-xs font-bold uppercase tracking-[0.1em] text-[var(--accent-red)]">
           {firstName(fighterA.name)}
         </span>
-        <span className="type-tech truncate text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[#8FB3E8]">
+        <span className="type-tech truncate text-right text-xs font-bold uppercase tracking-[0.1em] text-[var(--accent-blue)]">
           {firstName(fighterB.name)}
         </span>
 
@@ -188,11 +188,11 @@ function StatComparisonCard({
 
           return (
             <Fragment key={row.label}>
-              <span className="py-1.5 text-xs text-[#999999]">{row.label}</span>
-              <span className={`py-1.5 text-right text-sm font-bold ${aWins ? 'text-[#D32F2F]' : 'text-[#FFFFFF]'}`}>
+              <span className="py-2 text-base font-semibold text-[#FFFFFF]">{row.label}</span>
+              <span className={`py-2 text-right text-lg font-bold ${aWins ? 'text-[#C8102E]' : 'text-[#FFFFFF]'}`}>
                 {row.format(valueA)}
               </span>
-              <span className={`py-1.5 text-right text-sm font-bold ${bWins ? 'text-[#8FB3E8]' : 'text-[#FFFFFF]'}`}>
+              <span className={`py-2 text-right text-lg font-bold ${bWins ? 'text-[var(--accent-blue)]' : 'text-[#FFFFFF]'}`}>
                 {row.format(valueB)}
               </span>
             </Fragment>
@@ -209,27 +209,27 @@ function KeyMatchupFactors({ factors }: { factors: MainFactor[] }) {
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="mb-3 flex items-center gap-2.5">
-        <div className="rounded-xl bg-[#D32F2F]/12 p-2 text-[#D32F2F]">
-          <ListOrdered className="h-4 w-4" />
+        <div className="rounded-xl bg-[#C8102E]/12 p-2 text-[#C8102E]">
+          <ListOrdered className="h-5 w-5" />
         </div>
         <div>
-          <p className="broadcast-label text-[10px] text-[#999999]">SHAP explainability</p>
-          <h2 className="mt-0.5 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Key matchup factors</h2>
+          <p className="broadcast-label text-xs text-[#FFFFFF]">SHAP explainability</p>
+          <h2 className="mt-0.5 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Key matchup factors</h2>
         </div>
       </div>
 
       <div className="grid gap-2">
         {factors.map((factor, index) => (
-          <div key={factor.feature} className="metric-tile flex items-center gap-3 rounded-xl px-3 py-2.5">
-            <span className="data-value w-7 shrink-0 text-lg font-bold text-[#D32F2F]">
+          <div key={factor.feature} className="metric-tile flex items-center gap-3.5 rounded-xl px-3.5 py-3.5">
+            <span className="data-value w-10 shrink-0 text-2xl font-bold text-[#C8102E]">
               {String(index + 1).padStart(2, '0')}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-[#FFFFFF]">
-                {factor.feature} <span className="font-normal text-[#999999]">favored</span>{' '}
-                <span className="text-[#D32F2F]">{factor.impact}</span>
+              <p className="text-lg font-semibold leading-snug text-[#FFFFFF]">
+                {factor.feature} <span className="font-normal text-[#FFFFFF]">favored</span>{' '}
+                <span className="text-[#C8102E]">{factor.impact}</span>
               </p>
-              <p className="mt-0.5 text-xs leading-5 text-[#999999]">{factor.explanation}</p>
+              <p className="mt-1 text-[15px] leading-6 text-[#FFFFFF]">{factor.explanation}</p>
             </div>
           </div>
         ))}

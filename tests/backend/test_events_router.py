@@ -55,3 +55,43 @@ def test_upcoming_events_have_no_winners_yet(client):
     for event in events:
         for fight in event["fights"]:
             assert fight["winner"] is None
+
+
+def test_fights_carry_referee_rounds_title_flag_and_result_details(client):
+    fights = [fight for event in client.get("/events").json() for fight in event["fights"]]
+    detailed = [fight for fight in fights if fight["referee"]]
+
+    # Nearly every historical fight is matched by fight_url to data/raw/fight_details.csv.
+    assert len(detailed) / len(fights) > 0.95
+    sample = detailed[0]
+    assert sample["num_rounds"] in {1, 2, 3, 4, 5, None}
+    assert isinstance(sample["title_fight"], bool)
+    assert sample["result"]
+    assert any(fight["title_fight"] is True for fight in fights)
+    assert any(fight["result"] == "Decision - Unanimous" and "-" in (fight["result_details"] or "") for fight in fights)
+
+
+def test_bmf_title_fights_are_flagged_even_though_the_belt_is_not_a_divisional_title(client):
+    fights = [fight for event in client.get("/events").json() for fight in event["fights"]]
+    bmf = [fight for fight in fights if fight["bmf_title"]]
+
+    assert {(fight["fighter_1"], fight["fighter_2"]) for fight in bmf} >= {
+        ("Charles Oliveira", "Max Holloway"),
+        ("Max Holloway", "Justin Gaethje"),
+        ("Jorge Masvidal", "Nate Diaz"),
+    }
+    assert all(fight["title_fight"] is False for fight in bmf)  # the source data does not count BMF fights as title fights
+
+
+def test_upcoming_fights_with_a_current_champion_are_flagged_as_title_fights(client):
+    # Champions change and so do the cards, so derive the expectation from the current champions instead of naming fights.
+    champions = {reign["division"]: reign["champion"] for reign in client.get("/champions").json()["current_champions"]}
+    upcoming = client.get("/events/upcoming").json()
+    fights = [fight for event in upcoming for fight in event["fights"]]
+    assert fights
+
+    for fight in fights:
+        holder = champions.get(fight["weight_class"] or "")
+        expected = holder in (fight["fighter_1"], fight["fighter_2"])
+        # A fight is a title fight only when today's champion of that division is in it, even on a numbered event.
+        assert bool(fight["title_fight"]) == expected, (fight["fighter_1"], fight["fighter_2"], fight["weight_class"])

@@ -11,6 +11,12 @@ class FightResult(BaseModel):
     round: int | None = None
     time: str | None = None
     fight_url: str | None = None
+    referee: str | None = None
+    num_rounds: int | None = None
+    title_fight: bool | None = None
+    bmf_title: bool = False
+    result: str | None = None
+    result_details: str | None = None
 
 
 class EventSummary(BaseModel):

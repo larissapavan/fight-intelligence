@@ -1,11 +1,15 @@
 import { useMemo, useState } from 'react'
 import { CalendarClock, CalendarDays, ChevronDown, Hash, MapPin, Search, Swords, Trophy } from 'lucide-react'
 
+import { LatestNewsCard } from '../shared/components/LatestNewsCard'
+import { PickChip } from '../shared/components/PickChip'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
+import { TitleFightBadge } from '../shared/components/FighterBadges'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useEvents } from '../shared/hooks/useEvents'
 import { useUpcomingEvents } from '../shared/hooks/useUpcomingEvents'
-import type { EventSummary, FightResult } from '../shared/types/api'
+import { useUpcomingPicks } from '../shared/hooks/useUpcomingPicks'
+import type { EventSummary, FightResult, UpcomingPick } from '../shared/types/api'
 
 const NUMBERED_EVENT_PATTERN = /^UFC \d+/
 
@@ -109,7 +113,7 @@ export function Events() {
 
         <div className="mt-3 grid gap-2.5 lg:grid-cols-[1fr_180px_180px]">
           <div className="soft-input flex items-center gap-2.5 rounded-xl px-3 py-2.5">
-            <Search className="h-4 w-4 text-[#D32F2F]" />
+            <Search className="h-4 w-4 text-[#C8102E]" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -120,6 +124,7 @@ export function Events() {
           <select
             value={yearFilter}
             onChange={(event) => setYearFilter(event.target.value)}
+            aria-label="Filter by year"
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
             {years.map((year) => (
@@ -131,6 +136,7 @@ export function Events() {
           <select
             value={monthFilter}
             onChange={(event) => setMonthFilter(event.target.value)}
+            aria-label="Filter by month"
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
             {[ALL_MONTHS, ...MONTH_NAMES].map((month) => (
@@ -150,8 +156,10 @@ export function Events() {
         onToggle={toggleEvent}
       />
 
+      <LatestNewsCard />
+
       {error ? (
-        <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+        <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
       ) : null}
 
       {loading ? (
@@ -206,6 +214,8 @@ function UpcomingEventsSection({
   openEvents: Set<string>
   onToggle: (key: string) => void
 }) {
+  const pickFor = useUpcomingPicks()
+
   if (loading) {
     return <LoadingSkeleton className="h-[80px]" />
   }
@@ -217,14 +227,14 @@ function UpcomingEventsSection({
   return (
     <section className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="mb-2 flex items-center gap-2">
-        <CalendarClock className="h-4 w-4 text-[#D32F2F]" />
+        <CalendarClock className="h-4 w-4 text-[#C8102E]" />
         <h2 className="broadcast-label text-xs text-[#FFFFFF]">Upcoming Confirmed Events</h2>
         <span className="theme-muted text-xs">({events.length})</span>
       </div>
       <div className="grid gap-1.5">
         {events.map((event) => {
           const key = event.event_url ?? event.name
-          return <EventCard key={key} event={event} isOpen={openEvents.has(key)} onToggle={() => onToggle(key)} />
+          return <EventCard key={key} event={event} isOpen={openEvents.has(key)} onToggle={() => onToggle(key)} pickFor={pickFor} />
         })}
       </div>
     </section>
@@ -258,7 +268,7 @@ function EventGroup({
         className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
         aria-expanded={isOpen}
       >
-        <Icon className="h-4 w-4 text-[#D32F2F]" />
+        <Icon className="h-4 w-4 text-[#C8102E]" />
         <h2 className="broadcast-label text-xs text-[#FFFFFF]">{title}</h2>
         <span className="theme-muted text-xs">({events.length})</span>
         <ChevronDown className={`theme-muted ml-auto h-4 w-4 shrink-0 transition ${isOpen ? 'rotate-180' : ''}`} />
@@ -286,7 +296,17 @@ function EventGroup({
   )
 }
 
-function EventCard({ event, isOpen, onToggle }: { event: EventSummary; isOpen: boolean; onToggle: () => void }) {
+function EventCard({
+  event,
+  isOpen,
+  onToggle,
+  pickFor,
+}: {
+  event: EventSummary
+  isOpen: boolean
+  onToggle: () => void
+  pickFor?: (event: string, fighterA: string, fighterB: string) => UpcomingPick | undefined
+}) {
   return (
     <article className="surface-card overflow-hidden rounded-xl">
       <button
@@ -322,7 +342,7 @@ function EventCard({ event, isOpen, onToggle }: { event: EventSummary; isOpen: b
           {event.fights.length ? (
             <div className="grid gap-2">
               {event.fights.map((fight, index) => (
-                <FightRow key={fight.fight_url ?? index} fight={fight} />
+                <FightRow key={fight.fight_url ?? index} fight={fight} pick={pickFor?.(event.name, fight.fighter_1, fight.fighter_2)} />
               ))}
             </div>
           ) : (
@@ -334,7 +354,7 @@ function EventCard({ event, isOpen, onToggle }: { event: EventSummary; isOpen: b
   )
 }
 
-function FightRow({ fight }: { fight: FightResult }) {
+function FightRow({ fight, pick }: { fight: FightResult; pick?: UpcomingPick }) {
   const fighter1Won = fight.winner !== null && fight.winner === fight.fighter_1
   const fighter2Won = fight.winner !== null && fight.winner === fight.fighter_2
 
@@ -346,11 +366,20 @@ function FightRow({ fight }: { fight: FightResult }) {
         <FighterName name={fight.fighter_2} won={fighter2Won} align="left" />
       </div>
       <div className="theme-muted mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px]">
+        <TitleFightBadge fight={fight} />
+        <PickChip pick={pick} />
         {fight.weight_class ? <span className="selector-chip">{fight.weight_class}</span> : null}
         <span>{formatMethod(fight)}</span>
         {fight.round ? <span>R{fight.round}</span> : null}
         {fight.time ? <span>{fight.time}</span> : null}
+        {fight.num_rounds ? <span>{fight.num_rounds} rounds</span> : null}
       </div>
+      {fight.referee || fight.result_details ? (
+        <div className="theme-muted mt-1.5 space-y-0.5 text-center text-[11px] leading-4">
+          {fight.referee ? <p>Referee: {fight.referee}</p> : null}
+          {fight.result?.startsWith('Decision') && fight.result_details ? <p>{fight.result} · {fight.result_details}</p> : null}
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -358,9 +387,9 @@ function FightRow({ fight }: { fight: FightResult }) {
 function FighterName({ name, won, align }: { name: string; won: boolean; align: 'left' | 'right' }) {
   return (
     <span className={`flex min-w-0 items-center gap-1.5 ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}>
-      {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#D32F2F]" /> : null}
+      {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#C8102E]" /> : null}
       <span className={`truncate text-sm ${won ? 'font-bold text-[#FFFFFF]' : 'text-[#999999]'}`}>{name}</span>
-      {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#D32F2F]" /> : null}
+      {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#C8102E]" /> : null}
     </span>
   )
 }

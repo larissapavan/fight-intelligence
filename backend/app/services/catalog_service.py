@@ -11,12 +11,19 @@ logger = logging.getLogger(__name__)
 
 from src.ufc_predictor.config import BASE_DIR, RAW_DATA_DIR
 
+from .bmf_service import BMF_FIGHTS_SOURCE_PATH, current_bmf_champion
+
 FIGHTERS_SOURCE_PATH = RAW_DATA_DIR / "fighters.csv"
 FIGHTS_SOURCE_PATH = RAW_DATA_DIR / "fights.csv"
 CAREER_STATS_SOURCE_PATH = RAW_DATA_DIR / "fighter_career_stats.csv"
 HISTORICAL_PHOTOS_SOURCE_PATH = BASE_DIR / "lutadores_historicos.csv"
 HISTORICAL_PHOTOS_URL_PREFIX = "/fighter-photos/"
 PHOTOS_MANIFEST_PATH = RAW_DATA_DIR / "fighter_photos.csv"
+ORIGINS_SOURCE_PATH = RAW_DATA_DIR / "fighter_origins.csv"
+HOMETOWN_OVERRIDES_PATH = RAW_DATA_DIR / "hometown_overrides.csv"
+NAME_ALIASES_PATH = RAW_DATA_DIR / "name_aliases.csv"
+ROSTER_SOURCE_PATH = RAW_DATA_DIR / "roster_watch.csv"
+ORIGIN_COLUMNS = ["hometown", "country", "country_code"]
 PHOTO_KIND_PRIORITY = {"espn": 1, "champion": 2}
 
 VALID_STANCES = {"Orthodox", "Southpaw", "Switch", "Open Stance", "Unknown"}
@@ -70,14 +77,30 @@ def _build_catalog() -> pd.DataFrame:
     catalog["rank_signal"] = catalog["belt"].map(lambda value: "Champion" if value else "Contender")
 
     catalog["ranking"] = pd.NA
-    catalog["is_active"] = _flag_active(catalog)
+    catalog = catalog.merge(_load_roster(), on="fighter_url", how="left")
+    on_roster = catalog["roster_status"].notna()
+    # roster.watch is the authority for who is on the UFC roster; our own signals only cover fighters it does not list.
+    catalog["is_active"] = (catalog["roster_status"].eq("active")) | (~on_roster & _flag_active(catalog))
+    catalog["ufc_status"] = _ufc_status(catalog, on_roster)
 
     historical_photos = _load_historical_photos()
     catalog = catalog.merge(historical_photos, on="profile_key", how="left")
     catalog["image_url"] = catalog["historical_image_url"]
     catalog = catalog.drop(columns=["historical_image_url"])
 
-    return catalog.sort_values("name").drop_duplicates(subset=["profile_key"], keep="last").reset_index(drop=True)
+    catalog = catalog.merge(_load_origins(), on="fighter_url", how="left")
+    # The first nationality roster.watch lists is the country the fighter represents (it drives the main flag).
+    primary_code = catalog["roster_country_codes"].fillna("").str.split("|").str[0]
+    primary_name = catalog["roster_countries"].fillna("").str.split("|").str[0]
+    catalog["country_code"] = primary_code.where(primary_code.ne(""), catalog.get("country_code"))
+    catalog["country"] = primary_name.where(primary_name.ne(""), catalog.get("country"))
+    catalog = _merge_aliases(catalog)
+    catalog["badges"] = _with_current_bmf(catalog)
+
+    # Two fighters can share a name: keep the one roster.watch lists (active first), so its flags and badges show.
+    catalog["_priority"] = catalog["is_active"].astype(int) + catalog["roster_status"].notna().astype(int)
+    catalog = catalog.sort_values(["name", "_priority"]).drop_duplicates(subset=["profile_key"], keep="last")
+    return catalog.drop(columns=["_priority"]).reset_index(drop=True)
 
 
 ACTIVE_WINDOW_DAYS = 730
@@ -90,9 +113,80 @@ def _names_in_csv(path, columns: list[str]) -> set[str]:
     return {_normalize_name(str(name)) for column in frame.columns for name in frame[column] if str(name).strip()}
 
 
+def load_name_aliases() -> dict[str, str]:
+    """Other spellings of a fighter's name (data/raw/name_aliases.csv): normalized alias -> catalog name.
+
+    ESPN and UFCStats do not always spell a name the same way ("Wes Schultz" / "Wesley Schultz"), and some fighters are
+    announced by their nickname. The catalog uses the UFCStats spelling everywhere."""
+    if not NAME_ALIASES_PATH.exists():
+        return {}
+    aliases = pd.read_csv(NAME_ALIASES_PATH, keep_default_na=False)
+    return {_normalize_name(row.alias): str(row.canonical).strip() for row in aliases.itertuples() if str(row.alias).strip() and str(row.canonical).strip()}
+
+
+def canonical_name(name: str | None) -> str | None:
+    """The catalog spelling of a name: itself unless it is a known alias."""
+    if not name:
+        return name
+    return load_name_aliases().get(_normalize_name(name), name)
+
+
+def _merge_aliases(catalog: pd.DataFrame) -> pd.DataFrame:
+    """Fold a duplicate row (an alias) into the real fighter: the real row keeps its values, and borrows what it lacks."""
+    aliases = load_name_aliases()
+    if not aliases:
+        return catalog
+    keys = catalog["name"].map(_normalize_name)
+    drop: list[int] = []
+    for alias_key, canonical in aliases.items():
+        alias_rows = catalog.index[keys == alias_key]
+        real_rows = catalog.index[keys == _normalize_name(canonical)]
+        if len(alias_rows) == 0 or len(real_rows) == 0:
+            continue
+        alias_row, real_row = alias_rows[0], real_rows[0]
+        for column in catalog.columns:
+            if column in {"name", "profile_key", "fighter_url", "nickname"}:
+                continue
+            value = catalog.at[real_row, column]
+            missing = (isinstance(value, float) and pd.isna(value)) or value is None or value is pd.NA or (isinstance(value, str) and not value.strip())
+            if missing:
+                catalog.at[real_row, column] = catalog.at[alias_row, column]
+        drop.append(alias_row)
+    return catalog.drop(index=drop) if drop else catalog
+
+
+def _load_roster() -> pd.DataFrame:
+    """roster.watch rows linked to our fighters: roster status, UFC debut and last fight, nationalities and badges."""
+    columns = ["fighter_url", "roster_status", "ufc_debut", "ufc_last_fight", "roster_url", "roster_countries", "roster_country_codes", "badges"]
+    if not ROSTER_SOURCE_PATH.exists():
+        return pd.DataFrame(columns=columns)
+    roster = pd.read_csv(ROSTER_SOURCE_PATH, keep_default_na=False)
+    roster = roster[roster["fighter_url"].astype(str).str.strip().ne("")]
+    roster = roster.rename(
+        columns={
+            "status": "roster_status",
+            "debut": "ufc_debut",
+            "last_fight": "ufc_last_fight",
+            "profile": "roster_url",
+            "countries": "roster_countries",
+            "country_codes": "roster_country_codes",
+        }
+    )
+    return roster.drop_duplicates(subset=["fighter_url"], keep="last")[columns]
+
+
+def _ufc_status(catalog: pd.DataFrame, on_roster: pd.Series) -> pd.Series:
+    """active / former (fought in the UFC, no longer on the roster) / never (no UFC fight on record)."""
+    fought = catalog["tracked_bouts"].fillna(0).gt(0) | on_roster
+    status = pd.Series("never", index=catalog.index)
+    status[fought] = "former"
+    status[catalog["is_active"]] = "active"
+    return status
+
+
 def _flag_active(catalog: pd.DataFrame) -> pd.Series:
-    """Active = fought within the last two years of the dataset, is booked on an upcoming card, or is
-    currently ranked/champion. Derived from our own data so it needs no external roster feed."""
+    """Fallback for fighters roster.watch does not list: fought within the last two years of the dataset, is booked
+    on an upcoming card, or is currently ranked/champion."""
     last_fight = pd.to_datetime(catalog.get("last_fight_date"), errors="coerce")
     latest = last_fight.max()
     recent = last_fight >= (latest - pd.Timedelta(days=ACTIVE_WINDOW_DAYS)) if pd.notna(latest) else last_fight.notna() & False
@@ -157,6 +251,31 @@ def _load_historical_photos() -> pd.DataFrame:
         return empty
     photos = pd.concat(frames, ignore_index=True).sort_values("priority", kind="stable")
     return photos.drop_duplicates(subset=["profile_key"], keep="last")[["profile_key", "historical_image_url"]]
+
+
+def _load_origins() -> pd.DataFrame:
+    """Hometown and the country each fighter represents (flag) (data/raw/fighter_origins.csv, keyed by fighter_url)."""
+    empty = pd.DataFrame(columns=["fighter_url", *ORIGIN_COLUMNS])
+    if not ORIGINS_SOURCE_PATH.exists():
+        return empty
+    origins = pd.read_csv(ORIGINS_SOURCE_PATH, keep_default_na=False)
+    origins = origins[origins["fighter_url"].astype(str).str.strip().ne("")]
+    origins = origins.drop_duplicates(subset=["fighter_url"], keep="last")[["fighter_url", *ORIGIN_COLUMNS]]
+    return _apply_hometown_overrides(origins)
+
+
+def _apply_hometown_overrides(origins: pd.DataFrame) -> pd.DataFrame:
+    """Hand-written hometowns (data/raw/hometown_overrides.csv) win over ufc.com, which sometimes lists only a country.
+
+    The daily scraper never touches that file, so a correction made once stays."""
+    if not HOMETOWN_OVERRIDES_PATH.exists():
+        return origins
+    overrides = pd.read_csv(HOMETOWN_OVERRIDES_PATH, keep_default_na=False)
+    overrides = overrides[overrides["fighter_url"].astype(str).str.strip().ne("") & overrides["hometown"].astype(str).str.strip().ne("")]
+    hometown_by_url = dict(zip(overrides["fighter_url"], overrides["hometown"].astype(str).str.strip()))
+    origins = origins.copy()
+    origins["hometown"] = [hometown_by_url.get(url, hometown) for url, hometown in zip(origins["fighter_url"], origins["hometown"])]
+    return origins
 
 
 def _load_career_stats() -> pd.DataFrame:
@@ -239,6 +358,11 @@ def _source_signature() -> tuple:
         CAREER_STATS_SOURCE_PATH,
         HISTORICAL_PHOTOS_SOURCE_PATH,
         PHOTOS_MANIFEST_PATH,
+        ORIGINS_SOURCE_PATH,
+        HOMETOWN_OVERRIDES_PATH,
+        NAME_ALIASES_PATH,
+        ROSTER_SOURCE_PATH,
+        BMF_FIGHTS_SOURCE_PATH,
     ]
     return tuple(path.stat().st_mtime_ns if path.exists() else None for path in paths)
 
@@ -278,14 +402,20 @@ def get_latest_fight_date() -> str | None:
     return None if pd.isna(latest) else latest.date().isoformat()
 
 
-def list_fighters() -> list[dict]:
-    catalog = get_fighter_catalog().copy()
+def list_fighters(ufc_only: bool = False) -> list[dict]:
+    """Every fighter in the catalog; with `ufc_only`, only those who fought in the UFC or are on the roster/a card.
+
+    The catalog also holds fighters from other promotions (status "never"): they feed the model but are not part of
+    what the site shows or lets you pick."""
+    catalog = get_fighter_catalog()
+    if ufc_only:
+        catalog = catalog[catalog["ufc_status"] != "never"]
     return [_format_profile(row) for row in catalog.to_dict(orient="records")]
 
 
 def get_fighter_profile(name: str) -> dict:
     catalog = get_fighter_catalog()
-    match = catalog.loc[catalog["name"] == name]
+    match = catalog.loc[catalog["name"] == (canonical_name(name) or name)]
     if match.empty:
         raise KeyError(f"Fighter '{name}' was not found in the catalog.")
 
@@ -321,7 +451,38 @@ def _format_profile(record: dict) -> dict:
         "rank_signal": _nullable_string(record.get("rank_signal")),
         "image_url": _nullable_string(record.get("image_url")),
         "fighter_url": _nullable_string(record.get("fighter_url")),
+        "hometown": _nullable_string(record.get("hometown")),
+        "country": _nullable_string(record.get("country")),
+        "country_code": _nullable_string(record.get("country_code")),
+        "ufc_status": _nullable_string(record.get("ufc_status")) or "never",
+        "badges": [badge for badge in (_nullable_string(record.get("badges")) or "").split("|") if badge],
+        "nationalities": _nationalities(record),
+        "ufc_debut": _nullable_string(record.get("ufc_debut")),
+        "ufc_last_fight": _nullable_string(record.get("ufc_last_fight")),
+        "roster_url": _nullable_string(record.get("roster_url")),
     }
+
+
+def _with_current_bmf(catalog: pd.DataFrame) -> pd.Series:
+    """The reigning BMF champion gets "bmf_current" in place of the "bmf" badge (everyone else keeps "bmf")."""
+    badges = catalog["badges"].fillna("")
+    champion = current_bmf_champion()
+    if not champion:
+        return badges
+    is_champion = catalog["profile_key"].eq(_normalize_name(champion))
+
+    def swap(value: str) -> str:
+        kept = [badge for badge in value.split("|") if badge and badge != "bmf"]
+        return "|".join(["bmf_current", *kept])
+
+    return badges.where(~is_champion, badges.map(swap))
+
+
+def _nationalities(record: dict) -> list[dict]:
+    """Every nationality roster.watch lists, the country the fighter represents first."""
+    names = (_nullable_string(record.get("roster_countries")) or "").split("|")
+    codes = (_nullable_string(record.get("roster_country_codes")) or "").split("|")
+    return [{"name": name, "code": code or None} for name, code in zip(names, codes) if name]
 
 
 def _nullable_string(value) -> str | None:

@@ -25,7 +25,7 @@ export function DataIntelligence() {
         />
       </section>
 
-      {error ? <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       {loading || !dataInfo ? (
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -88,9 +88,9 @@ function formatSourceLabel(source: string) {
 
 const PIPELINE_TONE_CLASSES: Record<string, string> = {
   default: 'border-white/10 bg-white/[0.03] text-[#FFFFFF]',
-  source: 'border-[#2F5FA8]/25 bg-[#2F5FA8]/10 text-[#8FB3E8]',
+  source: 'border-[#2F5FA8]/25 bg-[#2F5FA8]/10 text-[var(--accent-blue)]',
   highlight: 'border-white/18 bg-white/[0.06] text-[#FFFFFF]',
-  accent: 'border-[#D32F2F]/30 bg-[#D32F2F]/10 text-[#FF6B6B]',
+  accent: 'border-[#C8102E]/30 bg-[#C8102E]/10 text-[var(--accent-red)]',
 }
 
 function PipelineNode({

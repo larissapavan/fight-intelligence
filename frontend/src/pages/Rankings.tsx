@@ -2,12 +2,14 @@ import { useMemo, useState } from 'react'
 import { ArrowDown, ArrowUp, Crown, Sparkles, Trophy } from 'lucide-react'
 
 import { FighterAvatar } from '../shared/components/FighterAvatar'
+import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
+import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../shared/hooks/useFighterImages'
 import { useFighters } from '../shared/hooks/useFighters'
 import { useRankings } from '../shared/hooks/useRankings'
-import type { RankingCategory, RankingEntry } from '../shared/types/api'
+import type { FighterProfile, RankingCategory, RankingEntry } from '../shared/types/api'
 
 type Tab = 'division' | 'p4p'
 
@@ -44,7 +46,7 @@ export function Rankings() {
       </section>
 
       {error ? (
-        <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+        <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
       ) : null}
 
       {loading ? (
@@ -96,8 +98,9 @@ function DivisionView({
   return (
     <div className="space-y-4">
       <div className="surface-card rounded-[18px] border-white/14 p-3.5">
-        <label className="broadcast-label mb-2 block text-xs text-[#CCCCCC]">Division</label>
+        <label htmlFor="ranking-division" className="broadcast-label mb-2 block text-xs text-[#CCCCCC]">Division</label>
         <select
+          id="ranking-division"
           value={active.category}
           onChange={(event) => onSelect(event.target.value)}
           className="soft-input theme-text w-full rounded-xl px-3 py-2.5 text-sm outline-none"
@@ -141,10 +144,10 @@ function P4pView({
             type="button"
             onClick={() => onSelect(category.category)}
             className={`ghost-action inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] ${
-              category.category === active.category ? 'ring-1 ring-[#D32F2F]/45' : ''
+              category.category === active.category ? 'ring-1 ring-[#C8102E]/45' : ''
             }`}
           >
-            <Sparkles className="h-3.5 w-3.5 text-[#D32F2F]" />
+            <Sparkles className="h-3.5 w-3.5 text-[#C8102E]" />
             {category.category.replace('Pound-for-Pound ', '')}
           </button>
         ))}
@@ -157,7 +160,12 @@ function P4pView({
 
 function RankingList({ entries }: { entries: RankingEntry[] }) {
   const { fighters } = useFighters()
+  const [profileName, setProfileName] = useState<string | null>(null)
   const { imageByName } = useFighterImages()
+  const profileFor = useMemo(() => {
+    const index = new Map(fighters.map((fighter) => [normalizeFighterName(fighter.name), fighter]))
+    return (name: string) => index.get(normalizeFighterName(name))
+  }, [fighters])
   const imageUrlFor = useMemo(() => {
     const profileByName = new Map(fighters.map((fighter) => [normalizeFighterName(fighter.name), fighter]))
     return (name: string) => getFighterImageUrl(name, imageByName, profileByName.get(normalizeFighterName(name))?.image_url)
@@ -173,9 +181,23 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
         <span className="text-xs text-[#CCCCCC]">{contenders.length + (champion ? 1 : 0)} listed</span>
       </div>
       <div className="grid gap-2.5">
-      {champion ? <RankingRow entry={champion} imageUrl={imageUrlFor(champion.fighter)} isChampion /> : null}
+      {champion ? (
+        <RankingRow
+          entry={champion}
+          imageUrl={imageUrlFor(champion.fighter)}
+          profile={profileFor(champion.fighter)}
+          onOpenProfile={setProfileName}
+          isChampion
+        />
+      ) : null}
       {contenders.map((entry) => (
-        <RankingRow key={entry.fighter} entry={entry} imageUrl={imageUrlFor(entry.fighter)} />
+        <RankingRow
+          key={entry.fighter}
+          entry={entry}
+          imageUrl={imageUrlFor(entry.fighter)}
+          profile={profileFor(entry.fighter)}
+          onOpenProfile={setProfileName}
+        />
       ))}
       {!champion && contenders.length === 0 ? (
         <div className="surface-card rounded-[18px] px-4 py-6 text-center text-sm text-[#999999]">
@@ -183,16 +205,37 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
         </div>
       ) : null}
       </div>
+
+      {profileName ? (
+        <FighterProfileModal
+          key={profileName}
+          name={profileName}
+          onClose={() => setProfileName(null)}
+          onSelectFighter={setProfileName}
+        />
+      ) : null}
     </section>
   )
 }
 
-function RankingRow({ entry, imageUrl, isChampion = false }: { entry: RankingEntry; imageUrl: string | null; isChampion?: boolean }) {
-  return (
-    <article className="metric-tile flex items-center gap-3.5 rounded-2xl px-3.5 py-3">
+function RankingRow({
+  entry,
+  imageUrl,
+  profile,
+  onOpenProfile,
+  isChampion = false,
+}: {
+  entry: RankingEntry
+  imageUrl: string | null
+  profile?: FighterProfile
+  onOpenProfile: (name: string) => void
+  isChampion?: boolean
+}) {
+  const content = (
+    <>
       <span
         className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl text-base font-bold ${
-          isChampion ? 'bg-[#D32F2F]/15 text-[#FF4D54]' : 'bg-white/[0.07] text-[#D4D4D4]'
+          isChampion ? 'bg-[#C8102E] text-white' : 'bg-[var(--surface-3)] text-[var(--text-main)]'
         }`}
       >
         {isChampion ? <Crown className="h-4 w-4" /> : entry.rank}
@@ -201,10 +244,14 @@ function RankingRow({ entry, imageUrl, isChampion = false }: { entry: RankingEnt
       <FighterAvatar name={entry.fighter} imageUrl={imageUrl} highlight={isChampion} className="h-12 w-12" />
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-semibold text-[#FFFFFF]">{entry.fighter}</p>
+        <p className="flex min-w-0 items-center gap-2 text-base font-semibold text-[#FFFFFF]">
+          {profile ? <FlagList fighter={profile} /> : null}
+          <span className="min-w-0 truncate">{entry.fighter}</span>
+        </p>
+        {profile ? <FighterBadges badges={profile.badges} className="mt-1" /> : null}
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[#CCCCCC]">
           {isChampion ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-[#E5A93C]/50 bg-[#E5A93C]/10 px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-[#F2C260]">
+            <span className="inline-flex items-center gap-1 rounded-full border border-[var(--rule)] bg-[#F2C230] px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-[#0E0E0E]">
               <Trophy className="h-3.5 w-3.5" /> Champion
             </span>
           ) : null}
@@ -214,7 +261,23 @@ function RankingRow({ entry, imageUrl, isChampion = false }: { entry: RankingEnt
       </div>
 
       <RankChangeBadge change={entry.rank_change} />
-    </article>
+    </>
+  )
+
+  const base = 'metric-tile flex w-full items-center gap-3.5 rounded-2xl px-3.5 py-3'
+
+  // Ranked fighters we have a profile for open it on this page; anyone else stays a plain row.
+  return profile ? (
+    <button
+      type="button"
+      onClick={() => onOpenProfile(profile.name)}
+      aria-label={`${entry.fighter}, rank ${entry.rank || 'champion'}. View profile`}
+      className={`${base} cursor-pointer text-left transition hover:!bg-[#F2C230]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]`}
+    >
+      {content}
+    </button>
+  ) : (
+    <article className={base}>{content}</article>
   )
 }
 
@@ -231,7 +294,7 @@ function RankChangeBadge({ change }: { change: string | null }) {
 
   if (change === 'down') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-[#D32F2F]/20 bg-[#D32F2F]/10 px-2 py-0.5 text-[10px] font-semibold text-[#D32F2F]">
+      <span className="inline-flex items-center gap-1 rounded-full border border-[#C8102E]/20 bg-[#C8102E]/10 px-2 py-0.5 text-[10px] font-semibold text-[#C8102E]">
         <ArrowDown className="h-3 w-3" />
       </span>
     )

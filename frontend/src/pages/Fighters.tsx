@@ -1,41 +1,35 @@
-import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Award,
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   Radio,
+  Ruler,
   Search,
   Shield,
-  Sparkles,
+  Swords,
   Weight,
-  X,
 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { ChampionBelt } from '../shared/components/ChampionBelt'
+import { FighterOrigin } from '../shared/components/FighterOrigin'
+import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
+import { BADGES } from '../shared/data/badges'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
+import { FighterProfileModal } from '../shared/components/FighterProfileModal'
+import { MiniStat } from '../shared/components/MiniStat'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { formatPercent } from '../shared/data/fightLabels'
 import { isKnownActive, isKnownRetired } from '../shared/data/fighterStatusOverrides'
 import { useFighters } from '../shared/hooks/useFighters'
 import { getFighterImageUrl, useFighterImages, type FighterImageRecord } from '../shared/hooks/useFighterImages'
-import { getFighterPerformance, getSimilarFighters } from '../shared/services/api'
-import type { FighterPerformance, FighterProfile, FightRecord, SimilarFighter, YearlyTrend } from '../shared/types/api'
+import type { FighterProfile } from '../shared/types/api'
 
-type ActiveFilter = 'all' | 'active' | 'retired'
-
-const METHOD_LABELS: Record<string, string> = {
-  'KO/TKO': 'KO/TKO',
-  Submission: 'Submission',
-  Decision: 'Decision',
-  Disqualification: 'DQ',
-  Other: 'Other',
-}
+type UfcStatus = 'active' | 'former' | 'never'
+type ActiveFilter = 'all' | Exclude<UfcStatus, 'never'>
 
 type DivisionGroup = {
   key: string
@@ -46,6 +40,8 @@ type DivisionGroup = {
   match: (fighter: FighterProfile) => boolean
 }
 
+// The UFC runs three women's divisions today. The discontinued Women's Featherweight (a handful of former fighters)
+// has no tab of its own: those fighters are listed under Open Class.
 const divisionGroups: DivisionGroup[] = [
   { key: 'flyweight', label: 'Flyweight', shortLabel: 'FLW', limit: '125 lb', tone: 'blue', match: byDivision('flyweight') },
   { key: 'bantamweight', label: 'Bantamweight', shortLabel: 'BW', limit: '135 lb', tone: 'red', match: byDivision('bantamweight') },
@@ -80,14 +76,6 @@ const divisionGroups: DivisionGroup[] = [
     match: byDivision("women's bantamweight"),
   },
   {
-    key: 'w-featherweight',
-    label: "Women's Featherweight",
-    shortLabel: 'WFW',
-    limit: '145 lb',
-    tone: 'gold',
-    match: byDivision("women's featherweight"),
-  },
-  {
     key: 'open-class',
     label: 'Open Class / Unclassified',
     shortLabel: 'OPEN',
@@ -99,25 +87,25 @@ const divisionGroups: DivisionGroup[] = [
 
 const toneStyles = {
   red: {
-    text: 'text-[#FF6B6B]',
-    border: 'border-[#D32F2F]/24',
-    bg: 'bg-[#D32F2F]/10',
-    bar: 'bg-[#D32F2F]',
-    glow: 'shadow-[0_14px_34px_rgba(232,27,35,0.14)]',
+    text: 'text-[var(--accent-red)]',
+    border: 'border-[#C8102E]/24',
+    bg: 'bg-[#C8102E]/10',
+    bar: 'bg-[#C8102E]',
+    glow: '',
   },
   blue: {
-    text: 'text-[#8FB3E8]',
+    text: 'text-[var(--accent-blue)]',
     border: 'border-[#2F5FA8]/24',
     bg: 'bg-[#2F5FA8]/10',
     bar: 'bg-[#2F5FA8]',
-    glow: 'shadow-[0_14px_34px_rgba(47,95,168,0.14)]',
+    glow: '',
   },
   gold: {
-    text: 'text-[#CCCCCC]',
-    border: 'border-white/18',
-    bg: 'bg-white/8',
-    bar: 'bg-[#CCCCCC]',
-    glow: 'shadow-[0_14px_34px_rgba(255,255,255,0.08)]',
+    text: 'text-[var(--text-main)]',
+    border: 'border-[var(--rule)]',
+    bg: 'bg-[var(--surface-3)]',
+    bar: 'bg-[var(--rule)]',
+    glow: '',
   },
 }
 
@@ -126,24 +114,30 @@ export function Fighters() {
   const { imageByName } = useFighterImages()
   const [query, setQuery] = useState('')
   const [stanceFilter, setStanceFilter] = useState('All stances')
+  const [badgeFilter, setBadgeFilter] = useState('')
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>('all')
   const [activeDivision, setActiveDivision] = useState('lightweight')
   const [searchParams, setSearchParams] = useSearchParams()
   // Deep link from other pages (e.g. Champions): /fighters?fighter=<name> opens that profile.
   const [selectedFighter, setSelectedFighter] = useState<string | null>(() => searchParams.get('fighter'))
 
-  const isActiveFighter = useCallback(
-    (fighter: FighterProfile) =>
-      (fighter.is_active || isKnownActive(fighter.name)) && !isKnownRetired(fighter.name),
-    [],
-  )
+  const statusOf = useCallback((fighter: FighterProfile): UfcStatus => {
+    if (isKnownActive(fighter.name)) return 'active'
+    const status = fighter.ufc_status ?? 'never'
+    // A fighter on the manual retirement list did fight in the UFC, so they are former, not unknown.
+    return isKnownRetired(fighter.name) ? 'former' : status
+  }, [])
+
+  const statusCounts = useMemo(() => {
+    const counts: Record<UfcStatus, number> = { active: 0, former: 0, never: 0 }
+    for (const fighter of fighters) counts[statusOf(fighter)] += 1
+    return counts
+  }, [fighters, statusOf])
 
   const stances = useMemo(
     () => ['All stances', ...Array.from(new Set(fighters.map((fighter) => fighter.stance).filter(Boolean))).sort()],
     [fighters],
   )
-
-  const activeCount = useMemo(() => fighters.filter(isActiveFighter).length, [fighters, isActiveFighter])
 
   const visibleFighters = useMemo(() => {
     const term = query.trim().toLowerCase()
@@ -153,12 +147,11 @@ export function Fighters() {
         fighter.name.toLowerCase().includes(term) ||
         (fighter.nickname?.toLowerCase().includes(term) ?? false)
       const matchesStance = stanceFilter === 'All stances' || fighter.stance === stanceFilter
-      const isActive = isActiveFighter(fighter)
-      const matchesActive =
-        activeFilter === 'all' || (activeFilter === 'active' ? isActive : !isActive)
-      return matchesName && matchesStance && matchesActive
+      const matchesBadge = !badgeFilter || (fighter.badges ?? []).includes(badgeFilter)
+      const matchesStatus = activeFilter === 'all' || statusOf(fighter) === activeFilter
+      return matchesName && matchesStance && matchesBadge && matchesStatus
     })
-  }, [fighters, query, stanceFilter, activeFilter, isActiveFighter])
+  }, [fighters, query, stanceFilter, badgeFilter, activeFilter, statusOf])
 
   const groupedFighters = useMemo(() => {
     const groups = new Map<string, FighterProfile[]>()
@@ -193,9 +186,9 @@ export function Fighters() {
           </div>
         </div>
 
-        <div className="mt-3 grid gap-2.5 md:grid-cols-[1fr_220px]">
+        <div className="mt-3 grid gap-2.5 md:grid-cols-[1fr_220px_240px]">
           <div className="soft-input flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5">
-            <Search className="h-4 w-4 shrink-0 text-[#D32F2F]" />
+            <Search className="h-4 w-4 shrink-0 text-[#C8102E]" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -206,11 +199,25 @@ export function Fighters() {
           <select
             value={stanceFilter}
             onChange={(event) => setStanceFilter(event.target.value)}
+            aria-label="Filter by stance"
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
             {stances.map((stance) => (
               <option key={stance} value={stance}>
                 {stance}
+              </option>
+            ))}
+          </select>
+          <select
+            value={badgeFilter}
+            onChange={(event) => setBadgeFilter(event.target.value)}
+            aria-label="Filter by badge or origin"
+            className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
+          >
+            <option value="">All badges and origins</option>
+            {Object.entries(BADGES).map(([key, info]) => (
+              <option key={key} value={key}>
+                {info.label}
               </option>
             ))}
           </select>
@@ -221,11 +228,11 @@ export function Fighters() {
             <ActiveTabButton active={activeFilter === 'all'} onClick={() => setActiveFilter('all')} count={fighters.length}>
               All
             </ActiveTabButton>
-            <ActiveTabButton active={activeFilter === 'active'} onClick={() => setActiveFilter('active')} count={activeCount}>
+            <ActiveTabButton active={activeFilter === 'active'} onClick={() => setActiveFilter('active')} count={statusCounts.active}>
               <Radio className="h-3 w-3" /> Active
             </ActiveTabButton>
-            <ActiveTabButton active={activeFilter === 'retired'} onClick={() => setActiveFilter('retired')} count={fighters.length - activeCount}>
-              Retired / Released
+            <ActiveTabButton active={activeFilter === 'former'} onClick={() => setActiveFilter('former')} count={statusCounts.former}>
+              Former UFC
             </ActiveTabButton>
           </div>
           <p className="broadcast-label text-[10px] text-[#999999]">
@@ -234,7 +241,7 @@ export function Fighters() {
         </div>
       </section>
 
-      {error ? <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       {loading ? (
         <section className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
@@ -303,8 +310,8 @@ function ActiveTabButton({
       aria-pressed={active}
       className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
         active
-          ? 'bg-[#E50914]/14 text-[#E50914] shadow-[inset_0_0_0_1px_rgba(229,9,20,0.45)]'
-          : 'text-[#999999] hover:text-white'
+          ? 'bg-[var(--rule)] text-[var(--card-bg)]'
+          : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]'
       }`}
     >
       {children}
@@ -317,7 +324,7 @@ function CountPill({ active, children }: { active: boolean; children: React.Reac
   return (
     <span
       className={`inline-flex min-w-[1.6em] items-center justify-center rounded-full px-1.5 py-px text-[10px] font-bold tabular-nums tracking-normal ${
-        active ? 'bg-[#E50914]/20 text-[#E50914]' : 'bg-white/8 text-[#999999]'
+        active ? 'bg-[var(--tape)] text-[#0E0E0E]' : 'bg-[var(--surface-3)] text-[var(--text-muted)]'
       }`}
     >
       {children}
@@ -502,8 +509,8 @@ function DivisionPill({
       className={[
         'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition duration-200 md:px-3 md:text-xs',
         isActive
-          ? 'border-[#E50914]/60 bg-[#E50914]/10 text-[#E50914] shadow-[0_0_14px_rgba(229,9,20,0.22)]'
-          : 'border-white/8 bg-white/[0.03] text-[#999999] hover:border-white/16 hover:text-white',
+          ? 'border-[var(--rule)] bg-[var(--rule)] text-[var(--card-bg)]'
+          : 'border-[var(--rule)] bg-[var(--card-bg)] text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
       ].join(' ')}
     >
       <span className="hidden sm:inline">{group.label}</span>
@@ -530,20 +537,21 @@ function FighterDivisionCard({
 
   return (
     <motion.article
-      className="surface-card group overflow-hidden rounded-[18px] transition duration-300 hover:-translate-y-0.5 hover:border-white/16"
+      className="surface-card group flex h-full flex-col overflow-hidden rounded-[18px] transition duration-300 hover:-translate-y-0.5"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, delay: Math.min(index * 0.012, 0.18) }}
     >
       <div className={`h-1 w-full ${styles.bar}`} />
-      <div className="p-3">
-        <div className="grid grid-cols-[70px_1fr] gap-3">
+      <div className="flex flex-1 flex-col p-3">
+        <div className="grid min-h-[176px] grid-cols-[70px_1fr] content-start gap-3">
           <FighterPortrait fighter={fighter} imageUrl={imageUrl ?? undefined} tone={group.tone} />
           <div className="min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <p className={`broadcast-label text-[10px] ${styles.text}`}>{fighter.division ?? group.shortLabel}</p>
                 <h3 className="mt-1 inline-flex max-w-full items-center gap-1.5 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[#FFFFFF]">
+                  <FlagList fighter={fighter} />
                   <span className="min-w-0">{fighter.name}</span>
                   {fighter.belt ? <ChampionBelt /> : null}
                 </h3>
@@ -554,14 +562,16 @@ function FighterDivisionCard({
               {formatRecord(fighter)}
               {fighter.nickname ? ` • "${fighter.nickname}"` : ''}
             </p>
+            <FighterOrigin fighter={fighter} className="mt-1.5" />
+            <FighterBadges badges={fighter.badges} className="mt-1.5" />
           </div>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="mt-auto grid grid-cols-2 gap-2 pt-3">
           <MiniStat icon={Shield} label="Win rate" value={formatPercent(fighter.win_rate)} />
           <MiniStat icon={Weight} label="Weight" value={fighter.weight_lbs ? `${fighter.weight_lbs.toFixed(0)} lb` : '—'} />
-          <MiniStat label="Reach" value={fighter.reach_cm ? `${fighter.reach_cm.toFixed(0)} cm` : '—'} />
-          <MiniStat label="Style" value={fighter.stance || 'Unknown'} />
+          <MiniStat icon={Ruler} label="Reach" value={fighter.reach_cm ? `${fighter.reach_cm.toFixed(0)} cm` : '—'} />
+          <MiniStat icon={Swords} label="Style" value={fighter.stance || 'Unknown'} />
         </div>
 
         <div className="mt-3 flex gap-2">
@@ -579,7 +589,9 @@ function FighterDivisionCard({
               target="_blank"
               rel="noreferrer"
               onClick={(event) => event.stopPropagation()}
-              className="ghost-action inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#D32F2F]"
+              aria-label={`${fighter.name} on UFCStats (opens in a new tab)`}
+              title="Open on UFCStats"
+              className="ghost-action inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E]"
             >
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
@@ -611,7 +623,7 @@ function FighterPortrait({
     .toUpperCase()
   const toneClass =
     tone === 'red'
-      ? 'from-[#D32F2F]/34 to-[var(--avatar-bg)]'
+      ? 'from-[#C8102E]/34 to-[var(--avatar-bg)]'
       : tone === 'blue'
         ? 'from-[#2F5FA8]/34 to-[var(--avatar-bg)]'
         : 'from-white/12 to-[var(--avatar-bg)]'
@@ -646,26 +658,6 @@ function FighterPortrait({
   )
 }
 
-function MiniStat({
-  label,
-  value,
-  icon: Icon,
-}: {
-  label: string
-  value: string
-  icon?: React.ComponentType<{ className?: string }>
-}) {
-  return (
-    <div className="metric-tile rounded-xl px-2.5 py-2">
-      <div className="flex items-center gap-1.5 text-[#999999]">
-        {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
-        <span className="type-tech text-[10px] uppercase tracking-[0.14em]">{label}</span>
-      </div>
-      <p className="type-num mt-1 truncate text-xs font-semibold text-[#FFFFFF]">{value}</p>
-    </div>
-  )
-}
-
 function SummaryTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="metric-tile rounded-xl px-3 py-2.5">
@@ -691,450 +683,4 @@ function getDivisionLabel(fighter: FighterProfile) {
 
 function formatRecord(fighter: FighterProfile) {
   return `${fighter.wins ?? 0}-${fighter.losses ?? 0}${fighter.draws ? `-${fighter.draws}` : ''} record`
-}
-
-function formatPercent(value: number | null | undefined) {
-  if (value == null) return '—'
-  return `${(value * 100).toFixed(1)}%`
-}
-
-function FighterProfileModal({
-  name,
-  onClose,
-  onSelectFighter,
-}: {
-  name: string
-  onClose: () => void
-  onSelectFighter: (name: string) => void
-}) {
-  const [performance, setPerformance] = useState<FighterPerformance | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [similarFighters, setSimilarFighters] = useState<SimilarFighter[]>([])
-  const [similarLoading, setSimilarLoading] = useState(true)
-
-  useEffect(() => {
-    let cancelled = false
-
-    getFighterPerformance(name)
-      .then((data) => {
-        if (!cancelled) setPerformance(data)
-      })
-      .catch((requestError) => {
-        console.error(requestError)
-        if (cancelled) return
-        const status = axios.isAxiosError(requestError) ? requestError.response?.status : undefined
-        if (status === 404) {
-          setError('No performance history found for this fighter.')
-        } else if (status) {
-          setError(`Unable to load performance history (server returned ${status}).`)
-        } else {
-          setError('Unable to load performance history. Check your connection and try again.')
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [name])
-
-  useEffect(() => {
-    let cancelled = false
-
-    getSimilarFighters(name)
-      .then((data) => {
-        if (!cancelled) setSimilarFighters(data)
-      })
-      .catch((requestError) => {
-        console.error(requestError)
-      })
-      .finally(() => {
-        if (!cancelled) setSimilarLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [name])
-
-  return createPortal(
-    <motion.div
-      className="selector-backdrop fixed inset-0 z-[95] flex items-center justify-center overflow-hidden px-3 py-3 backdrop-blur-sm sm:px-5 sm:py-5"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose()
-      }}
-    >
-      <motion.section
-        className="surface-card flex h-[min(640px,calc(100vh-1.5rem))] w-full max-w-[560px] flex-col overflow-hidden rounded-[22px] border-white/14"
-        initial={{ opacity: 0, y: 16, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-      >
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--line-soft)] px-4 py-3">
-          <div className="min-w-0">
-            <p className="broadcast-label text-[10px] text-[#999999]">Performance profile</p>
-            <h2 className="truncate text-xl font-bold uppercase tracking-[0.02em] text-[#FFFFFF]">{name}</h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="ghost-action grid h-9 w-9 shrink-0 place-items-center rounded-full"
-            aria-label="Close performance profile"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
-          {loading ? (
-            <div className="space-y-2.5">
-              <LoadingSkeleton className="h-[60px]" />
-              <LoadingSkeleton className="h-[100px]" />
-              <LoadingSkeleton className="h-[140px]" />
-            </div>
-          ) : error ? (
-            <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
-          ) : performance ? (
-            <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-2">
-                <MiniStat label="Fights" value={`${performance.total_fights}`} />
-                <MiniStat label="Wins" value={`${performance.wins}`} />
-                <MiniStat label="Losses" value={`${performance.losses}`} />
-              </div>
-
-              <CareerTimeline fights={performance.career_timeline} />
-
-              <FighterTrends trends={performance.yearly_trends} />
-
-              {performance.weight_class_history.length > 0 ? (
-                <div className="metric-tile rounded-2xl p-3">
-                  <p className="broadcast-label text-[10px] text-[#999999]">Weight class history</p>
-                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-sm font-semibold text-[#FFFFFF]">
-                    {performance.weight_class_history.map((weightClass, index) => (
-                      <span key={`${weightClass}-${index}`} className="inline-flex items-center gap-1.5">
-                        {index > 0 ? <span className="text-[#999999]">→</span> : null}
-                        {weightClass}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-
-              {Object.keys(performance.method_breakdown).length > 0 ? (
-                <div className="metric-tile rounded-2xl p-3">
-                  <p className="broadcast-label text-[10px] text-[#999999]">Favorite finishing methods</p>
-                  <div className="mt-2 space-y-1.5">
-                    {Object.entries(performance.method_breakdown)
-                      .sort(([, a], [, b]) => b - a)
-                      .map(([method, count]) => (
-                        <div key={method} className="flex items-center gap-2">
-                          <span className="w-24 shrink-0 text-xs text-[#999999]">{METHOD_LABELS[method] ?? method}</span>
-                          <div className="progress-track h-2 flex-1 overflow-hidden rounded-full">
-                            <div
-                              className="h-full rounded-full bg-[#D32F2F]"
-                              style={{ width: `${(count / performance.wins) * 100}%` }}
-                            />
-                          </div>
-                          <span className="type-num w-5 shrink-0 text-right text-xs font-semibold text-[#FFFFFF]">{count}</span>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              ) : null}
-
-              {performance.last_performances.length > 0 ? (
-                <div>
-                  <p className="broadcast-label mb-1.5 text-[10px] text-[#999999]">Last performances</p>
-                  <div className="grid gap-1.5">
-                    {performance.last_performances.map((fight, index) => (
-                      <div key={index} className="metric-tile rounded-xl px-3 py-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="truncate text-sm font-semibold text-[#FFFFFF]">vs {fight.opponent}</span>
-                          <ResultBadge result={fight.result} />
-                        </div>
-                        <p className="theme-muted mt-0.5 flex items-center gap-1.5 text-[11px]">
-                          {fight.date ? (
-                            <span className="inline-flex items-center gap-1">
-                              <CalendarDays className="h-3 w-3" />
-                              {fight.date}
-                            </span>
-                          ) : null}
-                          <span>{fight.method ? METHOD_LABELS[fight.method] ?? fight.method : 'Result pending'}</span>
-                          {fight.round ? <span>R{fight.round}</span> : null}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
-          {similarLoading ? (
-            <LoadingSkeleton className="mt-3 h-[180px]" />
-          ) : similarFighters.length > 0 ? (
-            <div className="metric-tile mt-3 rounded-2xl p-3">
-              <div className="mb-1.5 flex items-center gap-1.5 text-[#999999]">
-                <Sparkles className="h-3.5 w-3.5 text-[#D32F2F]" />
-                <p className="broadcast-label text-[10px]">Similar fighters</p>
-              </div>
-              <div className="grid gap-1.5">
-                {similarFighters.map((fighter, index) => (
-                  <button
-                    key={fighter.name}
-                    type="button"
-                    onClick={() => onSelectFighter(fighter.name)}
-                    className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition hover:bg-white/[0.05]"
-                  >
-                    <span className="broadcast-label w-4 shrink-0 text-[10px] text-[#666666]">{index + 1}</span>
-                    <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{fighter.name}</span>
-                    {fighter.division ? (
-                      <span className="type-tech hidden shrink-0 text-[10px] uppercase tracking-[0.1em] text-[#999999] sm:inline">
-                        {fighter.division}
-                      </span>
-                    ) : null}
-                    <span className="shrink-0 text-xs text-[#999999]">
-                      {fighter.wins}-{fighter.losses}
-                      {fighter.draws ? `-${fighter.draws}` : ''}
-                    </span>
-                    <span className="shrink-0 rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-2 py-0.5 text-xs font-bold text-[#D32F2F]">
-                      {Math.round(fighter.similarity * 100)}%
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
-        </div>
-      </motion.section>
-    </motion.div>,
-    document.body,
-  )
-}
-
-function CareerTimeline({ fights }: { fights: FightRecord[] | undefined }) {
-  if (!fights || fights.length === 0) return null
-
-  const entries = fights.reduce<{
-    items: Array<{ fight: FightRecord; year: string | null; showYear: boolean }>
-    lastYear: string
-  }>(
-    (acc, fight) => {
-      const year = fight.date ? fight.date.slice(0, 4) : null
-      const showYear = year !== null && year !== acc.lastYear
-      return {
-        items: [...acc.items, { fight, year, showYear }],
-        lastYear: showYear ? (year as string) : acc.lastYear,
-      }
-    },
-    { items: [], lastYear: '' },
-  ).items
-
-  return (
-    <div className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[10px] text-[#999999]">Career timeline</p>
-      <div className="pill-scroll mt-3 overflow-x-auto pb-1">
-        <div className="relative flex min-w-max items-end gap-3 px-1">
-          <div className="pointer-events-none absolute inset-x-1 top-[26px] h-px bg-white/12" />
-          {entries.map(({ fight, year, showYear }, index) => {
-            const isWin = fight.result === 'win'
-            const isLoss = fight.result === 'loss'
-
-            return (
-              <div key={index} className="relative z-10 flex shrink-0 flex-col items-center gap-1">
-                <span className="h-3 whitespace-nowrap text-[9px] font-semibold text-[#666666]">{showYear ? year : ''}</span>
-                <span
-                  title={`${fight.opponent} — ${fight.date ?? 'Date unknown'}`}
-                  className={`grid h-5 w-5 place-items-center rounded-full border text-[9px] font-bold ${
-                    isWin
-                      ? 'border-[#D32F2F] bg-[#D32F2F] text-white'
-                      : isLoss
-                        ? 'border-white/25 bg-[#1a1a1a] text-[#999999]'
-                        : 'border-white/15 bg-[#1a1a1a] text-[#666666]'
-                  }`}
-                >
-                  {isWin ? 'W' : isLoss ? 'L' : '–'}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const ROUND_COLORS = ['#D32F2F', '#2F5FA8', '#CCCCCC', '#9c7a25', '#666666']
-
-const chartTooltipStyle = {
-  background: '#141414',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: '10px',
-  fontSize: '11px',
-}
-
-function formatWinTime(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / 60)
-  const seconds = totalSeconds % 60
-  return `${minutes}:${seconds.toString().padStart(2, '0')}`
-}
-
-function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
-  if (!trends || trends.length < 2) return null
-
-  const rateData = trends.map((trend) => ({
-    year: `${trend.year}`,
-    winRate: trend.win_rate != null ? Math.round(trend.win_rate * 1000) / 10 : null,
-    finishRate: trend.finish_rate != null ? Math.round(trend.finish_rate * 1000) / 10 : null,
-  }))
-
-  const timeData = trends
-    .filter((trend) => trend.avg_win_time_seconds != null)
-    .map((trend) => ({ year: `${trend.year}`, seconds: trend.avg_win_time_seconds as number }))
-
-  const rounds = Array.from(new Set(trends.flatMap((trend) => Object.keys(trend.round_distribution).map(Number)))).sort(
-    (a, b) => a - b,
-  )
-  const roundData = trends.map((trend) => {
-    const row: Record<string, number | string> = { year: `${trend.year}` }
-    for (const round of rounds) {
-      row[`R${round}`] = trend.round_distribution[round] ?? 0
-    }
-    return row
-  })
-
-  return (
-    <div className="space-y-3">
-      <div className="metric-tile rounded-2xl p-3">
-        <p className="broadcast-label text-[10px] text-[#999999]">Win rate &amp; finish rate over time</p>
-        <div className="mt-2 h-[140px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={rateData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-              <XAxis dataKey="year" tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis
-                domain={[0, 100]}
-                tick={{ fill: '#999999', fontSize: 10 }}
-                axisLine={false}
-                tickLine={false}
-                width={32}
-                tickFormatter={(value: number) => `${value}%`}
-              />
-              <Tooltip
-                contentStyle={chartTooltipStyle}
-                formatter={(value, name) => [`${Number(value ?? 0)}%`, String(name ?? '')]}
-              />
-              <Line type="monotone" dataKey="winRate" name="Win rate" stroke="#D32F2F" strokeWidth={2} dot={{ r: 3 }} connectNulls />
-              <Line
-                type="monotone"
-                dataKey="finishRate"
-                name="Finish rate"
-                stroke="#8FB3E8"
-                strokeWidth={2}
-                dot={{ r: 3 }}
-                connectNulls
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="mt-1 flex items-center gap-3 text-[10px] text-[#999999]">
-          <span className="inline-flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#D32F2F]" />
-            Win rate
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#8FB3E8]" />
-            Finish rate
-          </span>
-        </div>
-      </div>
-
-      {roundData.length > 0 && rounds.length > 0 ? (
-        <div className="metric-tile rounded-2xl p-3">
-          <p className="broadcast-label text-[10px] text-[#999999]">Round distribution by year (wins)</p>
-          <div className="mt-2 h-[140px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={roundData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-                <XAxis dataKey="year" tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} width={24} />
-                <Tooltip contentStyle={chartTooltipStyle} />
-                {rounds.map((round, index) => (
-                  <Bar
-                    key={round}
-                    dataKey={`R${round}`}
-                    name={`Round ${round}`}
-                    stackId="rounds"
-                    fill={ROUND_COLORS[index % ROUND_COLORS.length]}
-                    radius={index === rounds.length - 1 ? [4, 4, 0, 0] : undefined}
-                  />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="mt-1 flex flex-wrap items-center gap-3 text-[10px] text-[#999999]">
-            {rounds.map((round, index) => (
-              <span key={round} className="inline-flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: ROUND_COLORS[index % ROUND_COLORS.length] }} />
-                R{round}
-              </span>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      {timeData.length > 1 ? (
-        <div className="metric-tile rounded-2xl p-3">
-          <p className="broadcast-label text-[10px] text-[#999999]">Average win time over time</p>
-          <div className="mt-2 h-[120px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeData} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
-                <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-                <XAxis dataKey="year" tick={{ fill: '#999999', fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis
-                  tick={{ fill: '#999999', fontSize: 10 }}
-                  axisLine={false}
-                  tickLine={false}
-                  width={36}
-                  tickFormatter={formatWinTime}
-                />
-                <Tooltip
-                  contentStyle={chartTooltipStyle}
-                  formatter={(value) => [formatWinTime(Number(value ?? 0)), 'Avg win time']}
-                />
-                <Line type="monotone" dataKey="seconds" stroke="#CCCCCC" strokeWidth={2} dot={{ r: 3 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
-function ResultBadge({ result }: { result: 'win' | 'loss' | null }) {
-  if (result === 'win') {
-    return (
-      <span className="type-tech rounded-full border border-[#D32F2F]/25 bg-[#D32F2F]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#D32F2F]">
-        Win
-      </span>
-    )
-  }
-  if (result === 'loss') {
-    return (
-      <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
-        Loss
-      </span>
-    )
-  }
-  return (
-    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
-      NC
-    </span>
-  )
 }

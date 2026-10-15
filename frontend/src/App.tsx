@@ -12,6 +12,8 @@ const Home = lazy(() => import('./pages/Home').then((module) => ({ default: modu
 const Fighters = lazy(() => import('./pages/Fighters').then((module) => ({ default: module.Fighters })))
 const Events = lazy(() => import('./pages/Events').then((module) => ({ default: module.Events })))
 const Rankings = lazy(() => import('./pages/Rankings').then((module) => ({ default: module.Rankings })))
+const TrackRecord = lazy(() => import('./pages/TrackRecord').then((module) => ({ default: module.TrackRecord })))
+const RecordBook = lazy(() => import('./pages/RecordBook').then((module) => ({ default: module.RecordBook })))
 const Champions = lazy(() => import('./pages/Champions').then((module) => ({ default: module.Champions })))
 const HeadToHead = lazy(() => import('./pages/HeadToHead').then((module) => ({ default: module.HeadToHead })))
 const Model = lazy(() => import('./pages/Model').then((module) => ({ default: module.Model })))
@@ -30,10 +32,16 @@ const matchupTabs: SectionTab[] = [
   { to: '/matchup-intelligence', label: 'Matchup' },
 ]
 
+const championsTabs: SectionTab[] = [
+  { to: '/champions', label: 'Champions' },
+  { to: '/record-book', label: 'Record book' },
+]
+
 const aboutTabs: SectionTab[] = [
   { to: '/about', label: 'About' },
   { to: '/data', label: 'Data' },
   { to: '/model', label: 'System' },
+  { to: '/track-record', label: 'Track record' },
 ]
 
 function App() {
@@ -52,11 +60,15 @@ function App() {
             <Route path="/fighters" element={<Fighters />} />
             <Route path="/events" element={<Events />} />
             <Route path="/rankings" element={<Rankings />} />
-            <Route path="/champions" element={<Champions />} />
+            <Route element={<TabbedLayout label="Champions and records" tabs={championsTabs} />}>
+              <Route path="/champions" element={<Champions />} />
+              <Route path="/record-book" element={<RecordBook />} />
+            </Route>
             <Route element={<TabbedLayout label="About this project" tabs={aboutTabs} />}>
               <Route path="/about" element={<About />} />
               <Route path="/data" element={<DataIntelligence />} />
               <Route path="/model" element={<Model />} />
+              <Route path="/track-record" element={<TrackRecord />} />
             </Route>
             <Route path="/about-model" element={<AboutModel />} />
             <Route path="*" element={<NotFound />} />

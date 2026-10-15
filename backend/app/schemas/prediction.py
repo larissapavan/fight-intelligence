@@ -25,3 +25,13 @@ class PredictionResponse(BaseModel):
     fighter_b_profile: dict
     comparison_stats: dict
     main_factors: list[MainFactor]
+
+
+class UpcomingPick(BaseModel):
+    event_name: str
+    event_date: str | None = None
+    fighter_1: str
+    fighter_2: str
+    predicted_winner: str
+    probability: float
+    fighter_1_probability: float

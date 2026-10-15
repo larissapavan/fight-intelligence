@@ -1,0 +1,339 @@
+category,stat_key,stat,note,unit,rank,fighter,value,ufc_url,updated
+Fights,TotalFights,Total Fights,,Total,1,Jim Miller,47,http://www.ufc.com/athlete/Jim-Miller,2026-10-15
+Fights,TotalFights,Total Fights,,Total,2,Andrei Arlovski,42,http://www.ufc.com/athlete/Andrei-Arlovski,2026-10-15
+Fights,TotalFights,Total Fights,,Total,3,Donald Cerrone,38,http://www.ufc.com/athlete/Donald-Cerrone,2026-10-15
+Fights,TotalFights,Total Fights,,Total,3,Neil Magny,38,http://www.ufc.com/athlete/Neil-Magny,2026-10-15
+Fights,TotalFights,Total Fights,,Total,5,Clay Guida,37,http://www.ufc.com/athlete/Clay-Guida,2026-10-15
+Fights,TotalFights,Total Fights,,Total,5,Rafael Dos Anjos,37,http://www.ufc.com/athlete/Rafael-Dos-Anjos,2026-10-15
+Fights,TotalFights,Total Fights,,Total,5,Charles Oliveira,37,http://www.ufc.com/athlete/Charles-Oliveira,2026-10-15
+Fights,TotalFights,Total Fights,,Total,8,Jeremy Stephens,36,http://www.ufc.com/athlete/Jeremy-Stephens,2026-10-15
+Fights,TotalFights,Total Fights,,Total,9,Demian Maia,33,http://www.ufc.com/athlete/Demian-Maia,2026-10-15
+Fights,TotalFights,Total Fights,,Total,9,Edson Barboza,33,http://www.ufc.com/athlete/Edson-Barboza,2026-10-15
+Fights,TotalFights,Total Fights,,Total,9,Max Holloway,33,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Fights,Wins,Wins,,Total,1,Jim Miller,28,http://www.ufc.com/athlete/Jim-Miller,2026-10-15
+Fights,Wins,Wins,,Total,2,Charles Oliveira,25,http://www.ufc.com/athlete/Charles-Oliveira,2026-10-15
+Fights,Wins,Wins,,Total,2,Neil Magny,25,http://www.ufc.com/athlete/Neil-Magny,2026-10-15
+Fights,Wins,Wins,,Total,4,Max Holloway,24,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Fights,Wins,Wins,,Total,5,Andrei Arlovski,23,http://www.ufc.com/athlete/Andrei-Arlovski,2026-10-15
+Fights,Wins,Wins,,Total,5,Donald Cerrone,23,http://www.ufc.com/athlete/Donald-Cerrone,2026-10-15
+Fights,Wins,Wins,,Total,7,Demian Maia,22,http://www.ufc.com/athlete/Demian-Maia,2026-10-15
+Fights,Wins,Wins,,Total,7,Jon Jones,22,http://www.ufc.com/athlete/Jon-Jones,2026-10-15
+Fights,Wins,Wins,,Total,7,Dustin Poirier,22,http://www.ufc.com/athlete/Dustin-Poirier,2026-10-15
+Fights,Wins,Wins,,Total,10,Rafael Dos Anjos,21,http://www.ufc.com/athlete/Rafael-Dos-Anjos,2026-10-15
+Fights,Finishes,Finishes,,Total,1,Charles Oliveira,21,http://www.ufc.com/athlete/Charles-Oliveira,2026-10-15
+Fights,Finishes,Finishes,,Total,2,Jim Miller,20,http://www.ufc.com/athlete/Jim-Miller,2026-10-15
+Fights,Finishes,Finishes,,Total,3,Donald Cerrone,16,http://www.ufc.com/athlete/Donald-Cerrone,2026-10-15
+Fights,Finishes,Finishes,,Total,3,Derrick Lewis,16,http://www.ufc.com/athlete/Derrick-Lewis,2026-10-15
+Fights,Finishes,Finishes,,Total,5,Matt Brown,15,http://www.ufc.com/athlete/Matt-Brown,2026-10-15
+Fights,Finishes,Finishes,,Total,5,Dustin Poirier,15,http://www.ufc.com/athlete/Dustin-Poirier,2026-10-15
+Fights,Finishes,Finishes,,Total,5,Vicente Luque,15,http://www.ufc.com/athlete/Vicente-Luque,2026-10-15
+Fights,Finishes,Finishes,,Total,8,Anderson Silva,14,http://www.ufc.com/athlete/Anderson-Silva,2026-10-15
+Fights,Finishes,Finishes,,Total,8,Max Holloway,14,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Fights,Finishes,Finishes,,Total,10,Frank Mir,13,http://www.ufc.com/athlete/Frank-Mir,2026-10-15
+Fights,Finishes,Finishes,,Total,10,Joe Lauzon,13,http://www.ufc.com/athlete/Joe-Lauzon,2026-10-15
+Fights,Finishes,Finishes,,Total,10,Glover Teixeira,13,http://www.ufc.com/athlete/Glover-Teixeira,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,1,Derrick Lewis,16,http://www.ufc.com/athlete/Derrick-Lewis,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,2,Matt Brown,13,http://www.ufc.com/athlete/Matt-Brown,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,3,Max Holloway,12,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,4,Anderson Silva,11,http://www.ufc.com/athlete/Anderson-Silva,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,4,Anthony Johnson,11,http://www.ufc.com/athlete/Anthony-Johnson,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,4,Drew Dober,11,http://www.ufc.com/athlete/Drew-Dober,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,4,Dustin Poirier,11,http://www.ufc.com/athlete/Dustin-Poirier,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,4,Thiago Santos,11,http://www.ufc.com/athlete/Thiago-Santos,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,9,Michael Bisping,10,http://www.ufc.com/athlete/Michael-Bisping,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,9,Cain Velasquez,10,http://www.ufc.com/athlete/Cain-Velasquez,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,9,Junior Dos Santos,10,http://www.ufc.com/athlete/Junior-Dos-Santos,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,9,Donald Cerrone,10,http://www.ufc.com/athlete/Donald-Cerrone,2026-10-15
+Fights,KOTKOWins,KO/TKO Wins,,Total,9,Francis Ngannou,10,http://www.ufc.com/athlete/Francis-Ngannou,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,1,Charles Oliveira,17,http://www.ufc.com/athlete/Charles-Oliveira,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,2,Jim Miller,14,http://www.ufc.com/athlete/Jim-Miller,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,3,Demian Maia,11,http://www.ufc.com/athlete/Demian-Maia,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,3,Gerald Meerschaert,11,http://www.ufc.com/athlete/Gerald-Meerschaert,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,5,Nate Diaz,10,http://www.ufc.com/athlete/Nate-Diaz,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,6,Michael Chiesa,9,http://www.ufc.com/athlete/Michael-Chiesa,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,7,Frank Mir,8,http://www.ufc.com/athlete/Frank-Mir,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,7,Gunnar Nelson,8,http://www.ufc.com/athlete/Gunnar-Nelson,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,7,Islam Makhachev,8,http://www.ufc.com/athlete/Islam-Makhachev,2026-10-15
+Fights,SubmissionWins,Submission Wins,,Total,7,Brendan Allen,8,http://www.ufc.com/athlete/Brendan-Allen,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,1,Brad Tavares,14,http://www.ufc.com/athlete/Brad-Tavares,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,1,Neil Magny,14,http://www.ufc.com/athlete/Neil-Magny,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Andrei Arlovski,12,http://www.ufc.com/athlete/Andrei-Arlovski,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Georges St-Pierre,12,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Diego Sanchez,12,http://www.ufc.com/athlete/Diego-Sanchez,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Rafael Dos Anjos,12,http://www.ufc.com/athlete/Rafael-Dos-Anjos,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Darren Elkins,12,http://www.ufc.com/athlete/Darren-Elkins,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Sean Strickland,12,http://www.ufc.com/athlete/Sean-Strickland,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Belal Muhammad,12,http://www.ufc.com/athlete/Belal-Muhammad,2026-10-15
+Fights,DecisionWins,Decision Wins,,Total,3,Merab Dvalishvili,12,http://www.ufc.com/athlete/Merab-Dvalishvili,2026-10-15
+Fights,WinStreak,Win Streak,,Total,1,Islam Makhachev,17,http://www.ufc.com/athlete/Islam-Makhachev,2026-10-15
+Fights,WinStreak,Win Streak,,Total,2,Anderson Silva,16,http://www.ufc.com/athlete/Anderson-Silva,2026-10-15
+Fights,WinStreak,Win Streak,,Total,3,Kamaru Usman,15,http://www.ufc.com/athlete/Kamaru-Usman,2026-10-15
+Fights,WinStreak,Win Streak,,Total,4,Merab Dvalishvili,14,http://www.ufc.com/athlete/Merab-Dvalishvili,2026-10-15
+Fights,WinStreak,Win Streak,,Total,5,Georges St-Pierre,13,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Fights,WinStreak,Win Streak,,Total,5,Jon Jones,13,http://www.ufc.com/athlete/Jon-Jones,2026-10-15
+Fights,WinStreak,Win Streak,,Total,5,Demetrious Johnson,13,http://www.ufc.com/athlete/Demetrious-Johnson,2026-10-15
+Fights,WinStreak,Win Streak,,Total,5,Khabib Nurmagomedov,13,http://www.ufc.com/athlete/Khabib-Nurmagomedov,2026-10-15
+Fights,WinStreak,Win Streak,,Total,5,Max Holloway,13,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Fights,WinStreak,Win Streak,,Total,10,Amanda Nunes,12,http://www.ufc.com/athlete/Amanda-Nunes,2026-10-15
+Fights,WinStreak,Win Streak,,Total,10,Tony Ferguson,12,http://www.ufc.com/athlete/Tony-Ferguson,2026-10-15
+Fights,WinStreak,Win Streak,,Total,10,Alexander Volkanovski,12,http://www.ufc.com/athlete/Alexander-Volkanovski,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,1,Jon Jones,16,http://www.ufc.com/athlete/Jon-Jones,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,2,Georges St-Pierre,13,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,3,Demetrious Johnson,12,http://www.ufc.com/athlete/Demetrious-Johnson,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,4,Anderson Silva,11,http://www.ufc.com/athlete/Anderson-Silva,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,4,Amanda Nunes,11,http://www.ufc.com/athlete/Amanda-Nunes,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,4,Valentina Shevchenko,11,http://www.ufc.com/athlete/Valentina-Shevchenko,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,7,Matt Hughes,9,http://www.ufc.com/athlete/Matt-Hughes,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,8,Randy Couture,8,http://www.ufc.com/athlete/Randy-Couture,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,8,Jose Aldo,8,http://www.ufc.com/athlete/Jose-Aldo,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,8,Alexander Volkanovski,8,http://www.ufc.com/athlete/Alexander-Volkanovski,2026-10-15
+Fights,TitleFightWins,Title Fight Wins,,Total,8,Israel Adesanya,8,http://www.ufc.com/athlete/Israel-Adesanya,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,1,Charles Oliveira,21,http://www.ufc.com/athlete/Charles-Oliveira,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,2,Donald Cerrone,18,http://www.ufc.com/athlete/Donald-Cerrone,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,3,Justin Gaethje,17,http://www.ufc.com/athlete/Justin-Gaethje,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,4,Jim Miller,16,http://www.ufc.com/athlete/Jim-Miller,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,4,Nate Diaz,16,http://www.ufc.com/athlete/Nate-Diaz,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,6,Joe Lauzon,15,http://www.ufc.com/athlete/Joe-Lauzon,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,6,Dustin Poirier,15,http://www.ufc.com/athlete/Dustin-Poirier,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,8,Anderson Silva,14,http://www.ufc.com/athlete/Anderson-Silva,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,9,Edson Barboza,13,http://www.ufc.com/athlete/Edson-Barboza,2026-10-15
+Fights,TotalAwards,Total Fight Night Bonuses,,Total,9,Max Holloway,13,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,1,Tom Aspinall,2:18,http://www.ufc.com/athlete/Tom-Aspinall,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,2,Drew McFedries,2:20,http://www.ufc.com/athlete/Drew-McFedries,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,3,Terrance McKinney,2:28,http://www.ufc.com/athlete/Terrance-McKinney,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,4,James Irvin,2:53,http://www.ufc.com/athlete/James-Irvin,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,5,Manuel Torres,2:56,http://www.ufc.com/athlete/Manuel-Torres,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,6,Ronda Rousey,3:06,http://www.ufc.com/athlete/Ronda-Rousey,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,7,Chris Daukaus,3:11,http://www.ufc.com/athlete/Chris-Daukaus,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,8,Cyril Asker,3:24,http://www.ufc.com/athlete/Cyril-Asker,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,9,Todd Duffee,3:26,http://www.ufc.com/athlete/Todd-Duffee,2026-10-15
+Time,AverageFightTimeShort,Shortest Avg. Fight Time,Minimum 5 UFC Fights,Time,10,Gadzhimurad Antigulov,3:27,http://www.ufc.com/athlete/Gadzhimurad-Antigulov,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,1,Valentina Shevchenko,19:04,http://www.ufc.com/athlete/Valentina-Shevchenko,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,2,Joanna Jedrzejczyk,18:37,http://www.ufc.com/athlete/Joanna-Jedrzejczyk,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,3,Demetrious Johnson,18:34,http://www.ufc.com/athlete/Demetrious-Johnson,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,4,Dominick Cruz,18:20,http://www.ufc.com/athlete/Dominick-Cruz,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,5,Kamaru Usman,18:12,http://www.ufc.com/athlete/Kamaru-Usman,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,6,Benson Henderson,18:02,http://www.ufc.com/athlete/Benson-Henderson,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,7,Petr Yan,17:38,http://www.ufc.com/athlete/Petr-Yan,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,8,Merab Dvalishvili,17:36,http://www.ufc.com/athlete/Merab-Dvalishvili,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,9,Israel Adesanya,17:09,http://www.ufc.com/athlete/Israel-Adesanya,2026-10-15
+Time,AverageFightTimeLong,Longest Avg. Fight Time,Minimum 5 UFC Fights,Time,10,Marvin Vettori,17:02,http://www.ufc.com/athlete/Marvin-Vettori,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,1,Max Holloway,8:53:52,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,2,Rafael Dos Anjos,8:51:31,http://www.ufc.com/athlete/Rafael-Dos-Anjos,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,3,Frankie Edgar,7:57:10,http://www.ufc.com/athlete/Frankie-Edgar,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,4,Jim Miller,7:32:57,http://www.ufc.com/athlete/Jim-Miller,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,5,Neil Magny,7:31:09,http://www.ufc.com/athlete/Neil-Magny,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,6,Angela Hill,7:12:45,http://www.ufc.com/athlete/Angela-Hill,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,7,Clay Guida,7:03:17,http://www.ufc.com/athlete/Clay-Guida,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,8,Andrei Arlovski,6:49:58,http://www.ufc.com/athlete/Andrei-Arlovski,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,9,Demian Maia,6:49:40,http://www.ufc.com/athlete/Demian-Maia,2026-10-15
+Time,TotalFightTime,Total Fight Time,,Time,10,Jeremy Stephens,6:48:52,http://www.ufc.com/athlete/Jeremy-Stephens,2026-10-15
+Time,ControlTime,Control Time,,Time,1,Georges St-Pierre,2:42:04,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Time,ControlTime,Control Time,,Time,2,Clay Guida,2:36:28,http://www.ufc.com/athlete/Clay-Guida,2026-10-15
+Time,ControlTime,Control Time,,Time,3,Demian Maia,2:35:20,http://www.ufc.com/athlete/Demian-Maia,2026-10-15
+Time,ControlTime,Control Time,,Time,4,Kamaru Usman,2:27:12,http://www.ufc.com/athlete/Kamaru-Usman,2026-10-15
+Time,ControlTime,Control Time,,Time,5,Rafael Dos Anjos,2:16:43,http://www.ufc.com/athlete/Rafael-Dos-Anjos,2026-10-15
+Time,ControlTime,Control Time,,Time,6,Darren Elkins,2:09:03,http://www.ufc.com/athlete/Darren-Elkins,2026-10-15
+Time,ControlTime,Control Time,,Time,7,Jon Fitch,2:08:26,http://www.ufc.com/athlete/Jon-Fitch,2026-10-15
+Time,ControlTime,Control Time,,Time,8,Randy Couture,2:06:42,http://www.ufc.com/athlete/Randy-Couture,2026-10-15
+Time,ControlTime,Control Time,,Time,9,Colby Covington,2:05:05,http://www.ufc.com/athlete/Colby-Covington,2026-10-15
+Time,ControlTime,Control Time,,Time,10,Islam Makhachev,1:53:58,http://www.ufc.com/athlete/Islam-Makhachev,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,1,Bartosz Fabinski,79.1%,http://www.ufc.com/athlete/Bartosz-Fabinski,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,2,Gregor Gillespie,71.9%,http://www.ufc.com/athlete/Gregor-Gillespie,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,3,Pat Sabatini,71.0%,http://www.ufc.com/athlete/Pat-Sabatini,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,4,Jailton Almeida,69.9%,http://www.ufc.com/athlete/Jailton-Almeida,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,5,Chael Sonnen,69.3%,http://www.ufc.com/athlete/Chael-Sonnen,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,6,Matt Lindland,66.1%,http://www.ufc.com/athlete/Matt-Lindland,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,7,Philip De Fries,65.6%,http://www.ufc.com/athlete/Phil-De-Fries,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,8,Grant Dawson,65.1%,http://www.ufc.com/athlete/Grant-Dawson,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,9,Charlie Brenneman,61.7%,http://www.ufc.com/athlete/Charlie-Brenneman,2026-10-15
+Time,ControlTimePercentage,Control Time Percentage,Minimum 5 UFC Fights,Percent,10,Cain Velasquez,60.4%,http://www.ufc.com/athlete/Cain-Velasquez,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,1,Georges St-Pierre,2:22:05,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,2,Demian Maia,2:01:15,http://www.ufc.com/athlete/Demian-Maia,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,3,Clay Guida,1:48:14,http://www.ufc.com/athlete/Clay-Guida,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,4,Jon Fitch,1:46:35,http://www.ufc.com/athlete/Jon-Fitch,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,5,Matt Hughes,1:45:08,http://www.ufc.com/athlete/Matt-Hughes,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,6,Darren Elkins,1:40:05,http://www.ufc.com/athlete/Darren-Elkins,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,7,Gillian Robertson,1:40:04,http://www.ufc.com/athlete/Gillian-Robertson,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,8,Valentina Shevchenko,1:38:16,http://www.ufc.com/athlete/Valentina-Shevchenko,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,9,Kamaru Usman,1:37:33,http://www.ufc.com/athlete/Kamaru-Usman,2026-10-15
+Time,TopPositionTime,Top Position Time,,Time,10,Islam Makhachev,1:35:27,http://www.ufc.com/athlete/Islam-Makhachev,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,1,Jailton Almeida,63.7%,http://www.ufc.com/athlete/Jailton-Almeida,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,2,Chael Sonnen,63.0%,http://www.ufc.com/athlete/Chael-Sonnen,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,3,Bartosz Fabinski,62.2%,http://www.ufc.com/athlete/Bartosz-Fabinski,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,4,Grant Dawson,56.1%,http://www.ufc.com/athlete/Grant-Dawson,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,5,Charlie Brenneman,54.8%,http://www.ufc.com/athlete/Charlie-Brenneman,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,6,Matt Lindland,54.3%,http://www.ufc.com/athlete/Matt-Lindland,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,7,Khamzat Chimaev,52.6%,http://www.ufc.com/athlete/Khamzat-Chimaev,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,8,Gregor Gillespie,52.5%,http://www.ufc.com/athlete/Gregor-Gillespie,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,9,Matt Hughes,51.6%,http://www.ufc.com/athlete/Matt-Hughes,2026-10-15
+Time,TopPositionTimePercentage,Top Position Percentage,Minimum 5 UFC Fights,Percent,10,Pat Sabatini,51.1%,http://www.ufc.com/athlete/Pat-Sabatini,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,1,Tom Aspinall,0:01,http://www.ufc.com/athlete/Tom-Aspinall,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,2,Ikram Aliskerov,0:03,http://www.ufc.com/athlete/Ikram-Aliskerov,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,3,Philipe Lins,0:05,http://www.ufc.com/athlete/Philipe-Lins,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,3,Ateba Gautier,0:05,http://www.ufc.com/athlete/Ateba-Gautier,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,5,Sam Patterson,0:07,http://www.ufc.com/athlete/Sam-Patterson,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,6,Zubaira Tukhugov,0:08,http://www.ufc.com/athlete/Zubaira-Tukhugov,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,7,Adriano Martins,0:09,http://www.ufc.com/athlete/Adriano-Martins,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,7,Chris Padilla,0:09,http://www.ufc.com/athlete/Chris-Padilla,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,9,Riki Fukuda,0:10,http://www.ufc.com/athlete/Riki-Fukuda,2026-10-15
+Time,BottomPositionTime,Bottom Position Time,Minimum 5 UFC Fights,Time,9,Ike Villanueva,0:10,http://www.ufc.com/athlete/Ike-Villanueva,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,1,Tom Aspinall,0.07%,http://www.ufc.com/athlete/Tom-Aspinall,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,2,Zubaira Tukhugov,0.12%,http://www.ufc.com/athlete/Zubaira-Tukhugov,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,3,Ikram Aliskerov,0.12%,http://www.ufc.com/athlete/Ikram-Aliskerov,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,4,Philipe Lins,0.13%,http://www.ufc.com/athlete/Philipe-Lins,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,5,Jon Jones,0.19%,http://www.ufc.com/athlete/Jon-Jones,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,6,Chris Padilla,0.22%,http://www.ufc.com/athlete/Chris-Padilla,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,7,Riki Fukuda,0.22%,http://www.ufc.com/athlete/Riki-Fukuda,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,8,Carlos Ulberg,0.26%,http://www.ufc.com/athlete/Carlos-Ulberg,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,9,Adriano Martins,0.26%,http://www.ufc.com/athlete/Adriano-Martins,2026-10-15
+Time,BottomPositionTimePercentage,Bottom Position Percentage,Minimum 5 UFC Fights,Percent,10,Alice Ardelean,0.26%,http://www.ufc.com/athlete/Alice-Ardelean,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,1,Donald Cerrone,20,http://www.ufc.com/athlete/Donald-Cerrone,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,2,Anderson Silva,18,http://www.ufc.com/athlete/Anderson-Silva,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,2,Jeremy Stephens,18,http://www.ufc.com/athlete/Jeremy-Stephens,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,4,Edson Barboza,16,http://www.ufc.com/athlete/Edson-Barboza,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,4,Marlon Vera,16,http://www.ufc.com/athlete/Marlon-Vera,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,6,Dustin Poirier,15,http://www.ufc.com/athlete/Dustin-Poirier,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,7,Chuck Liddell,14,http://www.ufc.com/athlete/Chuck-Liddell,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,7,Lyoto Machida,14,http://www.ufc.com/athlete/Lyoto-Machida,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,7,Mauricio Rua,14,http://www.ufc.com/athlete/Mauricio-Rua,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,7,Junior Dos Santos,14,http://www.ufc.com/athlete/Junior-Dos-Santos,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,7,Thiago Santos,14,http://www.ufc.com/athlete/Thiago-Santos,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,7,Khalil Rountree Jr.,14,http://www.ufc.com/athlete/Khalil-Rountree-Jr.,2026-10-15
+Striking,Knockdowns,Knockdowns Landed,,Total,7,Montel Jackson,14,http://www.ufc.com/athlete/Montel-Jackson,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,1,Drew McFedries,4.27,http://www.ufc.com/athlete/Drew-McFedries,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,2,Chris Daukaus,3.54,http://www.ufc.com/athlete/Chris-Daukaus,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,3,Tom Aspinall,3.27,http://www.ufc.com/athlete/Tom-Aspinall,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,4,Uros Medic,3.2,http://www.ufc.com/athlete/Uros-Medic,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,5,Manuel Torres,2.93,http://www.ufc.com/athlete/Manuel-Torres,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,5,Ateba Gautier,2.93,http://www.ufc.com/athlete/Ateba-Gautier,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,7,Todd Duffee,2.91,http://www.ufc.com/athlete/Todd-Duffee,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,8,Carlos Prates,2.32,http://www.ufc.com/athlete/Carlos-Prates,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,9,Gilbert Urbina,2.04,http://www.ufc.com/athlete/Gilbert-Urbina,2026-10-15
+Striking,KnockdownsAverage,Knockdown Avg. per 15 Min.,Minimum 5 UFC Fights,Total,10,Shane Carwin,2.03,http://www.ufc.com/athlete/Shane-Carwin,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,1,Max Holloway,3693,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,2,Sean Strickland,2430,http://www.ufc.com/athlete/Sean-Strickland,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,3,Angela Hill,2364,http://www.ufc.com/athlete/Angela-Hill,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,4,King Green,2151,http://www.ufc.com/athlete/King-Green,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,5,Dustin Poirier,1861,http://www.ufc.com/athlete/Dustin-Poirier,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,6,Rafael Dos Anjos,1848,http://www.ufc.com/athlete/Rafael-Dos-Anjos,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,7,Jessica Andrade,1824,http://www.ufc.com/athlete/Jessica-Andrade,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,8,Alexander Volkanovski,1815,http://www.ufc.com/athlete/Alexander-Volkanovski,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,9,Frankie Edgar,1801,http://www.ufc.com/athlete/Frankie-Edgar,2026-10-15
+Striking,SigStrikesLanded,Sig Strikes Landed,,Total,10,Joanna Jedrzejczyk,1754,http://www.ufc.com/athlete/Joanna-Jedrzejczyk,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,1,Alistair Overeem,74.3%,http://www.ufc.com/athlete/Alistair-Overeem,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,2,Shara Magomedov,62.8%,http://www.ufc.com/athlete/Shara-Magomedov,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,3,Ciryl Gane,61.7%,http://www.ufc.com/athlete/Ciryl-Gane,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,4,Chidi Njokuani,61.7%,http://www.ufc.com/athlete/Chidi-Njokuani,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,5,Josh Barnett,61.5%,http://www.ufc.com/athlete/Josh-Barnett,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,6,Alex Pereira,61.4%,http://www.ufc.com/athlete/Alex-Pereira,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,7,Phil Hawes,60.7%,http://www.ufc.com/athlete/Phillip-Hawes,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,8,Sean O'Malley,60.3%,http://www.ufc.com/athlete/Sean-OMalley,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,9,Tatiana Suarez,60.2%,http://www.ufc.com/athlete/Tatiana-Suarez,2026-10-15
+Striking,SigStrikesAccuracy,Sig Strike Accuracy,Minimum 5 UFC Fights and 500 Significant Strike Attempts,Percent,10,Anthony Hernandez,60.1%,http://www.ufc.com/athlete/Anthony-Hernandez,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,1,Carli Judice,8.7,http://www.ufc.com/athlete/Carli-Judice,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,2,Joshua Van,8.26,http://www.ufc.com/athlete/Joshua-Van,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,3,Terrance McKinney,7.95,http://www.ufc.com/athlete/Terrance-McKinney,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,4,Tom Aspinall,7.63,http://www.ufc.com/athlete/Tom-Aspinall,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,5,Casey O'Neill,7.6,http://www.ufc.com/athlete/Casey-ONeill,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,6,Leslie Smith,7.56,http://www.ufc.com/athlete/Leslie-Smith,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,7,Esteban Ribovics,7.46,http://www.ufc.com/athlete/Esteban-Ribovics,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,8,Emily Ducote,7.45,http://www.ufc.com/athlete/Emily-Ducote,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,9,Shane Burgos,7.4,http://www.ufc.com/athlete/Shane-Burgos,2026-10-15
+Striking,SLpM,Strikes Landed per Min.,Minimum 5 UFC Fights,Total,10,Hyder Amil,7.28,http://www.ufc.com/athlete/Hyder-Amil,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,1,Cristiane Justino,4.79,http://www.ufc.com/athlete/Cris-Cyborg,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,2,Cain Velasquez,4.08,http://www.ufc.com/athlete/Cain-Velasquez,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,3,Tom Aspinall,4.01,http://www.ufc.com/athlete/Tom-Aspinall,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,4,Carli Judice,3.99,http://www.ufc.com/athlete/Carli-Judice,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,5,Navajo Stirling,3.95,http://www.ufc.com/athlete/Navajo-Stirling,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,6,Todd Duffee,3.26,http://www.ufc.com/athlete/Todd-Duffee,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,7,Terrance McKinney,3.19,http://www.ufc.com/athlete/Terrance-McKinney,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,8,Ciryl Gane,3.09,http://www.ufc.com/athlete/Ciryl-Gane,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,8,Payton Talbott,3.09,http://www.ufc.com/athlete/Payton-Talbott,2026-10-15
+Striking,SignificantStrikesDifferential,Striking Differential,Minimum 5 UFC Fights,Total,10,Michael Morales,3.04,http://www.ufc.com/athlete/Michael-Morales,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,1,Georges St-Pierre,73.1%,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,2,Phil Davis,72.3%,http://www.ufc.com/athlete/Phil-Davis,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,3,Ryan Bader,71.8%,http://www.ufc.com/athlete/Ryan-Bader,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,4,Danielle Taylor,71.7%,http://www.ufc.com/athlete/Danielle-Taylor,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,5,Mara Romero Borella,71.2%,http://www.ufc.com/athlete/Mara-Romero-Borella,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,6,Vaughan Lee,70.2%,http://www.ufc.com/athlete/Vaughan-Lee,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,7,Luigi Fioravanti,69.9%,http://www.ufc.com/athlete/Luigi-Fioravanti,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,8,Desmond Green,69.0%,http://www.ufc.com/athlete/Desmond-Green,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,9,Enrique Barzola,68.7%,http://www.ufc.com/athlete/Enrique-Barzola,2026-10-15
+Striking,SignificantStrikesDefense,Sig Strike Defense,Minimum 5 UFC Fights and 500 Strike Attempts by Opponents,Percent,10,Jacqueline Cavalcanti,68.6%,http://www.ufc.com/athlete/Jacqueline-Cavalcanti,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,1,Pete Spratt,1.04,http://www.ufc.com/athlete/Pete-Spratt,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,2,Ivan Salaverry,1.15,http://www.ufc.com/athlete/Ivan-Salaverry,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,3,Pat Sabatini,1.16,http://www.ufc.com/athlete/Pat-Sabatini,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,4,Jon Madsen,1.18,http://www.ufc.com/athlete/Jon-Madsen,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,5,Renato Sobral,1.25,http://www.ufc.com/athlete/Renato-Sobral,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,6,Matt Lindland,1.31,http://www.ufc.com/athlete/Matt-Lindland,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,6,Ricco Rodriguez,1.31,http://www.ufc.com/athlete/Ricco-Rodriguez,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,8,Chael Sonnen,1.32,http://www.ufc.com/athlete/Chael-Sonnen,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,8,Jailton Almeida,1.32,http://www.ufc.com/athlete/Jailton-Almeida,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,10,Phil Davis,1.33,http://www.ufc.com/athlete/Phil-Davis,2026-10-15
+Striking,SApM,Strikes Absorbed per Min.,Minimum 5 UFC Fights,Total,10,Ryan Hall,1.33,http://www.ufc.com/athlete/Ryan-Hall,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,1,Max Holloway,3994,http://www.ufc.com/athlete/Max-Holloway,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,2,Neil Magny,2790,http://www.ufc.com/athlete/Neil-Magny,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,3,Merab Dvalishvili,2782,http://www.ufc.com/athlete/Merab-Dvalishvili,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,4,Angela Hill,2763,http://www.ufc.com/athlete/Angela-Hill,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,5,Kamaru Usman,2663,http://www.ufc.com/athlete/Kamaru-Usman,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,6,Sean Strickland,2643,http://www.ufc.com/athlete/Sean-Strickland,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,7,Rafael Dos Anjos,2623,http://www.ufc.com/athlete/Rafael-Dos-Anjos,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,8,Darren Elkins,2621,http://www.ufc.com/athlete/Darren-Elkins,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,9,Georges St-Pierre,2591,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Striking,TotalStrikesLanded,Total Strikes Landed,,Total,10,Nate Diaz,2487,http://www.ufc.com/athlete/Nate-Diaz,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,1,Merab Dvalishvili,119,http://www.ufc.com/athlete/Merab-Dvalishvili,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,2,Georges St-Pierre,90,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,3,Gleison Tibau,84,http://www.ufc.com/athlete/Gleison-Tibau,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,4,Clay Guida,78,http://www.ufc.com/athlete/Clay-Guida,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,5,Demetrious Johnson,74,http://www.ufc.com/athlete/Demetrious-Johnson,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,6,Frankie Edgar,73,http://www.ufc.com/athlete/Frankie-Edgar,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,7,Tim Elliott,70,http://www.ufc.com/athlete/Tim-Elliott,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,7,Colby Covington,70,http://www.ufc.com/athlete/Colby-Covington,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,7,Curtis Blaydes,70,http://www.ufc.com/athlete/Curtis-Blaydes,2026-10-15
+Grappling,TakedownsLanded,Takedowns Landed,,Total,10,Nik Lentz,69,http://www.ufc.com/athlete/Nik-Lentz,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,1,Nordine Taleb,76.2%,http://www.ufc.com/athlete/Nordine-Taleb,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,2,Taila Santos,75.0%,http://www.ufc.com/athlete/Taila-Santos,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,3,Robbie Lawler,73.9%,http://www.ufc.com/athlete/Robbie-Lawler,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,4,Georges St-Pierre,73.8%,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,5,Bartosz Fabinski,70.6%,http://www.ufc.com/athlete/Bartosz-Fabinski,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,6,Jonathan Goulet,70.0%,http://www.ufc.com/athlete/Jonathan-Goulet,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,7,Diego Brandao,68.0%,http://www.ufc.com/athlete/Diego-Brandao,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,8,Renato Sobral,66.7%,http://www.ufc.com/athlete/Renato-Sobral,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,8,Melvin Guillard,66.7%,http://www.ufc.com/athlete/Melvin-Guillard,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,8,Makhmud Muradov,66.7%,http://www.ufc.com/athlete/Makhmud-Muradov,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,8,Joanderson Brito,66.7%,http://www.ufc.com/athlete/Joanderson-Brito,2026-10-15
+Grappling,TakedownsAccuracy,Takedown Accuracy,Minimum 5 UFC Fights and 20 Takedown Attempts,Percent,8,Fatima Kline,66.7%,http://www.ufc.com/athlete/Fatima-Kline,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,1,Julio Arce,96.2%,http://www.ufc.com/athlete/Julio-Arce,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,2,Ilia Topuria,95.2%,http://www.ufc.com/athlete/Ilia-Topuria,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,3,Jon Jones,95.0%,http://www.ufc.com/athlete/Jon-Jones,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,4,Eddie Wineland,93.3%,http://www.ufc.com/athlete/Eddie-Wineland,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,5,Jimmie Rivera,92.6%,http://www.ufc.com/athlete/Jimmie-Rivera,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,6,Renan Barao,92.5%,http://www.ufc.com/athlete/Renan-Barao,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,7,Gleison Tibau,92.1%,http://www.ufc.com/athlete/Gleison-Tibau,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,8,Jose Aldo,91.6%,http://www.ufc.com/athlete/Jose-Aldo,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,9,Shane Burgos,91.5%,http://www.ufc.com/athlete/Shane-Burgos,2026-10-15
+Grappling,TakedownsDefense,Takedown Defense,Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent,Percent,10,Islam Makhachev,91.3%,http://www.ufc.com/athlete/Islam-Makhachev,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,1,Jim Miller,52,http://www.ufc.com/athlete/Jim-Miller,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,2,Charles Oliveira,51,http://www.ufc.com/athlete/Charles-Oliveira,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,3,Chris Lytle,31,http://www.ufc.com/athlete/Chris-Lytle,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,4,Joe Lauzon,29,http://www.ufc.com/athlete/Joe-Lauzon,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,5,Demian Maia,27,http://www.ufc.com/athlete/Demian-Maia,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,6,Nate Diaz,26,http://www.ufc.com/athlete/Nate-Diaz,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,6,Nik Lentz,26,http://www.ufc.com/athlete/Nik-Lentz,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,8,Darren Elkins,25,http://www.ufc.com/athlete/Darren-Elkins,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,8,Dustin Poirier,25,http://www.ufc.com/athlete/Dustin-Poirier,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,10,Matt Brown,24,http://www.ufc.com/athlete/Matt-Brown,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,10,Georges St-Pierre,24,http://www.ufc.com/athlete/Georges-St-Pierre,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,10,Joe Stevenson,24,http://www.ufc.com/athlete/Joe-Stevenson,2026-10-15
+Grappling,SubmissionsAttempted,Submission Attempts,,Total,10,Cole Miller,24,http://www.ufc.com/athlete/Cole-Miller,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,1,Paul Sass,7.38,http://www.ufc.com/athlete/Paul-Sass,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,2,John Albert,6.14,http://www.ufc.com/athlete/John-Albert,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,3,TJ Waldburger,4.79,http://www.ufc.com/athlete/TJ-Waldburger,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,4,Jaqueline Amorim,4.27,http://www.ufc.com/athlete/Jaqueline-Amorim,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,5,Dustin Hazelett,4.14,http://www.ufc.com/athlete/Dustin-Hazelett,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,6,Valter Walker,3.59,http://www.ufc.com/athlete/Valter-Walker,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,7,Shannon Gugerty,3.41,http://www.ufc.com/athlete/Shannon-Gugerty,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,8,Tim Credeur,3.29,http://www.ufc.com/athlete/Tim-Credeur,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,9,Jason High,3.26,http://www.ufc.com/athlete/Jason-High,2026-10-15
+Grappling,SubmissionsAverage,Submission Avg. per 15 Min.,Minimum 5 UFC Fights,Total,10,Dave Menne,3.25,http://www.ufc.com/athlete/Dave-Menne,2026-10-15

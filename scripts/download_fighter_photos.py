@@ -126,6 +126,61 @@ def checked_keys(rows: list[dict]) -> set[str]:
     return {name_key(r["name"]) for r in rows if r["kind"] == "espn"}
 
 
+# --------------------------------------------------------------------------- ufc.com athlete pages
+
+UFC_ATHLETE_URL = "https://www.ufc.com/athlete/{slug}"
+UFC_DELAY_SECONDS = 1.0
+
+
+def parse_athlete_photo(html: str) -> str | None:
+    """The headshot on a ufc.com athlete page, or None for the generic silhouette ufc.com shows when it has no photo."""
+    tag = BeautifulSoup(html, "html.parser").find("meta", property="og:image")
+    url = (tag.get("content") or "").strip() if tag else ""
+    return None if not url or "silhouette" in url.lower() else url
+
+
+def sync_ufc_page_photos(session: requests.Session, rows: list[dict], names: list[str]) -> int:
+    """Photos from the ufc.com athlete page for fighters ESPN has none for (typically new debutants)."""
+    added = 0
+    covered = covered_keys(rows)
+    for name in names:
+        if name_key(name) in covered:
+            continue
+        try:
+            page = session.get(UFC_ATHLETE_URL.format(slug=slugify(name)), timeout=TIMEOUT_SECONDS)
+            url = parse_athlete_photo(page.text) if page.status_code == 200 else None
+            image = session.get(url, timeout=TIMEOUT_SECONDS) if url else None
+        except requests.RequestException:
+            continue
+        finally:
+            time.sleep(UFC_DELAY_SECONDS)
+        if image is None or image.status_code != 200:
+            continue
+        encoded = to_webp(image.content, max_width=ESPN_MAX_WIDTH)
+        filename = f"{slugify(name)}.webp"
+        (PHOTOS_DIR / filename).write_bytes(encoded)
+        rows.append(
+            {
+                "name": name,
+                "kind": "ufc",
+                "source": "ufc.com athlete page",
+                "source_url": url,
+                "image_url": f"/fighter-photos/{filename}?v={version_tag(encoded)}",
+                "local_path": f"frontend/public/fighter-photos/{filename}",
+                "checked": date.today().isoformat(),
+            }
+        )
+        added += 1
+    return added
+
+
+def active_without_photo() -> list[str]:
+    """Active fighters the site shows without a photo."""
+    from backend.app.services.catalog_service import list_fighters
+
+    return [fighter["name"] for fighter in list_fighters(ufc_only=True) if fighter.get("is_active") and not fighter.get("image_url")]
+
+
 # --------------------------------------------------------------------------- champions
 
 
@@ -297,11 +352,12 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--champions", action="store_true", help="refresh champion belt photos from ufc.com")
     parser.add_argument("--missing", action="store_true", help="download ESPN headshots for fighters without a photo")
+    parser.add_argument("--ufc-pages", action="store_true", help="photos from ufc.com athlete pages for active fighters still without one")
     parser.add_argument("--optimize-existing", action="store_true", help="shrink the historical photos in place")
     parser.add_argument("--limit", type=int, help="max fighters to check on ESPN in this run")
     parser.add_argument("--retry-missing", action="store_true", help="re-check fighters ESPN had no photo for")
     args = parser.parse_args(argv)
-    run_all = not (args.champions or args.missing or args.optimize_existing)
+    run_all = not (args.champions or args.missing or args.optimize_existing or args.ufc_pages)
 
     PHOTOS_DIR.mkdir(parents=True, exist_ok=True)
     session = requests.Session()
@@ -309,7 +365,7 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.optimize_existing:
         optimize_existing()
-    if args.champions or args.missing or run_all:
+    if args.champions or args.missing or args.ufc_pages or run_all:
         rows = load_manifest()
         fighters = load_csv(FIGHTERS_PATH)[1]
         career = load_csv(CAREER_STATS_PATH)[1] if CAREER_STATS_PATH.exists() else []
@@ -320,6 +376,12 @@ def main(argv: list[str] | None = None) -> None:
             save_manifest(rows)
         if args.missing or run_all:
             sync_espn_photos(session, rows, catalog, args.limit, args.retry_missing)
+        if args.ufc_pages or run_all:
+            print("[info] Active fighters without a photo (ufc.com athlete pages) ...")
+            rows = load_manifest()
+            added = sync_ufc_page_photos(session, rows, active_without_photo())
+            save_manifest(rows)
+            print(f"[info] ufc.com photos added: {added}")
 
 
 if __name__ == "__main__":

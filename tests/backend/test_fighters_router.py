@@ -1,3 +1,8 @@
+import pandas as pd
+
+from backend.app.services.bmf_service import BMF_FIGHTS_SOURCE_PATH
+
+
 def test_fighters_returns_full_catalog(client):
     response = client.get("/fighters")
     assert response.status_code == 200
@@ -84,3 +89,72 @@ def test_similar_fighters_covers_entire_catalog(client):
             failures.append((fighter["name"], response.status_code))
 
     assert not failures, f"{len(failures)} fighters failed /similar: {failures[:10]}"
+
+
+def test_every_fighter_has_a_ufc_status_and_former_ones_carry_roster_dates(client):
+    fighters = client.get("/fighters").json()
+    assert {fighter["ufc_status"] for fighter in fighters} <= {"active", "former", "never"}
+
+    former = [fighter for fighter in fighters if fighter["ufc_status"] == "former" and fighter["roster_url"]]
+    assert len(former) > 1500
+    assert all(fighter["ufc_debut"] and fighter["ufc_last_fight"] for fighter in former)
+
+    by_name = {fighter["name"]: fighter for fighter in fighters}
+    assert by_name["Khabib Nurmagomedov"]["ufc_status"] == "former"
+    assert by_name["Khabib Nurmagomedov"]["ufc_last_fight"] == "2020-10-24"
+    # Retired from the UFC even though the last fight is recent: roster.watch says so.
+    assert by_name["Jon Jones"]["is_active"] is False
+    # Never fought in the UFC: no status of "former" and no fights.
+    assert any(fighter["ufc_status"] == "never" for fighter in fighters)
+
+
+def test_nationalities_badges_and_the_roster_status_come_from_roster_watch(client):
+    by_name = {fighter["name"]: fighter for fighter in client.get("/fighters").json()}
+
+    topuria = by_name["Ilia Topuria"]
+    assert [item["code"] for item in topuria["nationalities"]] == ["ge", "es"]
+    assert topuria["country_code"] == "ge"  # the first nationality is the one he represents
+
+    tsarukyan = by_name["Arman Tsarukyan"]
+    assert tsarukyan["country_code"] == "am"
+    assert [item["name"] for item in tsarukyan["nationalities"]] == ["Armenia", "Russia"]
+
+    assert "bmf" in by_name["Justin Gaethje"]["badges"]
+    assert "dwcs" in by_name["Carlos Ulberg"]["badges"]
+    assert {"goat", "hof"} <= set(by_name["Georges St-Pierre"]["badges"])
+    assert by_name["Georges St-Pierre"]["ufc_status"] == "former"
+
+
+def test_the_winner_of_the_latest_bmf_fight_is_the_current_bmf_champion(client):
+    by_name = {fighter["name"]: fighter for fighter in client.get("/fighters").json()}
+
+    # Read the BMF fights straight from their file so the expectation moves on its own after each new BMF fight.
+    fights = pd.read_csv(BMF_FIGHTS_SOURCE_PATH, keep_default_na=False)
+    decided = fights[fights["winner"].astype(str).str.strip().ne("")].sort_values("date")
+    current = decided.iloc[-1]["winner"]
+    earlier = {winner for winner in decided["winner"] if winner != current}
+
+    assert by_name[current]["badges"][0] == "bmf_current"
+    assert "bmf" not in by_name[current]["badges"]
+    # Earlier champions keep a plain "bmf" badge.
+    for name in earlier:
+        assert "bmf" in by_name[name]["badges"], name
+        assert "bmf_current" not in by_name[name]["badges"], name
+
+
+def test_ufc_only_leaves_out_fighters_who_never_fought_in_the_ufc(client):
+    everyone = client.get("/fighters").json()
+    ufc_only = client.get("/fighters", params={"ufc_only": True})
+
+    assert ufc_only.status_code == 200
+    listed = ufc_only.json()
+    assert listed and len(listed) < len(everyone)
+    assert all(fighter["ufc_status"] in {"active", "former"} for fighter in listed)
+    assert int(ufc_only.headers["X-Total-Count"]) == len(listed)
+    # Nobody who fought in the UFC goes missing.
+    assert {f["name"] for f in everyone if f["ufc_status"] != "never"} == {f["name"] for f in listed}
+
+
+def test_health_counts_only_the_fighters_the_site_shows(client):
+    shown = client.get("/fighters", params={"ufc_only": True}).json()
+    assert client.get("/health").json()["fighters_loaded"] == len(shown)

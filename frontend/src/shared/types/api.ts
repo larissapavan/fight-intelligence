@@ -26,6 +26,15 @@ export interface FighterProfile {
   rank_signal: string | null
   image_url: string | null
   fighter_url: string | null
+  hometown?: string | null
+  country?: string | null
+  country_code?: string | null
+  ufc_status?: 'active' | 'former' | 'never'
+  ufc_debut?: string | null
+  ufc_last_fight?: string | null
+  roster_url?: string | null
+  badges?: string[]
+  nationalities?: { name: string; code: string | null }[]
 }
 
 export interface DataInfo {
@@ -88,6 +97,12 @@ export interface FightResult {
   round: number | null
   time: string | null
   fight_url: string | null
+  referee?: string | null
+  num_rounds?: number | null
+  title_fight?: boolean | null
+  result?: string | null
+  result_details?: string | null
+  bmf_title?: boolean
 }
 
 export interface EventSummary {
@@ -124,6 +139,15 @@ export interface FightRecord {
   method_detail: string | null
   round: number | null
   time: string | null
+  winner?: string | null
+  location?: string | null
+  fight_url?: string | null
+  referee?: string | null
+  num_rounds?: number | null
+  title_fight?: boolean | null
+  bmf_title?: boolean
+  outcome?: string | null
+  result_details?: string | null
 }
 
 export interface CommonOpponent {
@@ -181,6 +205,15 @@ export interface TitleReign {
   defenses_count: number
   defenses_detail: string | null
   end_reason: string
+  last_fight?: {
+    event: string | null
+    date: string | null
+    opponent: string
+    result: 'win' | 'loss' | null
+    method: string | null
+    round: number | null
+    time: string | null
+  } | null
 }
 
 export interface ChampionSummary {
@@ -207,6 +240,19 @@ export interface TitleWin {
   reigns_in_division: number
 }
 
+export interface TitleFight {
+  date: string | null
+  event: string | null
+  division: string | null
+  opponent: string
+  result: 'win' | 'loss' | 'draw' | 'no_contest'
+  role: 'won_title' | 'defense' | 'lost_title' | 'challenge' | 'other'
+  label: string
+  title_type: 'undisputed' | 'interim' | null
+  method: string | null
+  round: number | null
+}
+
 export interface RecordEntry {
   rank: number
   champion: string
@@ -215,6 +261,7 @@ export interface RecordEntry {
   value: number
   detail: string | null
   title_wins?: TitleWin[] | null
+  title_fights?: TitleFight[] | null
 }
 
 export interface RecordCategory {
@@ -243,4 +290,100 @@ export interface FighterPerformance {
   last_performances: FightRecord[]
   career_timeline: FightRecord[]
   yearly_trends: YearlyTrend[]
+}
+
+export interface RecordBookLeader {
+  rank: number
+  fighter: string
+  value: string
+  profile_name: string | null
+  ufc_url: string | null
+}
+
+export interface RecordBookStat {
+  key: string
+  title: string
+  note: string | null
+  unit: string
+  leaders: RecordBookLeader[]
+}
+
+export interface RecordBookCategory {
+  name: string
+  stats: RecordBookStat[]
+}
+
+export interface RecordBookResponse {
+  updated: string | null
+  source_name: string
+  source_url: string
+  categories: RecordBookCategory[]
+}
+
+export interface Opponent {
+  name: string
+  fights: number
+  last_date: string | null
+}
+
+export interface OpponentsResponse {
+  fighter: string
+  opponents: Opponent[]
+}
+
+export interface NewsItem {
+  title: string
+  summary: string | null
+  url: string
+  image_url: string | null
+  published: string | null
+  kind: 'story' | 'video'
+}
+
+export interface NewsResponse {
+  source_name: string
+  source_url: string
+  items: NewsItem[]
+}
+
+export interface TrackedFight {
+  event_name: string
+  event_date: string
+  fighter_1: string
+  fighter_2: string
+  predicted_winner: string
+  confidence: number
+  winner: string | null
+  correct: boolean
+}
+
+export interface ConfidenceBand {
+  label: string
+  fights: number
+  average_confidence: number
+  accuracy: number
+}
+
+export interface TrackRecord {
+  tracking_since: string | null
+  logged: number
+  resolved: number
+  correct: number
+  accuracy: number | null
+  average_confidence: number | null
+  pending: number
+  next_event: { name: string; date: string } | null
+  bands: ConfidenceBand[]
+  recent: TrackedFight[]
+  biggest_misses: TrackedFight[]
+}
+
+export interface UpcomingPick {
+  event_name: string
+  event_date: string | null
+  fighter_1: string
+  fighter_2: string
+  predicted_winner: string
+  probability: number
+  fighter_1_probability: number
 }

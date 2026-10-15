@@ -5,7 +5,7 @@ export function NotFound() {
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-3 py-8">
       <div className="surface-card w-full max-w-md rounded-[20px] p-5 text-center">
-        <div className="mx-auto inline-flex rounded-xl bg-[#D32F2F]/10 p-3 text-[#FF6B6B]">
+        <div className="mx-auto inline-flex rounded-xl bg-[#C8102E]/10 p-3 text-[var(--accent-red)]">
           <Compass className="h-6 w-6" />
         </div>
         <p className="data-value mt-3 text-5xl font-bold text-[#FFFFFF]">404</p>

@@ -52,10 +52,47 @@ def validate() -> list[str]:
     return problems
 
 
+def champion_mismatches() -> list[str]:
+    """Divisions where the official rankings and our hand-kept title_reigns.csv name different champions.
+
+    Title changes are entered by hand, so after a title fight the rankings (refreshed daily) are the first to know. This
+    only warns: the rankings can also be the one that is behind, and a vacant belt has no champion on either side."""
+    rankings_path, reigns_path = RAW_DIR / "rankings.csv", RAW_DIR / "title_reigns.csv"
+    if not rankings_path.exists() or not reigns_path.exists():
+        return []
+    with rankings_path.open(encoding="utf-8", newline="") as handle:
+        ranked = {
+            row["category"]: row["fighter"]
+            for row in csv.DictReader(handle)
+            if row["is_p4p"].strip().lower() != "true" and row["rank"].strip() == "0"
+        }
+    with reigns_path.open(encoding="utf-8", newline="") as handle:
+        held = {
+            row["division"]: row["champion"]
+            for row in csv.DictReader(handle)
+            if row["is_current"].strip().lower() == "true" and row["title_type"] == "undisputed"
+        }
+
+    def same(a: str, b: str) -> bool:
+        return "".join(ch for ch in a.lower() if ch.isalnum()) == "".join(ch for ch in b.lower() if ch.isalnum())
+
+    notes = []
+    for division in sorted(set(ranked) | set(held)):
+        official, ours = ranked.get(division), held.get(division)
+        if official and ours and same(official, ours):
+            continue
+        if official or ours:
+            notes.append(f"{division}: rankings say {official or 'nobody'}, title_reigns.csv says {ours or 'nobody'}")
+    return notes
+
+
 def main() -> int:
     problems = validate()
     for problem in problems:
         print(f"[invalid] {problem}")
+    for note in champion_mismatches():
+        # "::warning::" shows up as an annotation on the GitHub Actions run; elsewhere it is just a line of text.
+        print(f"::warning::[champion mismatch] {note}")
     if problems:
         return 1
     print("[ok] data/raw looks consistent")

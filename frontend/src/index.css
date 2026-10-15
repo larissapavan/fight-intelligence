@@ -12,7 +12,8 @@
   --color-octagon-muted: #999999;
   --font-sports-display: 'Barlow Condensed', sans-serif;
   --font-sports-ui: 'Barlow', sans-serif;
-  --font-sports-tech: 'Chakra Petch', monospace, sans-serif;
+  --font-sports-tech: 'Barlow Condensed', sans-serif;
+  --font-poster: 'Anton', 'Barlow Condensed', Impact, sans-serif;
   /* legacy aliases used throughout this stylesheet */
   --font-display: var(--font-sports-display);
   --font-body: var(--font-sports-ui);
@@ -21,84 +22,88 @@
   --breakpoint-3xl: 90rem; /* 1440px */
 }
 
+/* Fight-poster identity. Light = paper (default), dark = ink. Flat colors, hard rules, no glow. */
 :root,
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --surface-1: #0a0a0a;
-  --surface-2: #141414;
-  --surface-3: rgba(255, 255, 255, 0.045);
-  --line-soft: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.18);
-  --text-main: #ffffff;
-  --text-muted: #999999;
-  --text-soft: #cccccc;
-  --app-background: #000000;
-  --grid-pattern:
-    linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 42%);
-  --hero-bg: #0d0d0d;
-  --card-bg: #141414;
-  --tile-bg: #1a1a1a;
-  --tile-hover-bg: #202020;
-  --input-bg: #1a1a1a;
-  --input-hover-bg: #1f1f1f;
-  --action-bg: #1a1a1a;
-  --action-hover-bg: #202020;
-  --option-bg: #161616;
-  --option-hover-bg: #1f1f1f;
-  --chip-bg: rgba(255, 255, 255, 0.05);
-  --modal-backdrop: rgba(0, 0, 0, 0.82);
-  --shadow-soft: rgba(0, 0, 0, 0.5);
-  --shadow-page: rgba(0, 0, 0, 0.5);
-  --avatar-bg: #1a1a1a;
-  --logo-bg: #000000;
-  --accent-red: #d32f2f;
-  --brand-red-dark: #b71c1c;
-  --brand-outline: #000000;
-  --accent-blue: #2f5fa8;
-  --accent-green: #2e9e5b;
-  --accent-gold: #c9a24b;
-  --canvas-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
 :root[data-theme='light'] {
   color-scheme: light;
-  --surface-1: #ffffff;
-  --surface-2: #f5f5f5;
-  --surface-3: rgba(15, 23, 42, 0.045);
-  --line-soft: rgba(15, 23, 42, 0.12);
-  --line-strong: rgba(15, 23, 42, 0.2);
-  --text-main: #111111;
-  --text-muted: #5c5c5c;
-  --text-soft: #3a3a3a;
-  --app-background: #f4f4f4;
-  --grid-pattern:
-    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent 44%);
-  --hero-bg: #ffffff;
-  --card-bg: #ffffff;
-  --tile-bg: #fafafa;
-  --tile-hover-bg: #efefef;
+  --ink: #0e0e0e;
+  --paper: #ede6d6;
+  --blood: #c8102e;
+  --tape: #f2c230;
+  --surface-1: #f7f2e7;
+  --surface-2: #ede6d6;
+  --surface-3: rgba(14, 14, 14, 0.06);
+  --line-soft: rgba(14, 14, 14, 0.28);
+  --line-strong: #0e0e0e;
+  --rule: #0e0e0e;
+  --hard: #0e0e0e;
+  --text-main: #0e0e0e;
+  --text-muted: #4a463b;
+  --text-soft: #2b2922;
+  --app-background: #e4dcc8;
+  --grid-pattern: radial-gradient(rgba(14, 14, 14, 0.11) 1.2px, transparent 1.3px);
+  --hero-bg: #ede6d6;
+  --card-bg: #f7f2e7;
+  --tile-bg: #fbf8f0;
+  --tile-hover-bg: #f2ecdc;
   --input-bg: #ffffff;
-  --input-hover-bg: #fafafa;
+  --input-hover-bg: #ffffff;
   --action-bg: #ffffff;
-  --action-hover-bg: #efefef;
+  --action-hover-bg: #f2ecdc;
   --option-bg: #ffffff;
-  --option-hover-bg: #efefef;
-  --chip-bg: rgba(15, 23, 42, 0.05);
-  --modal-backdrop: rgba(15, 23, 42, 0.55);
-  --shadow-soft: rgba(15, 23, 42, 0.1);
-  --shadow-page: rgba(15, 23, 42, 0.1);
-  --avatar-bg: #ededed;
-  --logo-bg: #111111;
-  --accent-red: #b71c1c;
-  --brand-red-dark: #8e1515;
-  --brand-outline: #1a1a1a;
-  --accent-blue: #29508c;
-  --accent-green: #157a41;
-  --accent-gold: #9c7a25;
+  --option-hover-bg: #f2ecdc;
+  --chip-bg: rgba(14, 14, 14, 0.06);
+  --modal-backdrop: rgba(14, 14, 14, 0.72);
+  --shadow-soft: rgba(14, 14, 14, 0.12);
+  --shadow-page: rgba(14, 14, 14, 0.12);
+  --avatar-bg: #d9d0bc;
+  --logo-bg: #0e0e0e;
+  --accent-red: #c8102e;
+  --text-red: #b80f2b; /* small red text: darker than the brand red so it keeps 4.5:1 on paper and on tinted chips */
+  --brand-red-dark: #8e0b21;
+  --brand-outline: #0e0e0e;
+  --accent-blue: #1f4e9c;
+  --accent-green: #2e7d4f;
+  --accent-gold: #d9a21b;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --surface-1: #121212;
+  --surface-2: #171717;
+  --surface-3: rgba(237, 230, 214, 0.06);
+  --line-soft: rgba(237, 230, 214, 0.26);
+  --line-strong: #ede6d6;
+  --rule: #ede6d6;
+  --hard: #c8102e;
+  --text-main: #ede6d6;
+  --text-muted: #a39d8c;
+  --text-soft: #cfc8b6;
+  --app-background: #0e0e0e;
+  --grid-pattern: radial-gradient(rgba(237, 230, 214, 0.07) 1.2px, transparent 1.3px);
+  --hero-bg: #171717;
+  --card-bg: #171717;
+  --tile-bg: #1e1e1e;
+  --tile-hover-bg: #262626;
+  --input-bg: #121212;
+  --input-hover-bg: #121212;
+  --action-bg: #1e1e1e;
+  --action-hover-bg: #2a2a2a;
+  --option-bg: #171717;
+  --option-hover-bg: #262626;
+  --chip-bg: rgba(237, 230, 214, 0.08);
+  --modal-backdrop: rgba(0, 0, 0, 0.8);
+  --shadow-soft: rgba(0, 0, 0, 0.5);
+  --shadow-page: rgba(0, 0, 0, 0.5);
+  --avatar-bg: #262626;
+  --logo-bg: #000000;
+  --accent-red: #e02a45;
+  --text-red: #f0475e;
+  --brand-red-dark: #8e0b21;
+  --brand-outline: #000000;
+  --accent-blue: #4a82d6;
+  --accent-green: #3fb27f;
+  --accent-gold: #f2c230;
 }
 
 html {
@@ -121,23 +126,7 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background-image: var(--grid-pattern);
-  background-size: 56px 56px, 56px 56px, 100% 100%;
-  mask-image: linear-gradient(180deg, black 0%, rgba(0, 0, 0, 0.7) 54%, transparent 100%);
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: var(--canvas-noise);
-}
-
-:root[data-theme='light'] body::after {
-  opacity: 0.03;
+  background-size: 8px 8px;
 }
 
 #root {
@@ -145,8 +134,8 @@ body::after {
 }
 
 ::selection {
-  background: rgba(232, 27, 35, 0.32);
-  color: var(--text-main);
+  background: var(--tape);
+  color: #0e0e0e;
 }
 
 button,
@@ -160,293 +149,234 @@ select {
   position: relative;
 }
 
-/* Typography system: display (headlines, fighter names) / tech (tags, badges, numbers) / ui (everything else) */
+/* Typography: Anton for headlines and big numbers, Barlow Condensed for labels, Barlow for text. */
 h1,
 h2,
 h3,
 .type-display {
-  font-family: var(--font-sports-display);
-  font-weight: 800;
-  font-style: italic;
+  font-family: var(--font-poster);
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  line-height: 1.05;
+  letter-spacing: 0.01em;
+  line-height: 0.98;
 }
 
 .type-tech {
   font-family: var(--font-sports-tech);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
 }
 
 .type-num {
+  font-family: var(--font-poster);
+  font-weight: 400;
+  font-synthesis: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.broadcast-label {
   font-family: var(--font-sports-tech);
   font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.data-value {
+  font-family: var(--font-poster);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
   font-variant-numeric: tabular-nums;
 }
 
 .page-hero {
   position: relative;
-  background:
-    radial-gradient(120% 180% at 100% 0%, rgba(232, 27, 35, 0.1), transparent 55%),
-    radial-gradient(90% 140% at 0% 0%, rgba(255, 255, 255, 0.05), transparent 60%),
-    var(--hero-bg);
-  border: 1px solid var(--line-soft);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 32px 60px -32px rgba(0, 0, 0, 0.7);
+  background-color: var(--hero-bg);
+  background-image: var(--grid-pattern);
+  background-size: 7px 7px;
+  border: 3px solid var(--rule);
+  box-shadow: 6px 6px 0 var(--hard);
 }
 
-.page-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-red) 0%, rgba(232, 27, 35, 0.15) 45%, transparent 70%);
-}
-
+/* Flat corner triangle, like a folded poster edge. */
 .page-hero::after {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
-  width: 26px;
-  height: 26px;
+  width: 16px;
+  height: 16px;
   background: var(--accent-red);
   clip-path: polygon(0 0, 100% 0, 0 100%);
-  opacity: 0.9;
+  pointer-events: none;
 }
 
 .surface-card {
   position: relative;
-  background:
-    radial-gradient(140% 160% at 0% 0%, rgba(255, 255, 255, 0.045), transparent 60%),
-    var(--card-bg);
-  border: 1px solid var(--line-soft);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 28px 50px -32px rgba(0, 0, 0, 0.7);
+  background: var(--card-bg);
+  border: 3px solid var(--rule);
+  box-shadow: 5px 5px 0 var(--hard);
 }
 
 .metric-tile {
   position: relative;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 45%), var(--tile-bg);
-  border: 1px solid var(--line-soft);
+  background: var(--tile-bg);
+  border: 2px solid var(--rule);
   overflow: hidden;
   transition:
-    border-color 150ms ease,
-    background 150ms ease,
-    transform 150ms ease;
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background 120ms ease;
 }
 
 .metric-tile::before {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent-red), rgba(232, 27, 35, 0) 75%);
-  opacity: 0.85;
+  height: 4px;
+  background: var(--accent-red);
 }
 
 .metric-tile--blue::before {
-  background: linear-gradient(90deg, var(--accent-blue), rgba(47, 95, 168, 0) 75%);
+  background: var(--accent-blue);
 }
 
 .metric-tile:hover {
-  border-color: var(--line-strong);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 45%), var(--tile-hover-bg);
-  transform: translateY(-1px);
-}
-
-.broadcast-label {
-  font-family: var(--font-sports-tech);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.data-value {
-  font-family: var(--font-sports-tech);
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
+  background: var(--tile-hover-bg);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--hard);
 }
 
 .primary-action {
   position: relative;
-  font-family: var(--font-ui);
-  font-weight: 600;
-  background: linear-gradient(155deg, #ff2731 0%, var(--accent-red) 45%, #9c0f16 100%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 14px 26px -10px rgba(232, 27, 35, 0.6),
-    3px 3px 0 rgba(0, 0, 0, 0.45);
+  font-family: var(--font-sports-tech);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  background: var(--tape);
+  color: #0e0e0e !important;
+  border: 3px solid var(--rule);
+  box-shadow: 4px 4px 0 var(--hard);
   transition:
-    background 150ms ease,
-    transform 150ms ease,
-    box-shadow 150ms ease;
+    transform 120ms ease,
+    box-shadow 120ms ease;
 }
 
 .primary-action:hover {
-  background: linear-gradient(155deg, #ff4650 0%, #ff2731 45%, #b0141a 100%);
-  transform: translate(-1px, -2px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    0 20px 34px -10px rgba(232, 27, 35, 0.75),
-    4px 5px 0 rgba(0, 0, 0, 0.45);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--hard);
 }
 
 .primary-action:active {
-  background: #b0141a;
-  transform: translate(0, 0);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 8px 16px -8px rgba(232, 27, 35, 0.5),
-    1px 1px 0 rgba(0, 0, 0, 0.45);
+  transform: translate(4px, 4px);
+  box-shadow: none;
 }
 
 .primary-action:disabled {
-  background: var(--action-bg);
+  background: transparent;
+  border-style: dashed;
   border-color: var(--line-soft);
   box-shadow: none;
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
+  transform: none;
 }
 
 .ghost-action {
-  font-family: var(--font-ui);
-  font-weight: 600;
+  font-family: var(--font-sports-tech);
+  font-weight: 700;
+  letter-spacing: 0.1em;
   background: var(--action-bg);
-  border: 1px solid var(--line-soft);
+  border: 2px solid var(--rule);
   transition:
-    background 150ms ease,
-    border-color 150ms ease;
+    background 120ms ease,
+    transform 120ms ease,
+    box-shadow 120ms ease;
 }
 
 .ghost-action:hover {
   background: var(--action-hover-bg);
-  border-color: var(--line-strong);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--hard);
 }
 
 .soft-input {
   background: var(--input-bg);
-  border: 1px solid var(--line-soft);
-  transition:
-    border-color 150ms ease,
-    background 150ms ease;
+  border: 2px solid var(--rule);
+  transition: box-shadow 120ms ease;
 }
 
 .soft-input:focus-within,
 .soft-input:focus {
   background: var(--input-hover-bg);
-  border-color: var(--accent-red);
-  box-shadow: 0 0 0 3px rgba(232, 27, 35, 0.18);
+  box-shadow: 0 0 0 3px var(--tape);
 }
 
 .soft-input-blue:focus-within,
 .soft-input-blue:focus {
   background: var(--input-hover-bg);
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(47, 95, 168, 0.18);
+  box-shadow: 0 0 0 3px var(--accent-blue);
 }
 
 .progress-track {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--surface-3);
+  border: 2px solid var(--rule);
 }
 
-:root[data-theme='light'] .progress-track {
-  background: rgba(15, 23, 42, 0.08);
+/* Header: a paper bar with a hard shadow; the cream badge carries the brand. */
+header nav {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 header nav a {
-  font-family: var(--font-ui);
-}
-
-header nav {
-  background: rgba(0, 0, 0, 0.32) !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
-}
-
-:root[data-theme='light'] header nav {
-  background: rgba(15, 23, 42, 0.06) !important;
-  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.12);
+  font-family: var(--font-sports-tech);
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 header nav a.nav-link-active {
-  background: linear-gradient(155deg, #ff2731, var(--accent-red) 70%, #a3131a) !important;
-  color: #ffffff !important;
-  box-shadow:
-    0 4px 14px -2px rgba(232, 27, 35, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: var(--tape) !important;
+  color: #0e0e0e !important;
+  box-shadow: none !important;
+  outline: 2px solid var(--rule);
+  outline-offset: -2px;
 }
 
 .corner-flag {
   position: relative;
-  height: 4px;
+  height: 8px;
   width: 100%;
 }
 
-.corner-flag::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 20px;
-  height: 20px;
-  background: inherit;
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  filter: brightness(1.35);
-}
-
 .corner-flag--red {
-  background: linear-gradient(90deg, var(--accent-red), rgba(232, 27, 35, 0) 85%);
+  background: var(--accent-red);
 }
 
 .corner-flag--blue {
-  background: linear-gradient(90deg, var(--accent-blue), rgba(47, 95, 168, 0) 85%);
+  background: var(--accent-blue);
 }
 
 .vs-medallion {
-  position: relative;
   display: grid;
   place-items: center;
   width: 60px;
   height: 60px;
   border-radius: 9999px;
-  background: conic-gradient(
-    from 225deg,
-    rgba(232, 27, 35, 0.95),
-    rgba(20, 20, 20, 0.95) 48%,
-    rgba(47, 95, 168, 0.95) 52%,
-    rgba(20, 20, 20, 0.95) 100%
-  );
-  box-shadow:
-    0 0 0 3px rgba(0, 0, 0, 0.55),
-    0 0 22px rgba(232, 27, 35, 0.32),
-    0 0 22px rgba(47, 95, 168, 0.24);
-}
-
-.vs-medallion::before {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border-radius: inherit;
-  background: var(--surface-1);
-  border: 1px solid var(--line-soft);
+  background: var(--tape);
+  border: 3px solid #0e0e0e;
+  box-shadow: 3px 3px 0 #0e0e0e;
+  transform: rotate(-6deg);
 }
 
 .vs-medallion span {
-  position: relative;
-  z-index: 1;
-  font-family: var(--font-sports-display);
-  font-style: italic;
-  font-weight: 900;
-  font-size: 1.35rem;
-  letter-spacing: 0.06em;
-  color: var(--text-main);
+  font-family: var(--font-poster);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #0e0e0e;
 }
 
 .theme-text {
@@ -467,7 +397,7 @@ header nav a.nav-link-active {
 
 .selector-option {
   background: var(--option-bg);
-  border-color: var(--line-soft);
+  border: 2px solid var(--rule);
   color: var(--text-main);
 }
 
@@ -483,9 +413,9 @@ header nav a.nav-link-active {
 }
 
 .selector-chip {
-  border: 1px solid var(--line-soft);
+  border: 2px solid var(--rule);
   background: var(--chip-bg);
-  border-radius: 4px;
+  border-radius: 0;
   padding: 0.25rem 0.625rem;
 }
 
@@ -610,30 +540,77 @@ select.soft-input option {
   }
 }
 
-/* Wireframe-3D wordmark (FIGHT INTELLIGENCE): bright sport red for contrast on near-black */
-.brand-wordmark {
-  font-family: "Russo One", var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  line-height: 1;
-  color: #ff2b33;
-  -webkit-text-stroke: 0.5px #000;
-  paint-order: stroke fill;
-  text-shadow:
-    1px 1px 0 #8e1515,
-    2px 2px 0 #000,
-    0 0 14px rgba(255, 30, 39, 0.35);
-}
-
-:root[data-theme='light'] .brand-wordmark {
-  color: #d3121a;
-  text-shadow: 1px 1px 0 #7a0e12, 2px 2px 0 rgba(0, 0, 0, 0.55);
-}
-
 /* Grid items default to min-width:auto, so one long unbroken line widens a single-column grid past the
    viewport on narrow phones. Zero-specificity reset: explicit min-w-* utilities still win. */
 :where(main .grid) > :where(*) {
   min-width: 0;
+}
+
+/* Flat slab before a headline, like a scorebug. */
+.title-chamfer {
+  position: relative;
+  padding-left: 0.8rem;
+}
+
+.title-chamfer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  bottom: 0.12em;
+  width: 0.28em;
+  background: var(--accent-red);
+  transform: skewX(-18deg);
+}
+
+/* Square the whole interface: poster prints have no rounded corners. Opt back in with .keep-round. */
+.dashboard-shell [class*="rounded"]:not(.keep-round) {
+  border-radius: 2px !important;
+}
+
+.keep-round {
+  border-radius: 9999px !important;
+}
+
+/* Poster utilities */
+.poster-display {
+  font-family: var(--font-poster);
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+}
+
+.poster-hatch {
+  background-image: repeating-linear-gradient(135deg, rgba(14, 14, 14, 0.09) 0 10px, transparent 10px 20px);
+}
+
+.poster-halftone {
+  background-image: radial-gradient(rgba(14, 14, 14, 0.16) 1.2px, transparent 1.3px);
+  background-size: 7px 7px;
+}
+
+.poster-stamp {
+  display: inline-block;
+  border: 3px solid currentColor;
+  padding: 0.15rem 0.7rem;
+  transform: rotate(-6deg);
+  opacity: 0.92;
+}
+
+.poster-leader {
+  flex: 1;
+  align-self: flex-end;
+  margin: 0 0.35rem 0.3rem;
+  border-bottom: 2px dotted currentColor;
+  opacity: 0.45;
+}
+
+/* Red text (hard-coded blood red or the accent variable) uses the text shade: lighter on ink, a touch darker on paper,
+   so small labels reach WCAG AA contrast in both themes. Red fills and borders keep the brand colours. */
+.text-\[\#C8102E\],
+.text-\[var\(--accent-red\)\] {
+  color: var(--text-red) !important;
 }

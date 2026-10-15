@@ -33,7 +33,7 @@ export function Model() {
         />
       </section>
 
-      {error ? <p className="rounded-xl border border-[#D32F2F]/25 bg-[#D32F2F]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       {loading || !modelInfo ? (
         <section className="grid gap-3 lg:grid-cols-4">
@@ -71,7 +71,7 @@ export function Model() {
                           color: '#FFFFFF',
                         }}
                       />
-                    <Bar dataKey="accuracy" fill="#D32F2F" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="accuracy" fill="#C8102E" radius={[6, 6, 0, 0]} />
                     <Bar dataKey="rocAuc" fill="#999999" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -98,7 +98,7 @@ export function Model() {
                         color: '#FFFFFF',
                       }}
                     />
-                    <Bar dataKey="score" fill="#D32F2F" radius={[0, 6, 6, 0]} />
+                    <Bar dataKey="score" fill="#C8102E" radius={[0, 6, 6, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -133,7 +133,7 @@ export function Model() {
                 title="What still needs to evolve"
                 description="The platform is production-styled, but it still communicates the model's boundaries with honesty and clarity."
               />
-              <div className="mt-3 rounded-2xl border border-[#D32F2F]/18 bg-[#D32F2F]/8 p-3">
+              <div className="mt-3 rounded-2xl border border-[#C8102E]/18 bg-[#C8102E]/8 p-3">
                 <ul className="space-y-2 text-xs leading-5 text-[#FFFFFF]">
                   {modelInfo.limitations.map((item) => (
                     <li key={item}>• {item}</li>

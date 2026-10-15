@@ -53,3 +53,11 @@ def test_slugify_is_ascii_and_stable():
     assert photos.slugify("Jiří Procházka") == "jiri-prochazka"
     assert photos.slugify("Sean King III") == "sean-king-iii"
 
+
+
+def test_athlete_page_photo_skips_the_generic_silhouette():
+    page = '<html><head><meta property="og:image" content="{}"></head></html>'
+    assert photos.parse_athlete_photo(page.format("https://ufc.com/images/2026-09/DOE_JOHN_09-01.png")) == "https://ufc.com/images/2026-09/DOE_JOHN_09-01.png"
+    assert photos.parse_athlete_photo(page.format("https://ufc.com/images/2019-04/SILHOUETTE.png?VersionId=x")) is None
+    assert photos.parse_athlete_photo(page.format("https://ufc.com/images/2018-12/silhouette-headshot-female.png")) is None
+    assert photos.parse_athlete_photo("<html></html>") is None

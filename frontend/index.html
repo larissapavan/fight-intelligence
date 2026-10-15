@@ -7,28 +7,35 @@
     <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="theme-color" content="#0e0e0e" />
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem("ufc-predictor:theme") === "dark" ? "dark" : "light";
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
     <title>Fight Intelligence</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Barlow:wght@400;500;600&family=Chakra+Petch:wght@600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700;1,800;1,900&family=Anton&family=Barlow:wght@400;500;600&display=swap"
     />
 
-    <meta name="description" content="Predict UFC fight outcomes with a machine learning model trained on real historical fight data. Compare fighters, explore rankings, events and head-to-head records." />
+    <meta name="description" content="Predict UFC fights with machine learning and see exactly why. Fighter stats, rankings and champions." />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Fight Intelligence" />
-    <meta property="og:description" content="Predict UFC fight outcomes with a machine learning model trained on real historical fight data. Compare fighters, explore rankings, events and head-to-head records." />
-    <meta property="og:image" content="https://fight-intelligence.vercel.app/og-image.jpg" />
+    <meta property="og:description" content="Predict UFC fights with machine learning and see exactly why. Fighter stats, rankings and champions." />
+    <meta property="og:image" content="https://fight-intelligence.vercel.app/og-image.jpg?v=2" />
     <meta property="og:url" content="https://fight-intelligence.vercel.app/" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Fight Intelligence" />
-    <meta name="twitter:description" content="Predict UFC fight outcomes with a machine learning model trained on real historical fight data." />
-    <meta name="twitter:image" content="https://fight-intelligence.vercel.app/og-image.jpg" />
+    <meta name="twitter:description" content="Predict UFC fights with machine learning and see exactly why. Fighter stats, rankings and champions." />
+    <meta name="twitter:image" content="https://fight-intelligence.vercel.app/og-image.jpg?v=2" />
   </head>
   <body>
     <div id="root"></div>

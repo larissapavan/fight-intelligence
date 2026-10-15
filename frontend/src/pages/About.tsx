@@ -13,12 +13,22 @@ const sources: { name: string; href?: string; use: string }[] = [
   {
     name: 'ESPN',
     href: 'https://www.espn.com/mma/',
-    use: 'Events, results, upcoming cards, fighter records, new-fighter profiles and fighter photos.',
+    use: 'Events, results, upcoming cards, fighter records, new-fighter profiles, fighter photos and the news headlines on the home and events pages (each links back to the original story).',
   },
   {
     name: 'UFC.com',
     href: 'https://www.ufc.com/rankings',
-    use: 'Official rankings and the current champions’ photos.',
+    use: 'Official rankings, the current champions’ photos and hometowns.',
+  },
+  {
+    name: 'UFC Stats Leaders',
+    href: 'https://statleaders.ufc.com/en/career',
+    use: 'The UFC\u2019s official career Record Book: all-time leaders in wins, finishes, striking, grappling and more.',
+  },
+  {
+    name: 'roster.watch',
+    href: 'https://www.roster.watch/',
+    use: 'The UFC roster, current and former: who is on it, nationalities, debut and last fight dates, and the origin and honor badges (Contender Series, TUF, Road to UFC, BMF, Hall of Fame).',
   },
   {
     name: 'Sherdog',
@@ -27,12 +37,27 @@ const sources: { name: string; href?: string; use: string }[] = [
   },
   {
     name: 'Published UFC title histories',
-    use: 'Champions and title records, compiled by hand.',
+    use: 'Champions, title reigns and the list of BMF title fights, compiled by hand.',
   },
   {
-    name: 'UFC Historical Fight Dataset 1994–2026 (Kaggle)',
+    name: 'UFC data by scarekrow (Kaggle)',
+    href: 'https://www.kaggle.com/datasets/scarekrow/ufc-data',
+    use: 'The referee, scheduled rounds, title-fight flag and judges’ scores shown on fight cards (UFC_full_data_silver_v2.csv).',
+  },
+  {
+    name: 'flagcdn.com',
+    href: 'https://flagcdn.com',
+    use: 'Country flag images.',
+  },
+  {
+    name: 'Google Fonts',
+    href: 'https://fonts.google.com',
+    use: 'Anton, Barlow and Barlow Condensed, all under the SIL Open Font License.',
+  },
+  {
+    name: 'UFC Historical Fight Dataset (1993–2026) (Kaggle)',
     href: 'https://www.kaggle.com/datasets/larissapavan/ufc-historical-fight-dataset-19942026',
-    use: 'Used to train the prediction model.',
+    use: 'The author’s own dataset, published on Kaggle: the events, fights, fighters, rankings and title reigns this site is built on.',
   },
 ]
 
@@ -50,7 +75,7 @@ export function About() {
       </section>
 
       <AboutSection id="who" icon={Users} title="Who makes this">
-        <ul className="list-disc space-y-2 pl-5 marker:text-[#D32F2F]">
+        <ul className="list-disc space-y-2 pl-5 marker:text-[#C8102E]">
           <li>This project is built independently by an MMA fan.</li>
           <li>
             It has no affiliation, partnership, sponsorship or endorsement from the UFC, Zuffa LLC, TKO or any
@@ -67,8 +92,8 @@ export function About() {
         <p>
           Fighter profiles, events, results and rankings are collected from public sources (UFCStats.com, ESPN and
           UFC.com), the title history is compiled by hand from published UFC title records, and everything is saved as
-          CSV files that are refreshed manually whenever the maintainer runs the update scripts — there is no automatic
-          schedule. For each matchup the system compares the two fighters (age, height, reach, record, striking and
+          CSV files that an automated job refreshes once a day, after a validation step that rejects broken updates
+          (title changes are still entered by hand, so a new champion can appear a little late). For each matchup the system compares the two fighters (age, height, reach, record, striking and
           takedown accuracy, stance) and feeds those differences into a machine-learning model that estimates each
           fighter’s chance of winning and shows which factors weighed most; the model was trained on a historical fight
           dataset published on Kaggle. Because the data comes from public pages that can change, it
@@ -78,7 +103,7 @@ export function About() {
       </AboutSection>
 
       <AboutSection id="disclaimer" icon={AlertTriangle} title="Important disclaimer">
-        <ul className="list-disc space-y-2 pl-5 marker:text-[#D32F2F]">
+        <ul className="list-disc space-y-2 pl-5 marker:text-[#C8102E]">
           <li>
             Predictions are statistical estimates, made as a hobby and for study. They are not a guarantee of any
             outcome and they are not betting advice.
@@ -105,6 +130,11 @@ export function About() {
             </li>
           ))}
         </ul>
+
+        <p className="mt-4 text-xs leading-5 text-[#999999]">
+          Built with open-source software: React, Vite, Tailwind CSS, Recharts, Framer Motion and Lucide on the
+          front end; FastAPI, pandas, scikit-learn and SHAP on the back end.
+        </p>
       </AboutSection>
     </div>
   )
@@ -124,7 +154,7 @@ function AboutSection({
   return (
     <section className="surface-card rounded-[20px] p-3 sm:p-4" aria-labelledby={`about-${id}`}>
       <div className="flex items-center gap-2.5">
-        <div className="rounded-xl bg-[#D32F2F]/12 p-2 text-[#D32F2F]">
+        <div className="rounded-xl bg-[#C8102E]/12 p-2 text-[#C8102E]">
           <Icon className="h-4 w-4" aria-hidden />
         </div>
         <h2 id={`about-${id}`} className="text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
@@ -142,7 +172,7 @@ function ExternalAnchor({ href, children }: { href: string; children: ReactNode 
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-[#FFFFFF] underline decoration-[#D32F2F]/70 underline-offset-4 transition hover:decoration-[#D32F2F] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D32F2F]"
+      className="inline-flex items-center gap-1 text-[#FFFFFF] underline decoration-[#C8102E]/70 underline-offset-4 transition hover:decoration-[#C8102E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
     >
       {children}
       <ExternalLink className="h-3 w-3 shrink-0" aria-hidden />

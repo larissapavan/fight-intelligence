@@ -16,8 +16,11 @@ from backend.app.routers.events import router as events_router
 from backend.app.routers.fight_history import router as fight_history_router
 from backend.app.routers.fighters import router as fighters_router
 from backend.app.routers.meta import build_meta_router
+from backend.app.routers.news import router as news_router
 from backend.app.routers.prediction import build_prediction_router
 from backend.app.routers.rankings import router as rankings_router
+from backend.app.routers.record_book import router as record_book_router
+from backend.app.routers.track_record import router as track_record_router
 from backend.app.services.prediction_service import PredictionService
 
 logging.basicConfig(
@@ -103,4 +106,7 @@ app.include_router(events_router)
 app.include_router(rankings_router)
 app.include_router(fight_history_router)
 app.include_router(champions_router)
+app.include_router(record_book_router)
+app.include_router(news_router)
+app.include_router(track_record_router)
 app.include_router(build_prediction_router(get_prediction_service))

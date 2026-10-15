@@ -40,3 +40,34 @@ def test_predict_same_fighter_twice_still_resolves(client, two_fighter_names):
     assert response.status_code == 200
     body = response.json()
     assert abs(body["fighter_a_probability"] + body["fighter_b_probability"] - 1.0) < 1e-6
+
+
+def test_upcoming_picks_cover_the_announced_fights(client):
+    upcoming = client.get("/events/upcoming").json()
+    announced = {
+        (event["name"], fight["fighter_1"], fight["fighter_2"])
+        for event in upcoming
+        for fight in event["fights"]
+        if fight["fighter_1"] and fight["fighter_2"]
+    }
+    response = client.get("/predict/upcoming")
+    assert response.status_code == 200
+    picks = response.json()
+
+    assert picks
+    assert {(pick["event_name"], pick["fighter_1"], pick["fighter_2"]) for pick in picks} <= announced
+    for pick in picks:
+        assert pick["predicted_winner"] in {pick["fighter_1"], pick["fighter_2"]}
+        assert 0.5 <= pick["probability"] <= 1.0
+        assert 0.0 <= pick["fighter_1_probability"] <= 1.0
+        # The pick is the fighter the probability favors.
+        favored = pick["fighter_1"] if pick["fighter_1_probability"] >= 0.5 else pick["fighter_2"]
+        assert pick["predicted_winner"] == favored
+
+
+def test_a_pick_matches_the_full_prediction(client):
+    pick = client.get("/predict/upcoming").json()[0]
+    full = client.post("/predict", json={"fighter_a": pick["fighter_1"], "fighter_b": pick["fighter_2"]}).json()
+
+    assert full["predicted_winner"] == pick["predicted_winner"]
+    assert abs(full["fighter_a_probability"] - pick["fighter_1_probability"]) < 1e-9

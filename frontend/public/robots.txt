@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ufcfightpredictor.vercel.app/sitemap.xml
+Sitemap: https://fight-intelligence.vercel.app/sitemap.xml

@@ -80,10 +80,7 @@ class PredictionService:
             model_output="probability",
         )
 
-    def predict_matchup(self, fighter_a_name: str, fighter_b_name: str) -> dict:
-        fighter_a = get_fighter_profile(fighter_a_name)
-        fighter_b = get_fighter_profile(fighter_b_name)
-
+    def _features_for(self, fighter_a: dict, fighter_b: dict) -> pd.DataFrame:
         inference_df = build_inference_frame(
             fight_date=pd.Timestamp.today().normalize(),
             fighter_red=fighter_a["name"],
@@ -105,7 +102,25 @@ class PredictionService:
             red_stance=fighter_a["stance"],
             blue_stance=fighter_b["stance"],
         )
-        X = align_feature_columns(inference_df, self.feature_columns)
+        return align_feature_columns(inference_df, self.feature_columns)
+
+    def predict_pick(self, fighter_a_name: str, fighter_b_name: str) -> dict:
+        """Just the pick and its probability (no SHAP), for lists that show many fights at once."""
+        fighter_a = get_fighter_profile(fighter_a_name)
+        fighter_b = get_fighter_profile(fighter_b_name)
+        fighter_a_probability = float(self.model.predict_proba(self._features_for(fighter_a, fighter_b))[0, 1])
+        winner_is_a = fighter_a_probability >= 0.5
+        return {
+            "predicted_winner": fighter_a["name"] if winner_is_a else fighter_b["name"],
+            "probability": max(fighter_a_probability, 1.0 - fighter_a_probability),
+            "fighter_a_probability": fighter_a_probability,
+        }
+
+    def predict_matchup(self, fighter_a_name: str, fighter_b_name: str) -> dict:
+        fighter_a = get_fighter_profile(fighter_a_name)
+        fighter_b = get_fighter_profile(fighter_b_name)
+
+        X = self._features_for(fighter_a, fighter_b)
         fighter_a_probability = float(self.model.predict_proba(X)[0, 1])
         fighter_b_probability = 1.0 - fighter_a_probability
         predicted_winner = (

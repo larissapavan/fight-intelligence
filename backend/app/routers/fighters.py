@@ -16,9 +16,10 @@ def fighters(
     response: Response,
     limit: int | None = Query(default=None, ge=1, le=5000, description="Max number of fighters to return."),
     offset: int = Query(default=0, ge=0, description="Number of fighters to skip."),
+    ufc_only: bool = Query(default=False, description="Leave out fighters who never fought in the UFC."),
 ) -> list[FighterSummary]:
     response.headers["Cache-Control"] = "public, max-age=300"
-    catalog = list_fighters()
+    catalog = list_fighters(ufc_only=ufc_only)
     response.headers["X-Total-Count"] = str(len(catalog))
     page = catalog[offset : offset + limit] if limit is not None else catalog[offset:]
     return [FighterSummary(**fighter) for fighter in page]

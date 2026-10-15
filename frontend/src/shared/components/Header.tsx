@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Activity, CircleDot, FolderGit2, Menu, Moon, Sun, X } from 'lucide-react'
+import { CircleDot, FolderGit2, Menu, Moon, Sun, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { useModelInfo } from '../hooks/useModelInfo'
@@ -11,8 +11,8 @@ const navItems: { to: string; label: string; group?: string[] }[] = [
   { to: '/fighters', label: 'Fighters' },
   { to: '/events', label: 'Events' },
   { to: '/rankings', label: 'Rankings' },
-  { to: '/champions', label: 'Champions' },
-  { to: '/about', label: 'About', group: ['/about', '/data', '/model'] },
+  { to: '/champions', label: 'Champions', group: ['/champions', '/record-book'] },
+  { to: '/about', label: 'About', group: ['/about', '/data', '/model', '/track-record'] },
 ]
 
 function isItemActive(item: (typeof navItems)[number], pathname: string) {
@@ -30,10 +30,10 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const apiLabel = loading ? 'Checking' : health?.model_loaded ? 'Live' : 'Offline'
   const apiClasses = loading
-    ? 'border-white/10 bg-white/[0.04] text-[#CCCCCC]'
+    ? 'border-[var(--rule)] bg-[var(--surface-3)] text-[var(--text-muted)]'
     : health?.model_loaded
-      ? 'border-[#D32F2F]/24 bg-[#D32F2F]/10 text-[#D32F2F]'
-      : 'border-white/10 bg-white/[0.04] text-[#999999]'
+      ? 'border-[var(--rule)] bg-[#2E7D4F] text-white'
+      : 'border-[var(--rule)] bg-[#C8102E] text-white'
   const apiDotClasses = loading ? '' : health?.model_loaded ? 'animate-pulse' : ''
   const isLight = theme === 'light'
 
@@ -57,21 +57,24 @@ export function Header() {
     <header>
       <div className="surface-card border-b border-white/10 rounded-[18px] px-2.5 py-2.5 sm:px-3.5 sm:py-3">
         <div className="flex items-center justify-between gap-2">
-          <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="Fight Intelligence home">
-            <BrandMark className="h-9 w-9 shrink-0 sm:h-10 sm:w-10" />
-            <div className="flex min-w-0 flex-col justify-center gap-1">
-              <div className="flex items-center gap-1.5 text-[#FF4D54]">
-                <Activity className="h-3.5 w-3.5" />
-                <p className="broadcast-label truncate text-[9px] sm:text-[10px]">Matchup analytics</p>
-              </div>
-              <p className="brand-wordmark truncate pr-1 text-[1.15rem] sm:text-[1.5rem]">
+          <Link
+            to="/"
+            aria-label="Fight Intelligence home"
+            className="brand-badge flex min-w-0 items-center gap-3.5 border-2 border-black bg-[#EFECE6] px-4 py-2.5 text-black sm:px-5"
+          >
+            <BrandMark className="h-9 w-9 shrink-0 rounded-none sm:h-10 sm:w-10" />
+            <span className="flex min-w-0 flex-col items-start justify-center gap-1">
+              <span className="truncate font-mono text-[10px] font-bold uppercase leading-none tracking-widest text-[#A80D26] sm:text-[11px]">
+                Matchup analytics
+              </span>
+              <span className="truncate font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.4rem] font-normal uppercase leading-none tracking-[0.04em] text-black sm:text-[1.75rem]">
                 Fight Intelligence
-              </p>
-            </div>
+              </span>
+            </span>
           </Link>
 
           <div className="flex shrink-0 items-center gap-1.5">
-            <div className={`type-tech hidden items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:inline-flex ${apiClasses}`}>
+            <div className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:inline-flex ${apiClasses}`}>
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
               {apiLabel}
             </div>
@@ -83,7 +86,7 @@ export function Header() {
                   to={item.to}
                   className={[
                     'rounded-full px-3 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] transition xl:px-4 xl:py-2.5 xl:text-sm xl:tracking-[0.1em]',
-                    isItemActive(item, pathname) ? 'nav-link-active' : 'text-[#D4D4D4] hover:bg-white/10 hover:text-white',
+                    isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
                   ].join(' ')}
                 >
                   {item.label}
@@ -107,7 +110,7 @@ export function Header() {
               target="_blank"
               rel="noreferrer"
               title="GitHub"
-              className="ghost-action hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#D32F2F] lg:inline-flex"
+              className="ghost-action hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] lg:inline-flex"
             >
               <FolderGit2 className="h-4 w-4" />
               <span className="hidden xl:inline">GitHub</span>
@@ -135,7 +138,7 @@ export function Header() {
               className="overflow-hidden lg:hidden"
             >
               <div className="mt-2.5 flex flex-col gap-2 border-t border-white/8 pt-2.5">
-                <div className={`type-tech inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:hidden ${apiClasses}`}>
+                <div className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:hidden ${apiClasses}`}>
                   <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
                   {apiLabel}
                 </div>
@@ -148,7 +151,7 @@ export function Header() {
                       onClick={() => setMenuOpen(false)}
                       className={[
                         'rounded-xl px-3 py-3 text-sm font-semibold uppercase tracking-[0.1em] transition',
-                        isItemActive(item, pathname) ? 'nav-link-active' : 'text-[#D4D4D4] hover:bg-white/10 hover:text-white',
+                        isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
                       ].join(' ')}
                     >
                       {item.label}
@@ -170,7 +173,7 @@ export function Header() {
                     href="https://github.com/larissapavan"
                     target="_blank"
                     rel="noreferrer"
-                    className="ghost-action inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#D32F2F]"
+                    className="ghost-action inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E]"
                   >
                     <FolderGit2 className="h-4 w-4" />
                     GitHub
@@ -188,8 +191,8 @@ export function Header() {
 function readThemePreference(): ThemeMode {
   try {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
-    return stored === 'light' ? 'light' : 'dark'
+    return stored === 'dark' ? 'dark' : 'light'
   } catch {
-    return 'dark'
+    return 'light'
   }
 }

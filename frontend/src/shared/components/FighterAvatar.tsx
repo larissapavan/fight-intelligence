@@ -21,10 +21,10 @@ export function FighterAvatar({ name, imageUrl, className = 'h-14 w-14', highlig
 
   return (
     <span
-      className={`relative grid ${className} shrink-0 place-items-center overflow-hidden rounded-lg border bg-gradient-to-br from-[#D32F2F]/30 to-[var(--avatar-bg)] ${
+      className={`relative grid ${className} shrink-0 place-items-center overflow-hidden rounded-lg border-2 bg-[var(--avatar-bg)] ${
         highlight
-          ? 'border-[#E5A93C]/70 shadow-[0_0_0_1px_rgba(211,47,47,0.35)]'
-          : 'border-neutral-700/60'
+          ? 'border-[#F2C230] shadow-[2px_2px_0_#0E0E0E]'
+          : 'border-[var(--rule)]'
       }`}
     >
       {showImage ? (
@@ -38,7 +38,7 @@ export function FighterAvatar({ name, imageUrl, className = 'h-14 w-14', highlig
           className="absolute inset-0 h-full w-full object-cover object-top"
         />
       ) : (
-        <span className="type-display text-sm font-bold uppercase text-[#FF6B6B]" aria-hidden="true">
+        <span className="type-display text-sm font-bold uppercase text-[var(--accent-red)]" aria-hidden="true">
           {initials}
         </span>
       )}
