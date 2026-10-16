@@ -3,17 +3,17 @@ from __future__ import annotations
 MODEL_NAME = "HistGradientBoostingClassifier"
 
 MODEL_LIMITATIONS = [
-    "Predictions are estimative and based on historical pre-fight data.",
-    "The current dataset can still be improved with fully reconstructed rolling fighter statistics.",
-    "This system is intended for portfolio and analysis purposes, not betting advice.",
+    "Predictions are estimates based on past fights and each fighter's career stats.",
+    "The model uses each fighter's current career numbers, not their numbers at the time of past fights.",
+    "This is a personal project for learning, not betting advice.",
 ]
 
 MODEL_HIGHLIGHTS = [
-    "Temporal validation is used instead of random split to better simulate real prediction flow.",
-    "Feature engineering emphasizes matchup deltas such as win rate, reach, age, and striking efficiency.",
-    "SHAP explanations are used to translate model output into a readable fight analysis view.",
+    "It was tested on fights that came after the ones it trained on, as a real prediction would be.",
+    "Most inputs are differences between the two fighters, such as win rate, reach, age and striking accuracy.",
+    "SHAP shows which stats pushed each prediction toward one fighter or the other.",
 ]
 
 SYSTEM_TAGLINE = (
-    "Professional fight intelligence platform for predictive analysis, athlete comparison, and explainable ML insights."
+    "UFC fight stats, rankings and win predictions, with an explanation for every pick."
 )

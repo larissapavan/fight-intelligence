@@ -32,7 +32,7 @@ export function Rankings() {
         <SectionHeading
           eyebrow="Official UFC rankings"
           title="Divisional & pound-for-pound rankings"
-          description="Sourced live from ufc.com's media panel rankings, cross-referenced with our own win rate and last-fight data."
+          description="The official ufc.com rankings, with each fighter's win rate and last fight added from our data."
         />
 
         <div className="mt-4 inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">

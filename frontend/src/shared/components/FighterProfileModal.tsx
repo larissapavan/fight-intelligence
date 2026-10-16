@@ -293,7 +293,7 @@ function CareerTimeline({
                   onClick={() => onSelect(fight)}
                   aria-pressed={selected !== null && fightKey(selected) === fightKey(fight)}
                   aria-label={`${isWin ? 'Win' : isLoss ? 'Loss' : 'No result'} vs ${fight.opponent}, ${fight.date ?? 'date unknown'}. Open fight details`}
-                  title={`${fight.opponent} — ${fight.date ?? 'Date unknown'}`}
+                  title={`${fight.opponent}, ${fight.date ?? 'date unknown'}`}
                   className={`grid h-6 w-6 cursor-pointer place-items-center rounded-full border text-[10px] font-bold transition hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230] ${
                     selected !== null && fightKey(selected) === fightKey(fight) ? 'ring-2 ring-[var(--rule)] ring-offset-2 ring-offset-[var(--card-bg)]' : ''
                   } ${

@@ -44,9 +44,9 @@ export function MatchupIntelligence() {
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
-          eyebrow="Matchup intelligence"
+          eyebrow="Matchup"
           title="Why this matchup is interesting"
-          description="A category-by-category breakdown of striking, grappling and physical attributes, plus the exact SHAP-derived factors the prediction model weighed most."
+          description="Striking, grappling and physical numbers for both fighters, plus the factors the model weighed most."
         />
       </section>
 

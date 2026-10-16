@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, Award, CalendarDays, CircleDot, ListOrdered, ShieldAlert, Swords, TrendingUp, Trophy } from 'lucide-react'
+import { ArrowRight, Award, CalendarDays, ListOrdered, ShieldAlert, Swords, TrendingUp, Trophy } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { FighterAvatar } from '../shared/components/FighterAvatar'
+import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { FighterBadges, FlagList, TitleFightBadge } from '../shared/components/FighterBadges'
 import { LatestNewsCard } from '../shared/components/LatestNewsCard'
 import { PickChip } from '../shared/components/PickChip'
@@ -21,11 +22,13 @@ import type { EventSummary, FighterPerformance, FightResult, UpcomingPick } from
 type Trend = { streak: number; finishRate: number | null }
 
 export function Home() {
-  const { health, loading: modelLoading, error: modelError } = useModelInfo()
+  const { health, error: modelError } = useModelInfo()
   const { events, loading: eventsLoading, error: eventsError } = useUpcomingEvents()
   const { rankings, loading: rankingsLoading, error: rankingsError } = useRankings()
   const { prediction, loading: predicting, runPrediction } = usePrediction()
   const [trends, setTrends] = useState<Record<string, Trend>>({})
+  // A fighter chosen in the Trending or Pound-for-pound cards opens in place, so closing it leaves you where you were.
+  const [profileName, setProfileName] = useState<string | null>(null)
 
   const nextEvent = useMemo(() => {
     const today = new Date().toISOString().slice(0, 10)
@@ -75,18 +78,17 @@ export function Home() {
           Fight Intelligence
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[#E5E5E5]">
-          A live look at what's next in the UFC — the upcoming main event, a real model prediction, fighter momentum
-          and the current pound-for-pound picture, all pulled from the same data this platform predicts from.
+          What's next in the UFC: the upcoming main event, the model's pick for it, how the fighters are trending and the top of
+          the pound-for-pound ranking, all from the same data the model uses.
         </p>
 
-        <div className="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
           <MiniStat
             label="Fights analyzed"
             value={health?.fights_tracked ? health.fights_tracked.toLocaleString('en-US') : '—'}
             icon={Award}
           />
           <MiniStat label="Fighters tracked" value={health?.fighters_loaded ? `${health.fighters_loaded}` : '—'} icon={Swords} />
-          <StatusStat online={Boolean(health?.model_loaded)} loading={modelLoading} />
           <MiniStat label="Next event" value={eventsLoading ? 'Loading...' : nextEvent ? formatShortDate(nextEvent.date) : '—'} icon={CalendarDays} />
         </div>
       </motion.section>
@@ -104,14 +106,23 @@ export function Home() {
         />
 
         <div className="grid gap-3">
-          <TrendingCard mainEvent={mainEvent} trends={trends} />
-          <RankingsCard category={p4pRankings} loading={rankingsLoading} error={rankingsError} />
+          <TrendingCard mainEvent={mainEvent} trends={trends} onOpenProfile={setProfileName} />
+          <RankingsCard category={p4pRankings} loading={rankingsLoading} error={rankingsError} onOpenProfile={setProfileName} />
         </div>
       </section>
 
       <FullCardSection nextEvent={nextEvent} />
 
       <LatestNewsCard />
+
+      {profileName ? (
+        <FighterProfileModal
+          key={profileName}
+          name={profileName}
+          onClose={() => setProfileName(null)}
+          onSelectFighter={setProfileName}
+        />
+      ) : null}
     </div>
   )
 }
@@ -309,7 +320,15 @@ function FightCardRow({ fight, pick }: { fight: FightResult; pick?: UpcomingPick
   )
 }
 
-function TrendingCard({ mainEvent, trends }: { mainEvent: FightResult | null; trends: Record<string, Trend> }) {
+function TrendingCard({
+  mainEvent,
+  trends,
+  onOpenProfile,
+}: {
+  mainEvent: FightResult | null
+  trends: Record<string, Trend>
+  onOpenProfile: (name: string) => void
+}) {
   if (!mainEvent) return null
 
   return (
@@ -319,18 +338,30 @@ function TrendingCard({ mainEvent, trends }: { mainEvent: FightResult | null; tr
         <p className="broadcast-label text-[10px]">Trending</p>
       </div>
       <div className="mt-2.5 space-y-1.5">
-        <TrendRow name={mainEvent.fighter_1} trend={trends[mainEvent.fighter_1]} />
-        <TrendRow name={mainEvent.fighter_2} trend={trends[mainEvent.fighter_2]} />
+        <TrendRow name={mainEvent.fighter_1} trend={trends[mainEvent.fighter_1]} onOpenProfile={onOpenProfile} />
+        <TrendRow name={mainEvent.fighter_2} trend={trends[mainEvent.fighter_2]} onOpenProfile={onOpenProfile} />
       </div>
     </article>
   )
 }
 
-function TrendRow({ name, trend }: { name: string; trend: Trend | undefined }) {
+const CLICKABLE_ROW =
+  'w-full cursor-pointer text-left transition hover:!bg-[#F2C230]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]'
+
+function TrendRow({
+  name,
+  trend,
+  onOpenProfile,
+}: {
+  name: string
+  trend: Trend | undefined
+  onOpenProfile: (name: string) => void
+}) {
+  const profile = useFighterLookup()(name)
   if (!trend) return <LoadingSkeleton className="h-[52px]" />
 
-  return (
-    <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
+  const content = (
+    <>
       <p className="truncate text-xs font-semibold text-[#FFFFFF]">{name}</p>
       <p className="mt-0.5 text-[11px] leading-4 text-[#999999]">
         {trend.streak > 0 ? (
@@ -340,7 +371,17 @@ function TrendRow({ name, trend }: { name: string; trend: Trend | undefined }) {
         )}
         {trend.finishRate != null ? ` • ${Math.round(trend.finishRate * 100)}% finish rate` : ''}
       </p>
-    </div>
+    </>
+  )
+  const box = 'block rounded-xl border border-white/6 bg-black/18 px-3 py-2'
+
+  // Only fighters we have a profile for open one; anyone else stays a plain row.
+  return profile ? (
+    <button type="button" onClick={() => onOpenProfile(profile.name)} aria-label={`${name}. View profile`} className={`${box} ${CLICKABLE_ROW}`}>
+      {content}
+    </button>
+  ) : (
+    <div className={box}>{content}</div>
   )
 }
 
@@ -348,10 +389,12 @@ function RankingsCard({
   category,
   loading,
   error,
+  onOpenProfile,
 }: {
   category: { entries: { rank: number; fighter: string }[] } | null
   loading: boolean
   error: string | null
+  onOpenProfile: (name: string) => void
 }) {
   const lookup = useFighterLookup()
   return (
@@ -376,13 +419,32 @@ function RankingsCard({
         <p className="mt-2.5 text-xs text-[#999999]">{error}</p>
       ) : category ? (
         <div className="mt-2.5 space-y-1.5">
-          {category.entries.slice(0, 3).map((entry) => (
-            <div key={entry.rank} className="flex items-center gap-2.5 rounded-xl border border-white/6 bg-black/18 px-3 py-2">
-              <span className="data-value w-5 shrink-0 text-sm font-bold text-[#C8102E]">{entry.rank}</span>
-              <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</span>
-              {lookup(entry.fighter) ? <FighterBadges badges={lookup(entry.fighter)?.badges} /> : null}
-            </div>
-          ))}
+          {category.entries.slice(0, 3).map((entry) => {
+            const profile = lookup(entry.fighter)
+            const content = (
+              <>
+                <span className="data-value w-5 shrink-0 text-sm font-bold text-[#C8102E]">{entry.rank}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</span>
+                {profile ? <FighterBadges badges={profile.badges} /> : null}
+              </>
+            )
+            const box = 'flex items-center gap-2.5 rounded-xl border border-white/6 bg-black/18 px-3 py-2'
+            return profile ? (
+              <button
+                key={entry.rank}
+                type="button"
+                onClick={() => onOpenProfile(profile.name)}
+                aria-label={`${entry.fighter}, rank ${entry.rank}. View profile`}
+                className={`${box} ${CLICKABLE_ROW}`}
+              >
+                {content}
+              </button>
+            ) : (
+              <div key={entry.rank} className={box}>
+                {content}
+              </div>
+            )
+          })}
         </div>
       ) : (
         <p className="mt-2.5 text-xs text-[#999999]">Rankings unavailable right now.</p>
@@ -407,22 +469,6 @@ function MiniStat({
         <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
       </div>
       <p className="data-value mt-1 text-xl font-bold text-[#FFFFFF]">{value}</p>
-    </div>
-  )
-}
-
-function StatusStat({ online, loading }: { online: boolean; loading: boolean }) {
-  return (
-    <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
-      <div className="flex items-center gap-2">
-        <CircleDot className={`h-3.5 w-3.5 ${online ? 'fill-[#C8102E] text-[#C8102E] animate-pulse' : 'fill-[#999999] text-[#999999]'}`} />
-        <p className="broadcast-label text-[10px] text-[#999999]">API status</p>
-      </div>
-      <div className="mt-1 inline-flex rounded-full border border-white/8 px-2.5 py-0.5">
-        <span className={`type-tech text-xs font-semibold uppercase tracking-[0.16em] ${loading ? 'text-[#CCCCCC]' : online ? 'text-[#C8102E]' : 'text-[#999999]'}`}>
-          {loading ? 'Checking...' : online ? 'Live' : 'Offline'}
-        </span>
-      </div>
     </div>
   )
 }

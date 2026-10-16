@@ -2,16 +2,27 @@ import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   Award,
+  Bell,
   ChevronLeft,
   ChevronRight,
+  Dumbbell,
   ExternalLink,
+  Flame,
+  Footprints,
+  HandFist,
+  Hammer,
+  Medal,
   Radio,
   Ruler,
   Search,
   Shield,
   Swords,
+  Target,
+  Timer,
   Weight,
+  Zap,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ChampionBelt } from '../shared/components/ChampionBelt'
@@ -36,6 +47,7 @@ type DivisionGroup = {
   label: string
   shortLabel: string
   limit: string
+  icon: LucideIcon
   tone: 'red' | 'blue' | 'gold'
   match: (fighter: FighterProfile) => boolean
 }
@@ -43,19 +55,20 @@ type DivisionGroup = {
 // The UFC runs three women's divisions today. The discontinued Women's Featherweight (a handful of former fighters)
 // has no tab of its own: those fighters are listed under Open Class.
 const divisionGroups: DivisionGroup[] = [
-  { key: 'flyweight', label: 'Flyweight', shortLabel: 'FLW', limit: '125 lb', tone: 'blue', match: byDivision('flyweight') },
-  { key: 'bantamweight', label: 'Bantamweight', shortLabel: 'BW', limit: '135 lb', tone: 'red', match: byDivision('bantamweight') },
-  { key: 'featherweight', label: 'Featherweight', shortLabel: 'FW', limit: '145 lb', tone: 'gold', match: byDivision('featherweight') },
-  { key: 'lightweight', label: 'Lightweight', shortLabel: 'LW', limit: '155 lb', tone: 'red', match: byDivision('lightweight') },
-  { key: 'welterweight', label: 'Welterweight', shortLabel: 'WW', limit: '170 lb', tone: 'blue', match: byDivision('welterweight') },
-  { key: 'middleweight', label: 'Middleweight', shortLabel: 'MW', limit: '185 lb', tone: 'gold', match: byDivision('middleweight') },
-  { key: 'light-heavyweight', label: 'Light Heavyweight', shortLabel: 'LHW', limit: '205 lb', tone: 'red', match: byDivision('light heavyweight') },
-  { key: 'heavyweight', label: 'Heavyweight', shortLabel: 'HW', limit: '265 lb', tone: 'blue', match: byDivision('heavyweight') },
+  { key: 'flyweight', label: 'Flyweight', shortLabel: 'FLW', limit: '125 lb', icon: Zap, tone: 'blue', match: byDivision('flyweight') },
+  { key: 'bantamweight', label: 'Bantamweight', shortLabel: 'BW', limit: '135 lb', icon: Footprints, tone: 'red', match: byDivision('bantamweight') },
+  { key: 'featherweight', label: 'Featherweight', shortLabel: 'FW', limit: '145 lb', icon: Target, tone: 'gold', match: byDivision('featherweight') },
+  { key: 'lightweight', label: 'Lightweight', shortLabel: 'LW', limit: '155 lb', icon: Flame, tone: 'red', match: byDivision('lightweight') },
+  { key: 'welterweight', label: 'Welterweight', shortLabel: 'WW', limit: '170 lb', icon: Shield, tone: 'blue', match: byDivision('welterweight') },
+  { key: 'middleweight', label: 'Middleweight', shortLabel: 'MW', limit: '185 lb', icon: Swords, tone: 'gold', match: byDivision('middleweight') },
+  { key: 'light-heavyweight', label: 'Light Heavyweight', shortLabel: 'LHW', limit: '205 lb', icon: HandFist, tone: 'red', match: byDivision('light heavyweight') },
+  { key: 'heavyweight', label: 'Heavyweight', shortLabel: 'HW', limit: '265 lb', icon: Hammer, tone: 'blue', match: byDivision('heavyweight') },
   {
     key: 'w-strawweight',
     label: "Women's Strawweight",
     shortLabel: 'WSW',
     limit: '115 lb',
+    icon: Timer,
     tone: 'gold',
     match: byDivision("women's strawweight"),
   },
@@ -64,6 +77,7 @@ const divisionGroups: DivisionGroup[] = [
     label: "Women's Flyweight",
     shortLabel: 'WFLW',
     limit: '125 lb',
+    icon: Bell,
     tone: 'blue',
     match: byDivision("women's flyweight"),
   },
@@ -72,6 +86,7 @@ const divisionGroups: DivisionGroup[] = [
     label: "Women's Bantamweight",
     shortLabel: 'WBW',
     limit: '135 lb',
+    icon: Medal,
     tone: 'red',
     match: byDivision("women's bantamweight"),
   },
@@ -80,6 +95,7 @@ const divisionGroups: DivisionGroup[] = [
     label: 'Open Class / Unclassified',
     shortLabel: 'OPEN',
     limit: 'Mixed',
+    icon: Dumbbell,
     tone: 'blue',
     match: (fighter) => !divisionGroups.slice(0, -1).some((group) => group.match(fighter)),
   },
@@ -175,9 +191,9 @@ export function Fighters() {
       <section className="page-hero rounded-[20px] px-3 py-3 xs:px-4 xs:py-3.5 md:px-5 md:py-5 lg:px-6 lg:py-6">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
           <SectionHeading
-            eyebrow="Fighter database"
+            eyebrow="Fighters"
             title="Weight classes"
-            description="Browse athletes by UFC weight class, inspect scouting profiles and jump quickly to source data."
+            description="Browse fighters by weight class and open a profile for their record, career timeline and stats."
           />
 
           <div className="grid gap-2 xs:grid-cols-2">
@@ -431,8 +447,6 @@ function DivisionPanel({
   imageByName: Map<string, FighterImageRecord>
   onSelectFighter: (name: string) => void
 }) {
-  const styles = toneStyles[group.tone]
-
   return (
     <motion.section
       className="surface-card overflow-hidden rounded-[20px]"
@@ -443,8 +457,8 @@ function DivisionPanel({
     >
       <div className="flex w-full flex-col gap-3 px-3 py-3 text-left xs:px-4 sm:flex-row sm:items-center sm:justify-between md:px-5">
         <div className="flex items-center gap-3">
-          <div className={`rounded-xl border p-2 ${styles.border} ${styles.bg} ${styles.text}`}>
-            <Weight className="h-4 w-4" />
+          <div className="grid h-11 w-11 shrink-0 place-items-center border-2 border-[var(--rule)] bg-[var(--card-bg)] text-[var(--text-main)]">
+            <group.icon className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
             <p className="broadcast-label text-[10px] text-[#999999]">Active division</p>
@@ -456,7 +470,7 @@ function DivisionPanel({
             </p>
           </div>
         </div>
-        <span className={`type-tech w-fit rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.border} ${styles.bg} ${styles.text}`}>
+        <span className="type-tech w-fit border-2 border-[var(--rule)] bg-[var(--card-bg)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-main)]">
           {group.shortLabel}
         </span>
       </div>
@@ -513,6 +527,7 @@ function DivisionPill({
           : 'border-[var(--rule)] bg-[var(--card-bg)] text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
       ].join(' ')}
     >
+      <group.icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
       <span className="hidden sm:inline">{group.label}</span>
       <span className="sm:hidden">{group.shortLabel}</span>
       <CountPill active={isActive}>{count}</CountPill>
@@ -544,15 +559,16 @@ function FighterDivisionCard({
     >
       <div className={`h-1 w-full ${styles.bar}`} />
       <div className="flex flex-1 flex-col p-3">
-        <div className="grid min-h-[176px] grid-cols-[70px_1fr] content-start gap-3">
+        {/* On a phone the card is centred and stacked, so a long name such as "Khabib Nurmagomedov" wraps inside it. */}
+        <div className="grid grid-cols-1 content-start justify-items-center gap-3 text-center sm:min-h-[176px] sm:grid-cols-[70px_1fr] sm:justify-items-stretch sm:text-left">
           <FighterPortrait fighter={fighter} imageUrl={imageUrl ?? undefined} tone={group.tone} />
-          <div className="min-w-0">
+          <div className="min-w-0 max-sm:w-full">
             <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
+              <div className="min-w-0 max-sm:w-full">
                 <p className={`broadcast-label text-[10px] ${styles.text}`}>{fighter.division ?? group.shortLabel}</p>
-                <h3 className="mt-1 inline-flex max-w-full items-center gap-1.5 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[#FFFFFF]">
+                <h3 className="mt-1 flex max-w-full flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[#FFFFFF] sm:justify-start">
                   <FlagList fighter={fighter} />
-                  <span className="min-w-0">{fighter.name}</span>
+                  <span className="min-w-0 break-words">{fighter.name}</span>
                   {fighter.belt ? <ChampionBelt /> : null}
                 </h3>
               </div>
@@ -562,8 +578,8 @@ function FighterDivisionCard({
               {formatRecord(fighter)}
               {fighter.nickname ? ` • "${fighter.nickname}"` : ''}
             </p>
-            <FighterOrigin fighter={fighter} className="mt-1.5" />
-            <FighterBadges badges={fighter.badges} className="mt-1.5" />
+            <FighterOrigin fighter={fighter} className="mt-1.5 max-sm:[&>li]:justify-center" />
+            <FighterBadges badges={fighter.badges} className="mt-1.5 max-sm:justify-center" />
           </div>
         </div>
 
@@ -631,7 +647,7 @@ function FighterPortrait({
   const showImage = Boolean(imageUrl && !imageFailed)
 
   return (
-    <div className={`relative h-[86px] overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-gradient-to-br ${toneClass}`}>
+    <div className={`relative h-[86px] w-[70px] overflow-hidden rounded-2xl border max-sm:h-[118px] max-sm:w-24 border-[var(--line-soft)] bg-gradient-to-br ${toneClass}`}>
       {showImage ? (
         <img
           src={imageUrl}

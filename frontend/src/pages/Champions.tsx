@@ -48,7 +48,7 @@ export function Champions() {
         <SectionHeading
           eyebrow="Title fight history"
           title="Champions & records"
-          description="Every UFC title reign, defense and record book entry — compiled from published UFC title histories."
+          description="Every UFC title reign, defense and title record, compiled from published title histories."
         />
 
         <div
@@ -274,7 +274,7 @@ function GreatestChampionsSection({ champions }: { champions: ChampionSummary[] 
             key={champion.champion}
             type="button"
             onClick={() => openProfile(champion.champion)}
-            aria-label={`${champion.champion} — view profile`}
+            aria-label={`${champion.champion}, view profile`}
             className="surface-card flex w-full min-w-0 cursor-pointer text-left items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors hover:bg-neutral-800/60 focus-visible:bg-neutral-800/60 focus-visible:outline-none"
           >
             <div className="relative shrink-0">
@@ -480,7 +480,7 @@ function MultiDivisionSection({ category, current }: { category: RecordCategory;
                           key={reign.division}
                           className="inline-flex items-center gap-1 border-2 border-[#0E0E0E] bg-[#F2C230] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#0E0E0E]"
                         >
-                          <ChampionBelt className="h-3 w-3" />
+                          <ChampionBelt className="h-3 w-6" />
                           Current {reign.title_type === 'interim' ? 'interim ' : ''}
                           {reign.division} champion
                         </li>
@@ -596,7 +596,7 @@ function TitleFightRow({ fight, previous }: { fight: TitleFight; previous: Title
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] ${ROLE_STYLES[fight.role]}`}>
-              {fight.role === 'won_title' ? <ChampionBelt className="h-3 w-3" /> : null}
+              {fight.role === 'won_title' ? <ChampionBelt className="h-3 w-6" /> : null}
               {fight.role === 'defense' ? <Shield className="h-3 w-3" /> : null}
               {fight.label}
             </span>

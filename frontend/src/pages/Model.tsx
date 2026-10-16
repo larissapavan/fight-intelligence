@@ -27,9 +27,9 @@ export function Model() {
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
-          eyebrow="Model intelligence"
-          title="The predictive engine behind the platform"
-          description="A compact view of the predictive system, baseline performance and the feature logic behind the fight calls."
+          eyebrow="The model"
+          title="How the model works"
+          description="The model, how it compares with simpler ones, and what goes into each prediction."
         />
       </section>
 
@@ -54,8 +54,8 @@ export function Model() {
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
                 eyebrow="Baseline comparison"
-                title="Why this model was selected"
-                description="The production model was benchmarked against simpler baselines to justify performance beyond generic classifiers."
+                title="Why this model"
+                description="It was tested against simpler models, and gradient boosting had the best accuracy and log loss."
               />
               <div className="mt-3 h-[210px] min-w-0 sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%" minWidth={280}>
@@ -81,8 +81,8 @@ export function Model() {
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
                 eyebrow="Feature design"
-                title="Feature engineering for matchup intelligence"
-                description="The system focuses on comparison logic: where one athlete gains an advantage over the other before the fight starts."
+                title="What the model looks at"
+                description="Mostly the difference between the two fighters: age, reach, record, striking and takedown accuracy."
               />
               <div className="mt-3 h-[210px] min-w-0 sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%" minWidth={280}>
@@ -109,8 +109,8 @@ export function Model() {
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
                 eyebrow="System design"
-                title="Pipeline from data to API"
-                description="The backend transforms real fight data into reusable prediction services consumed by the web application."
+                title="From data to this site"
+                description="Fight data is cleaned, turned into features and served by the API to this site."
               />
               <div className="mt-3 space-y-2">
                 {modelInfo.highlights.map((item) => (
@@ -130,8 +130,8 @@ export function Model() {
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
                 eyebrow="Limitations"
-                title="What still needs to evolve"
-                description="The platform is production-styled, but it still communicates the model's boundaries with honesty and clarity."
+                title="What it can't do"
+                description="Where the model falls short."
               />
               <div className="mt-3 rounded-2xl border border-[#C8102E]/18 bg-[#C8102E]/8 p-3">
                 <ul className="space-y-2 text-xs leading-5 text-[#FFFFFF]">

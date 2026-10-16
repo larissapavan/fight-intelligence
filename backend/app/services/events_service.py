@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import math
+import re
+import unicodedata
 from datetime import date
 
 import pandas as pd
@@ -123,7 +125,33 @@ def get_upcoming_events() -> list[dict]:
     if _upcoming_cache["signature"] != signature:
         _upcoming_cache["data"] = _build_events(UPCOMING_EVENTS_SOURCE_PATH, ascending=True, infer_title_fights=True)
         _upcoming_cache["signature"] = signature
-    return _merge_manual_fights(_upcoming_cache["data"], _load_manual_fights(), date.today().isoformat())
+    merged = _merge_manual_fights(_upcoming_cache["data"], _load_manual_fights(), date.today().isoformat())
+    return [_main_event_first(event) for event in merged]
+
+
+def _surname_tokens(text: str) -> list[str]:
+    plain = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
+    return [part for part in re.split(r"[^a-z0-9]+", plain) if part]
+
+
+def _main_event_first(event: dict) -> dict:
+    """Put the main event first and the rest in card order, the way the pages show a card.
+
+    Upcoming cards come from ESPN, which lists bouts from the first prelim to the main event. The main event is the
+    bout the card is named after ("UFC 333: Volkanovski vs. Evloev"); when no bout matches the name, the last one is it."""
+    fights = event["fights"]
+    if len(fights) < 2:
+        return event
+    headliners = [_surname_tokens(side) for side in re.split(r"\s+vs\.?\s+", event["name"].split(":", 1)[-1], flags=re.IGNORECASE)]
+    main = len(fights) - 1
+    if len(headliners) == 2 and all(headliners):
+        for index, fight in enumerate(fights):
+            names = [set(_surname_tokens(str(fight["fighter_1"]))), set(_surname_tokens(str(fight["fighter_2"])))]
+            if any(all(token in names[0] for token in a) and all(token in names[1] for token in b) for a, b in (headliners, headliners[::-1])):
+                main = index
+                break
+    ordered = [fights[main]] + [fight for index, fight in enumerate(reversed(fights)) if len(fights) - 1 - index != main]
+    return {**event, "fights": ordered}
 
 
 def _load_manual_fights() -> list[dict]:

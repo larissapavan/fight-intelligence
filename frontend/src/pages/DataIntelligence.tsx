@@ -19,9 +19,9 @@ export function DataIntelligence() {
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
-          eyebrow="Data intelligence"
-          title="From raw scrapes to a prediction"
-          description="A technical look at how real UFC data becomes the dataset this platform predicts from — no synthetic or placeholder records anywhere in the pipeline."
+          eyebrow="The data"
+          title="From raw data to a prediction"
+          description="How public UFC data becomes the dataset the model learns from. Every record in it is real."
         />
       </section>
 
@@ -46,7 +46,7 @@ export function DataIntelligence() {
             <SectionHeading
               eyebrow="Architecture"
               title="Data pipeline"
-              description="Every prediction traces back to real historical fight data — scraped, cleaned and engineered into features before it ever reaches the model."
+              description="Every prediction starts from real fight data that is collected, cleaned and turned into features before the model sees it."
             />
             <DataPipelineDiagram sources={dataInfo.sources} />
           </section>
@@ -69,13 +69,13 @@ function DataPipelineDiagram({ sources }: { sources: string[] }) {
 
       <PipelineNode label="Raw Data" tone="highlight" />
       <PipelineArrow />
-      <PipelineNode label="Cleaning" description="Parsing, normalization and deduplication across sources" />
+      <PipelineNode label="Cleaning" description="Fixing formats and removing duplicates across sources" />
       <PipelineArrow />
-      <PipelineNode label="Feature Engineering" description="Matchup deltas: reach, age, win rate, striking, takedown accuracy" />
+      <PipelineNode label="Feature Engineering" description="The difference between the two fighters in reach, age, win rate, striking and takedown accuracy" />
       <PipelineArrow />
       <PipelineNode label="ML Dataset" tone="highlight" />
       <PipelineArrow />
-      <PipelineNode label="Prediction" tone="accent" description="HistGradientBoostingClassifier + SHAP explainability" />
+      <PipelineNode label="Prediction" tone="accent" description="A gradient boosting model, with SHAP to explain each pick" />
     </div>
   )
 }

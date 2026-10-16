@@ -1,12 +1,14 @@
-import { useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { CalendarClock, CalendarDays, ChevronDown, Hash, MapPin, Search, Swords, Trophy } from 'lucide-react'
 
+import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { LatestNewsCard } from '../shared/components/LatestNewsCard'
 import { PickChip } from '../shared/components/PickChip'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { TitleFightBadge } from '../shared/components/FighterBadges'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useEvents } from '../shared/hooks/useEvents'
+import { useFighterLookup } from '../shared/hooks/useFighterLookup'
 import { useUpcomingEvents } from '../shared/hooks/useUpcomingEvents'
 import { useUpcomingPicks } from '../shared/hooks/useUpcomingPicks'
 import type { EventSummary, FightResult, UpcomingPick } from '../shared/types/api'
@@ -30,6 +32,9 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
+/** Opens a fighter's profile on top of the page, so closing it leaves the reader on the same card. */
+const OpenProfileContext = createContext<(name: string) => void>(() => undefined)
+
 export function Events() {
   const { events, loading, error } = useEvents()
   const upcoming = useUpcomingEvents()
@@ -38,6 +43,7 @@ export function Events() {
   const [monthFilter, setMonthFilter] = useState(ALL_MONTHS)
   const [openEvents, setOpenEvents] = useState<Set<string>>(new Set())
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set())
+  const [profileName, setProfileName] = useState<string | null>(null)
 
   const years = useMemo(() => {
     const found = new Set<string>()
@@ -47,9 +53,11 @@ export function Events() {
     return [ALL_YEARS, ...Array.from(found).sort((a, b) => Number(b) - Number(a))]
   }, [events])
 
-  const visibleEvents = useMemo(() => {
-    const term = query.trim().toLowerCase()
-    return events.filter((event) => {
+  const isSearching = query.trim() !== '' || yearFilter !== ALL_YEARS || monthFilter !== ALL_MONTHS
+
+  const matchesFilters = useCallback(
+    (event: EventSummary) => {
+      const term = query.trim().toLowerCase()
       const formattedDate = formatEventDate(event.date).toLowerCase()
       const matchesQuery =
         !term ||
@@ -63,8 +71,16 @@ export function Events() {
         monthFilter === ALL_MONTHS || MONTH_NAMES[Number(event.date?.slice(5, 7)) - 1] === monthFilter
 
       return matchesQuery && matchesYear && matchesMonth
-    })
-  }, [events, query, yearFilter, monthFilter])
+    },
+    [query, yearFilter, monthFilter],
+  )
+
+  const visibleEvents = useMemo(() => events.filter(matchesFilters), [events, matchesFilters])
+  // While searching, the upcoming cards are filtered by the same search instead of always showing all of them.
+  const visibleUpcoming = useMemo(
+    () => (isSearching ? upcoming.events.filter(matchesFilters) : upcoming.events),
+    [isSearching, upcoming.events, matchesFilters],
+  )
 
   const totalFights = useMemo(() => events.reduce((sum, event) => sum + event.fight_count, 0), [events])
 
@@ -95,7 +111,58 @@ export function Events() {
     })
   }
 
+  // The archive results (or the empty state). While searching they go right under the filters, above the upcoming
+  // cards and the news, so a match is never buried at the bottom of the page.
+  const results = (
+    <>
+      {error ? (
+        <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+      ) : null}
+
+      {loading ? (
+        <section className="grid gap-2.5 md:grid-cols-2">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <LoadingSkeleton key={index} className="h-[110px]" />
+          ))}
+        </section>
+      ) : visibleEvents.length ? (
+        <div className="space-y-3 sm:space-y-4">
+          {isSearching && numberedEvents.length === 0 ? null : (
+            <EventGroup
+              groupKey="numbered"
+              title="UFC Numbered Events"
+              icon={Hash}
+              events={numberedEvents}
+              isOpen={openGroups.has('numbered') || isSearching}
+              onToggleGroup={toggleGroup}
+              openEvents={openEvents}
+              onToggle={toggleEvent}
+            />
+          )}
+          {isSearching && fightNightEvents.length === 0 ? null : (
+            <EventGroup
+              groupKey="fight-night"
+              title="UFC Fight Night"
+              icon={Swords}
+              events={fightNightEvents}
+              isOpen={openGroups.has('fight-night') || isSearching}
+              onToggleGroup={toggleGroup}
+              openEvents={openEvents}
+              onToggle={toggleEvent}
+            />
+          )}
+        </div>
+      ) : (
+        <div className="surface-card rounded-[20px] px-4 py-7 text-center">
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No events found</p>
+          <p className="mt-2 text-sm text-[#999999]">Adjust the search to find another card.</p>
+        </div>
+      )}
+    </>
+  )
+
   return (
+    <OpenProfileContext.Provider value={setProfileName}>
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
@@ -148,56 +215,30 @@ export function Events() {
         </div>
       </section>
 
+      {isSearching ? results : null}
+
       <UpcomingEventsSection
-        events={upcoming.events}
+        events={visibleUpcoming}
         loading={upcoming.loading}
         error={upcoming.error}
         openEvents={openEvents}
         onToggle={toggleEvent}
       />
 
-      <LatestNewsCard />
+      {isSearching ? null : <LatestNewsCard />}
 
-      {error ? (
-        <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+      {isSearching ? null : results}
+
+      {profileName ? (
+        <FighterProfileModal
+          key={profileName}
+          name={profileName}
+          onClose={() => setProfileName(null)}
+          onSelectFighter={setProfileName}
+        />
       ) : null}
-
-      {loading ? (
-        <section className="grid gap-2.5 md:grid-cols-2">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <LoadingSkeleton key={index} className="h-[110px]" />
-          ))}
-        </section>
-      ) : visibleEvents.length ? (
-        <div className="space-y-3 sm:space-y-4">
-          <EventGroup
-            groupKey="numbered"
-            title="UFC Numbered Events"
-            icon={Hash}
-            events={numberedEvents}
-            isOpen={openGroups.has('numbered')}
-            onToggleGroup={toggleGroup}
-            openEvents={openEvents}
-            onToggle={toggleEvent}
-          />
-          <EventGroup
-            groupKey="fight-night"
-            title="UFC Fight Night"
-            icon={Swords}
-            events={fightNightEvents}
-            isOpen={openGroups.has('fight-night')}
-            onToggleGroup={toggleGroup}
-            openEvents={openEvents}
-            onToggle={toggleEvent}
-          />
-        </div>
-      ) : (
-        <div className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No events found</p>
-          <p className="mt-2 text-sm text-[#999999]">Adjust the search to find another card.</p>
-        </div>
-      )}
     </div>
+    </OpenProfileContext.Provider>
   )
 }
 
@@ -385,12 +426,29 @@ function FightRow({ fight, pick }: { fight: FightResult; pick?: UpcomingPick }) 
 }
 
 function FighterName({ name, won, align }: { name: string; won: boolean; align: 'left' | 'right' }) {
-  return (
-    <span className={`flex min-w-0 items-center gap-1.5 ${align === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}>
+  const openProfile = useContext(OpenProfileContext)
+  const profile = useFighterLookup()(name)
+  const side = align === 'right' ? 'justify-end text-right' : 'justify-start text-left'
+  const label = (
+    <>
       {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#C8102E]" /> : null}
       <span className={`truncate text-sm ${won ? 'font-bold text-[#FFFFFF]' : 'text-[#999999]'}`}>{name}</span>
       {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#C8102E]" /> : null}
-    </span>
+    </>
+  )
+
+  // Fighters we have a profile for open it on this page; anyone else stays plain text.
+  return profile ? (
+    <button
+      type="button"
+      onClick={() => openProfile(profile.name)}
+      aria-label={`${name}. View profile`}
+      className={`flex min-w-0 cursor-pointer items-center gap-1.5 px-1.5 py-1 transition hover:bg-[#F2C230]/40 focus-visible:bg-[#F2C230]/40 focus-visible:outline-none ${side}`}
+    >
+      {label}
+    </button>
+  ) : (
+    <span className={`flex min-w-0 items-center gap-1.5 px-1.5 py-1 ${side}`}>{label}</span>
   )
 }
 

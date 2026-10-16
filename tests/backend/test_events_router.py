@@ -137,3 +137,29 @@ def test_a_manual_fight_joins_the_card_ESPN_already_has(monkeypatch):
 
     merged = service._merge_manual_fights(base, [manual_row()], today="2026-11-01")
     assert len(merged) == 1 and merged[0]["fight_count"] == 2
+
+
+def test_the_main_event_is_the_bout_the_card_is_named_after(client):
+    # ESPN lists a card from the first prelim to the main event; the pages need the main event first.
+    for event in client.get("/events/upcoming").json():
+        if len(event["fights"]) < 2 or " vs" not in event["name"]:
+            continue
+        headline = event["name"].split(":", 1)[-1].lower()
+        main = event["fights"][0]
+        surnames = [name.split()[-1].lower() for name in (main["fighter_1"], main["fighter_2"])]
+        named = any(surname in headline for surname in surnames)
+        others_named = any(
+            all(name.split()[-1].lower() in headline for name in (fight["fighter_1"], fight["fighter_2"])) for fight in event["fights"][1:]
+        )
+        assert named or not others_named, event["name"]
+
+
+def test_main_event_first_orders_a_card_and_falls_back_to_the_last_bout():
+    from backend.app.services import events_service as service
+
+    named = event("UFC Fight Night: Buckley vs. Malott", "2030-01-01", ("Opener One", "Opener Two"), ("Erin Blanchfield", "Co Main"), ("Joaquin Buckley", "Mike Malott"))
+    assert [(f["fighter_1"]) for f in service._main_event_first(named)["fights"]] == ["Joaquin Buckley", "Erin Blanchfield", "Opener One"]
+
+    unnamed = event("UFC Fight Night: Special Card", "2030-01-01", ("Opener One", "Opener Two"), ("Middle A", "Middle B"), ("Headliner A", "Headliner B"))
+    assert [(f["fighter_1"]) for f in service._main_event_first(unnamed)["fights"]] == ["Headliner A", "Middle A", "Opener One"]
+    assert service._main_event_first(event("UFC 1: Solo", "2030-01-01", ("A", "B")))["fights"][0]["fighter_1"] == "A"

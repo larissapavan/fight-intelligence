@@ -47,8 +47,8 @@ export function AboutModel() {
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
           eyebrow="About"
-          title="A full stack portfolio platform for applied AI"
-          description="Built to demonstrate applied AI, sports analytics and full stack product thinking in one production-styled platform."
+          title="A UFC analytics project built to learn"
+          description="I built this to learn how to take a model from raw data to a working website."
         />
       </section>
 
@@ -57,30 +57,30 @@ export function AboutModel() {
       <section className="grid gap-3 lg:grid-cols-4">
         <InfoCard
           icon={Trophy}
-          title="Professional portfolio project"
-          description="Designed to showcase applied AI, sports intelligence thinking and production-minded engineering rather than a notebook-only prototype."
+          title="Built to learn"
+          description="A whole project instead of a notebook: data collection, a model, an API and a website."
         />
         <InfoCard
           icon={Binary}
-          title="Machine Learning in production context"
-          description="The predictive engine compares pre-fight statistics, builds matchup features and serves responses through a FastAPI backend."
+          title="How a pick is made"
+          description="The model compares the two fighters' stats before the fight, and the API returns the pick with the factors behind it."
         />
         <InfoCard
           icon={ChartNoAxesCombined}
-          title="Historical fight data"
-          description="Real UFC records, fighter attributes and derived performance metrics feed the analytical and predictive layers of the platform."
+          title="The data"
+          description="Real UFC records and fighter stats, collected from public sources."
         />
         <InfoCard
           icon={ShieldAlert}
           title="Responsible use"
-          description="Predictions are estimates based on historical data and should not be interpreted as betting advice or financial guidance."
+          description="Predictions are estimates from past data. They are not betting advice."
         />
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[1fr_1fr]">
         <article className="surface-card rounded-[20px] p-3 sm:p-4">
           <p className="broadcast-label text-[10px] text-[#999999]">Core stack</p>
-          <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">React, FastAPI and applied machine learning</h2>
+          <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">What it is built with</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {[
               'FastAPI',
@@ -89,8 +89,7 @@ export function AboutModel() {
               'Feature Engineering',
               'Data Visualization',
               'REST APIs',
-              'Full Stack Architecture',
-              'Explainable AI',
+                            'SHAP explanations',
             ].map((item) => (
               <div key={item} className="metric-tile rounded-xl px-3 py-2.5 text-xs font-medium text-[#FFFFFF]">
                 {item}
@@ -101,7 +100,7 @@ export function AboutModel() {
 
         <article className="surface-card rounded-[20px] p-3 sm:p-4">
           <p className="broadcast-label text-[10px] text-[#999999]">Links & contact</p>
-          <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Where to explore the project</h2>
+          <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Find the project</h2>
           <div className="mt-3 grid gap-2">
             {contactLinks.map(({ label, href, icon: Icon }) => {
               const isLinkedIn = label === 'LinkedIn Profile'
@@ -183,7 +182,7 @@ export function AboutModel() {
                 <span className="type-tech text-xs font-semibold uppercase tracking-[0.18em]">Use disclaimer</span>
               </div>
               <p className="text-xs leading-5 text-[#FFFFFF]">
-                The platform offers informed estimates generated from historical data and modeling logic. It does not replace expert judgment and should not be used for betting decisions.
+                The picks are estimates from past data. The model knows nothing about injuries or weight cuts, so do not use it to bet.
               </p>
             </div>
             <div className="mt-3 space-y-2">
