@@ -7,16 +7,23 @@ BMF title fight (a defense included) and everything else follows.
 
 from __future__ import annotations
 
+import time
+
 import pandas as pd
 
 from src.ufc_predictor.config import RAW_DATA_DIR
 
 BMF_FIGHTS_SOURCE_PATH = RAW_DATA_DIR / "bmf_title_fights.csv"
 
-_cache: dict = {"signature": "unset", "fight_urls": frozenset(), "champion": None}
+_cache: dict = {"signature": "unset", "fight_urls": frozenset(), "champion": None, "checked": 0.0}
 
 
 def _load() -> None:
+    # Asked once per fight when a whole archive is built: look at the file at most once a second.
+    now = time.monotonic()
+    if _cache["signature"] != "unset" and now - _cache["checked"] < 1.0:
+        return
+    _cache["checked"] = now
     signature = BMF_FIGHTS_SOURCE_PATH.stat().st_mtime_ns if BMF_FIGHTS_SOURCE_PATH.exists() else None
     if _cache["signature"] == signature:
         return

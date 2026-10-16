@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import math
 import re
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -22,6 +23,7 @@ PHOTOS_MANIFEST_PATH = RAW_DATA_DIR / "fighter_photos.csv"
 ORIGINS_SOURCE_PATH = RAW_DATA_DIR / "fighter_origins.csv"
 HOMETOWN_OVERRIDES_PATH = RAW_DATA_DIR / "hometown_overrides.csv"
 NAME_ALIASES_PATH = RAW_DATA_DIR / "name_aliases.csv"
+STATUS_OVERRIDES_PATH = RAW_DATA_DIR / "status_overrides.csv"
 ROSTER_SOURCE_PATH = RAW_DATA_DIR / "roster_watch.csv"
 ORIGIN_COLUMNS = ["hometown", "country", "country_code"]
 PHOTO_KIND_PRIORITY = {"espn": 1, "champion": 2}
@@ -82,6 +84,7 @@ def _build_catalog() -> pd.DataFrame:
     # roster.watch is the authority for who is on the UFC roster; our own signals only cover fighters it does not list.
     catalog["is_active"] = (catalog["roster_status"].eq("active")) | (~on_roster & _flag_active(catalog))
     catalog["ufc_status"] = _ufc_status(catalog, on_roster)
+    catalog = _apply_status_overrides(catalog)
 
     historical_photos = _load_historical_photos()
     catalog = catalog.merge(historical_photos, on="profile_key", how="left")
@@ -113,15 +116,49 @@ def _names_in_csv(path, columns: list[str]) -> set[str]:
     return {_normalize_name(str(name)) for column in frame.columns for name in frame[column] if str(name).strip()}
 
 
+_aliases_cache: dict = {"signature": None, "data": {}, "checked": 0.0}
+
+
+def _apply_status_overrides(catalog: pd.DataFrame) -> pd.DataFrame:
+    """Hand-kept status (data/raw/status_overrides.csv: name, status active|former) for news roster.watch has not caught up with.
+
+    A fighter released or retired today is still "active" on roster.watch for a while; delete the row once it agrees."""
+    if not STATUS_OVERRIDES_PATH.exists():
+        return catalog
+    overrides = pd.read_csv(STATUS_OVERRIDES_PATH, keep_default_na=False)
+    status_by_name = {_normalize_name(row.name): str(row.status).strip().lower() for row in overrides.itertuples()}
+    keys = catalog["name"].map(_normalize_name)
+    for key, status in status_by_name.items():
+        if status not in {"active", "former"}:
+            continue
+        rows = keys == key
+        catalog.loc[rows, "is_active"] = status == "active"
+        catalog.loc[rows, "ufc_status"] = status
+    return catalog
+
+
 def load_name_aliases() -> dict[str, str]:
     """Other spellings of a fighter's name (data/raw/name_aliases.csv): normalized alias -> catalog name.
 
     ESPN and UFCStats do not always spell a name the same way ("Wes Schultz" / "Wesley Schultz"), and some fighters are
     announced by their nickname. The catalog uses the UFCStats spelling everywhere."""
+    # Called for every fight of every event: look at the file at most once a second, and read it only when it changes.
+    now = time.monotonic()
+    if _aliases_cache["signature"] is not None and now - _aliases_cache["checked"] < 1.0:
+        return _aliases_cache["data"]
     if not NAME_ALIASES_PATH.exists():
         return {}
-    aliases = pd.read_csv(NAME_ALIASES_PATH, keep_default_na=False)
-    return {_normalize_name(row.alias): str(row.canonical).strip() for row in aliases.itertuples() if str(row.alias).strip() and str(row.canonical).strip()}
+    _aliases_cache["checked"] = now
+    signature = NAME_ALIASES_PATH.stat().st_mtime_ns
+    if _aliases_cache["signature"] != signature:
+        aliases = pd.read_csv(NAME_ALIASES_PATH, keep_default_na=False)
+        _aliases_cache["data"] = {
+            _normalize_name(row.alias): str(row.canonical).strip()
+            for row in aliases.itertuples()
+            if str(row.alias).strip() and str(row.canonical).strip()
+        }
+        _aliases_cache["signature"] = signature
+    return _aliases_cache["data"]
 
 
 def canonical_name(name: str | None) -> str | None:
@@ -361,6 +398,7 @@ def _source_signature() -> tuple:
         ORIGINS_SOURCE_PATH,
         HOMETOWN_OVERRIDES_PATH,
         NAME_ALIASES_PATH,
+        STATUS_OVERRIDES_PATH,
         ROSTER_SOURCE_PATH,
         BMF_FIGHTS_SOURCE_PATH,
     ]

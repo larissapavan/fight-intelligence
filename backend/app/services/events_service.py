@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from datetime import date
 
 import pandas as pd
 
@@ -11,6 +12,7 @@ from .catalog_service import NAME_ALIASES_PATH, canonical_name
 
 EVENT_CARDS_SOURCE_PATH = RAW_DATA_DIR / "event_cards.csv"
 UPCOMING_EVENTS_SOURCE_PATH = RAW_DATA_DIR / "upcoming_events.csv"
+MANUAL_FIGHTS_SOURCE_PATH = RAW_DATA_DIR / "manual_fights.csv"
 FIGHT_DETAILS_SOURCE_PATH = RAW_DATA_DIR / "fight_details.csv"
 DETAIL_COLUMNS = ["referee", "num_rounds", "title_fight", "result", "result_details"]
 
@@ -121,7 +123,65 @@ def get_upcoming_events() -> list[dict]:
     if _upcoming_cache["signature"] != signature:
         _upcoming_cache["data"] = _build_events(UPCOMING_EVENTS_SOURCE_PATH, ascending=True, infer_title_fights=True)
         _upcoming_cache["signature"] = signature
-    return _upcoming_cache["data"]
+    return _merge_manual_fights(_upcoming_cache["data"], _load_manual_fights(), date.today().isoformat())
+
+
+def _load_manual_fights() -> list[dict]:
+    if not MANUAL_FIGHTS_SOURCE_PATH.exists():
+        return []
+    frame = pd.read_csv(MANUAL_FIGHTS_SOURCE_PATH, keep_default_na=False, dtype=str)
+    return frame.to_dict(orient="records")
+
+
+def _pair_key(fighter_1: str, fighter_2: str) -> tuple[str, str]:
+    first, second = sorted([str(canonical_name(fighter_1)).lower(), str(canonical_name(fighter_2)).lower()])
+    return first, second
+
+
+def _merge_manual_fights(events: list[dict], manual: list[dict], today: str) -> list[dict]:
+    """Add fights announced in the news before ESPN lists them (data/raw/manual_fights.csv).
+
+    The daily ESPN refresh rebuilds upcoming_events.csv and drops cards it does not know, so a hand-added fight cannot
+    live there. Here it is layered on top instead, and retires itself: once ESPN lists the same pairing, or the date has
+    passed, the manual row is ignored."""
+    if not manual:
+        return events
+    merged = [{**event, "fights": list(event["fights"])} for event in events]
+    announced = {_pair_key(fight["fighter_1"], fight["fighter_2"]) for event in merged for fight in event["fights"]}
+
+    for row in manual:
+        date_iso = (row.get("event_date") or "").strip()
+        fighter_1, fighter_2 = (row.get("fighter_1") or "").strip(), (row.get("fighter_2") or "").strip()
+        if not (date_iso and fighter_1 and fighter_2) or date_iso < today or _pair_key(fighter_1, fighter_2) in announced:
+            continue
+        fight = _format_fight(
+            pd.Series(
+                {
+                    "fighter_1": fighter_1,
+                    "fighter_2": fighter_2,
+                    "weight_class": (row.get("weight_class") or "").strip() or None,
+                    "title_fight": None,
+                }
+            ),
+            _current_champions(),
+        )
+        event = next((item for item in merged if item["date"] == date_iso and item["name"] == row.get("event_name")), None)
+        if event is None:
+            event = {
+                "name": row.get("event_name") or "Upcoming card",
+                "date": date_iso,
+                "location": (row.get("location") or "").strip() or None,
+                "fight_count": 0,
+                "fights": [],
+                "event_url": None,
+            }
+            merged.append(event)
+        event["fights"].append(fight)
+        event["fight_count"] = len(event["fights"])
+        announced.add(_pair_key(fighter_1, fighter_2))
+
+    merged.sort(key=lambda item: item["date"] or "9999")
+    return merged
 
 
 def _format_fight(row: pd.Series, champions: dict[str, set[str]] | None = None) -> dict:

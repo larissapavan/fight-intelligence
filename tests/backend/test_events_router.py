@@ -95,3 +95,45 @@ def test_upcoming_fights_with_a_current_champion_are_flagged_as_title_fights(cli
         expected = holder in (fight["fighter_1"], fight["fighter_2"])
         # A fight is a title fight only when today's champion of that division is in it, even on a numbered event.
         assert bool(fight["title_fight"]) == expected, (fight["fighter_1"], fight["fighter_2"], fight["weight_class"])
+
+
+def event(name, date, *pairs):
+    return {"name": name, "date": date, "location": None, "fight_count": len(pairs), "event_url": None,
+            "fights": [{"fighter_1": a, "fighter_2": b} for a, b in pairs]}
+
+
+def manual_row(date="2026-12-05", a="Fighter One", b="Fighter Two", name="UFC Fight Night: Test"):
+    return {"event_name": name, "event_date": date, "location": "", "fighter_1": a, "fighter_2": b, "weight_class": "Middleweight"}
+
+
+def test_manual_fights_create_an_event_the_news_announced_before_espn(monkeypatch):
+    from backend.app.services import events_service as service
+
+    monkeypatch.setattr(service, "_current_champions", lambda: {})
+    base = [event("UFC 999", "2026-12-12", ("Alpha One", "Beta Two"))]
+
+    merged = service._merge_manual_fights(base, [manual_row()], today="2026-11-01")
+    assert [item["date"] for item in merged] == ["2026-12-05", "2026-12-12"]  # kept in date order
+    added = merged[0]
+    assert added["fight_count"] == 1 and added["fights"][0]["fighter_1"] == "Fighter One"
+    assert base[0]["fights"] and len(base) == 1  # the cached list is never modified
+
+
+def test_a_manual_fight_retires_once_espn_lists_the_pairing_or_the_date_passes(monkeypatch):
+    from backend.app.services import events_service as service
+
+    monkeypatch.setattr(service, "_current_champions", lambda: {})
+    listed = [event("UFC 999", "2026-12-05", ("Fighter Two", "Fighter One"))]  # same pairing, corners swapped
+
+    assert service._merge_manual_fights(listed, [manual_row()], today="2026-11-01") == listed
+    assert service._merge_manual_fights([], [manual_row()], today="2026-12-06") == []  # the date has passed
+
+
+def test_a_manual_fight_joins_the_card_ESPN_already_has(monkeypatch):
+    from backend.app.services import events_service as service
+
+    monkeypatch.setattr(service, "_current_champions", lambda: {})
+    base = [event("UFC Fight Night: Test", "2026-12-05", ("Alpha One", "Beta Two"))]
+
+    merged = service._merge_manual_fights(base, [manual_row()], today="2026-11-01")
+    assert len(merged) == 1 and merged[0]["fight_count"] == 2

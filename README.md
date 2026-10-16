@@ -81,7 +81,7 @@ Random forest has a slightly higher ROC AUC. I went with gradient boosting becau
 
 **How it stays fresh.** A GitHub Actions workflow runs the update scripts once a day. It first saves the model's pick for every announced fight, then refreshes ESPN (events and results), settles the saved picks whose fights are now over for the track record page, and refreshes the rankings, the roster, the hometowns and the record book. A validation step then compares each CSV with the last committed version and rejects the update if a header changed or the row count drops, which is what protects the site when one of the sources changes its format. The tests run before anything is committed.
 
-**Kept by hand.** A few small files are edited manually: `title_reigns.csv` (champions and belt changes), `bmf_title_fights.csv`, `hometown_overrides.csv` (a city that ufc.com lists only as a country) and `name_aliases.csv` (the same fighter spelled differently by ESPN and UFC Stats).
+**Kept by hand.** A few small files are edited manually: `title_reigns.csv` (champions and belt changes), `bmf_title_fights.csv`, `hometown_overrides.csv` (a city that ufc.com lists only as a country), `name_aliases.csv` (the same fighter spelled differently by ESPN and UFC Stats) and `manual_fights.csv` (fights announced in the news before ESPN lists them; each one drops out by itself once ESPN has it or the date passes).
 
 ## Quality
 

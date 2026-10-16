@@ -140,3 +140,26 @@ def test_profiles_and_cards_resolve_alias_spellings(client):
     aliases = {entry for entry in ("Jose Mauro Delano", "Wesley Schultz", "Ko Seok-hyeon", "Lee Jeong-yeong", "Tina Black")}
     assert not announced & aliases  # the alias spellings never reach the page
     assert not {name for name in announced if name not in names}  # and every announced fighter has a profile
+
+
+def test_alias_lookup_reads_the_file_once_not_once_per_fight(monkeypatch):
+    from backend.app.services import catalog_service as service
+
+    reads = []
+    real_read = service.pd.read_csv
+    monkeypatch.setattr(service.pd, "read_csv", lambda path, *args, **kwargs: reads.append(str(path)) or real_read(path, *args, **kwargs))
+    service._aliases_cache.update({"signature": None, "data": {}})
+
+    for _ in range(500):
+        service.canonical_name("Wesley Schultz")
+
+    assert reads.count(str(service.NAME_ALIASES_PATH)) == 1
+    assert service.canonical_name("Wesley Schultz") == "Wes Schultz"
+
+
+def test_a_hand_kept_status_beats_a_roster_that_has_not_caught_up(client):
+    fighters = {fighter["name"]: fighter for fighter in client.get("/fighters").json()}
+
+    # Released by the UFC while roster.watch still lists him as active.
+    assert fighters["Farid Basharat"]["is_active"] is False
+    assert fighters["Farid Basharat"]["ufc_status"] == "former"
