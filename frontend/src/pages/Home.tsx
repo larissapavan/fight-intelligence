@@ -6,23 +6,27 @@ import { Link } from 'react-router-dom'
 import { FighterAvatar } from '../shared/components/FighterAvatar'
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { FighterBadges, FlagList, TitleFightBadge } from '../shared/components/FighterBadges'
+import { badgesForRankings } from '../shared/data/badges'
 import { LatestNewsCard } from '../shared/components/LatestNewsCard'
-import { PickChip } from '../shared/components/PickChip'
+import { FightMatchupCard } from '../shared/components/FightMatchupCard'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
+import { WinProbabilityBar } from '../shared/components/WinProbabilityBar'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { usePrediction } from '../shared/hooks/usePrediction'
+import { useTrackRecord } from '../shared/hooks/useTrackRecord'
 import { getFighterImageUrl, useFighterImages } from '../shared/hooks/useFighterImages'
 import { useFighterLookup } from '../shared/hooks/useFighterLookup'
 import { useRankings } from '../shared/hooks/useRankings'
 import { useUpcomingPicks } from '../shared/hooks/useUpcomingPicks'
 import { useUpcomingEvents } from '../shared/hooks/useUpcomingEvents'
 import { getFighterPerformance } from '../shared/services/api'
-import type { EventSummary, FighterPerformance, FightResult, UpcomingPick } from '../shared/types/api'
+import type { EventSummary, FighterPerformance, FightResult } from '../shared/types/api'
 
 type Trend = { streak: number; finishRate: number | null }
 
 export function Home() {
-  const { health, error: modelError } = useModelInfo()
+  const { health, modelInfo, error: modelError } = useModelInfo()
+  const { data: trackRecord } = useTrackRecord()
   const { events, loading: eventsLoading, error: eventsError } = useUpcomingEvents()
   const { rankings, loading: rankingsLoading, error: rankingsError } = useRankings()
   const { prediction, loading: predicting, runPrediction } = usePrediction()
@@ -60,7 +64,7 @@ export function Home() {
   const systemError = modelError ?? eventsError
 
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-6 sm:space-y-8">
       {systemError ? (
         <p className="flex items-center gap-2 rounded-xl border border-[#C8102E]/20 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">
           <ShieldAlert className="h-4 w-4 shrink-0 text-[var(--accent-red)]" />
@@ -93,27 +97,32 @@ export function Home() {
         </div>
       </motion.section>
 
-      <section className="grid gap-3 xl:grid-cols-[1.3fr_1fr]">
-        <MainEventCard
-          loading={eventsLoading}
-          error={eventsError}
-          nextEvent={nextEvent}
-          mainEvent={mainEvent}
-          predictedWinner={prediction?.predicted_winner ?? null}
-          probabilityA={prediction?.fighter_a_probability ?? null}
-          probabilityB={prediction?.fighter_b_probability ?? null}
-          predicting={predicting}
-        />
+      <TrackRecordStrip
+        fightsAnalyzed={health?.fights_tracked ?? null}
+        testAccuracy={modelInfo?.metrics?.accuracy ?? null}
+        liveAccuracy={trackRecord?.accuracy ?? null}
+        resolved={trackRecord?.resolved ?? null}
+      />
 
-        <div className="grid gap-3">
-          <TrendingCard mainEvent={mainEvent} trends={trends} onOpenProfile={setProfileName} />
-          <RankingsCard category={p4pRankings} loading={rankingsLoading} error={rankingsError} onOpenProfile={setProfileName} />
-        </div>
+      <MainEventCard
+        loading={eventsLoading}
+        error={eventsError}
+        nextEvent={nextEvent}
+        mainEvent={mainEvent}
+        predictedWinner={prediction?.predicted_winner ?? null}
+        probabilityA={prediction?.fighter_a_probability ?? null}
+        probabilityB={prediction?.fighter_b_probability ?? null}
+        predicting={predicting}
+      />
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <TrendingCard mainEvent={mainEvent} trends={trends} onOpenProfile={setProfileName} />
+        <RankingsCard category={p4pRankings} loading={rankingsLoading} error={rankingsError} onOpenProfile={setProfileName} />
       </section>
 
       <FullCardSection nextEvent={nextEvent} />
 
-      <LatestNewsCard />
+      <LatestNewsCard quiet />
 
       {profileName ? (
         <FighterProfileModal
@@ -184,59 +193,54 @@ function MainEventCard({
     )
   }
 
-  const winnerIsA = predictedWinner === mainEvent.fighter_1
-
   return (
-    <article className="surface-card rounded-[20px] p-3 sm:p-4">
+    <article className="surface-card rounded-[20px] p-4 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="broadcast-label text-[10px] text-[#999999]">Upcoming event</p>
-          <h2 className="mt-1 truncate text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{nextEvent.name}</h2>
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-[#999999]">
+          <p className="broadcast-label text-[10px] text-[var(--accent-red)]">Upcoming event</p>
+          <h2 className="mt-1 text-2xl font-black uppercase leading-tight tracking-[0.03em] text-[var(--text-main)] sm:text-4xl">{nextEvent.name}</h2>
+          <p className="mt-2 flex items-center gap-1.5 text-sm text-[var(--text-muted)]">
             <CalendarDays className="h-3.5 w-3.5" />
             {formatFullDate(nextEvent.date)} • {nextEvent.fight_count} fights
           </p>
         </div>
       </div>
 
-      <div className="mt-3 rounded-2xl border border-white/8 bg-black/18 p-3">
+      <div className="mt-5 rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-3)] p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="broadcast-label text-[10px] text-[#C8102E]">Main event</p>
+          <p className="broadcast-label text-[10px] text-[var(--accent-red)]">Main event</p>
           <TitleFightBadge fight={mainEvent} />
         </div>
 
-        <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
           <MainEventName name={mainEvent.fighter_1} align="right" />
-          <span className="rounded-full border border-white/10 px-2 py-1 text-[10px] font-bold text-[#999999]">VS</span>
+          <span className="broadcast-label border border-[var(--rule)] px-2 py-1 text-[10px] text-[var(--text-muted)]">VS</span>
           <MainEventName name={mainEvent.fighter_2} align="left" />
         </div>
         {mainEvent.weight_class ? (
-          <p className="type-tech mt-1 text-center text-[10px] uppercase tracking-[0.12em] text-[#999999]">{mainEvent.weight_class}</p>
+          <p className="type-tech mt-2 text-center text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">{mainEvent.weight_class}</p>
         ) : null}
 
         {predicting ? (
-          <div className="mt-3">
-            <LoadingSkeleton className="h-[52px]" />
+          <div className="mt-4">
+            <LoadingSkeleton className="h-[88px]" />
           </div>
         ) : probabilityA != null && probabilityB != null ? (
-          <div className="mt-3">
-            <div className="flex items-center justify-between text-sm font-bold">
-              <span className={winnerIsA ? 'text-[#C8102E]' : 'text-[#FFFFFF]'}>{Math.round(probabilityA * 100)}%</span>
-              <span className={!winnerIsA ? 'text-[var(--accent-blue)]' : 'text-[#FFFFFF]'}>{Math.round(probabilityB * 100)}%</span>
-            </div>
-            <div className="mt-1.5 flex h-2.5 overflow-hidden rounded-full bg-[#262626]">
-              <div className="h-full bg-gradient-to-r from-[#A5151C] to-[#C8102E]" style={{ width: `${probabilityA * 100}%` }} />
-              <div className="h-full bg-gradient-to-r from-[#1c3c6e] to-[#2F5FA8]" style={{ width: `${probabilityB * 100}%` }} />
-            </div>
-            <p className="mt-2 text-center text-xs text-[#999999]">
-              Model favors <span className="font-semibold text-[#FFFFFF]">{predictedWinner}</span>
-            </p>
+          <div className="mt-5">
+            <WinProbabilityBar
+              showNames={false}
+              nameA={mainEvent.fighter_1}
+              nameB={mainEvent.fighter_2}
+              probabilityA={probabilityA}
+              probabilityB={probabilityB}
+              predictedWinner={predictedWinner}
+            />
           </div>
         ) : null}
       </div>
 
       <Link
-        to={`/matchup-intelligence?a=${encodeURIComponent(mainEvent.fighter_1)}&b=${encodeURIComponent(mainEvent.fighter_2)}`}
+        to={`/matchup-intelligence?a=${encodeURIComponent(mainEvent.fighter_1)}&b=${encodeURIComponent(mainEvent.fighter_2)}&event=${encodeURIComponent(nextEvent.name)}`}
         className="primary-action mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
       >
         Analyze matchup
@@ -262,7 +266,7 @@ function MainEventName({ name, align }: { name: string; align: 'left' | 'right' 
         className="h-20 w-[4.25rem] shrink-0 sm:h-24 sm:w-20"
       />
       <div className={`flex min-w-0 flex-1 flex-col gap-1 ${right ? 'items-end text-right' : 'items-start text-left'} max-sm:w-full max-sm:items-center max-sm:text-center`}>
-        <p className="type-display w-full text-sm font-bold uppercase leading-tight text-[#FFFFFF] sm:text-lg">{name}</p>
+        <p className="type-display w-full text-base font-bold uppercase leading-tight text-[var(--text-main)] sm:text-2xl">{name}</p>
         {fighter ? (
           <span className={`flex flex-wrap items-center gap-1 ${right ? 'sm:justify-end' : 'sm:justify-start'} max-sm:justify-center`}>
             <FlagList fighter={fighter} />
@@ -281,42 +285,24 @@ function FullCardSection({ nextEvent }: { nextEvent: EventSummary | null }) {
   const restOfCard = nextEvent.fights.slice(1)
 
   return (
-    <section className="surface-card rounded-[20px] p-3 sm:p-4">
-      <div className="flex items-center gap-2 text-[#C8102E]">
+    <section className="surface-card rounded-[20px] p-4 sm:p-5">
+      <div className="flex items-center gap-2 text-[var(--accent-red)]">
         <ListOrdered className="h-4 w-4" />
         <p className="broadcast-label text-[10px]">
           Rest of the card • {restOfCard.length} {restOfCard.length === 1 ? 'fight' : 'fights'}
         </p>
       </div>
-      <div className="mt-2.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
         {restOfCard.map((fight, index) => (
-          <FightCardRow key={index} fight={fight} pick={pickFor(nextEvent.name, fight.fighter_1, fight.fighter_2)} />
+          <FightMatchupCard
+            key={index}
+            fight={fight}
+            eventName={nextEvent.name}
+            pick={pickFor(nextEvent.name, fight.fighter_1, fight.fighter_2)}
+          />
         ))}
       </div>
     </section>
-  )
-}
-
-function FightCardRow({ fight, pick }: { fight: FightResult; pick?: UpcomingPick }) {
-  return (
-    <Link
-      to={`/matchup-intelligence?a=${encodeURIComponent(fight.fighter_1)}&b=${encodeURIComponent(fight.fighter_2)}`}
-      className="group flex w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2.5 transition hover:border-[#C8102E]/25 hover:bg-white/[0.05]"
-    >
-      <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-[#FFFFFF]">
-          {fight.fighter_1} <span className="text-[#999999]">vs</span> {fight.fighter_2}
-        </p>
-        <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-          <TitleFightBadge fight={fight} className="!px-1.5 !text-[9px]" />
-          <PickChip pick={pick} />
-          {fight.weight_class ? (
-            <p className="type-tech text-[10px] uppercase tracking-[0.1em] text-[#999999]">{fight.weight_class}</p>
-          ) : null}
-        </div>
-      </div>
-      <ArrowRight className="h-4 w-4 shrink-0 text-[#666666] transition group-hover:text-[#C8102E]" />
-    </Link>
   )
 }
 
@@ -358,22 +344,30 @@ function TrendRow({
   onOpenProfile: (name: string) => void
 }) {
   const profile = useFighterLookup()(name)
+  const { imageByName } = useFighterImages()
   if (!trend) return <LoadingSkeleton className="h-[52px]" />
 
   const content = (
     <>
-      <p className="truncate text-xs font-semibold text-[#FFFFFF]">{name}</p>
-      <p className="mt-0.5 text-[11px] leading-4 text-[#999999]">
-        {trend.streak > 0 ? (
-          <span className="text-[#C8102E]">↑ {trend.streak}-fight win streak</span>
-        ) : (
-          <span>Coming off a loss</span>
-        )}
-        {trend.finishRate != null ? ` • ${Math.round(trend.finishRate * 100)}% finish rate` : ''}
-      </p>
+      <FighterAvatar
+        name={name}
+        imageUrl={getFighterImageUrl(name, imageByName, profile?.image_url)}
+        className="h-10 w-9"
+      />
+      <span className="min-w-0">
+        <p className="truncate text-sm font-bold text-[var(--text-main)]">{name}</p>
+        <p className="mt-0.5 text-xs leading-4 text-[var(--text-muted)]">
+          {trend.streak > 0 ? (
+            <span className="text-[var(--accent-red)]">↑ {trend.streak}-fight win streak</span>
+          ) : (
+            <span>Coming off a loss</span>
+          )}
+          {trend.finishRate != null ? ` • ${Math.round(trend.finishRate * 100)}% finish rate` : ''}
+        </p>
+      </span>
     </>
   )
-  const box = 'block rounded-xl border border-white/6 bg-black/18 px-3 py-2'
+  const box = 'flex items-center gap-2.5 rounded-xl border border-[var(--line-soft)] bg-[var(--surface-3)] px-3 py-2.5'
 
   // Only fighters we have a profile for open one; anyone else stays a plain row.
   return profile ? (
@@ -397,6 +391,7 @@ function RankingsCard({
   onOpenProfile: (name: string) => void
 }) {
   const lookup = useFighterLookup()
+  const { imageByName } = useFighterImages()
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center justify-between gap-2">
@@ -404,7 +399,7 @@ function RankingsCard({
           <Trophy className="h-4 w-4" />
           <p className="broadcast-label text-[10px]">Pound-for-pound</p>
         </div>
-        <Link to="/rankings" className="type-tech text-[10px] font-semibold uppercase tracking-[0.1em] text-[#999999] transition hover:text-white">
+        <Link to="/rankings" className="type-tech text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-red)]">
           View all
         </Link>
       </div>
@@ -423,12 +418,17 @@ function RankingsCard({
             const profile = lookup(entry.fighter)
             const content = (
               <>
-                <span className="data-value w-5 shrink-0 text-sm font-bold text-[#C8102E]">{entry.rank}</span>
-                <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{entry.fighter}</span>
-                {profile ? <FighterBadges badges={profile.badges} /> : null}
+                <FighterAvatar
+                  name={entry.fighter}
+                  imageUrl={getFighterImageUrl(entry.fighter, imageByName, profile?.image_url)}
+                  className="h-10 w-9"
+                />
+                <span className="data-value w-5 shrink-0 text-sm font-bold text-[var(--accent-red)]">{entry.rank}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-bold text-[var(--text-main)]">{entry.fighter}</span>
+                {profile ? <FighterBadges badges={badgesForRankings(profile.badges)} /> : null}
               </>
             )
-            const box = 'flex items-center gap-2.5 rounded-xl border border-white/6 bg-black/18 px-3 py-2'
+            const box = 'flex items-center gap-2.5 rounded-xl border border-[var(--line-soft)] bg-[var(--surface-3)] px-3 py-2.5'
             return profile ? (
               <button
                 key={entry.rank}
@@ -450,6 +450,52 @@ function RankingsCard({
         <p className="mt-2.5 text-xs text-[#999999]">Rankings unavailable right now.</p>
       )}
     </article>
+  )
+}
+
+function percentLabel(value: number | null | undefined) {
+  if (value == null) return '—'
+  return `${(value * 100).toFixed(1)}%`
+}
+
+function TrackRecordStrip({
+  fightsAnalyzed,
+  testAccuracy,
+  liveAccuracy,
+  resolved,
+}: {
+  fightsAnalyzed: number | null
+  testAccuracy: number | null
+  liveAccuracy: number | null
+  resolved: number | null
+}) {
+  const accuracy = resolved && resolved > 0 && liveAccuracy != null ? liveAccuracy : testAccuracy
+  const accuracyNote = resolved && resolved > 0 && liveAccuracy != null ? 'live picks' : 'held-out test'
+
+  return (
+    <section className="surface-card flex flex-wrap items-center justify-between gap-3 rounded-[20px] px-3 py-3 sm:px-4">
+      <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
+        <div>
+          <p className="broadcast-label text-[10px] text-[#999999]">Model accuracy</p>
+          <p className="data-value text-xl font-bold text-[#FFFFFF]">{percentLabel(accuracy)}</p>
+          <p className="text-[11px] text-[#999999]">{accuracyNote}</p>
+        </div>
+        <div>
+          <p className="broadcast-label text-[10px] text-[#999999]">Fights analyzed</p>
+          <p className="data-value text-xl font-bold text-[#FFFFFF]">
+            {fightsAnalyzed ? fightsAnalyzed.toLocaleString('en-US') : '—'}
+          </p>
+          <p className="text-[11px] text-[#999999]">career bouts on file</p>
+        </div>
+      </div>
+      <Link
+        to="/track-record"
+        className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] transition hover:text-white"
+      >
+        Track record
+        <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
+    </section>
   )
 }
 

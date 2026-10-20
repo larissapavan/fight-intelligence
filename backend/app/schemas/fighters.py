@@ -48,4 +48,7 @@ class FighterSummary(BaseModel):
     ufc_last_fight: str | None = None
     roster_url: str | None = None
     badges: list[str] = []
+    current_titles: list[str] = []
+    former_titles: list[str] = []
+    interim_titles: list[str] = []
     nationalities: list[Nationality] = []

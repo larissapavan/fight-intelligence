@@ -44,7 +44,7 @@ def fighter_row(first, last, wins, losses, url="http://ufcstats.com/fighter-deta
     return {"first_name": first, "last_name": last, "wins": str(wins), "losses": str(losses), "draws": "0", "fighter_url": url}
 
 
-def no_result(event_id, competition_id):
+def no_result(event, bout):
     return ("KO/TKO", "Punches")
 
 
@@ -80,6 +80,33 @@ def test_map_weight_class(raw, expected):
 )
 def test_map_result(result, expected):
     assert espn.map_result(result) == expected
+
+
+def test_officials_and_scorecards_ignore_placeholders_and_bad_scores():
+    referee, judges = espn.parse_officials({
+        "items": [
+            {"id": "1", "firstName": "Jerin", "lastName": "Valel", "position": {"name": "Referee"}, "order": 0},
+            {"id": "2", "firstName": "Eric", "lastName": "Colon", "position": {"name": "Judge"}, "order": 1},
+            {"id": "3", "firstName": "Judge", "lastName": "1", "position": {"name": "Judge"}, "order": 2},
+            "not-a-judge",
+        ]
+    })
+    assert referee == "Jerin Valel"
+    assert judges == [("2", "Eric Colon")]
+    scores = espn.parse_judge_scores({
+        "items": [{"linescores": [
+            {"value": 29, "official": {"$ref": "http://x/officials/2?lang=en"}},
+            {"value": 99, "official": {"id": "9"}},
+            {"value": "nope", "official": {"id": "2"}},
+        ]}]
+    })
+    assert scores == {"2": 29}
+    assert espn.format_scorecards(judges, {"2": 28}, {"2": 29}) == "Eric Colon 28 - 29."
+    assert espn.format_scorecards(judges, {}, {"2": 29}) == ""
+    assert espn.parse_officials(None) == ("", [])
+    assert espn.scheduled_rounds({"format": {"regulation": {"periods": 5}}}) == "5"
+    assert espn.scheduled_rounds({"format": {"regulation": {"periods": 12}}}) == ""
+    assert espn.clean_clock("4:19") == "4:19" and espn.clean_clock("tomorrow") == ""
 
 
 def test_format_location_expands_us_states_and_skips_state_abroad():
@@ -121,24 +148,33 @@ def completed_event():
     return espn.parse_scoreboard(payload(comps=comps))[0]
 
 
-def test_sync_completed_event_adds_winner_first_rows_and_is_idempotent():
+def test_sync_completed_event_keeps_the_announced_order_and_is_idempotent():
     tables = empty_tables(
         fighters=[fighter_row("Alpha", "One", 10, 2), fighter_row("Beta", "Two", 11, 1)],
-        upcoming=[{"event_name": "UFC 999: Alpha vs. Beta", "event_date": "November 07, 2026", "fighter_1": "Alpha One", "fighter_2": "Beta Two"}],
+        upcoming=[{
+            "event_name": "UFC 999: Alpha vs. Beta", "event_date": "November 07, 2026",
+            "event_url": "http://ufcstats.com/event-details/abc", "fight_url": "http://ufcstats.com/fight-details/1",
+            "fighter_1": "Alpha One", "fighter_2": "Beta Two",
+        }],
     )
     report = espn.Report()
     catalog = espn.Catalog(tables.fighters)
     espn.sync_completed_event(completed_event(), tables, catalog, no_result, report)
 
     row = tables.cards[0]
-    assert (row["fighter_1"], row["fighter_2"], row["winner"]) == ("Beta Two", "Alpha One", "Beta Two")
+    assert (row["fighter_1"], row["fighter_2"], row["winner"]) == ("Alpha One", "Beta Two", "Beta Two")
     assert (row["method"], row["method_detail"], row["round"], row["time"]) == ("KO/TKO", "Punches", "2.0", "3:15")
-    assert row["event_url"] == "" and row["fight_url"] == ""
-    assert tables.fights[0]["fighter_1"] == "Beta Two" and tables.events[0]["event_name"] == "UFC 999: Alpha vs. Beta"
+    assert row["event_url"] == "http://ufcstats.com/event-details/abc"
+    assert row["fight_url"] == "http://ufcstats.com/fight-details/1"
+    assert tables.fights[0]["fight_url"] == "http://ufcstats.com/fight-details/1"
+    assert tables.details[0]["referee"] == "" and tables.details[0]["result"] == "KO/TKO"
+    assert tables.details[0]["result_details"] == "Punches"
+    assert tables.events[0]["event_url"] == "http://ufcstats.com/event-details/abc"
     assert tables.upcoming == []
 
     espn.sync_completed_event(completed_event(), tables, catalog, no_result, espn.Report())
     assert len(tables.cards) == 1 and len(tables.fights) == 1 and len(tables.events) == 1
+    assert len(tables.details) == 1
 
 
 def test_sync_completed_event_only_adds_missing_bouts_to_an_existing_event():
@@ -159,6 +195,60 @@ def test_sync_completed_event_only_adds_missing_bouts_to_an_existing_event():
     assert len(tables.cards) == 2 and report.bouts_added == 1
     assert tables.cards[1]["event_url"] == "http://ufcstats.com/event-details/abc"
     assert tables.events == []
+
+
+def test_decision_scorecards_use_the_announced_corner_order():
+    def detail(event, bout):
+        return espn.BoutDetail(
+            method="U-DEC", referee="Jerin Valel", num_rounds="3", result="Decision - Unanimous",
+            judges=[("2", "Eric Colon"), ("9", "Missing Card")],
+            scores={"1": {"2": 28}, "2": {"2": 29}},
+        )
+
+    tables = empty_tables(upcoming=[{
+        "event_name": "UFC 999: Alpha vs. Beta", "event_date": "November 07, 2026",
+        "fight_url": "http://ufcstats.com/fight-details/9", "fighter_1": "Alpha One", "fighter_2": "Beta Two",
+    }])
+    espn.sync_completed_event(completed_event(), tables, espn.Catalog([]), detail, espn.Report())
+    saved = tables.details[0]
+    assert saved["referee"] == "Jerin Valel"
+    assert saved["result"] == "Decision - Unanimous"
+    assert saved["result_details"] == "Eric Colon 28 - 29."
+    assert saved["num_rounds"] == "3"
+
+
+def test_a_fight_without_a_stats_url_still_stores_the_referee():
+    tables = empty_tables(upcoming=[{
+        "event_name": "UFC 999: Alpha vs. Beta", "event_date": "November 07, 2026",
+        "fight_url": "", "fighter_1": "Alpha One", "fighter_2": "Beta Two",
+    }])
+
+    def detail(event, bout):
+        return espn.BoutDetail(method="KO/TKO", method_detail="Knee", referee="Marc Goddard", result="KO/TKO")
+
+    espn.sync_completed_event(completed_event(), tables, espn.Catalog([]), detail, espn.Report())
+    assert tables.cards[0]["fight_url"] == "https://www.espn.com/mma/fightcenter/_/id/10"
+    assert tables.details[0]["referee"] == "Marc Goddard"
+    assert tables.details[0]["result_details"] == "Knee"
+
+    espn.sync_completed_event(completed_event(), tables, espn.Catalog([]), detail, espn.Report())
+    assert len(tables.cards) == 1 and len(tables.details) == 1
+
+
+def test_a_bad_bout_payload_does_not_drop_the_announced_fight():
+    tables = empty_tables(upcoming=[{
+        "event_name": "UFC 999: Alpha vs. Beta", "event_date": "November 07, 2026",
+        "fight_url": "http://ufcstats.com/fight-details/9", "fighter_1": "Alpha One", "fighter_2": "Beta Two",
+    }])
+
+    def boom(event, bout):
+        raise ValueError("unexpected shape")
+
+    report = espn.Report()
+    espn.sync_completed_event(completed_event(), tables, espn.Catalog([]), boom, report)
+    assert tables.cards == []
+    assert tables.upcoming[0]["fight_url"] == "http://ufcstats.com/fight-details/9"
+    assert report.detail_skipped
 
 
 # --------------------------------------------------------------------------- upcoming events
@@ -245,3 +335,28 @@ def test_refresh_records_only_advances_along_espn_timeline():
     assert (tables.fighters[0]["wins"], tables.career[0]["wins"]) == ("11", "11")
     assert (tables.fighters[1]["wins"], tables.career[1]["wins"]) == ("20", "20")
     assert report.records_updated == 1 and len(report.record_skipped) == 1
+
+
+def test_refresh_problem_rejects_an_empty_scoreboard_a_shrinking_roster_and_a_half_bout():
+    roster = [fighter_row("Alpha", "One", 1, 0)]
+    upcoming = [{"event_name": "UFC 1", "fighter_1": "Alpha One", "fighter_2": "Beta Two"} for _ in range(5)]
+    before = empty_tables(fighters=roster, upcoming=upcoming)
+    finished = espn.EspnBout("1", "Lightweight", [], None, True)
+    past = espn.EspnEvent("1", "UFC 1", date(2026, 10, 1), None, [finished])
+
+    assert "no events" in espn.refresh_problem(before, before, [])
+    assert "shrank" in espn.refresh_problem(before, empty_tables(fighters=[], upcoming=upcoming), [past])
+    collapsed = empty_tables(fighters=roster, upcoming=[])
+    assert "upcoming cards dropped" in espn.refresh_problem(before, collapsed, [past])
+    half = empty_tables(fighters=roster, upcoming=[{"event_name": "UFC 1", "fighter_1": "Alpha One", "fighter_2": ""}])
+    assert "missing a fighter" in espn.refresh_problem(before, half, [past])
+
+
+def test_weight_overrides_fix_a_bout_espn_books_in_the_wrong_division():
+    rows = [
+        {"fighter_1": "Lucia Szabova", "fighter_2": "Tainara Lisboa", "weight_class": "Women's Flyweight"},
+        {"fighter_1": "Other One", "fighter_2": "Other Two", "weight_class": "Lightweight"},
+    ]
+    override = [{"fighter_1": "Tainara Lisboa", "fighter_2": "Lucia Szabova", "weight_class": "Women's Bantamweight"}]
+    espn.apply_weight_overrides(rows, override)
+    assert [r["weight_class"] for r in rows] == ["Women's Bantamweight", "Lightweight"]

@@ -126,6 +126,17 @@ def checked_keys(rows: list[dict]) -> set[str]:
     return {name_key(r["name"]) for r in rows if r["kind"] == "espn"}
 
 
+def photo_skip_keys(rows: list[dict], retry_missing: bool, recheck: set[str]) -> set[str]:
+    """Fighters the ESPN step leaves alone: the ones with a photo, the champions, and (unless retrying) the ones ESPN
+    had no photo for. `recheck` are active fighters the site still shows without a photo: ESPN often publishes a
+    debutant's headshot a few days after the profile exists, so those are asked again on every run."""
+    champions = {name_key(r["name"]) for r in rows if r["kind"] == "champion"}
+    skip = covered_keys(rows) | champions
+    if not retry_missing:
+        skip |= checked_keys(rows) - (recheck - covered_keys(rows) - champions)
+    return skip
+
+
 # --------------------------------------------------------------------------- ufc.com athlete pages
 
 UFC_ATHLETE_URL = "https://www.ufc.com/athlete/{slug}"
@@ -270,10 +281,7 @@ def sync_espn_photos(
         if athlete_id:
             id_by_row[id(row)] = [athlete_id]
 
-    champion_keys = {name_key(r["name"]) for r in rows if r["kind"] == "champion"}
-    skip = covered_keys(rows) | champion_keys
-    if not retry_missing:
-        skip |= checked_keys(rows)
+    skip = photo_skip_keys(rows, retry_missing, {name_key(name) for name in active_without_photo()})
     todo = []
     for row in catalog.rows:
         ids = id_by_row.get(id(row), [])
@@ -285,22 +293,32 @@ def sync_espn_photos(
 
     saved = missing = errors = 0
     existing_files = {Path(r["local_path"]).name: r["name"] for r in rows if r.get("local_path")}
+
+    def record(entry: dict) -> None:
+        """Replace an earlier "no photo" row for the same fighter instead of stacking a duplicate on every retry."""
+        rows[:] = [r for r in rows if not (r["kind"] == "espn" and not r.get("local_path") and name_key(r["name"]) == name_key(entry["name"]))]
+        rows.append(entry)
+
     for index, (name, athlete_id) in enumerate(todo, 1):
         url = ESPN_HEADSHOT_URL.format(athlete_id=athlete_id)
         entry = {"name": name, "kind": "espn", "source": "ESPN", "source_url": url, "image_url": "", "local_path": "", "checked": date.today().isoformat()}
         try:
             response = session.get(url, timeout=TIMEOUT_SECONDS)
-        except requests.RequestException:
+        except requests.RequestException as exc:
             errors += 1
+            print(f"  [error] {name}: {exc.__class__.__name__}")
             continue
         if response.status_code == 404:
             missing += 1
-            rows.append(entry)
+            record(entry)
         elif response.status_code == 200:
             try:
                 encoded = to_webp(response.content, max_width=ESPN_MAX_WIDTH)
             except OSError:
-                errors += 1
+                # A 200 that is not an image (a placeholder): same as no photo, so it is not asked again every run.
+                missing += 1
+                print(f"  [info] {name}: ESPN's file is not a usable image, treated as no photo")
+                record(entry)
                 continue
             filename = f"{slugify(name)}.webp"
             if existing_files.get(filename, name) != name:
@@ -308,10 +326,11 @@ def sync_espn_photos(
             (PHOTOS_DIR / filename).write_bytes(encoded)
             existing_files[filename] = name
             entry.update({"image_url": f"{WEB_PREFIX}{filename}", "local_path": f"frontend/public/fighter-photos/{filename}"})
-            rows.append(entry)
+            record(entry)
             saved += 1
         else:
             errors += 1  # 429/5xx: not recorded, retried on the next run
+            print(f"  [error] {name}: HTTP {response.status_code}")
             time.sleep(2)
         if index % 100 == 0:
             save_manifest(rows)

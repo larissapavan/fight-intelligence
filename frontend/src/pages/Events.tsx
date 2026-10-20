@@ -1,14 +1,13 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { CalendarClock, CalendarDays, ChevronDown, Hash, MapPin, Search, Swords, Trophy } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
+import { CalendarClock, CalendarDays, ChevronDown, Hash, MapPin, Search, Swords } from 'lucide-react'
 
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { LatestNewsCard } from '../shared/components/LatestNewsCard'
-import { PickChip } from '../shared/components/PickChip'
+import { FightMatchupCard } from '../shared/components/FightMatchupCard'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
-import { TitleFightBadge } from '../shared/components/FighterBadges'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useEvents } from '../shared/hooks/useEvents'
-import { useFighterLookup } from '../shared/hooks/useFighterLookup'
 import { useUpcomingEvents } from '../shared/hooks/useUpcomingEvents'
 import { useUpcomingPicks } from '../shared/hooks/useUpcomingPicks'
 import type { EventSummary, FightResult, UpcomingPick } from '../shared/types/api'
@@ -38,7 +37,8 @@ const OpenProfileContext = createContext<(name: string) => void>(() => undefined
 export function Events() {
   const { events, loading, error } = useEvents()
   const upcoming = useUpcomingEvents()
-  const [query, setQuery] = useState('')
+  const [searchParams] = useSearchParams()
+  const [query, setQuery] = useState(() => searchParams.get('q') ?? '')
   const [yearFilter, setYearFilter] = useState(ALL_YEARS)
   const [monthFilter, setMonthFilter] = useState(ALL_MONTHS)
   const [openEvents, setOpenEvents] = useState<Set<string>>(new Set())
@@ -111,8 +111,8 @@ export function Events() {
     })
   }
 
-  // The archive results (or the empty state). While searching they go right under the filters, above the upcoming
-  // cards and the news, so a match is never buried at the bottom of the page.
+  // The archive groups. While searching they go right under the filters, above the upcoming cards, so a match is
+  // never buried. Otherwise they sit above the ESPN headlines.
   const results = (
     <>
       {error ? (
@@ -163,7 +163,7 @@ export function Events() {
 
   return (
     <OpenProfileContext.Provider value={setProfileName}>
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-6 sm:space-y-8">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
           <SectionHeading
@@ -215,7 +215,7 @@ export function Events() {
         </div>
       </section>
 
-      {isSearching ? results : null}
+      {isSearching ? <div className="space-y-6">{results}</div> : null}
 
       <UpcomingEventsSection
         events={visibleUpcoming}
@@ -225,9 +225,9 @@ export function Events() {
         onToggle={toggleEvent}
       />
 
-      {isSearching ? null : <LatestNewsCard />}
-
       {isSearching ? null : results}
+
+      {isSearching ? null : <LatestNewsCard quiet />}
 
       {profileName ? (
         <FighterProfileModal
@@ -272,7 +272,7 @@ function UpcomingEventsSection({
         <h2 className="broadcast-label text-xs text-[#FFFFFF]">Upcoming Confirmed Events</h2>
         <span className="theme-muted text-xs">({events.length})</span>
       </div>
-      <div className="grid gap-1.5">
+      <div className="grid gap-3">
         {events.map((event) => {
           const key = event.event_url ?? event.name
           return <EventCard key={key} event={event} isOpen={openEvents.has(key)} onToggle={() => onToggle(key)} pickFor={pickFor} />
@@ -318,7 +318,7 @@ function EventGroup({
       {isOpen ? (
         <div className="border-t border-[var(--line-soft)] px-3 py-3 sm:px-4">
           {events.length ? (
-            <div className="grid gap-1.5">
+            <div className="grid gap-3">
               {events.map((event) => {
                 const key = event.event_url ?? event.name
                 return (
@@ -381,9 +381,9 @@ function EventCard({
             </p>
           ) : null}
           {event.fights.length ? (
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               {event.fights.map((fight, index) => (
-                <FightRow key={fight.fight_url ?? index} fight={fight} pick={pickFor?.(event.name, fight.fighter_1, fight.fighter_2)} />
+                <FightRow key={fight.fight_url ?? index} eventName={event.name} fight={fight} pick={pickFor?.(event.name, fight.fighter_1, fight.fighter_2)} />
               ))}
             </div>
           ) : (
@@ -395,61 +395,17 @@ function EventCard({
   )
 }
 
-function FightRow({ fight, pick }: { fight: FightResult; pick?: UpcomingPick }) {
-  const fighter1Won = fight.winner !== null && fight.winner === fight.fighter_1
-  const fighter2Won = fight.winner !== null && fight.winner === fight.fighter_2
-
-  return (
-    <div className="metric-tile rounded-2xl px-3 py-2.5">
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <FighterName name={fight.fighter_1} won={fighter1Won} align="right" />
-        <span className="broadcast-label px-1 text-[10px] text-[#999999]">vs</span>
-        <FighterName name={fight.fighter_2} won={fighter2Won} align="left" />
-      </div>
-      <div className="theme-muted mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px]">
-        <TitleFightBadge fight={fight} />
-        <PickChip pick={pick} />
-        {fight.weight_class ? <span className="selector-chip">{fight.weight_class}</span> : null}
-        <span>{formatMethod(fight)}</span>
-        {fight.round ? <span>R{fight.round}</span> : null}
-        {fight.time ? <span>{fight.time}</span> : null}
-        {fight.num_rounds ? <span>{fight.num_rounds} rounds</span> : null}
-      </div>
-      {fight.referee || fight.result_details ? (
-        <div className="theme-muted mt-1.5 space-y-0.5 text-center text-[11px] leading-4">
-          {fight.referee ? <p>Referee: {fight.referee}</p> : null}
-          {fight.result?.startsWith('Decision') && fight.result_details ? <p>{fight.result} · {fight.result_details}</p> : null}
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
-function FighterName({ name, won, align }: { name: string; won: boolean; align: 'left' | 'right' }) {
+function FightRow({ eventName, fight, pick }: { eventName: string; fight: FightResult; pick?: UpcomingPick }) {
   const openProfile = useContext(OpenProfileContext)
-  const profile = useFighterLookup()(name)
-  const side = align === 'right' ? 'justify-end text-right' : 'justify-start text-left'
-  const label = (
-    <>
-      {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#C8102E]" /> : null}
-      <span className={`truncate text-sm ${won ? 'font-bold text-[#FFFFFF]' : 'text-[#999999]'}`}>{name}</span>
-      {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[#C8102E]" /> : null}
-    </>
-  )
+  const details = [
+    [formatMethod(fight), fight.round ? `R${fight.round}` : null, fight.time, fight.num_rounds ? `${fight.num_rounds} rounds` : null]
+      .filter(Boolean)
+      .join(' · '),
+    fight.referee ? `Referee: ${fight.referee}` : null,
+    fight.result?.startsWith('Decision') && fight.result_details ? `${fight.result} · ${fight.result_details}` : null,
+  ].filter((line): line is string => Boolean(line))
 
-  // Fighters we have a profile for open it on this page; anyone else stays plain text.
-  return profile ? (
-    <button
-      type="button"
-      onClick={() => openProfile(profile.name)}
-      aria-label={`${name}. View profile`}
-      className={`flex min-w-0 cursor-pointer items-center gap-1.5 px-1.5 py-1 transition hover:bg-[#F2C230]/40 focus-visible:bg-[#F2C230]/40 focus-visible:outline-none ${side}`}
-    >
-      {label}
-    </button>
-  ) : (
-    <span className={`flex min-w-0 items-center gap-1.5 px-1.5 py-1 ${side}`}>{label}</span>
-  )
+  return <FightMatchupCard fight={fight} pick={pick} eventName={eventName} onOpenFighter={openProfile} details={details} />
 }
 
 function SummaryTile({ label, value }: { label: string; value: string }) {

@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 from src.ufc_predictor.config import BASE_DIR, RAW_DATA_DIR
 
 from .bmf_service import BMF_FIGHTS_SOURCE_PATH, current_bmf_champion
+from .champions_service import TITLE_REIGNS_SOURCE_PATH
 
 FIGHTERS_SOURCE_PATH = RAW_DATA_DIR / "fighters.csv"
 FIGHTS_SOURCE_PATH = RAW_DATA_DIR / "fights.csv"
@@ -70,7 +71,6 @@ def _build_catalog() -> pd.DataFrame:
 
     fight_summary = _load_fight_summary()
     catalog = fighters_df.merge(fight_summary, on="profile_key", how="left")
-    catalog["division"] = catalog["division"].combine_first(catalog["weight_lbs"].apply(_division_from_weight))
     catalog["total_fights"] = catalog["tracked_bouts"].combine_first(
         catalog["wins"] + catalog["losses"] + catalog["draws"]
     )
@@ -80,6 +80,15 @@ def _build_catalog() -> pd.DataFrame:
 
     catalog["ranking"] = pd.NA
     catalog = catalog.merge(_load_roster(), on="fighter_url", how="left")
+    # No UFC fight on record (debutants): the division roster.watch lists, with the profile weight to pick between two.
+    debut_division = pd.Series(
+        [
+            _debut_division(classes, weight, gender == "female")
+            for classes, weight, gender in zip(catalog["roster_weight_classes"], catalog["weight_lbs"], catalog["roster_gender"])
+        ],
+        index=catalog.index,
+    )
+    catalog["division"] = catalog["division"].combine_first(debut_division)
     on_roster = catalog["roster_status"].notna()
     # roster.watch is the authority for who is on the UFC roster; our own signals only cover fighters it does not list.
     catalog["is_active"] = (catalog["roster_status"].eq("active")) | (~on_roster & _flag_active(catalog))
@@ -194,7 +203,7 @@ def _merge_aliases(catalog: pd.DataFrame) -> pd.DataFrame:
 
 def _load_roster() -> pd.DataFrame:
     """roster.watch rows linked to our fighters: roster status, UFC debut and last fight, nationalities and badges."""
-    columns = ["fighter_url", "roster_status", "ufc_debut", "ufc_last_fight", "roster_url", "roster_countries", "roster_country_codes", "badges"]
+    columns = ["fighter_url", "roster_status", "ufc_debut", "ufc_last_fight", "roster_url", "roster_countries", "roster_country_codes", "badges", "roster_weight_classes", "roster_gender"]
     if not ROSTER_SOURCE_PATH.exists():
         return pd.DataFrame(columns=columns)
     roster = pd.read_csv(ROSTER_SOURCE_PATH, keep_default_na=False)
@@ -207,6 +216,8 @@ def _load_roster() -> pd.DataFrame:
             "profile": "roster_url",
             "countries": "roster_countries",
             "country_codes": "roster_country_codes",
+            "weight_classes": "roster_weight_classes",
+            "gender": "roster_gender",
         }
     )
     return roster.drop_duplicates(subset=["fighter_url"], keep="last")[columns]
@@ -494,11 +505,149 @@ def _format_profile(record: dict) -> dict:
         "country_code": _nullable_string(record.get("country_code")),
         "ufc_status": _nullable_string(record.get("ufc_status")) or "never",
         "badges": [badge for badge in (_nullable_string(record.get("badges")) or "").split("|") if badge],
+        "current_titles": _current_titles(record.get("fighter_url"), record.get("name"), record.get("badges")),
+        "former_titles": _former_titles(record.get("fighter_url"), record.get("name")),
+        "interim_titles": _interim_titles(record.get("fighter_url"), record.get("name")),
         "nationalities": _nationalities(record),
         "ufc_debut": _nullable_string(record.get("ufc_debut")),
         "ufc_last_fight": _nullable_string(record.get("ufc_last_fight")),
         "roster_url": _nullable_string(record.get("roster_url")),
     }
+
+
+_championship_cache: dict = {
+    "signature": "unset",
+    "former_url": {},
+    "former_name": {},
+    "current_url": {},
+    "current_name": {},
+}
+
+
+def _championship_maps() -> tuple[dict[str, list[str]], dict[str, list[str]], dict[str, list[str]], dict[str, list[str]]]:
+    """Undisputed titles a fighter holds today, and ones they held and no longer do."""
+    signature = TITLE_REIGNS_SOURCE_PATH.stat().st_mtime_ns if TITLE_REIGNS_SOURCE_PATH.exists() else None
+    cached = _championship_cache
+    if cached["signature"] == signature:
+        return cached["former_url"], cached["former_name"], cached["current_url"], cached["current_name"]
+    former_url: dict[str, list[str]] = {}
+    former_name: dict[str, list[str]] = {}
+    current_url: dict[str, list[str]] = {}
+    current_name: dict[str, list[str]] = {}
+    if signature is not None:
+        reigns = pd.read_csv(TITLE_REIGNS_SOURCE_PATH, keep_default_na=False)
+        undisputed = reigns[reigns["title_type"].astype(str).str.strip().eq("undisputed")]
+        current = {
+            (str(row.fighter_url).strip(), str(row.division).strip())
+            for row in undisputed.itertuples(index=False)
+            if str(row.is_current).strip().lower() == "true"
+        }
+        current_names = {
+            (_normalize_name(str(row.champion)), str(row.division).strip())
+            for row in undisputed.itertuples(index=False)
+            if str(row.is_current).strip().lower() == "true"
+        }
+        former_seen_url: dict[str, set[str]] = {}
+        former_seen_name: dict[str, set[str]] = {}
+        current_seen_url: dict[str, set[str]] = {}
+        current_seen_name: dict[str, set[str]] = {}
+        for row in undisputed.itertuples(index=False):
+            division = str(row.division).strip()
+            url = str(row.fighter_url).strip()
+            name = _normalize_name(str(row.champion))
+            is_current = str(row.is_current).strip().lower() == "true"
+            if is_current:
+                if url:
+                    current_seen_url.setdefault(url, set()).add(division)
+                if name:
+                    current_seen_name.setdefault(name, set()).add(division)
+                continue
+            if (url, division) in current or (name, division) in current_names:
+                continue
+            if url:
+                former_seen_url.setdefault(url, set()).add(division)
+            if name:
+                former_seen_name.setdefault(name, set()).add(division)
+        former_url = {url: sorted(divisions) for url, divisions in former_seen_url.items()}
+        former_name = {name: sorted(divisions) for name, divisions in former_seen_name.items()}
+        current_url = {url: sorted(divisions) for url, divisions in current_seen_url.items()}
+        current_name = {name: sorted(divisions) for name, divisions in current_seen_name.items()}
+    _championship_cache.update({
+        "signature": signature,
+        "former_url": former_url,
+        "former_name": former_name,
+        "current_url": current_url,
+        "current_name": current_name,
+    })
+    return former_url, former_name, current_url, current_name
+
+
+_interim_cache: dict = {"signature": None, "by_url": {}, "by_name": {}}
+
+
+def _interim_maps() -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    """Divisions where a fighter held the interim title and never went on to win the title itself.
+
+    A fighter who later won the division's undisputed belt (the usual interim-to-champion path) is not listed: the
+    interim win shows on that fight in their history instead."""
+    signature = TITLE_REIGNS_SOURCE_PATH.stat().st_mtime_ns if TITLE_REIGNS_SOURCE_PATH.exists() else None
+    if _interim_cache["signature"] != signature:
+        by_url: dict[str, set[str]] = {}
+        by_name: dict[str, set[str]] = {}
+        if signature is not None:
+            reigns = pd.read_csv(TITLE_REIGNS_SOURCE_PATH, keep_default_na=False)
+            types = reigns["title_type"].astype(str).str.strip()
+            undisputed_dates: dict[tuple[str, str], list[str]] = {}
+            for row in reigns[types.eq("undisputed")].itertuples(index=False):
+                division = str(row.division).strip()
+                for who in (str(row.fighter_url).strip(), _normalize_name(str(row.champion))):
+                    if who:
+                        undisputed_dates.setdefault((who, division), []).append(str(row.date_won))
+            for row in reigns[types.eq("interim")].itertuples(index=False):
+                division = str(row.division).strip()
+                url, name = str(row.fighter_url).strip(), _normalize_name(str(row.champion))
+                later_title = any(
+                    d > str(row.date_won) for who in (url, name) if who for d in undisputed_dates.get((who, division), [])
+                )
+                if later_title:
+                    continue
+                if url:
+                    by_url.setdefault(url, set()).add(division)
+                if name:
+                    by_name.setdefault(name, set()).add(division)
+        _interim_cache.update(
+            signature=signature,
+            by_url={key: sorted(value) for key, value in by_url.items()},
+            by_name={key: sorted(value) for key, value in by_name.items()},
+        )
+    return _interim_cache["by_url"], _interim_cache["by_name"]
+
+
+def _interim_titles(fighter_url, name) -> list[str]:
+    by_url, by_name = _interim_maps()
+    return _titles_for(fighter_url, name, by_url, by_name)
+
+
+def _titles_for(fighter_url, name, by_url: dict[str, list[str]], by_name: dict[str, list[str]]) -> list[str]:
+    url = _nullable_string(fighter_url)
+    if url and url in by_url:
+        return by_url[url]
+    return by_name.get(_normalize_name(str(name or "")), [])
+
+
+def _former_titles(fighter_url, name) -> list[str]:
+    former_url, former_name, _, _ = _championship_maps()
+    return _titles_for(fighter_url, name, former_url, former_name)
+
+
+def _current_titles(fighter_url, name, badges) -> list[str]:
+    """Divisions held today, with BMF first when this fighter is the reigning BMF champion."""
+    _, _, current_url, current_name = _championship_maps()
+    titles = _titles_for(fighter_url, name, current_url, current_name)
+    badge_list = [badge for badge in (_nullable_string(badges) or "").split("|") if badge]
+    if "bmf_current" in badge_list:
+        return ["BMF", *titles]
+    return titles
 
 
 def _with_current_bmf(catalog: pd.DataFrame) -> pd.Series:
@@ -589,9 +738,26 @@ def _format_division(value: str) -> str | None:
     return text.title().replace("Women'S", "Women's")
 
 
-def _division_from_weight(weight_lbs: float | None) -> str | None:
+def _debut_division(roster_classes: object, weight_lbs: float | None, female: bool) -> str | None:
+    """Division for a fighter with no UFC fight on record. roster.watch lists weight classes ("middleweight, welterweight");
+    the one matching the profile weight wins, else the first listed ("openweight" is not a division). Without roster
+    data the profile weight alone decides, and women get the women's divisions."""
+    listed = [] if roster_classes is None or pd.isna(roster_classes) else str(roster_classes).split(",")
+    listed = [d for d in (_format_division(item) for item in listed) if d and d.lower() != "openweight"]
+    guess = _division_from_weight(weight_lbs, female)
+    if guess in listed or not listed:
+        return guess
+    return listed[0]
+
+
+def _division_from_weight(weight_lbs: float | None, female: bool = False) -> str | None:
     if weight_lbs is None or pd.isna(weight_lbs):
         return None
+    if female:
+        for limit, division in ((115, "Strawweight"), (125, "Flyweight"), (135, "Bantamweight")):
+            if weight_lbs <= limit:
+                return f"Women's {division}"
+        return "Women's Featherweight"
     if weight_lbs <= 115:
         return "Strawweight"
     if weight_lbs <= 125:

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { getHealth, getModelInfo } from '../services/api'
+import { getModelInfo, waitForHealth } from '../services/api'
 import type { HealthInfo, ModelInfo } from '../types/api'
 
 export function useModelInfo() {
@@ -12,12 +12,17 @@ export function useModelInfo() {
   useEffect(() => {
     const load = async () => {
       try {
-        const [info, healthData] = await Promise.all([getModelInfo(), getHealth()])
-        setModelInfo(info)
+        const healthData = await waitForHealth()
         setHealth(healthData)
+        setLoading(false)
+        try {
+          const info = await getModelInfo()
+          setModelInfo(info)
+        } catch {
+          // Health can come up before the model bundle is ready.
+        }
       } catch {
         setError('Unable to load system information from the backend.')
-      } finally {
         setLoading(false)
       }
     }

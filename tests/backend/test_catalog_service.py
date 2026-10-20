@@ -163,3 +163,18 @@ def test_a_hand_kept_status_beats_a_roster_that_has_not_caught_up(client):
     # Released by the UFC while roster.watch still lists him as active.
     assert fighters["Farid Basharat"]["is_active"] is False
     assert fighters["Farid Basharat"]["ufc_status"] == "former"
+
+
+def test_debut_division_uses_the_roster_class_and_never_gives_a_woman_a_men_s_division():
+    from backend.app.services.catalog_service import _debut_division
+
+    # 145 lbs is a men's featherweight by weight alone, but the roster lists her at women's bantamweight.
+    assert _debut_division("women's bantamweight", 145.0, True) == "Women's Bantamweight"
+    # No roster data: the weight decides, with the women's division names.
+    assert _debut_division(None, 145.0, True) == "Women's Featherweight"
+    assert _debut_division(float("nan"), 125.0, True) == "Women's Flyweight"
+    assert _debut_division(None, 145.0, False) == "Featherweight"
+    # Two listed classes: the one matching the profile weight, else the first listed. Openweight is not a division.
+    assert _debut_division("middleweight, welterweight", 170.0, False) == "Welterweight"
+    assert _debut_division("middleweight, welterweight", 200.0, False) == "Middleweight"
+    assert _debut_division("openweight", 170.0, False) == "Welterweight"

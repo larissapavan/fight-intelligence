@@ -82,6 +82,13 @@ def test_bmf_title_fights_are_flagged_even_though_the_belt_is_not_a_divisional_t
     }
     assert all(fight["title_fight"] is False for fight in bmf)  # the source data does not count BMF fights as title fights
 
+    upcoming = [fight for event in client.get("/events/upcoming").json() for fight in event["fights"]]
+    oliveira_lopes = next(
+        fight for fight in upcoming if {fight["fighter_1"], fight["fighter_2"]} == {"Charles Oliveira", "Diego Lopes"}
+    )
+    assert oliveira_lopes["bmf_title"] is True
+    assert not oliveira_lopes["title_fight"]
+
 
 def test_upcoming_fights_with_a_current_champion_are_flagged_as_title_fights(client):
     # Champions change and so do the cards, so derive the expectation from the current champions instead of naming fights.

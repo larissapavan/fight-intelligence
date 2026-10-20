@@ -145,6 +145,56 @@ def parse_rankings(html: str) -> list[dict]:
     return records
 
 
+def rankings_problem(records: list[dict], previous_rows: int | None = None) -> str | None:
+    """A partial page must not replace the stored rankings."""
+    if not records:
+        return "parsed zero ranking rows"
+    categories = {record["category"] for record in records}
+    if len(categories) < GROUPS_EXPECTED:
+        return f"only {len(categories)} categories (expected {GROUPS_EXPECTED})"
+    if any(not str(record.get("fighter") or "").strip() for record in records):
+        return "a ranking row has no fighter name"
+    if previous_rows and len(records) < previous_rows * 0.8:
+        return f"rows dropped from {previous_rows} to {len(records)}"
+    return None
+
+
+def previous_ranking_rows() -> int | None:
+    if not OUTPUT_PATH.exists():
+        return None
+    with OUTPUT_PATH.open(encoding="utf-8", newline="") as handle:
+        return max(sum(1 for _ in handle) - 1, 0)
+
+
+def load_previous_rankings() -> list[dict]:
+    if not OUTPUT_PATH.exists():
+        return []
+    with OUTPUT_PATH.open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def ranking_changes(old: list[dict], new: list[dict]) -> list[str]:
+    """One line per fighter who moved, entered or left a ranking since the last run (rank 0 is the champion)."""
+    def places(rows: list[dict]) -> dict[tuple[str, str], int]:
+        return {(str(row["category"]), str(row["fighter"]).strip()): int(row["rank"]) for row in rows}
+
+    before, after = places(old), places(new)
+    lines = []
+    for (category, fighter), rank in sorted(after.items(), key=lambda item: (item[0][0], item[1])):
+        was = before.get((category, fighter))
+        if was == rank:
+            continue
+        if rank == 0:
+            lines.append(f"{category}: {fighter} is now champion")
+        elif was is None:
+            lines.append(f"{category}: {fighter} enters at #{rank}")
+        else:
+            lines.append(f"{category}: {fighter} #{'C' if was == 0 else was} -> #{rank}")
+    for category, fighter in sorted(set(before) - set(after)):
+        lines.append(f"{category}: {fighter} left the rankings")
+    return lines
+
+
 def save_rankings(records: list[dict]) -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with OUTPUT_PATH.open("w", newline="", encoding="utf-8") as handle:
@@ -157,14 +207,19 @@ def main() -> None:
     print("[info] Fetching https://www.ufc.com/rankings ...")
     html = fetch_rankings_html()
     records = parse_rankings(html)
-    if not records:
-        raise RuntimeError("Parsed zero ranking rows — page structure may have changed.")
+    problem = rankings_problem(records, previous_ranking_rows())
+    if problem:
+        raise RuntimeError(f"Rankings left unchanged: {problem}.")
 
+    changes = ranking_changes(load_previous_rankings(), records) if previous_ranking_rows() else []
     save_rankings(records)
     categories = sorted({record["category"] for record in records})
     print(f"[info] Saved {len(records)} ranking rows across {len(categories)} categories.")
     for category in categories:
         print(f"  - {category}")
+    print(f"[info] {len(changes)} ranking changes since the last run" if changes else "[info] No ranking changes since the last run.")
+    for line in changes:
+        print(f"  ~ {line}")
 
 
 if __name__ == "__main__":

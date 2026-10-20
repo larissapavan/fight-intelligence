@@ -1,13 +1,11 @@
 import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Trophy } from 'lucide-react'
 
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useRecordBook } from '../shared/hooks/useRecordBook'
 import type { RecordBookCategory, RecordBookStat } from '../shared/types/api'
-
-const PREVIEW_ROWS = 5
 
 const CATEGORY_BLURBS: Record<string, string> = {
   Fights: 'Wins, finishes, streaks and title wins across a whole career.',
@@ -59,13 +57,13 @@ export function RecordBook() {
       {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
 
       {loading ? (
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-2.5">
           {Array.from({ length: 6 }).map((_, index) => (
-            <LoadingSkeleton key={index} className="h-[260px]" />
+            <LoadingSkeleton key={index} className="h-[48px]" />
           ))}
         </section>
       ) : active ? (
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <section className="grid gap-2.5">
           {active.stats.map((stat) => (
             <StatCard key={stat.key} stat={stat} onOpenProfile={setProfileName} />
           ))}
@@ -84,36 +82,40 @@ export function RecordBook() {
   )
 }
 
+/** One stat as a full-width row that opens to its leaders, like the card groups on the Events page. */
 function StatCard({ stat, onOpenProfile }: { stat: RecordBookStat; onOpenProfile: (name: string) => void }) {
-  const [expanded, setExpanded] = useState(false)
-  const visible = expanded ? stat.leaders : stat.leaders.slice(0, PREVIEW_ROWS)
-  const hasMore = stat.leaders.length > PREVIEW_ROWS
+  const [open, setOpen] = useState(false)
+  const panelId = `stat-${stat.key}`
 
   return (
-    <article className="surface-card flex flex-col p-3">
-      <h3 className="text-base font-bold uppercase tracking-[0.02em] text-[#FFFFFF]">{stat.title}</h3>
-      {stat.note ? <p className="theme-muted mt-0.5 text-[11px] leading-4">{stat.note}</p> : null}
+    <section className="surface-card overflow-hidden rounded-[20px]">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
+      >
+        <Trophy className="h-4 w-4 shrink-0 text-[#C8102E]" />
+        <h3 className="broadcast-label text-xs text-[#FFFFFF]">{stat.title}</h3>
+        <span className="theme-muted text-xs">({stat.leaders.length})</span>
+        <ChevronDown className={`theme-muted ml-auto h-4 w-4 shrink-0 transition ${open ? 'rotate-180' : ''}`} />
+      </button>
 
-      <ol className="mt-2 grid">
-        {visible.map((leader, index) => (
-          <li key={`${leader.rank}-${leader.fighter}-${index}`}>
-            <LeaderRow leader={leader} onOpenProfile={onOpenProfile} />
-          </li>
-        ))}
-      </ol>
-
-      {hasMore ? (
-        <button
-          type="button"
-          onClick={() => setExpanded((value) => !value)}
-          aria-expanded={expanded}
-          className="type-tech mt-auto flex items-center justify-center gap-1 border-t border-white/8 pt-2 text-[10px] text-[#999999] transition hover:text-[#C8102E]"
-        >
-          {expanded ? 'Show fewer' : `View top ${stat.leaders.length}`}
-          <ChevronDown className={`h-3 w-3 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} />
-        </button>
+      {open ? (
+        <div id={panelId} className="border-t border-[var(--line-soft)] px-3 py-3 sm:px-4">
+          {stat.note ? <p className="theme-muted mb-2 text-[11px] leading-4">{stat.note}</p> : null}
+          {/* Two columns on wide screens, read top to bottom: the top half on the left, the rest on the right. */}
+          <ol className="lg:columns-2 lg:gap-x-8">
+            {stat.leaders.map((leader, index) => (
+              <li key={`${leader.rank}-${leader.fighter}-${index}`} className="break-inside-avoid">
+                <LeaderRow leader={leader} onOpenProfile={onOpenProfile} />
+              </li>
+            ))}
+          </ol>
+        </div>
       ) : null}
-    </article>
+    </section>
   )
 }
 

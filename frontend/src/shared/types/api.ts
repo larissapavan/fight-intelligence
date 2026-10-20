@@ -34,6 +34,10 @@ export interface FighterProfile {
   ufc_last_fight?: string | null
   roster_url?: string | null
   badges?: string[]
+  current_titles?: string[]
+  former_titles?: string[]
+  /** Divisions where the fighter has ever held the interim title. */
+  interim_titles?: string[]
   nationalities?: { name: string; code: string | null }[]
 }
 
@@ -146,6 +150,10 @@ export interface FightRecord {
   num_rounds?: number | null
   title_fight?: boolean | null
   bmf_title?: boolean
+  /** The interim belt was at stake (the interim champion won it or defended it). */
+  interim_title?: boolean
+  /** The fighter won the interim title fight. */
+  interim_title_win?: boolean
   outcome?: string | null
   result_details?: string | null
 }
@@ -274,6 +282,8 @@ export interface RecordCategory {
 
 export interface ChampionsResponse {
   current_champions: TitleReign[]
+  /** Every reign of every belt, oldest first within each division. */
+  reigns: TitleReign[]
   greatest_champions: ChampionSummary[]
   records: RecordCategory[]
 }

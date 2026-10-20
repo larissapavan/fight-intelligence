@@ -60,6 +60,8 @@ EVENTS_PATH = RAW_DATA_DIR / "events.csv"
 UPCOMING_PATH = RAW_DATA_DIR / "upcoming_events.csv"
 FIGHTERS_PATH = RAW_DATA_DIR / "fighters.csv"
 CAREER_STATS_PATH = RAW_DATA_DIR / "fighter_career_stats.csv"
+FIGHT_DETAILS_PATH = RAW_DATA_DIR / "fight_details.csv"
+WEIGHT_OVERRIDES_PATH = RAW_DATA_DIR / "weight_overrides.csv"
 
 EVENT_CARD_FIELDS = [
     "event_name", "event_date", "location", "event_url", "fight_url", "fighter_1", "fighter_2",
@@ -75,6 +77,20 @@ CAREER_FIELDS = [
     "fighter_url", "dob", "sig_str_acc", "takedown_acc", "slpm", "sapm", "str_def", "td_avg", "td_def",
     "sub_avg", "wins", "losses", "draws",
 ]
+FIGHT_DETAIL_FIELDS = ["fight_url", "referee", "num_rounds", "title_fight", "result", "result_details"]
+RESULT_LABELS = {
+    "U-DEC": "Decision - Unanimous",
+    "S-DEC": "Decision - Split",
+    "M-DEC": "Decision - Majority",
+    "KO/TKO": "KO/TKO",
+    "SUB": "Submission",
+    "DQ": "DQ",
+    "Overturned": "Overturned",
+    "Other": "Other",
+}
+DECISION_METHODS = {"U-DEC", "S-DEC", "M-DEC"}
+KNOWN_METHODS = set(RESULT_LABELS)
+TIME_RE = re.compile(r"^\d{1,2}:\d{2}$")
 
 US_STATES = {
     "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California", "CO": "Colorado",
@@ -137,6 +153,98 @@ def map_weight_class(label: str) -> str:
     return label
 
 
+def scheduled_rounds(competition: dict | None) -> str:
+    periods = (((competition or {}).get("format") or {}).get("regulation") or {}).get("periods")
+    try:
+        periods = int(periods)
+    except (TypeError, ValueError):
+        return ""
+    return str(periods) if 1 <= periods <= 5 else ""
+
+
+def clean_round(period) -> str:
+    try:
+        period = int(period)
+    except (TypeError, ValueError):
+        return ""
+    return f"{float(period)}" if 1 <= period <= 5 else ""
+
+
+def clean_clock(value: str) -> str:
+    value = (value or "").strip()
+    return value if TIME_RE.match(value) else ""
+
+
+def official_name(item: dict) -> str:
+    """Drop ESPN placeholders such as 'Judge 1' so they never land in a scorecard."""
+    first = ascii_name(str(item.get("firstName") or "")).strip()
+    last = ascii_name(str(item.get("lastName") or "")).strip()
+    if re.fullmatch(r"judge", first, re.I) and re.fullmatch(r"\d+", last):
+        return ""
+    name = f"{first} {last}".strip()
+    if not name or name.lower() in {"referee", "judge"}:
+        return ""
+    return name
+
+
+def parse_officials(payload: dict | None) -> tuple[str, list[tuple[str, str]]]:
+    """Referee name, and judges as (official id, name) in ESPN's order."""
+    if not isinstance(payload, dict) or not isinstance(payload.get("items"), list):
+        return "", []
+    referee = ""
+    judges: list[tuple[int, str, str]] = []
+    for item in payload["items"]:
+        if not isinstance(item, dict):
+            continue
+        position = str((item.get("position") or {}).get("name") or "").lower()
+        name = official_name(item)
+        if position == "referee" and name and not referee:
+            referee = name
+        elif position == "judge" and name and item.get("id"):
+            order = item.get("order")
+            judges.append((order if isinstance(order, int) else 99, str(item["id"]), name))
+    judges.sort(key=lambda judge: judge[0])
+    return referee, [(official_id, name) for _, official_id, name in judges]
+
+
+def parse_judge_scores(payload: dict | None) -> dict[str, int]:
+    """One fighter's score from each judge. Values outside 1–50 are ignored."""
+    if not isinstance(payload, dict) or not isinstance(payload.get("items"), list) or not payload["items"]:
+        return {}
+    first = payload["items"][0]
+    lines = first.get("linescores") if isinstance(first, dict) else None
+    if not isinstance(lines, list):
+        return {}
+    scores: dict[str, int] = {}
+    for line in lines:
+        if not isinstance(line, dict):
+            continue
+        official = line.get("official") if isinstance(line.get("official"), dict) else {}
+        official_id = str(official.get("id") or "")
+        if not official_id:
+            match = re.search(r"/officials/(\d+)", str(official.get("$ref") or ""))
+            official_id = match.group(1) if match else ""
+        try:
+            value = int(float(line.get("value")))
+        except (TypeError, ValueError):
+            continue
+        if official_id and 1 <= value <= 50:
+            scores[official_id] = value
+    return scores
+
+
+def format_scorecards(judges: list[tuple[str, str]], scores_a: dict[str, int], scores_b: dict[str, int]) -> str:
+    """'Judge 28 - 29. ...' with fighter 1's score first, matching fight_details.csv."""
+    parts: list[str] = []
+    for official_id, name in judges:
+        score_a = scores_a.get(official_id)
+        score_b = scores_b.get(official_id)
+        if score_a is None or score_b is None:
+            continue
+        parts.append(f"{name} {score_a} - {score_b}")
+    return ". ".join(parts) + ("." if parts else "")
+
+
 def map_result(result: dict | None) -> tuple[str, str]:
     """ESPN status.result -> (method, method_detail) in the dataset's vocabulary."""
     if not result:
@@ -191,6 +299,7 @@ class EspnBout:
     completed: bool
     period: int | None = None
     clock: str = ""
+    scheduled_rounds: str = ""
 
 
 @dataclass
@@ -256,6 +365,7 @@ def parse_scoreboard(payload: dict) -> list[EspnEvent]:
                     completed=bool((status.get("type") or {}).get("completed")),
                     period=status.get("period"),
                     clock=status.get("displayClock") or "",
+                    scheduled_rounds=scheduled_rounds(comp),
                 )
             )
         if event.bouts:
@@ -280,6 +390,32 @@ def save_csv(path: Path, fields: list[str], rows: list[dict]) -> None:
 
 
 @dataclass
+class BoutDetail:
+    method: str = ""
+    method_detail: str = ""
+    referee: str = ""
+    num_rounds: str = ""
+    result: str = ""
+    judges: list[tuple[str, str]] = field(default_factory=list)
+    scores: dict[str, dict[str, int]] = field(default_factory=dict)
+
+    @property
+    def usable_method(self) -> str:
+        return self.method if self.method in KNOWN_METHODS else ""
+
+
+def coerce_detail(result: BoutDetail | tuple | None) -> BoutDetail:
+    if isinstance(result, BoutDetail):
+        result.method = result.usable_method
+        return result
+    if isinstance(result, tuple) and len(result) == 2:
+        method, detail = result
+        method = method if method in KNOWN_METHODS else ""
+        return BoutDetail(method=method, method_detail=str(detail or ""), result=RESULT_LABELS.get(method, ""))
+    return BoutDetail()
+
+
+@dataclass
 class Tables:
     cards: list[dict]
     fights: list[dict]
@@ -287,6 +423,7 @@ class Tables:
     upcoming: list[dict]
     fighters: list[dict]
     career: list[dict]
+    details: list[dict] = field(default_factory=list)
 
 
 def parse_day(text: str) -> date | None:
@@ -426,6 +563,8 @@ class Report:
     fighters_created: list[str] = field(default_factory=list)
     fuzzy_matches: list[str] = field(default_factory=list)
     ambiguous: list[str] = field(default_factory=list)
+    details_added: int = 0
+    detail_skipped: list[str] = field(default_factory=list)
 
 
 def _card_row(meta: dict, bout: EspnBout, catalog: Catalog, result: tuple[str, str] | None) -> dict:
@@ -442,9 +581,74 @@ def _card_row(meta: dict, bout: EspnBout, catalog: Catalog, result: tuple[str, s
         }
     )
     if bout.completed:
-        row["round"] = f"{float(bout.period)}" if bout.period else ""
-        row["time"] = bout.clock
+        row["round"] = clean_round(bout.period)
+        row["time"] = clean_clock(bout.clock)
     return row
+
+
+def athlete_id_for(name: str, bout: EspnBout, catalog: Catalog) -> str:
+    for fighter in bout.fighters:
+        canonical = catalog.canonical(fighter)
+        if name_key(name) == name_key(canonical) or name_key(name) == name_key(fighter.name) or _ratio(name, canonical) >= 0.9:
+            return fighter.espn_id
+    return ""
+
+
+def aligned_winner(bout: EspnBout, row: dict, catalog: Catalog) -> str:
+    if bout.winner_index is None or not (0 <= bout.winner_index < len(bout.fighters)):
+        return ""
+    winner = catalog.canonical(bout.fighters[bout.winner_index])
+    existing = [name for name in (row.get("fighter_1"), row.get("fighter_2")) if name]
+    if not existing:
+        return winner
+    for name in existing:
+        if name_key(name) == name_key(winner) or _ratio(name, winner) >= 0.9:
+            return name
+    return ""
+
+
+def scorecard_text(detail: BoutDetail, bout: EspnBout, row: dict, catalog: Catalog) -> str:
+    if detail.usable_method not in DECISION_METHODS:
+        return detail.method_detail if detail.usable_method else ""
+    scores_a = detail.scores.get(athlete_id_for(row.get("fighter_1", ""), bout, catalog), {})
+    scores_b = detail.scores.get(athlete_id_for(row.get("fighter_2", ""), bout, catalog), {})
+    return format_scorecards(detail.judges, scores_a, scores_b)
+
+
+def espn_fight_url(bout: EspnBout) -> str:
+    if not str(bout.competition_id).isdigit():
+        return ""
+    return f"https://www.espn.com/mma/fightcenter/_/id/{bout.competition_id}"
+
+
+def detail_saved(tables: Tables, fight_url: str) -> bool:
+    return bool(fight_url) and any(
+        existing.get("fight_url") == fight_url and (existing.get("referee") or existing.get("result"))
+        for existing in tables.details
+    )
+
+
+def upsert_fight_detail(tables: Tables, row: dict) -> None:
+    fight_url = (row.get("fight_url") or "").strip()
+    if not fight_url:
+        return
+    tables.details[:] = [existing for existing in tables.details if existing.get("fight_url") != fight_url]
+    tables.details.append({key: row.get(key, "") for key in FIGHT_DETAIL_FIELDS})
+
+
+def _remember_fight(tables: Tables, row: dict) -> None:
+    fight = {key: row.get(key, "") for key in FIGHT_FIELDS}
+    for existing in tables.fights:
+        same_url = fight["fight_url"] and existing.get("fight_url") == fight["fight_url"]
+        same_bout = (
+            existing.get("event_name") == fight["event_name"]
+            and existing.get("event_date") == fight["event_date"]
+            and same_pair(existing.get("fighter_1", ""), existing.get("fighter_2", ""), fight["fighter_1"], fight["fighter_2"])
+        )
+        if same_url or same_bout:
+            existing.update(fight)
+            return
+    tables.fights.append(fight)
 
 
 def _event_meta(event: EspnEvent, existing: list[dict] | None) -> dict:
@@ -460,40 +664,115 @@ def sync_completed_event(
     event: EspnEvent,
     tables: Tables,
     catalog: Catalog,
-    fetch_result: Callable[[str, str], tuple[str, str]],
+    fetch_result: Callable[[EspnEvent, EspnBout], BoutDetail | tuple],
     report: Report,
 ) -> None:
     groups = group_events(tables.cards)
     key = find_event_key(event, groups)
     existing = groups.get(key, []) if key else []
     existing_bouts = [r for r in existing if r["fighter_1"]]
-    meta = _event_meta(event, existing_bouts or None)
+    upcoming_key = find_event_key(event, group_events(tables.upcoming))
+    upcoming_rows = [
+        row for row in tables.upcoming if upcoming_key and (row["event_name"], row["event_date"]) == upcoming_key and row.get("fighter_1")
+    ]
+    meta = _event_meta(event, existing_bouts or upcoming_rows or None)
     added = 0
+    failed = 0
+    moved: set[int] = set()
     for bout in event.bouts:
-        if not bout.completed:
+        if not bout.completed or len(bout.fighters) != 2:
             continue
-        names = [f.name for f in bout.fighters]
-        if any(same_pair(r["fighter_1"], r["fighter_2"], names[0], names[1]) for r in existing_bouts):
+        names = [fighter.name for fighter in bout.fighters]
+        already = next((row for row in existing_bouts if same_pair(row["fighter_1"], row["fighter_2"], names[0], names[1])), None)
+        if already and already.get("winner") and detail_saved(tables, already.get("fight_url", "")):
             continue
-        result = fetch_result(event.espn_id, bout.competition_id)
-        row = _card_row(meta, bout, catalog, result)
-        tables.cards.append(row)
-        tables.fights.append({k: row.get(k, "") for k in FIGHT_FIELDS})
-        existing_bouts.append(row)
+        try:
+            detail = coerce_detail(fetch_result(event, bout))
+        except Exception as exc:  # noqa: BLE001 - one bad bout must not abort the card
+            failed += 1
+            report.detail_skipped.append(f"{event.name}: {names[0]} vs {names[1]} ({exc})")
+            continue
+        detail.num_rounds = detail.num_rounds or bout.scheduled_rounds
+        announced = next((row for row in upcoming_rows if same_pair(row["fighter_1"], row["fighter_2"], names[0], names[1])), None)
+        if announced is not None:
+            row = {column: announced.get(column, "") for column in EVENT_CARD_FIELDS}
+            if not aligned_winner(bout, row, catalog) and bout.winner_index is not None:
+                report.detail_skipped.append(f"{event.name}: winner for {names[0]} vs {names[1]} did not match the card")
+            row["winner"] = aligned_winner(bout, row, catalog)
+            row["method"] = detail.usable_method
+            row["method_detail"] = detail.method_detail if detail.usable_method else ""
+            row["round"] = clean_round(bout.period)
+            row["time"] = clean_clock(bout.clock)
+            if bout.weight_class:
+                row["weight_class"] = bout.weight_class
+        elif already is not None:
+            row = already
+            row["winner"] = aligned_winner(bout, row, catalog)
+            row["method"] = detail.usable_method
+            row["method_detail"] = detail.method_detail if detail.usable_method else ""
+            row["round"] = clean_round(bout.period)
+            row["time"] = clean_clock(bout.clock)
+        else:
+            row = _card_row(meta, bout, catalog, (detail.usable_method, detail.method_detail if detail.usable_method else ""))
+            if bout.winner_index is not None and not row["winner"]:
+                report.detail_skipped.append(f"{event.name}: {names[0]} vs {names[1]} had no usable winner")
+        if not (row.get("fight_url") or "").strip():
+            row["fight_url"] = espn_fight_url(bout)
+        backfill = already is not None and bool(already.get("winner"))
+        if not backfill and announced is None and already is None:
+            tables.cards.append(row)
+        elif not backfill and announced is not None:
+            tables.cards.append(row)
+            moved.add(id(announced))
+        scorecards = scorecard_text(detail, bout, row, catalog)
+        if row.get("fight_url"):
+            upsert_fight_detail(
+                tables,
+                {
+                    "fight_url": row["fight_url"],
+                    "referee": detail.referee,
+                    "num_rounds": detail.num_rounds,
+                    "title_fight": "false",
+                    "result": detail.result if detail.usable_method else "",
+                    "result_details": scorecards,
+                },
+            )
+            report.details_added += 1
+        elif detail.usable_method in DECISION_METHODS and detail.judges and not scorecards:
+            report.detail_skipped.append(f"{event.name}: {row.get('fighter_1')} vs {row.get('fighter_2')} had no usable scorecard")
+        _remember_fight(tables, row)
+        if backfill:
+            continue
+        if announced is None and already is None:
+            existing_bouts.append(row)
+        elif announced is not None:
+            existing_bouts.append(row)
         added += 1
     report.bouts_added += added
     if key is None and added:
         report.events_added.append(f"{meta['event_name']} ({meta['event_date']}, {added} lutas)")
-        if not any(e["event_name"] == meta["event_name"] and e["event_date"] == meta["event_date"] for e in tables.events):
-            tables.events.append({"event_name": meta["event_name"], "event_date": meta["event_date"], "event_url": ""})
+        if not any(item["event_name"] == meta["event_name"] and item["event_date"] == meta["event_date"] for item in tables.events):
+            tables.events.append({"event_name": meta["event_name"], "event_date": meta["event_date"], "event_url": meta.get("event_url", "")})
     elif added:
         report.events_added.append(f"{meta['event_name']} (+{added} lutas)")
     # A completed event no longer belongs in the upcoming list.
-    upcoming_key = find_event_key(event, group_events(tables.upcoming))
     if upcoming_key:
-        tables.upcoming[:] = [
-            r for r in tables.upcoming if (r["event_name"], r["event_date"]) != upcoming_key
-        ]
+        if failed:
+            tables.upcoming[:] = [row for row in tables.upcoming if id(row) not in moved]
+        else:
+            tables.upcoming[:] = [
+                row for row in tables.upcoming if (row["event_name"], row["event_date"]) != upcoming_key
+            ]
+
+
+def apply_weight_overrides(rows: list[dict], overrides: list[dict] | None = None) -> None:
+    """Fix bouts ESPN books in the wrong division (data/raw/weight_overrides.csv: fighter_1, fighter_2, weight_class)."""
+    if overrides is None:
+        overrides = load_csv(WEIGHT_OVERRIDES_PATH)[1] if WEIGHT_OVERRIDES_PATH.exists() else []
+    for row in rows:
+        for override in overrides:
+            if row.get("fighter_1") and same_pair(row["fighter_1"], row["fighter_2"], override["fighter_1"], override["fighter_2"]):
+                row["weight_class"] = override["weight_class"]
 
 
 def sync_upcoming_event(event: EspnEvent, tables: Tables, catalog: Catalog, report: Report) -> None:
@@ -527,6 +806,7 @@ def sync_upcoming_event(event: EspnEvent, tables: Tables, catalog: Catalog, repo
             report.upcoming_bouts_dropped.append(f"{meta['event_name']}: {row['fighter_1']} vs {row['fighter_2']}")
         else:
             rebuilt.append(row)  # not contradicted by ESPN (its card may still be incomplete)
+    apply_weight_overrides(rebuilt)
     if key is None:
         report.upcoming_events_added.append(f"{meta['event_name']} ({meta['event_date']}, {len(rebuilt)} lutas)")
         tables.upcoming.extend(rebuilt)
@@ -637,7 +917,7 @@ def sync(
     tables: Tables,
     since: date,
     until: date,
-    fetch_result: Callable[[str, str], tuple[str, str]],
+    fetch_result: Callable[[EspnEvent, EspnBout], BoutDetail | tuple],
     fetch_athlete: Callable[[str], dict],
     *,
     prune: bool = True,
@@ -697,13 +977,40 @@ class EspnClient:
         params = {"dates": f"{since:%Y%m%d}-{until:%Y%m%d}", "limit": 500}
         return parse_scoreboard(self.get_json(SCOREBOARD_URL, params))
 
-    def fetch_result(self, event_id: str, competition_id: str) -> tuple[str, str]:
-        time.sleep(REQUEST_DELAY_SECONDS)
+    def fetch_bout(self, event: EspnEvent, bout: EspnBout) -> BoutDetail:
+        """Method, referee and, for decisions, judge scorecards. A failed call leaves that piece blank."""
+        detail = BoutDetail(num_rounds=bout.scheduled_rounds)
+        base = f"{CORE_URL}/events/{event.espn_id}/competitions/{bout.competition_id}"
         try:
-            status = self.get_json(f"{CORE_URL}/events/{event_id}/competitions/{competition_id}/status?lang=en")
+            time.sleep(REQUEST_DELAY_SECONDS)
+            status = self.get_json(f"{base}/status?lang=en")
         except RuntimeError:
-            return "", ""
-        return map_result(status.get("result"))
+            return detail
+        if not isinstance(status, dict):
+            return detail
+        result = status.get("result") if isinstance(status.get("result"), dict) else None
+        method, method_detail = map_result(result)
+        detail.method = method if method in KNOWN_METHODS else ""
+        detail.method_detail = method_detail if detail.method else ""
+        detail.result = RESULT_LABELS.get(detail.method, "")
+        try:
+            time.sleep(REQUEST_DELAY_SECONDS)
+            detail.referee, detail.judges = parse_officials(self.get_json(f"{base}/officials?lang=en"))
+        except RuntimeError:
+            pass
+        if detail.method not in DECISION_METHODS:
+            return detail
+        for fighter in bout.fighters:
+            if not str(fighter.espn_id).isdigit():
+                continue
+            try:
+                time.sleep(REQUEST_DELAY_SECONDS)
+                detail.scores[fighter.espn_id] = parse_judge_scores(
+                    self.get_json(f"{base}/competitors/{fighter.espn_id}/linescores?lang=en")
+                )
+            except RuntimeError:
+                detail.scores[fighter.espn_id] = {}
+        return detail
 
     def fetch_athlete(self, athlete_id: str) -> dict:
         time.sleep(REQUEST_DELAY_SECONDS)
@@ -723,6 +1030,7 @@ def load_tables() -> tuple[Tables, dict[str, list[str]]]:
         ("cards", EVENT_CARDS_PATH, EVENT_CARD_FIELDS), ("fights", FIGHTS_PATH, FIGHT_FIELDS),
         ("events", EVENTS_PATH, EVENT_FIELDS), ("upcoming", UPCOMING_PATH, EVENT_CARD_FIELDS),
         ("fighters", FIGHTERS_PATH, FIGHTER_FIELDS), ("career", CAREER_STATS_PATH, CAREER_FIELDS),
+        ("details", FIGHT_DETAILS_PATH, FIGHT_DETAIL_FIELDS),
     ):
         if path.exists():
             headers[name], data[name] = load_csv(path)
@@ -731,10 +1039,28 @@ def load_tables() -> tuple[Tables, dict[str, list[str]]]:
     return Tables(**data), headers
 
 
+def refresh_problem(before: Tables, after: Tables, events: list[EspnEvent]) -> str | None:
+    """An empty or truncated ESPN payload must not overwrite the stored cards and records."""
+    if not events:
+        return "ESPN scoreboard returned no events"
+    if len(after.fighters) < len(before.fighters):
+        return f"fighter list shrank from {len(before.fighters)} to {len(after.fighters)}"
+    for row in after.upcoming:
+        if row.get("fighter_1") and not str(row.get("fighter_2") or "").strip():
+            return f"{row.get('event_name')}: a bout is missing a fighter"
+        if row.get("fighter_1") and not str(row.get("event_name") or "").strip():
+            return "an upcoming bout is missing its event"
+    upcoming_before = [row for row in before.upcoming if row.get("fighter_1") and row.get("fighter_2")]
+    if upcoming_before and len(after.upcoming) < len(upcoming_before) * 0.6 and not any(not event.completed for event in events):
+        return f"upcoming cards dropped from {len(upcoming_before)} to {len(after.upcoming)} with no future events"
+    return None
+
+
 def save_tables(tables: Tables, headers: dict[str, list[str]], before: Tables) -> None:
     for name, path in (
         ("cards", EVENT_CARDS_PATH), ("fights", FIGHTS_PATH), ("events", EVENTS_PATH),
         ("upcoming", UPCOMING_PATH), ("fighters", FIGHTERS_PATH), ("career", CAREER_STATS_PATH),
+        ("details", FIGHT_DETAILS_PATH),
     ):
         if getattr(tables, name) != getattr(before, name):
             save_csv(path, headers[name], getattr(tables, name))
@@ -769,6 +1095,9 @@ def print_report(report: Report, dry_run: bool) -> None:
         print(f"  ~ nome associado por similaridade: {item}")
     for item in report.ambiguous:
         print(f"  ? nome ambiguo/homonimo, nao alterado (revisar): {item}")
+    print(f"{prefix}Detalhes (arbitro/placar) gravados: {report.details_added}")
+    for item in report.detail_skipped:
+        print(f"  ! detalhe ignorado: {item}")
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -788,12 +1117,17 @@ def main(argv: list[str] | None = None) -> None:
     print(f"[info] Fetching ESPN scoreboard {since} -> {until} ...")
     events = client.scoreboard(since, until)
     print(f"[info] {len(events)} eventos ({sum(e.completed for e in events)} realizados)")
+    if not events:
+        raise RuntimeError("ESPN scoreboard returned no events; stored cards and records were left unchanged.")
 
     report = sync(
-        events, tables, since, until, client.fetch_result, client.fetch_athlete,
+        events, tables, since, until, client.fetch_bout, client.fetch_athlete,
         prune=not args.no_prune, update_fighters=not args.no_fighters,
     )
     print_report(report, args.dry_run)
+    problem = refresh_problem(before, tables, events)
+    if problem:
+        raise RuntimeError(f"Refresh left unchanged: {problem}.")
     if args.dry_run:
         return
     save_tables(tables, headers, before)

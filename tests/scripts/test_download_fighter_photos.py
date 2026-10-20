@@ -61,3 +61,20 @@ def test_athlete_page_photo_skips_the_generic_silhouette():
     assert photos.parse_athlete_photo(page.format("https://ufc.com/images/2019-04/SILHOUETTE.png?VersionId=x")) is None
     assert photos.parse_athlete_photo(page.format("https://ufc.com/images/2018-12/silhouette-headshot-female.png")) is None
     assert photos.parse_athlete_photo("<html></html>") is None
+
+
+def test_photo_skip_keys_asks_again_about_active_fighters_without_a_photo(monkeypatch):
+    monkeypatch.setattr(photos, "covered_keys", lambda rows: {photos.name_key("Has Photo")})
+    rows = [
+        {"name": "Has Photo", "kind": "espn", "local_path": "x.webp"},
+        {"name": "Old Retiree", "kind": "espn", "local_path": ""},  # ESPN had no photo, and the fighter is not active
+        {"name": "New Debutant", "kind": "espn", "local_path": ""},  # ESPN had none yet, but the site lists them as active
+        {"name": "Champ", "kind": "champion", "local_path": "c.webp"},
+    ]
+    recheck = {photos.name_key("New Debutant"), photos.name_key("Has Photo")}
+
+    skip = photos.photo_skip_keys(rows, retry_missing=False, recheck=recheck)
+    assert photos.name_key("Old Retiree") in skip  # not asked again
+    assert photos.name_key("New Debutant") not in skip  # asked again
+    assert photos.name_key("Has Photo") in skip and photos.name_key("Champ") in skip  # never overwrite a photo
+    assert photos.name_key("Old Retiree") not in photos.photo_skip_keys(rows, retry_missing=True, recheck=set())

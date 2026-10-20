@@ -22,9 +22,16 @@ const apiBaseURL = import.meta.env.DEV
   ? import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8000'
   : '/api'
 
+declare const __BUILD_ID__: string | undefined
+
+// Every request carries the build id, so each deploy starts with fresh answers instead of whatever the browser cached
+// from the previous one (the API caches for up to an hour). Without the define (a stray config, tests) it is "dev".
+const BUILD_ID = typeof __BUILD_ID__ === 'undefined' ? 'dev' : __BUILD_ID__
+
 const api = axios.create({
   baseURL: apiBaseURL,
   timeout: 60000,
+  params: { v: BUILD_ID },
 })
 
 export const getFighters = async () => {
@@ -102,8 +109,22 @@ export const getModelInfo = async () => {
 }
 
 export const getHealth = async () => {
-  const response = await api.get<HealthInfo>('/health')
+  const response = await api.get<HealthInfo>('/health', { timeout: 20000 })
   return response.data
+}
+
+/** Free hosts sleep when idle; keep pinging until the process is up. */
+export const waitForHealth = async (attempts = 8) => {
+  let lastError: unknown
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await getHealth()
+    } catch (requestError) {
+      lastError = requestError
+      await new Promise((resolve) => setTimeout(resolve, Math.min(3000 * (attempt + 1), 10000)))
+    }
+  }
+  throw lastError
 }
 
 export const getDataInfo = async () => {

@@ -120,6 +120,12 @@ def test_nationalities_badges_and_the_roster_status_come_from_roster_watch(clien
     assert [item["name"] for item in tsarukyan["nationalities"]] == ["Armenia", "Russia"]
 
     assert "bmf" in by_name["Justin Gaethje"]["badges"]
+    assert by_name["Justin Gaethje"]["current_titles"] == ["Lightweight"]
+    assert "Lightweight" not in by_name["Justin Gaethje"]["former_titles"]
+    assert "Lightweight" in by_name["Charles Oliveira"]["former_titles"]
+    assert "Lightweight" not in by_name["Charles Oliveira"]["current_titles"]
+    assert by_name["Charles Oliveira"]["current_titles"][0] == "BMF"
+    assert by_name["Charles Oliveira"]["badges"][0] == "bmf_current"
     assert "dwcs" in by_name["Carlos Ulberg"]["badges"]
     assert {"goat", "hof"} <= set(by_name["Georges St-Pierre"]["badges"])
     assert by_name["Georges St-Pierre"]["ufc_status"] == "former"
@@ -158,3 +164,39 @@ def test_ufc_only_leaves_out_fighters_who_never_fought_in_the_ufc(client):
 def test_health_counts_only_the_fighters_the_site_shows(client):
     shown = client.get("/fighters", params={"ufc_only": True}).json()
     assert client.get("/health").json()["fighters_loaded"] == len(shown)
+
+
+def test_interim_champions_keep_a_seal_unless_they_went_on_to_win_the_title(client):
+    by_name = {fighter["name"]: fighter for fighter in client.get("/fighters").json()}
+
+    assert by_name["Dustin Poirier"]["interim_titles"] == ["Lightweight"]  # interim only
+    assert by_name["Tony Ferguson"]["interim_titles"] == ["Lightweight"]
+    assert by_name["Justin Gaethje"]["interim_titles"] == []  # interim first, then the undisputed belt
+    assert by_name["Conor McGregor"]["interim_titles"] == []
+    assert by_name["Ilia Topuria"]["interim_titles"] == []  # undisputed only
+
+
+def test_the_fight_that_won_an_interim_title_is_marked_in_the_history(client):
+    def history(name):
+        return client.get(f"/fighters/{name}/performance").json()["career_timeline"]
+
+    # Accents ("Jose Aldo") and a local-vs-event date mismatch (UFC 284) in title_reigns.csv must not hide the fight.
+    for name, event in (("Justin Gaethje", "UFC 249"), ("Yair Rodriguez", "UFC 284"), ("Jose Aldo", "UFC 200")):
+        marked = [fight for fight in history(name) if fight["interim_title_win"]]
+        assert any(fight["event_name"].startswith(event) for fight in marked), name
+        assert all(fight["result"] == "win" for fight in marked), name
+    assert not any(fight["interim_title_win"] for fight in history("Ilia Topuria"))
+
+
+def test_a_lost_interim_title_fight_and_an_interim_defense_are_marked_too(client):
+    def history(name):
+        return {(f["date"], f["opponent"]): f for f in client.get(f"/fighters/{name}/performance").json()["career_timeline"]}
+
+    loss = history("Max Holloway")[("2019-04-13", "Dustin Poirier")]
+    assert loss["result"] == "loss" and loss["interim_title"] and not loss["interim_title_win"]  # fought for it, lost
+    win = history("Dustin Poirier")[("2019-04-13", "Max Holloway")]
+    assert win["interim_title"] and win["interim_title_win"]
+    # An interim defense listed in defenses_detail ("def. Eddie Wineland at UFC 165 on Sep 21, 2013").
+    assert history("Renan Barao")[("2013-09-21", "Eddie Wineland")]["interim_title"]
+    assert not history("Max Holloway")[("2017-12-02", "Jose Aldo")]["interim_title"]  # an undisputed title fight
+

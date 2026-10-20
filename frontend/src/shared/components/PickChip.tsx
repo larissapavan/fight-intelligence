@@ -6,16 +6,18 @@ import type { UpcomingPick } from '../types/api'
 export function PickChip({ pick, className = '' }: { pick: UpcomingPick | undefined; className?: string }) {
   if (!pick) return null
   const percent = Math.round(pick.probability * 100)
-  const tone = percent >= 70 ? 'bg-[#F2C230] text-[#0E0E0E]' : 'border border-[var(--rule)] text-[var(--text-main)]'
 
   return (
     <span
-      className={`inline-flex max-w-full items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] ${tone} ${className}`}
+      className={`inline-flex max-w-full items-center gap-1.5 border border-[var(--accent-red)] bg-[var(--card-bg)] px-1.5 py-1 text-[11px] font-bold uppercase leading-tight tracking-[0.06em] text-[var(--text-main)] sm:text-xs sm:tracking-[0.08em] ${className}`}
       title="The model's pick, based on each fighter's current stats. Not betting advice."
     >
-      <Sparkles className="h-3 w-3 shrink-0" />
-      <span className="truncate">
+      <Sparkles className="h-3 w-3 shrink-0 text-[var(--accent-red)]" aria-hidden="true" />
+      <span>
         Model: {pick.predicted_winner} {percent}%
+      </span>
+      <span className="h-2 w-14 shrink-0 overflow-hidden rounded-full bg-[var(--rule)]" aria-hidden="true">
+        <span className="block h-full bg-[var(--accent-red)]" style={{ width: `${percent}%` }} />
       </span>
     </span>
   )

@@ -3,7 +3,11 @@ export const METHOD_LABELS: Record<string, string> = {
   'KO/TKO': 'KO/TKO',
   Submission: 'Submission',
   Decision: 'Decision',
+  'U-DEC': 'Unanimous Decision',
+  'S-DEC': 'Split Decision',
+  'M-DEC': 'Majority Decision',
   Disqualification: 'DQ',
+  DQ: 'Disqualification',
   Other: 'Other',
 }
 

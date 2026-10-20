@@ -1,7 +1,7 @@
 import { Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import { LoadingSkeleton } from './shared/components/LoadingSkeleton'
+import { ServerLoadingState } from './shared/components/ServerLoadingState'
 import { TabbedLayout, type SectionTab } from './shared/components/TabbedLayout'
 import { ErrorBoundary } from './shared/components/ErrorBoundary'
 import { MainLayout } from './layouts/MainLayout'
@@ -48,7 +48,7 @@ function App() {
   return (
     <MainLayout>
       <ErrorBoundary>
-        <Suspense fallback={<LoadingSkeleton className="h-[58vh] rounded-[20px]" />}>
+        <Suspense fallback={<ServerLoadingState />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />

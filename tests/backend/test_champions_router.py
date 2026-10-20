@@ -101,3 +101,14 @@ def test_current_champions_carry_their_last_fight(client):
 
         latest = get_fights_for_fighter(reign["champion"])[0]
         assert (last["date"], last["opponent"]) == (latest["date"], latest["opponent"]), reign["champion"]
+
+def test_champions_lists_every_reign_oldest_first_within_each_division(client):
+    body = client.get("/champions").json()
+    reigns = body["reigns"]
+
+    assert len(reigns) > len(body["current_champions"])
+    assert {reign["champion"] for reign in body["current_champions"]} <= {reign["champion"] for reign in reigns}
+    assert sum(reign["is_current"] for reign in reigns) == len(body["current_champions"])
+    for division in {reign["division"] for reign in reigns}:
+        dates = [reign["date_won"] for reign in reigns if reign["division"] == division]
+        assert dates == sorted(dates)

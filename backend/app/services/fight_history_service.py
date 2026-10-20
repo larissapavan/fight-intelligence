@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import re
+import unicodedata
 from collections import deque
+from datetime import datetime
 
 import pandas as pd
 
 from backend.app.services.bmf_service import BMF_FIGHTS_SOURCE_PATH, is_bmf_title_fight
 from backend.app.services.catalog_service import _normalize_name, get_fighter_catalog
 from src.ufc_predictor.config import RAW_DATA_DIR
+
+TITLE_REIGNS_SOURCE_PATH = RAW_DATA_DIR / "title_reigns.csv"
 
 MAX_NETWORK_DEPTH = 6
 
@@ -24,6 +29,7 @@ METHOD_BUCKETS = {
 }
 
 _cache: dict = {"signature": None, "data": None}
+_interim_wins_cache: dict = {"signature": "unset", "wins": frozenset()}
 
 
 def _source_signature() -> tuple | None:
@@ -32,6 +38,49 @@ def _source_signature() -> tuple | None:
     details = FIGHT_DETAILS_SOURCE_PATH.stat().st_mtime_ns if FIGHT_DETAILS_SOURCE_PATH.exists() else None
     bmf = BMF_FIGHTS_SOURCE_PATH.stat().st_mtime_ns if BMF_FIGHTS_SOURCE_PATH.exists() else None
     return (EVENT_CARDS_SOURCE_PATH.stat().st_mtime_ns, details, bmf)
+
+
+def _fold(name: str) -> str:
+    """Name key that ignores accents: title_reigns.csv writes "José Aldo", the fight history "Jose Aldo"."""
+    return _normalize_name(unicodedata.normalize("NFKD", str(name)).encode("ascii", "ignore").decode())
+
+
+_DEFENSE = re.compile(r"def\.\s+.+?\s+at\s+(?P<event>.+?)\s+on\s+(?P<date>[A-Z][a-z]{2} \d{1,2}, \d{4})")
+
+
+def _interim_title_wins() -> frozenset[tuple[str, str]]:
+    """Keys of every fight the interim champion won with the interim belt at stake: (champion, ISO date) and
+    (champion, event name). That is the fight that won it, and each defense listed in defenses_detail.
+
+    A reign's date_won is the date of that fight, but the local date can differ by a day from the event date, so the
+    event name ("UFC 284") is a second way to find the fight."""
+    signature = TITLE_REIGNS_SOURCE_PATH.stat().st_mtime_ns if TITLE_REIGNS_SOURCE_PATH.exists() else None
+    if _interim_wins_cache["signature"] != signature:
+        wins: set[tuple[str, str]] = set()
+        if signature is not None:
+            reigns = pd.read_csv(TITLE_REIGNS_SOURCE_PATH, keep_default_na=False)
+            for row in reigns[reigns["title_type"].astype(str).str.strip().eq("interim")].itertuples(index=False):
+                who = _fold(row.champion)
+                wins.add((who, str(row.date_won).strip()))
+                if str(row.event).strip():
+                    wins.add((who, str(row.event).strip()))
+                for defense in str(row.defenses_detail).split(";"):
+                    found = _DEFENSE.search(defense)
+                    if found:
+                        wins.add((who, found["event"].strip()))
+                        try:
+                            wins.add((who, datetime.strptime(found["date"], "%b %d, %Y").date().isoformat()))
+                        except ValueError:
+                            pass
+        _interim_wins_cache.update(signature=signature, wins=frozenset(wins))
+    return _interim_wins_cache["wins"]
+
+
+def _won_interim(wins: frozenset[tuple[str, str]], who: str, date_iso: str | None, event_name: str) -> bool:
+    event = str(event_name)
+    return (who, date_iso) in wins or any(
+        key == who and (event == other or event.startswith(f"{other}:")) for key, other in wins
+    )
 
 
 def _load_fight_history() -> pd.DataFrame:
@@ -63,6 +112,7 @@ def get_fights_for_fighter(name: str) -> list[dict]:
     rows = df[(df["key_1"] == key) | (df["key_2"] == key)]
     rows = rows.sort_values("event_date_parsed", ascending=False, na_position="last")
 
+    interim_wins = _interim_title_wins()
     fights: list[dict] = []
     for _, row in rows.iterrows():
         is_fighter_1 = row["key_1"] == key
@@ -74,6 +124,7 @@ def get_fights_for_fighter(name: str) -> list[dict]:
             result = "win" if _normalize_name(winner) == key else "loss"
 
         date_parsed = row["event_date_parsed"]
+        date_iso = date_parsed.date().isoformat() if pd.notna(date_parsed) else None
         fights.append(
             {
                 "event_name": row["event_name"],
@@ -92,6 +143,8 @@ def get_fights_for_fighter(name: str) -> list[dict]:
                 "num_rounds": _to_int(row.get("num_rounds")),
                 "title_fight": _to_bool(row.get("title_fight")),
                 "bmf_title": is_bmf_title_fight(_nullable(row.get("fight_url"))),
+                "interim_title": pd.notna(winner) and _won_interim(interim_wins, _fold(winner), date_iso, row["event_name"]),
+                "interim_title_win": result == "win" and _won_interim(interim_wins, _fold(winner), date_iso, row["event_name"]),
                 "outcome": _nullable(row.get("outcome")),
                 "result_details": _nullable(row.get("result_details")),
             }

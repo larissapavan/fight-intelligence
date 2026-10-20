@@ -182,9 +182,15 @@ export function Fighters() {
     return groups
   }, [visibleFighters])
 
-  const featuredGroup = divisionGroups.find((group) => group.key === activeDivision) ?? divisionGroups[0]
-  const featuredFighters = groupedFighters.get(featuredGroup.key) ?? []
   const hasAnyResults = visibleFighters.length > 0
+  const isSearching = query.trim() !== '' || stanceFilter !== 'All stances' || badgeFilter !== ''
+  // Searching must show what it found: when the chosen division has no match, open the first one that does.
+  const shownDivision =
+    isSearching && (groupedFighters.get(activeDivision)?.length ?? 0) === 0
+      ? (divisionGroups.find((group) => (groupedFighters.get(group.key)?.length ?? 0) > 0)?.key ?? activeDivision)
+      : activeDivision
+  const featuredGroup = divisionGroups.find((group) => group.key === shownDivision) ?? divisionGroups[0]
+  const featuredFighters = groupedFighters.get(featuredGroup.key) ?? []
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -270,7 +276,7 @@ export function Fighters() {
           <WeightClassBar
             groups={divisionGroups}
             counts={groupedFighters}
-            activeKey={activeDivision}
+            activeKey={shownDivision}
             onSelect={setActiveDivision}
           />
 

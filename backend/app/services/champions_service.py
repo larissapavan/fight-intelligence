@@ -56,18 +56,22 @@ def _load_reigns_df() -> pd.DataFrame:
 def _build_champions_data() -> dict:
     df = _load_reigns_df()
     if df.empty:
-        return {"current_champions": [], "greatest_champions": [], "records": []}
+        return {"current_champions": [], "reigns": [], "greatest_champions": [], "records": []}
 
     current_champions = [_reign_to_dict(row) for row in df[df["is_current"]].to_dict(orient="records")]
     current_champions.sort(key=lambda r: r["division"])
     for reign in current_champions:
         reign["last_fight"] = _last_fight(reign["champion"])
 
+    # Every reign, oldest first within each division: the "who held this belt" timeline.
+    reigns = [_reign_to_dict(row) for row in df.sort_values(["division", "date_won"]).to_dict(orient="records")]
+
     greatest_champions = _build_greatest_champions(df)
     records = _build_records(df, _load_fights_df())
 
     return {
         "current_champions": current_champions,
+        "reigns": reigns,
         "greatest_champions": greatest_champions,
         "records": records,
     }

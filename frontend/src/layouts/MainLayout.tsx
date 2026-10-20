@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 
 import { Header } from '../shared/components/Header'
 import { PageMeta } from '../shared/components/PageMeta'
-import { getHealth } from '../shared/services/api'
+import { ServerLoadingState } from '../shared/components/ServerLoadingState'
+import { waitForHealth } from '../shared/services/api'
 
 function formatDataDate(iso: string) {
   const date = new Date(`${iso}T00:00:00`)
@@ -19,8 +20,8 @@ export function MainLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // The free hosting tier puts the API to sleep when idle, so the first visit can wait a while for it to wake up.
-    const slowTimer = window.setTimeout(() => setApiState((state) => (state === 'pending' ? 'slow' : state)), 4000)
-    getHealth()
+    const slowTimer = window.setTimeout(() => setApiState((state) => (state === 'pending' ? 'slow' : state)), 2500)
+    waitForHealth()
       .then((health) => {
         setDataDate(health.latest_fight_date ? formatDataDate(health.latest_fight_date) : null)
         setApiState('ready')
@@ -43,11 +44,6 @@ export function MainLayout({ children }: { children: ReactNode }) {
       <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col px-3 pb-4 pt-2 sm:px-4 sm:pb-5 md:px-5 lg:px-6 xl:px-8">
         <PageMeta />
         <Header />
-        {apiState === 'slow' ? (
-          <p role="status" className="mt-3 border-2 border-[var(--rule)] bg-[#F2C230] px-3 py-2 text-sm font-semibold text-[#0E0E0E]">
-            Waking up the server. After a quiet spell the first visit can take up to a minute, and the data will appear as soon as it is ready.
-          </p>
-        ) : null}
         {apiState === 'down' ? (
           <p role="status" className="mt-3 border-2 border-[var(--rule)] bg-[#C8102E] px-3 py-2 text-sm font-semibold text-white">
             The server is not answering right now. Give it a minute and reload the page.
@@ -60,7 +56,11 @@ export function MainLayout({ children }: { children: ReactNode }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {children}
+          {apiState === 'pending' || apiState === 'slow' ? (
+            <ServerLoadingState waking={apiState === 'slow'} />
+          ) : (
+            children
+          )}
         </motion.main>
         <footer className="mt-6 border-[3px] border-[var(--rule)] bg-[var(--card-bg)] px-4 py-3 text-sm font-medium text-[var(--text-main)] shadow-[5px_5px_0_var(--hard)]">
           <p className="type-tech text-xs uppercase tracking-[0.14em]">Fight Intelligence • AI sports analytics for matchup analysis</p>

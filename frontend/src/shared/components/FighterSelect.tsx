@@ -3,6 +3,7 @@ import { Check, ChevronDown, Clock3, Lock, Search, Swords, UserRound, X } from '
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
 
+import { FighterAvatar } from './FighterAvatar'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../hooks/useFighterImages'
 import type { FighterProfile, Opponent } from '../types/api'
 
@@ -158,17 +159,26 @@ export function FighterSelect({
 
   return (
     <div className="relative z-30 flex flex-col gap-1.5">
+      <span className={`broadcast-label text-[10px] ${styles.accent}`}>{label}</span>
       <button
         type="button"
         onClick={openSearch}
         aria-label={selectedFighter ? `${label}: ${selectedFighter.name}. Change fighter` : `${label}: search fighter`}
-        className="flex min-h-[52px] w-full items-center gap-3 border-[3px] border-[#0E0E0E] bg-white px-3 py-2 text-left text-[#0E0E0E] shadow-[4px_4px_0_#0E0E0E] outline-none transition hover:translate-x-px hover:translate-y-px hover:shadow-[3px_3px_0_#0E0E0E] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]"
+        className="flex min-h-[60px] w-full items-center gap-3 border-[3px] border-[var(--rule)] bg-[var(--card-bg)] px-3 py-2 text-left text-[var(--text-main)] shadow-[4px_4px_0_var(--hard)] outline-none transition hover:border-[var(--accent-red)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
       >
-        <Search className="h-5 w-5 shrink-0" aria-hidden="true" />
-        <span className="min-w-0 flex-1 truncate text-sm font-bold uppercase tracking-wide">
+        {selectedFighter ? (
+          <FighterAvatar
+            name={selectedFighter.name}
+            imageUrl={getFighterImageUrl(selectedFighter.name, imageByName, selectedFighter.image_url)}
+            className="h-10 w-9"
+          />
+        ) : (
+          <Search className={`h-5 w-5 shrink-0 ${styles.accent}`} aria-hidden="true" />
+        )}
+        <span className="min-w-0 flex-1 truncate text-sm font-bold uppercase tracking-wide sm:text-base">
           {selectedFighter?.name ?? placeholder}
         </span>
-        <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest">{selectedFighter ? 'Change' : 'Search'}</span>
+        <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest text-[var(--accent-red)]">{selectedFighter ? 'Change' : 'Search'}</span>
       </button>
 
       {createPortal(

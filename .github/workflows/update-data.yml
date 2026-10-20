@@ -26,9 +26,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Refresh ESPN data and UFC rankings
-        # Photos are skipped: they write binary files that should be reviewed, not auto-committed.
-        run: python -m scripts.update_all --skip-photos
+      - name: Refresh ESPN data, UFC rankings and fighter photos
+        # Photos are small WebP files (about 10 KB each). Only new fighters and active ones still without a photo are
+        # fetched, and validate_data fails the run if the manifest lists a photo that is not on disk.
+        run: python -m scripts.update_all
 
       - name: Validate refreshed data
         run: python -m scripts.validate_data
@@ -38,12 +39,12 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          if git diff --quiet -- data/raw; then
+          if git diff --quiet -- data/raw frontend/public/fighter-photos && [ -z "$(git ls-files --others --exclude-standard frontend/public/fighter-photos)" ]; then
             echo "No data changes."
             exit 0
           fi
           git config user.name "fight-intelligence-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/raw
+          git add data/raw frontend/public/fighter-photos
           git commit -m "chore(data): daily refresh $(date -u +%F)"
           git push

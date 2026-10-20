@@ -94,5 +94,6 @@ class RecordCategory(BaseModel):
 
 class ChampionsResponse(BaseModel):
     current_champions: list[TitleReign]
+    reigns: list[TitleReign] = []
     greatest_champions: list[ChampionSummary]
     records: list[RecordCategory]

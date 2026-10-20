@@ -28,13 +28,18 @@ export function Header() {
   const { pathname } = useLocation()
   const [theme, setTheme] = useState<ThemeMode>(() => readThemePreference())
   const [menuOpen, setMenuOpen] = useState(false)
-  const apiLabel = loading ? 'Checking' : health?.model_loaded ? 'Live' : 'Offline'
+  const apiLabel = loading ? 'Waking up' : health?.model_loaded ? 'Live' : 'Offline'
+  const apiTitle = loading
+    ? 'The API is starting. The first visit after a quiet spell can take up to a minute.'
+    : health?.model_loaded
+      ? 'API is live and the model is loaded'
+      : 'API is unreachable'
   const apiClasses = loading
-    ? 'border-[var(--rule)] bg-[var(--surface-3)] text-[var(--text-muted)]'
+    ? 'border-[#F2C230] bg-[#F2C230] text-[#0E0E0E]'
     : health?.model_loaded
       ? 'border-[var(--rule)] bg-[#2E7D4F] text-white'
       : 'border-[var(--rule)] bg-[#C8102E] text-white'
-  const apiDotClasses = loading ? '' : health?.model_loaded ? 'animate-pulse' : ''
+  const apiDotClasses = loading ? 'animate-pulse' : health?.model_loaded ? 'animate-pulse' : ''
   const isLight = theme === 'light'
 
   useEffect(() => {
@@ -74,7 +79,10 @@ export function Header() {
           </Link>
 
           <div className="flex shrink-0 items-center gap-1.5">
-            <div className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:inline-flex ${apiClasses}`}>
+            <div
+              title={apiTitle}
+              className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:inline-flex ${apiClasses}`}
+            >
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
               {apiLabel}
             </div>
@@ -138,7 +146,10 @@ export function Header() {
               className="overflow-hidden lg:hidden"
             >
               <div className="mt-2.5 flex flex-col gap-2 border-t border-white/8 pt-2.5">
-                <div className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:hidden ${apiClasses}`}>
+                <div
+                  title={apiTitle}
+                  className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:hidden ${apiClasses}`}
+                >
                   <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
                   {apiLabel}
                 </div>

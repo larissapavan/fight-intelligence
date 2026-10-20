@@ -31,10 +31,20 @@ from typing import Callable
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from scripts import download_fighter_photos, log_predictions, scrape_espn, scrape_fighter_origins, scrape_rankings, scrape_roster_watch, scrape_stat_leaders
+from scripts import download_fighter_photos, log_predictions, scrape_espn, scrape_fighter_origins, scrape_rankings, scrape_roster_watch, scrape_stat_leaders, validate_data
 
 # New fighters are a handful per week; the cap keeps a daily run short even if the origins file is ever behind.
 ORIGINS_DAILY_LIMIT = 300
+
+
+def require_valid() -> None:
+    problems = validate_data.validate()
+    for problem in problems:
+        print(f"[invalid] {problem}")
+    for note in validate_data.warnings():
+        print(f"[warn] {note}")
+    if problems:
+        raise RuntimeError("refreshed data failed validation")
 
 
 def run_step(name: str, step: Callable[[], None]) -> bool:
@@ -101,6 +111,7 @@ def main(argv: list[str] | None = None) -> int:
         results["Record book"] = (
             None if args.skip_records else run_step("Record book (statleaders.ufc.com)", scrape_stat_leaders.main)
         )
+        results["Validate"] = run_step("Validate refreshed data", require_valid)
 
     print("\n=== Summary ===")
     for name, ok in results.items():

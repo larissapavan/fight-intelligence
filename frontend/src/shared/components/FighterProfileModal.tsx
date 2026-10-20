@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
-import { FighterBadges, FlagList, TitleFightBadge } from './FighterBadges'
+import { CurrentChampionSeals, FighterBadges, FlagList, FormerChampionSeals, InterimChampionSeals, TitleFightBadge } from './FighterBadges'
 import { FighterAvatar } from './FighterAvatar'
 import { FighterOrigin } from './FighterOrigin'
 import { LoadingSkeleton } from './LoadingSkeleton'
@@ -113,7 +113,14 @@ export function FighterProfileModal({
               </h2>
               {profile ? <FighterOrigin fighter={profile} className="mt-1" /> : null}
               {profile ? <UfcStatusLine fighter={profile} /> : null}
-              {profile ? <FighterBadges badges={profile.badges} variant="full" className="mt-1.5" /> : null}
+              {profile ? (
+                <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                  <CurrentChampionSeals titles={profile.current_titles} />
+                  <FighterBadges badges={(profile.badges ?? []).filter((badge) => badge !== 'bmf_current')} variant="full" />
+                  <FormerChampionSeals titles={profile.former_titles} />
+                  <InterimChampionSeals titles={profile.interim_titles} />
+                </div>
+              ) : null}
             </div>
           </div>
           <button
@@ -642,9 +649,9 @@ function FightRecordList({
               className={`metric-tile w-full rounded-xl px-3 py-2 text-left ${isSelected ? 'ring-2 ring-[var(--rule)]' : ''}`}
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="flex min-w-0 items-center gap-1.5">
+                <span className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
                   <span className="truncate text-sm font-semibold text-[#FFFFFF]">vs {fight.opponent}</span>
-                  <TitleFightBadge fight={fight} className="shrink-0 !px-1 !text-[9px]" />
+                  <TitleFightBadge fight={fight} className="!px-1 !text-[9px]" />
                 </span>
                 <ResultBadge result={fight.result} />
               </div>

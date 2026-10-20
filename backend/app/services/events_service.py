@@ -9,7 +9,7 @@ import pandas as pd
 
 from src.ufc_predictor.config import RAW_DATA_DIR
 
-from .bmf_service import BMF_FIGHTS_SOURCE_PATH, is_bmf_title_fight
+from .bmf_service import BMF_FIGHTS_SOURCE_PATH, is_announced_bmf_bout, is_bmf_title_fight
 from .catalog_service import NAME_ALIASES_PATH, canonical_name
 
 EVENT_CARDS_SOURCE_PATH = RAW_DATA_DIR / "event_cards.csv"
@@ -233,7 +233,7 @@ def _format_fight(row: pd.Series, champions: dict[str, set[str]] | None = None) 
         "referee": _nullable_string(row.get("referee")),
         "num_rounds": _to_int(row.get("num_rounds")),
         "title_fight": title_fight,
-        "bmf_title": is_bmf_title_fight(_nullable_string(row.get("fight_url"))),
+        "bmf_title": is_bmf_title_fight(_nullable_string(row.get("fight_url"))) or is_announced_bmf_bout(fighter_1, fighter_2),
         "result": _nullable_string(row.get("result")),
         "result_details": _nullable_string(row.get("result_details")),
     }

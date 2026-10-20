@@ -37,6 +37,7 @@ def build_meta_router(get_service) -> APIRouter:
 
     @router.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
+        """Liveness probe used by the frontend while a sleeping host is waking up."""
         service: PredictionService | None = get_service()
         loaded = service is not None
         fighter_count = len(list_fighters(ufc_only=True)) if loaded else 0

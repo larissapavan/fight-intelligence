@@ -18,6 +18,8 @@ class FightRecord(BaseModel):
     num_rounds: int | None = None
     title_fight: bool | None = None
     bmf_title: bool = False
+    interim_title: bool = False
+    interim_title_win: bool = False
     outcome: str | None = None
     result_details: str | None = None
 

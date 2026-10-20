@@ -10,15 +10,23 @@ from __future__ import annotations
 
 import csv
 import io
+import re
 import subprocess
 import sys
+import unicodedata
+from collections import Counter
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 RAW_DIR = Path("data") / "raw"
 MAX_ROW_LOSS = 0.02  # tolerated shrink per file
+# A finished card leaves upcoming_events.csv and is appended to event_cards.csv, so that file can shrink by one card.
+ROW_LOSS = {"upcoming_events.csv": 0.40}
 # Files the refresh rewrites; the others are maintained by hand or by other pipelines.
 CHECKED = ["events.csv", "fights.csv", "event_cards.csv", "fighters.csv", "rankings.csv", "upcoming_events.csv"]
 MIN_ROWS = {"rankings.csv": 100, "fights.csv": 8000, "fighters.csv": 4000, "events.csv": 700}
+MAX_RANK = 15  # the UFC ranks 15 fighters per division (rank 0 is the champion)
+STALE_UPCOMING_DAYS = 3  # a card this far past its date should have turned into results by now
 
 
 def read_rows(text: str) -> list[list[str]]:
@@ -47,9 +55,128 @@ def validate() -> list[str]:
         if old_rows and new_rows and old_rows[0] != new_rows[0]:
             problems.append(f"{name}: header changed {old_rows[0]} -> {new_rows[0]}")
         old_n, new_n = len(old_rows) - 1, len(new_rows) - 1
-        if old_n > 0 and new_n < old_n * (1 - MAX_ROW_LOSS):
+        if old_n > 0 and new_n < old_n * (1 - ROW_LOSS.get(name, MAX_ROW_LOSS)):
             problems.append(f"{name}: rows dropped from {old_n} to {new_n}")
+    return problems + structure_problems()
+
+
+def warnings() -> list[str]:
+    return (
+        [f"champion mismatch: {note}" for note in champion_mismatches()]
+        + [f"no fighter profile: {name}" for name in unmatched_names()]
+        + [f"stale card: {note}" for note in stale_upcoming()]
+    )
+
+
+def read_dicts(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def name_key(value: str) -> str:
+    ascii_text = unicodedata.normalize("NFKD", str(value or "")).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]", "", ascii_text.lower())
+
+
+def rankings_structure_problems() -> list[str]:
+    """Rows that would break the Rankings page: a repeated fighter, a rank outside 0-15, a P4P list with a champion.
+
+    Two fighters may share a rank: the UFC publishes ties (for example two at #6, then #8)."""
+    problems: list[str] = []
+    by_category: dict[str, list[dict[str, str]]] = {}
+    for row in read_dicts(RAW_DIR / "rankings.csv"):
+        by_category.setdefault(row["category"], []).append(row)
+    for category, rows in by_category.items():
+        ranks = [row["rank"].strip() for row in rows]
+        if any(not rank.isdigit() or int(rank) > MAX_RANK for rank in ranks):
+            problems.append(f"rankings.csv: {category} has a rank outside 0-{MAX_RANK}")
+        for fighter, count in Counter(name_key(row["fighter"]) for row in rows).items():
+            if count > 1:
+                problems.append(f"rankings.csv: {category} lists the same fighter twice ({fighter})")
+        if rows[0]["is_p4p"].strip().lower() == "true" and "0" in ranks:
+            problems.append(f"rankings.csv: {category} is pound-for-pound but has a champion row")
     return problems
+
+
+def upcoming_structure_problems() -> list[str]:
+    """Cards that would show a nonsense bout: a fighter against themself or booked twice on the same card."""
+    problems: list[str] = []
+    booked: dict[str, Counter] = {}
+    for row in read_dicts(RAW_DIR / "upcoming_events.csv"):
+        event, one, two = row["event_name"].strip(), row["fighter_1"].strip(), row["fighter_2"].strip()
+        if not (one or two):
+            continue  # an event with no bouts announced yet
+        if not event:
+            problems.append("upcoming_events.csv: a bout has no event name")
+        if not (one and two):
+            problems.append(f"upcoming_events.csv: {event}: a bout is missing a fighter")
+            continue
+        if name_key(one) == name_key(two):
+            problems.append(f"upcoming_events.csv: {event}: {one} is booked against themself")
+        booked.setdefault(event, Counter()).update({name_key(one): 1, name_key(two): 1})
+    for event, counts in booked.items():
+        problems.extend(
+            f"upcoming_events.csv: {event}: a fighter is booked more than once ({key})" for key, n in counts.items() if n > 1
+        )
+    return problems
+
+
+def fighter_record_problems() -> list[str]:
+    bad = []
+    for row in read_dicts(RAW_DIR / "fighters.csv"):
+        for column in ("wins", "losses", "draws"):
+            value = row.get(column, "").strip()
+            if value and not value.isdigit():
+                bad.append(f"{row.get('first_name', '')} {row.get('last_name', '')}".strip())
+                break
+    return [f"fighters.csv: {len(bad)} fighters have a non-numeric record (first: {bad[0]})"] if bad else []
+
+
+def photo_manifest_problems() -> list[str]:
+    """A photo the manifest lists must exist on disk, or the site would show a broken image for that fighter."""
+    missing = [
+        row["name"]
+        for row in read_dicts(RAW_DIR / "fighter_photos.csv")
+        if row.get("local_path", "").strip() and not Path(row["local_path"]).exists()
+    ]
+    return [f"fighter_photos.csv: {len(missing)} listed photos are missing on disk (first: {missing[0]})"] if missing else []
+
+
+def structure_problems() -> list[str]:
+    return rankings_structure_problems() + upcoming_structure_problems() + fighter_record_problems() + photo_manifest_problems()
+
+
+def unmatched_names() -> list[str]:
+    """Ranked fighters and upcoming-card fighters with no profile in fighters.csv (after name_aliases.csv). Warning only:
+    the app still lists them, but their profile and prediction will not open."""
+    known = {name_key(f"{row['first_name']} {row['last_name']}") for row in read_dicts(RAW_DIR / "fighters.csv")}
+    if not known:
+        return []
+    aliases = {name_key(row["alias"]): name_key(row["canonical"]) for row in read_dicts(RAW_DIR / "name_aliases.csv")}
+    wanted: dict[str, str] = {}
+    for row in read_dicts(RAW_DIR / "rankings.csv"):
+        wanted.setdefault(name_key(row["fighter"]), f"{row['fighter']} (ranked, {row['category']})")
+    for row in read_dicts(RAW_DIR / "upcoming_events.csv"):
+        for column in ("fighter_1", "fighter_2"):
+            if row[column].strip():
+                wanted.setdefault(name_key(row[column]), f"{row[column]} ({row['event_name']})")
+    return [label for key, label in wanted.items() if key not in known and aliases.get(key) not in known]
+
+
+def stale_upcoming(today: date | None = None) -> list[str]:
+    """Upcoming cards whose date has passed: ESPN should have settled them into results by now."""
+    cutoff = (today or date.today()) - timedelta(days=STALE_UPCOMING_DAYS)
+    stale = set()
+    for row in read_dicts(RAW_DIR / "upcoming_events.csv"):
+        try:
+            day = datetime.strptime(row["event_date"].strip(), "%B %d, %Y").date()
+        except ValueError:
+            continue
+        if day < cutoff:
+            stale.add(f"{row['event_name']} ({row['event_date']}) is still listed as upcoming")
+    return sorted(stale)
 
 
 def champion_mismatches() -> list[str]:
@@ -90,9 +217,9 @@ def main() -> int:
     problems = validate()
     for problem in problems:
         print(f"[invalid] {problem}")
-    for note in champion_mismatches():
+    for note in warnings():
         # "::warning::" shows up as an annotation on the GitHub Actions run; elsewhere it is just a line of text.
-        print(f"::warning::[champion mismatch] {note}")
+        print(f"::warning::{note}")
     if problems:
         return 1
     print("[ok] data/raw looks consistent")

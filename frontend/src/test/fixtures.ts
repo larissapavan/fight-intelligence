@@ -81,7 +81,30 @@ const performance = {
   round_distribution: { '1': 1, '3': 1 },
   avg_win_time_seconds: 420,
   weight_class_history: ['Lightweight'],
-  last_performances: [],
+  last_performances: [
+    {
+      event_name: 'UFC 900: Alpha vs. Beta',
+      date: '2026-06-01',
+      opponent: 'Beta Two',
+      result: 'win',
+      weight_class: 'Lightweight',
+      method: 'KO/TKO',
+      method_detail: 'Punch',
+      round: 2,
+      time: '3:10',
+    },
+    {
+      event_name: 'UFC 899: Past Card',
+      date: '2026-03-01',
+      opponent: 'Gamma Three',
+      result: 'win',
+      weight_class: 'Lightweight',
+      method: 'Decision',
+      method_detail: null,
+      round: 3,
+      time: '5:00',
+    },
+  ],
   career_timeline: [],
   yearly_trends: [],
 }
@@ -142,6 +165,10 @@ export const routes: Record<string, unknown> = {
   ],
   '/champions': {
     current_champions: [reign],
+    reigns: [
+      { ...reign, champion: 'Omega Nine', title_type: 'undisputed', won_how: null, event: 'UFC 100', date_won: '2020-01-01', days_held: 300, is_current: false, defenses_count: 1, end_reason: 'lost_title_fight', last_fight: undefined },
+      reign,
+    ],
     greatest_champions: [{ champion: 'Alpha One', fighter_url: null, divisions: ['Lightweight'], total_reigns: 1, total_defenses: 2, total_days_as_champion: 400, longest_reign_days: 400, is_current_champion: true }],
     records: [
       { key: 'most_defenses', label: 'Most defenses in a single reign', kind: 'positive', unit: 'defenses', entries: [{ rank: 1, champion: 'Alpha One', fighter_url: null, division: 'Lightweight', value: 2, detail: null }] },
@@ -159,11 +186,26 @@ export const routes: Record<string, unknown> = {
   '/head-to-head': { fighter_a: 'Alpha One', fighter_b: 'Beta Two', fighter_a_wins: 1, fighter_b_wins: 0, no_contests: 0, meetings: [], common_opponents: [], network_path: [], degrees_of_separation: 0 },
   '/fighters/Alpha One/opponents': { fighter: 'Alpha One', opponents: [{ name: 'Beta Two', fights: 1, last_date: '2026-06-01' }] },
   '/fighters/Alpha One/performance': performance,
+  '/predict': {
+    predicted_winner: 'Alpha One',
+    probability: 0.58,
+    fighter_a_probability: 0.58,
+    fighter_b_probability: 0.42,
+    message: 'The model gives Alpha One a slight edge in this matchup.',
+    fighter_a_profile: alpha,
+    fighter_b_profile: beta,
+    comparison_stats: { fighter_a_win_rate: 0.857, fighter_b_win_rate: 0.8, reach_difference: 0, age_difference: 0 },
+    main_factors: [
+      { feature: 'Striking volume', impact: 'Alpha One', explanation: 'Lands more significant strikes per minute.', magnitude: 0.12 },
+      { feature: 'Takedown defense', impact: 'Beta Two', explanation: 'Stops a higher share of takedown attempts.', magnitude: 0.08 },
+      { feature: 'Recent form', impact: 'Alpha One', explanation: 'Coming in off consecutive wins.', magnitude: 0.06 },
+    ],
+  },
 }
 
 /** Look a URL up in the fake API; unknown fighters reuse the shapes above. */
 export function respond(rawUrl: string): unknown {
-  const url = decodeURIComponent(rawUrl)
+  const url = decodeURIComponent(rawUrl).replace(/^https?:\/\/[^/]+/, '').split('?')[0]
   if (url in routes) return routes[url]
   if (url.endsWith('/performance')) return { ...performance, fighter: url.split('/')[2] }
   if (url.endsWith('/opponents')) return { fighter: '', opponents: [] }

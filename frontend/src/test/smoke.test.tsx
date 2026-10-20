@@ -72,6 +72,17 @@ describe('the pages that depend on the API', () => {
     expect(await screen.findByText('Won title')).toBeInTheDocument()
   })
 
+  it('a division keeps its past champions in a collapsed timeline until it is opened', async () => {
+    renderAt('/champions')
+    const toggle = await screen.findByRole('button', { name: /lightweight title history/i }, { timeout: 10000 })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByText('Omega Nine')).not.toBeInTheDocument()
+    await userEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(await screen.findByText('Omega Nine')).toBeInTheDocument()
+    expect(screen.getByText(/1 defense · Lost the belt/)).toBeInTheDocument()
+  })
+
   it('an unknown address shows the not-found page', async () => {
     renderAt('/nothing-here')
     expect(await screen.findByRole('heading', { name: /page not found/i })).toBeInTheDocument()

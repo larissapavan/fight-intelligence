@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, Crown, Sparkles, Trophy } from 'lucide-react'
 
 import { FighterAvatar } from '../shared/components/FighterAvatar'
 import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
+import { badgesForRankings } from '../shared/data/badges'
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
@@ -248,7 +249,7 @@ function RankingRow({
           {profile ? <FlagList fighter={profile} /> : null}
           <span className="min-w-0 truncate">{entry.fighter}</span>
         </p>
-        {profile ? <FighterBadges badges={profile.badges} className="mt-1" /> : null}
+        {profile ? <FighterBadges badges={badgesForRankings(profile.badges)} className="mt-1" /> : null}
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[#CCCCCC]">
           {isChampion ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-[var(--rule)] bg-[#F2C230] px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-[#0E0E0E]">

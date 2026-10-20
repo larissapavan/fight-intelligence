@@ -2,6 +2,7 @@
 # The deployed API only needs backend/requirements.txt (smaller, faster Render builds).
 -r backend/requirements.txt
 requests==2.32.3
+pillow>=10.4
 beautifulsoup4==4.12.3
 matplotlib==3.10.1
 seaborn==0.13.2

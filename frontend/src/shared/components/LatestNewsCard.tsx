@@ -21,18 +21,18 @@ function timeAgo(published: string | null) {
 }
 
 /** The latest UFC headlines (via ESPN) with a link to the UFC's own X profile. Hidden when there is nothing to show. */
-export function LatestNewsCard({ limit = 6 }: { limit?: number }) {
+export function LatestNewsCard({ limit = 6, quiet = false }: { limit?: number; quiet?: boolean }) {
   const { data, loading } = useNews(limit)
 
-  if (loading) return <LoadingSkeleton className="h-[260px]" />
+  if (loading) return <LoadingSkeleton className="h-[180px]" />
   if (!data?.items.length) return null
 
   return (
-    <section className="surface-card rounded-[20px] p-3 sm:p-4" aria-labelledby="latest-news-title">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+    <section className={`rounded-[20px] border border-[var(--line-soft)] bg-[var(--surface-3)] ${quiet ? 'px-3 py-3 sm:px-4' : 'surface-card p-3 sm:p-4'}`} aria-labelledby="latest-news-title">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div className="flex items-center gap-2">
-          <Newspaper className="h-4 w-4 text-[#C8102E]" />
-          <h2 id="latest-news-title" className="broadcast-label text-xs text-[#FFFFFF]">
+          <Newspaper className={`h-3.5 w-3.5 ${quiet ? 'text-[var(--text-muted)]' : 'text-[var(--accent-red)]'}`} />
+          <h2 id="latest-news-title" className={`broadcast-label text-[10px] ${quiet ? 'text-[var(--text-muted)]' : 'text-[var(--text-main)]'}`}>
             Latest from the UFC
           </h2>
         </div>
@@ -47,10 +47,10 @@ export function LatestNewsCard({ limit = 6 }: { limit?: number }) {
         </a>
       </div>
 
-      <ul className="grid gap-2.5 md:grid-cols-2 xl:grid-cols-3">
+      <ul className={`grid gap-2 md:grid-cols-2 xl:grid-cols-3 ${quiet ? 'opacity-90' : ''}`}>
         {data.items.map((item) => (
           <li key={item.url} className="min-w-0">
-            <NewsRow item={item} />
+            <NewsRow item={item} quiet={quiet} />
           </li>
         ))}
       </ul>
@@ -66,7 +66,7 @@ export function LatestNewsCard({ limit = 6 }: { limit?: number }) {
   )
 }
 
-function NewsRow({ item }: { item: NewsItem }) {
+function NewsRow({ item, quiet = false }: { item: NewsItem; quiet?: boolean }) {
   const age = timeAgo(item.published)
 
   return (
@@ -74,13 +74,13 @@ function NewsRow({ item }: { item: NewsItem }) {
       href={item.url}
       target="_blank"
       rel="noreferrer"
-      className="metric-tile group flex h-full min-w-0 gap-3 p-2.5 transition hover:!bg-[#F2C230]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]"
+      className="group flex h-full min-w-0 gap-2.5 border border-[var(--line-soft)] bg-[var(--card-bg)] p-2 transition hover:border-[var(--accent-red)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
     >
-      <div className="relative h-[72px] w-[104px] shrink-0 overflow-hidden border-2 border-[var(--rule)] bg-[var(--surface-3)]">
+      <div className={`relative shrink-0 overflow-hidden border border-[var(--rule)] bg-[var(--surface-3)] ${quiet ? 'h-12 w-16' : 'h-[72px] w-[104px]'}`}>
         {item.image_url ? (
           <img src={item.image_url} alt="" loading="lazy" referrerPolicy="no-referrer" className="h-full w-full object-cover" />
         ) : (
-          <Newspaper className="m-auto mt-6 h-6 w-6 text-[#999999]" />
+          <Newspaper className={`m-auto text-[var(--text-muted)] ${quiet ? 'mt-3 h-4 w-4' : 'mt-6 h-6 w-6'}`} />
         )}
         {item.kind === 'video' ? (
           <span className="absolute bottom-0 left-0 inline-flex items-center gap-1 bg-[#C8102E] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
@@ -91,8 +91,8 @@ function NewsRow({ item }: { item: NewsItem }) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-3 text-[15px] font-semibold leading-snug text-[#FFFFFF]">{item.title}</p>
-        {age ? <p className="theme-muted mt-1 text-xs font-semibold">{age}</p> : null}
+        <p className={`line-clamp-2 font-semibold leading-snug text-[var(--text-main)] ${quiet ? 'text-xs' : 'text-sm'}`}>{item.title}</p>
+        {age ? <p className="mt-1 text-[11px] text-[var(--text-muted)]">{age}</p> : null}
       </div>
     </a>
   )

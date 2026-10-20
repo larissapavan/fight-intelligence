@@ -168,7 +168,7 @@ class PredictionService:
         contributions["feature"] = contributions["feature"].map(pretty_feature_name)
         top_contributions = contributions.reindex(
             contributions["shap_value"].abs().sort_values(ascending=False).index
-        ).head(5)
+        ).head(6)
 
         factors: list[dict] = []
         for _, row in top_contributions.iterrows():
