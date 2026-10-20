@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pandas as pd
 
 try:
@@ -22,7 +23,22 @@ logger = logging.getLogger(__name__)
 BACKEND_MODEL_PATH = Path(__file__).resolve().parents[2] / "model" / "model.pkl"
 
 
+# What a fighter-owned column measures, for the columns pretty_feature_name has no hand-written label for.
+OWNED_FEATURE_LABELS = {
+    "age": "age",
+    "height_cm": "height",
+    "reach_cm": "reach",
+    "wins": "wins",
+    "losses": "losses",
+    "sig_str_acc": "striking accuracy",
+    "takedown_acc": "takedown accuracy",
+    "win_rate": "win rate",
+}
+
+
 def pretty_feature_name(feature_name: str) -> str:
+    """A factor's label. There is no red or blue corner in a prediction any more (both orders are averaged), so the
+    columns that belong to one fighter read "Fighter A ..." (the first one asked about) and "Fighter B ..."."""
     labels = {
         "age_diff": "Age difference",
         "height_cm_diff": "Height difference",
@@ -42,7 +58,38 @@ def pretty_feature_name(feature_name: str) -> str:
         "red_takedown_acc": "Fighter A takedown accuracy",
         "blue_takedown_acc": "Fighter B takedown accuracy",
     }
-    return labels.get(feature_name, feature_name.replace("_", " ").title())
+    if feature_name in labels:
+        return labels[feature_name]
+    for prefix, owner in (("red_", "Fighter A"), ("blue_", "Fighter B")):
+        if feature_name.startswith(prefix):
+            rest = feature_name[len(prefix):]
+            if rest.startswith("stance_"):
+                return f"{owner} stance: {rest[len('stance_'):]}"
+            return f"{owner} {OWNED_FEATURE_LABELS.get(rest, rest.replace('_', ' '))}"
+    return feature_name.replace("_", " ").title()
+
+
+# Two fighters this close to 50% are a coin flip; the pick then goes to the first name alphabetically, so it does not
+# depend on which fighter was typed first.
+TIE_TOLERANCE = 1e-12
+
+
+def _counterpart(column: str) -> str:
+    """The column that holds the same fighter's value once the corners are swapped.
+
+    red_X and blue_X trade places. Differences, sums, same_stance and the fight date are the same column in both
+    orders (a difference only changes sign), so they map to themselves."""
+    if column.startswith("red_"):
+        return "blue_" + column[len("red_"):]
+    if column.startswith("blue_"):
+        return "red_" + column[len("blue_"):]
+    return column
+
+
+def _first_wins(probability: float, name_first: str, name_second: str) -> bool:
+    if abs(probability - 0.5) < TIE_TOLERANCE:
+        return name_first.lower() <= name_second.lower()
+    return probability > 0.5
 
 
 class PredictionService:
@@ -60,6 +107,8 @@ class PredictionService:
         self.baseline_metrics: dict = bundle.get("baseline_metrics", {})
         self.shap_background = bundle.get("shap_background")
         self.shap_explainer = self._build_shap_explainer()
+        # Position of each feature's counterpart under a corner swap (see _counterpart).
+        self._counterpart_index = [self.feature_columns.index(_counterpart(column)) for column in self.feature_columns]
 
     def _build_shap_explainer(self):
         if shap is None:
@@ -104,12 +153,24 @@ class PredictionService:
         )
         return align_feature_columns(inference_df, self.feature_columns)
 
+    def _both_orders(self, fighter_a: dict, fighter_b: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+        return self._features_for(fighter_a, fighter_b), self._features_for(fighter_b, fighter_a)
+
+    def _symmetric_probability(self, x_ab: pd.DataFrame, x_ba: pd.DataFrame) -> float:
+        """Chance that the first fighter wins, the same whichever fighter is typed first.
+
+        The model learned that the red corner wins more often (56.4% of its training fights), so asking it about
+        (A, B) and (B, A) gives answers that do not add up to 100%. Averaging "A as red wins" with "B as red loses"
+        cancels that corner bias: p(A, B) + p(B, A) is exactly 1."""
+        probabilities = self.model.predict_proba(pd.concat([x_ab, x_ba], ignore_index=True))[:, 1]
+        return (float(probabilities[0]) + 1.0 - float(probabilities[1])) / 2.0
+
     def predict_pick(self, fighter_a_name: str, fighter_b_name: str) -> dict:
         """Just the pick and its probability (no SHAP), for lists that show many fights at once."""
         fighter_a = get_fighter_profile(fighter_a_name)
         fighter_b = get_fighter_profile(fighter_b_name)
-        fighter_a_probability = float(self.model.predict_proba(self._features_for(fighter_a, fighter_b))[0, 1])
-        winner_is_a = fighter_a_probability >= 0.5
+        fighter_a_probability = self._symmetric_probability(*self._both_orders(fighter_a, fighter_b))
+        winner_is_a = _first_wins(fighter_a_probability, fighter_a["name"], fighter_b["name"])
         return {
             "predicted_winner": fighter_a["name"] if winner_is_a else fighter_b["name"],
             "probability": max(fighter_a_probability, 1.0 - fighter_a_probability),
@@ -120,15 +181,17 @@ class PredictionService:
         fighter_a = get_fighter_profile(fighter_a_name)
         fighter_b = get_fighter_profile(fighter_b_name)
 
-        X = self._features_for(fighter_a, fighter_b)
-        fighter_a_probability = float(self.model.predict_proba(X)[0, 1])
+        x_ab, x_ba = self._both_orders(fighter_a, fighter_b)
+        fighter_a_probability = self._symmetric_probability(x_ab, x_ba)
         fighter_b_probability = 1.0 - fighter_a_probability
         predicted_winner = (
-            fighter_a["name"] if fighter_a_probability >= fighter_b_probability else fighter_b["name"]
+            fighter_a["name"]
+            if _first_wins(fighter_a_probability, fighter_a["name"], fighter_b["name"])
+            else fighter_b["name"]
         )
         probability = max(fighter_a_probability, fighter_b_probability)
 
-        main_factors = self._build_main_factors(X, fighter_a["name"], fighter_b["name"])
+        main_factors = self._build_main_factors(x_ab, x_ba, fighter_a["name"], fighter_b["name"])
 
         return {
             "predicted_winner": predicted_winner,
@@ -153,18 +216,29 @@ class PredictionService:
             "limitations": MODEL_LIMITATIONS,
         }
 
-    def _build_main_factors(self, features: pd.DataFrame, fighter_a_name: str, fighter_b_name: str) -> list[dict]:
+    def _combined_attributions(self, x_ab: pd.DataFrame, x_ba: pd.DataFrame) -> np.ndarray | None:
+        """Each feature's push toward the first fighter, from both orders (one value per feature column).
+
+        SHAP explains p(A as red) from (A, B) and p(B as red) from (B, A). A feature that belongs to a fighter sits in
+        a different column in each order, so the two explanations are lined up through _counterpart, and the second
+        one is negated because it points toward B. The attributions then add up to p(A) - 0.5: the baseline is a
+        coin flip, not the red-corner win rate the raw model starts from. They add up only approximately, as far as
+        SHAP itself does: its probability output is off by up to about 1 percentage point per order."""
         if self.shap_explainer is None:
+            return None
+        imputed = self.model.named_steps["imputer"].transform(pd.concat([x_ab, x_ba], ignore_index=True))
+        values = self.shap_explainer(imputed).values
+        return 0.5 * (values[0] - values[1][self._counterpart_index])
+
+    def _build_main_factors(
+        self, x_ab: pd.DataFrame, x_ba: pd.DataFrame, fighter_a_name: str, fighter_b_name: str
+    ) -> list[dict]:
+        """The six features that moved the pick the most, explained with the same two-order average as the probability."""
+        combined = self._combined_attributions(x_ab, x_ba)
+        if combined is None:
             return []
 
-        imputed_features = self.model.named_steps["imputer"].transform(features)
-        shap_values = self.shap_explainer(imputed_features)
-        contributions = pd.DataFrame(
-            {
-                "feature": self.feature_columns,
-                "shap_value": shap_values.values[0],
-            }
-        )
+        contributions = pd.DataFrame({"feature": self.feature_columns, "shap_value": combined})
         contributions["feature"] = contributions["feature"].map(pretty_feature_name)
         top_contributions = contributions.reindex(
             contributions["shap_value"].abs().sort_values(ascending=False).index
