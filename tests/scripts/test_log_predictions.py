@@ -75,3 +75,48 @@ def test_resolve_marks_picks_right_wrong_or_neither(log_file, monkeypatch):
     assert log.loc["Fighter Five", "correct"] == "n/a"
     assert log.loc["Fighter Seven", "correct"] == ""  # no result yet: still pending
     assert log_predictions.resolve(today="2026-11-09") == 0  # settled fights are not settled again
+
+
+def log_rows(log_file):
+    rows = []
+    for key, event_date, correct, winner in (
+        ("future-open", "2026-11-07", "", ""),
+        ("future-open-2", "2026-12-05", "", ""),
+        ("already-happened", "2026-10-17", "", ""),  # the event took place, its result is just not in yet
+        ("settled", "2026-10-10", "True", "Fighter One"),
+        ("today", "2026-10-20", "", ""),  # fights may be under way: not touched
+    ):
+        rows.append(
+            {
+                "fight_key": key, "event_name": "UFC", "event_date": event_date, "fighter_1": "Fighter One",
+                "fighter_2": "Fighter Two", "prob_fighter_1": "0.9500", "predicted_winner": "Fighter Two",
+                "confidence": "0.9500", "logged_at": "2026-10-15", "winner": winner, "correct": correct,
+                "resolved_at": "2026-10-11" if correct else "",
+            }
+        )
+    track_record_service.save_log(pd.DataFrame(rows, columns=track_record_service.LOG_COLUMNS))
+
+
+def test_refresh_unresolved_re_predicts_only_fights_still_to_come(log_file):
+    log_rows(log_file)
+
+    assert log_predictions.refresh_unresolved(FakeService(), today="2026-10-20") == 2
+
+    log = track_record_service.load_log().set_index("fight_key")
+    for key in ("future-open", "future-open-2"):  # re-made with today's model, before the fight
+        assert (log.at[key, "predicted_winner"], log.at[key, "confidence"], log.at[key, "logged_at"]) == ("Fighter One", "0.7000", "2026-10-20")
+        assert log.at[key, "prob_fighter_1"] == "0.7000"
+    for key in ("already-happened", "settled", "today"):  # exactly as they were shown
+        assert (log.at[key, "predicted_winner"], log.at[key, "confidence"], log.at[key, "logged_at"]) == ("Fighter Two", "0.9500", "2026-10-15")
+    assert log.at["settled", "correct"] == "True"
+
+
+def test_refresh_unresolved_keeps_the_pick_of_a_fighter_who_left_the_catalog(log_file):
+    log_rows(log_file)
+    log = track_record_service.load_log()
+    log.loc[log["fight_key"] == "future-open", "fighter_2"] = "Unknown"
+    track_record_service.save_log(log)
+
+    assert log_predictions.refresh_unresolved(FakeService(), today="2026-10-20") == 1
+    kept = track_record_service.load_log().set_index("fight_key").loc["future-open"]
+    assert (kept["predicted_winner"], kept["logged_at"]) == ("Fighter Two", "2026-10-15")

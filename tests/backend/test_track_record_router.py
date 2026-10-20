@@ -61,3 +61,22 @@ def test_accuracy_bands_and_misses_come_from_the_settled_fights(client, fake_log
 
 def test_track_record_is_cacheable(client):
     assert "max-age" in client.get("/track-record").headers.get("cache-control", "")
+
+
+def test_picks_saved_before_the_corrected_model_are_flagged(client, fake_log):
+    old = row("old", 0.9, "")
+    old["logged_at"] = "2026-10-15"
+    new = row("new", 0.6, "")
+    new["logged_at"] = service.SYMMETRIC_MODEL_SINCE
+    service.save_log(pd.DataFrame([old, new], columns=service.LOG_COLUMNS))
+
+    body = client.get("/track-record").json()
+    assert body["earlier_model_picks"] == 1
+    assert "1 of these picks were saved before 2026-10-20" in body["earlier_model_note"]
+    assert "different answer depending on which fighter was listed first" in body["earlier_model_note"]
+
+
+def test_no_note_when_every_pick_comes_from_the_current_model(client, fake_log):
+    service.save_log(pd.DataFrame([row("new", 0.6, "")], columns=service.LOG_COLUMNS))  # logged 2026-11-01
+    body = client.get("/track-record").json()
+    assert body["earlier_model_picks"] == 0 and body["earlier_model_note"] is None

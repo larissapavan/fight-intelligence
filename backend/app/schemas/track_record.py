@@ -32,6 +32,8 @@ class TrackRecordResponse(BaseModel):
     accuracy: float | None = None
     average_confidence: float | None = None
     pending: int
+    earlier_model_picks: int = 0
+    earlier_model_note: str | None = None
     next_event: NextEvent | None = None
     bands: list[ConfidenceBand]
     recent: list[TrackedFight]

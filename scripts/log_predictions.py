@@ -2,7 +2,8 @@
 
 Two steps, run around the ESPN refresh in scripts.update_all:
     log_upcoming()  before it, while the cards are still "upcoming": the pick and confidence are stored with the stats
-                    as they are that day. A fight already in the log is never re-predicted.
+                    as they are that day. A fight already in the log is never re-predicted, unless the model itself
+                    changed and refresh_unresolved() is run by hand.
     resolve()       after it, when finished fights have a winner: marks each logged pick right or wrong.
 
 Nothing is back-filled. Predicting an old fight with today's career numbers would not be a prediction.
@@ -10,6 +11,7 @@ Nothing is back-filled. Predicting an old fight with today's career numbers woul
 Usage (from the repo root):
     python -m scripts.log_predictions            # log, then resolve
     python -m scripts.log_predictions --resolve-only
+    python -m scripts.log_predictions --refresh-unresolved   # after a model change: re-pick fights still to come
 """
 
 from __future__ import annotations
@@ -83,6 +85,37 @@ def log_upcoming(service=None, today: str | None = None) -> int:
     return len(added)
 
 
+def refresh_unresolved(service=None, today: str | None = None) -> int:
+    """Re-predict the saved picks of fights that have not happened yet, after the model changed. Returns how many.
+
+    Only fights on a later date than today and without a result are touched. A pick for an event that already took
+    place stays exactly as it was shown, and so does every settled one: the log records what the site said at the time,
+    not what a newer model would have said. A re-made pick is still made before its fight, so it stays a real prediction."""
+    if service is None:
+        from backend.app.services.prediction_service import PredictionService
+
+        service = PredictionService()
+    today = today or date.today().isoformat()
+    log = load_log()
+
+    refreshed = 0
+    for index in log.index[(log["correct"] == "") & (log["event_date"] > today)]:
+        try:
+            result = service.predict_pick(log.at[index, "fighter_1"], log.at[index, "fighter_2"])
+        except KeyError:
+            continue  # no longer in the catalog: leave the saved pick as it is
+        log.loc[index, ["prob_fighter_1", "predicted_winner", "confidence", "logged_at"]] = [
+            f"{result['fighter_a_probability']:.4f}",
+            result["predicted_winner"],
+            f"{result['probability']:.4f}",
+            today,
+        ]
+        refreshed += 1
+    if refreshed:
+        save_log(log)
+    return refreshed
+
+
 def resolve(today: str | None = None) -> int:
     """Settle logged fights whose result is now in the fight history. Returns how many were settled."""
     today = today or date.today().isoformat()
@@ -122,8 +155,16 @@ def resolve(today: str | None = None) -> int:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--resolve-only", action="store_true")
+    parser.add_argument(
+        "--refresh-unresolved",
+        action="store_true",
+        help="re-predict the saved picks of fights still to come (run once after a model change); nothing else is touched",
+    )
     args = parser.parse_args(argv)
 
+    if args.refresh_unresolved:
+        print(f"[info] predictions refreshed: {refresh_unresolved()}")
+        return
     if not args.resolve_only:
         print(f"[info] predictions logged: {log_upcoming()}")
     print(f"[info] predictions settled: {resolve()}")

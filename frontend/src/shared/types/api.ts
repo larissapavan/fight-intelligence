@@ -382,6 +382,9 @@ export interface TrackRecord {
   accuracy: number | null
   average_confidence: number | null
   pending: number
+  /** Picks saved by the first version of the model, before the two corners were averaged. */
+  earlier_model_picks?: number
+  earlier_model_note?: string | null
   next_event: { name: string; date: string } | null
   bands: ConfidenceBand[]
   recent: TrackedFight[]

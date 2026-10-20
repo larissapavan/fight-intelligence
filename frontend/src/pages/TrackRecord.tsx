@@ -62,6 +62,7 @@ export function TrackRecord() {
               <li>After the event the result is matched to the saved pick. Draws and no contests count for neither side.</li>
               <li>The held-out test number comes from fights the model never saw in training, but it used career stats as they stand today. Live accuracy is the fairer test, and it only counts fights predicted in advance.</li>
               <li>A few dozen fights is a small sample. Read the live number as a trend, not a verdict.</li>
+              {data.earlier_model_note ? <li>{data.earlier_model_note}</li> : null}
             </ul>
           </section>
         </>

@@ -27,6 +27,9 @@ LOG_COLUMNS = [
     "resolved_at",
 ]
 CONFIDENCE_BANDS = [(0.5, 0.6, "50-60%"), (0.6, 0.7, "60-70%"), (0.7, 0.8, "70-80%"), (0.8, 1.01, "80%+")]
+# Picks saved before this day came from the first version of the model, which answered differently depending on which
+# fighter was listed first. From this day on the pick is the average of both orders.
+SYMMETRIC_MODEL_SINCE = "2026-10-20"
 RECENT_LIMIT = 15
 MISS_LIMIT = 5
 
@@ -61,6 +64,8 @@ def _build(log: pd.DataFrame) -> dict:
             "accuracy": None,
             "average_confidence": None,
             "pending": 0,
+            "earlier_model_picks": 0,
+            "earlier_model_note": None,
             "next_event": None,
             "bands": [],
             "recent": [],
@@ -97,6 +102,7 @@ def _build(log: pd.DataFrame) -> dict:
     recent = [_row(row) for _, row in ordered.head(RECENT_LIMIT).iterrows()]
     misses = resolved[~resolved["correct_flag"]].sort_values("confidence", ascending=False)
 
+    earlier = int((log["logged_at"] < SYMMETRIC_MODEL_SINCE).sum())
     return {
         "tracking_since": log["logged_at"].min() or None,
         "logged": int(len(log)),
@@ -105,11 +111,23 @@ def _build(log: pd.DataFrame) -> dict:
         "accuracy": float(resolved["correct_flag"].mean()) if len(resolved) else None,
         "average_confidence": float(resolved["confidence"].mean()) if len(resolved) else None,
         "pending": int(len(pending)),
+        "earlier_model_picks": earlier,
+        "earlier_model_note": _earlier_model_note(earlier),
         "next_event": next_event,
         "bands": bands,
         "recent": recent,
         "biggest_misses": [_row(row) for _, row in misses.head(MISS_LIMIT).iterrows()],
     }
+
+
+def _earlier_model_note(count: int) -> str | None:
+    if not count:
+        return None
+    return (
+        f"{count} of these picks were saved before {SYMMETRIC_MODEL_SINCE}, by an earlier version of the model that gave "
+        "a different answer depending on which fighter was listed first. They are kept exactly as they were shown. "
+        "Picks saved from that day on use the corrected version."
+    )
 
 
 def _row(row: pd.Series) -> dict:

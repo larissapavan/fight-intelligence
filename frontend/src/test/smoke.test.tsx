@@ -83,6 +83,11 @@ describe('the pages that depend on the API', () => {
     expect(screen.getByText(/1 defense · Lost the belt/)).toBeInTheDocument()
   })
 
+  it('the track record says which picks came from the earlier version of the model', async () => {
+    renderAt('/track-record')
+    expect(await screen.findByText(/saved before 2026-10-20, by an earlier version of the model/i, undefined, { timeout: 10000 })).toBeInTheDocument()
+  })
+
   it('an unknown address shows the not-found page', async () => {
     renderAt('/nothing-here')
     expect(await screen.findByRole('heading', { name: /page not found/i })).toBeInTheDocument()

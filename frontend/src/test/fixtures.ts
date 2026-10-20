@@ -182,7 +182,7 @@ export const routes: Record<string, unknown> = {
     categories: [{ name: 'Fights', stats: [{ key: 'TotalFights', title: 'Total Fights', note: null, unit: 'Fights', leaders: [{ rank: 1, fighter: 'Alpha One', value: '30', profile_name: 'Alpha One', ufc_url: null }] }] }],
   },
   '/news': { source_name: 'ESPN', source_url: 'https://www.espn.com/mma/', items: [{ title: 'Alpha One retains the title', summary: null, url: 'https://www.espn.com/ufc/story/1', image_url: null, published: '2026-10-15T10:00:00Z', kind: 'story' }] },
-  '/track-record': { tracking_since: '2026-10-15', logged: 4, resolved: 0, correct: 0, accuracy: null, average_confidence: null, pending: 4, next_event: { name: 'UFC 900: Alpha vs. Beta', date: '2030-01-01' }, bands: [], recent: [], biggest_misses: [] },
+  '/track-record': { tracking_since: '2026-10-15', logged: 4, resolved: 0, correct: 0, accuracy: null, average_confidence: null, pending: 4, earlier_model_picks: 1, earlier_model_note: '1 of these picks were saved before 2026-10-20, by an earlier version of the model.', next_event: { name: 'UFC 900: Alpha vs. Beta', date: '2030-01-01' }, bands: [], recent: [], biggest_misses: [] },
   '/head-to-head': { fighter_a: 'Alpha One', fighter_b: 'Beta Two', fighter_a_wins: 1, fighter_b_wins: 0, no_contests: 0, meetings: [], common_opponents: [], network_path: [], degrees_of_separation: 0 },
   '/fighters/Alpha One/opponents': { fighter: 'Alpha One', opponents: [{ name: 'Beta Two', fights: 1, last_date: '2026-06-01' }] },
   '/fighters/Alpha One/performance': performance,
