@@ -27,6 +27,11 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Refresh ESPN data, UFC rankings and fighter photos
+        id: refresh
+        # One flaky source must not cost the whole day. update_all keeps going after a failing step and leaves that
+        # step's files untouched, so whatever did refresh is still validated and committed below. The run is still
+        # marked as failed at the end (last step) so the problem is not hidden.
+        continue-on-error: true
         # Photos are small WebP files (about 10 KB each). Only new fighters and active ones still without a photo are
         # fetched, and validate_data fails the run if the manifest lists a photo that is not on disk.
         run: python -m scripts.update_all
@@ -48,3 +53,9 @@ jobs:
           git add data/raw frontend/public/fighter-photos
           git commit -m "chore(data): daily refresh $(date -u +%F)"
           git push
+
+      - name: Report a failed refresh step
+        if: steps.refresh.outcome == 'failure'
+        run: |
+          echo "::error::A refresh step failed. See the Summary at the end of the refresh log. The steps that worked were validated and committed."
+          exit 1
