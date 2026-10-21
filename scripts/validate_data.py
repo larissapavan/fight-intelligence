@@ -23,8 +23,10 @@ MAX_ROW_LOSS = 0.02  # tolerated shrink per file
 # A finished card leaves upcoming_events.csv and is appended to event_cards.csv, so that file can shrink by one card.
 ROW_LOSS = {"upcoming_events.csv": 0.40}
 # Files the refresh rewrites; the others are maintained by hand or by other pipelines.
-CHECKED = ["events.csv", "fights.csv", "event_cards.csv", "fighters.csv", "rankings.csv", "upcoming_events.csv"]
-MIN_ROWS = {"rankings.csv": 100, "fights.csv": 8000, "fighters.csv": 4000, "events.csv": 700}
+CHECKED = ["events.csv", "fights.csv", "event_cards.csv", "fighters.csv", "rankings.csv", "upcoming_events.csv", "fight_stats.csv"]
+# fight_stats.csv has two rows (one per fighter) for every fight ESPN has numbers for, about 17,000 in all.
+MIN_ROWS = {"rankings.csv": 100, "fights.csv": 8000, "fighters.csv": 4000, "events.csv": 700, "fight_stats.csv": 10000}
+MAX_CONTRADICTORY_SHARE = 0.005  # share of fight_stats.csv rows that may have more landed than attempted (it is 0.11% today)
 MAX_RANK = 15  # the UFC ranks 15 fighters per division (rank 0 is the champion)
 STALE_UPCOMING_DAYS = 3  # a card this far past its date should have turned into results by now
 
@@ -144,8 +146,37 @@ def photo_manifest_problems() -> list[str]:
     return [f"fighter_photos.csv: {len(missing)} listed photos are missing on disk (first: {missing[0]})"] if missing else []
 
 
+def fight_stats_problems() -> list[str]:
+    """Per-fight statistics that would feed the model nonsense: a fight without both sides, more landed than attempted,
+    a negative count, or a fight that is not in event_cards.csv."""
+    rows = read_dicts(RAW_DIR / "fight_stats.csv")
+    if not rows:
+        return []
+    known = {row["fight_url"] for row in read_dicts(RAW_DIR / "event_cards.csv")}
+    sides: dict[str, list[str]] = {}
+    for row in rows:
+        sides.setdefault(row["fight_url"], []).append(name_key(row["fighter"]))
+    problems = [f"fight_stats.csv: {url} has {len(who)} rows, not one per fighter" for url, who in sides.items() if len(who) != 2 or who[0] == who[1]]
+    problems += [f"fight_stats.csv: {url} is not a fight in event_cards.csv" for url in sides if known and url not in known]
+    contradictory = 0
+    for row in rows:
+        try:
+            numbers = {k: float(v or 0) for k, v in row.items() if k not in {"fight_url", "event_date", "fighter", "opponent", "espn_event_id", "espn_competition_id", "espn_athlete_id"}}
+        except ValueError:
+            problems.append(f"fight_stats.csv: {row['fight_url']} has a number that is not a number")
+            continue
+        if any(v < 0 for v in numbers.values()):
+            problems.append(f"fight_stats.csv: {row['fight_url']} ({row['fighter']}) has a negative number")
+        contradictory += numbers.get("sig_landed", 0) > numbers.get("sig_attempted", 0) or numbers.get("td_landed", 0) > numbers.get("td_attempted", 0)
+    # ESPN has a handful of fights with strikes landed but none attempted (the training code skips them). More than that
+    # means the numbers changed meaning.
+    if contradictory > max(MAX_CONTRADICTORY_SHARE * len(rows), 1):
+        problems.append(f"fight_stats.csv: {contradictory} of {len(rows)} rows have more landed than attempted (the source has a few; this is too many)")
+    return problems[:20]  # enough to see what is wrong
+
+
 def structure_problems() -> list[str]:
-    return rankings_structure_problems() + upcoming_structure_problems() + fighter_record_problems() + photo_manifest_problems()
+    return rankings_structure_problems() + upcoming_structure_problems() + fighter_record_problems() + photo_manifest_problems() + fight_stats_problems()
 
 
 def unmatched_names() -> list[str]:

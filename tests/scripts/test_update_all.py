@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 
 from scripts import update_all
@@ -7,6 +9,7 @@ from scripts import update_all
 def calls(monkeypatch):
     log: list[tuple[str, object]] = []
     monkeypatch.setattr(update_all.scrape_espn, "main", lambda argv=None: log.append(("espn", list(argv or []))))
+    monkeypatch.setattr(update_all.scrape_fight_stats, "main", lambda argv=None: log.append(("stats", list(argv or []))))
     monkeypatch.setattr(update_all.scrape_rankings, "main", lambda: log.append(("rankings", None)))
     monkeypatch.setattr(update_all.download_fighter_photos, "main", lambda argv=None: log.append(("photos", list(argv or []))))
     monkeypatch.setattr(update_all.scrape_fighter_origins, "main", lambda argv=None: log.append(("origins", list(argv or []))))
@@ -19,7 +22,7 @@ def calls(monkeypatch):
 
 def test_logs_picks_before_espn_and_settles_them_after(calls):
     assert update_all.main([]) == 0
-    assert [name for name, _ in calls] == ["log", "espn", "settle", "rankings", "photos", "origins", "roster", "records"]
+    assert [name for name, _ in calls] == ["log", "espn", "settle", "stats", "rankings", "photos", "origins", "roster", "records"]
 
 
 def test_dry_run_only_previews_the_espn_step(calls):
@@ -28,7 +31,7 @@ def test_dry_run_only_previews_the_espn_step(calls):
 
 
 def test_skip_flags_are_respected(calls):
-    update_all.main(["--skip-espn", "--skip-photos", "--skip-origins", "--skip-roster", "--skip-records", "--skip-predictions"])
+    update_all.main(["--skip-espn", "--skip-photos", "--skip-origins", "--skip-roster", "--skip-records", "--skip-predictions", "--skip-stats"])
     assert [name for name, _ in calls] == ["rankings"]
 
 
@@ -38,5 +41,16 @@ def test_a_failing_step_does_not_stop_the_others_and_sets_exit_status(monkeypatc
 
     monkeypatch.setattr(update_all.scrape_espn, "main", boom)
     assert update_all.main([]) == 1
-    assert [name for name, _ in calls] == ["log", "settle", "rankings", "photos", "origins", "roster", "records"]
+    assert [name for name, _ in calls] == ["log", "settle", "stats", "rankings", "photos", "origins", "roster", "records"]
     assert "FAILED" in capsys.readouterr().out
+
+
+def test_the_daily_update_collects_statistics_only_for_the_last_month(calls):
+    update_all.main(["--skip-espn", "--skip-rankings", "--skip-photos", "--skip-origins", "--skip-roster", "--skip-records", "--skip-predictions"])
+    [(name, args)] = [c for c in calls if c[0] == "stats"]
+    assert args[0] == "--since" and (date.today() - date.fromisoformat(args[1])).days == update_all.FIGHT_STATS_DAYS
+
+
+def test_a_dry_run_collects_no_statistics(calls):
+    update_all.main(["--dry-run"])
+    assert "stats" not in [name for name, _ in calls]

@@ -16,3 +16,6 @@ backend/__pycache__/
 reports/
 project_zip/
 *.zip
+
+# The pre-fight candidate model: `python -m src.ufc_predictor.train_prefight` rebuilds it in seconds
+models/candidate/

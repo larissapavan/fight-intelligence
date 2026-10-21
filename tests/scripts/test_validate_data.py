@@ -121,3 +121,42 @@ def test_a_photo_listed_in_the_manifest_must_exist_on_disk(tmp_path, monkeypatch
 
     write(tmp_path / "fighter_photos.csv", header + f"A One,espn,ESPN,,,{present},2026-10-20\nGhost,espn,ESPN,,,{tmp_path / 'gone.webp'},2026-10-20\n")
     assert validate_data.photo_manifest_problems() == ["fighter_photos.csv: 1 listed photos are missing on disk (first: Ghost)"]
+
+
+STATS_HEADER = "fight_url,event_date,fighter,opponent,espn_event_id,espn_competition_id,espn_athlete_id,sig_landed,sig_attempted,td_landed,td_attempted\n"
+
+
+def test_fight_statistics_must_be_two_sensible_rows_per_fight(tmp_path, monkeypatch):
+    monkeypatch.setattr(validate_data, "RAW_DIR", tmp_path)
+    write(tmp_path / "event_cards.csv", "fight_url,fighter_1,fighter_2\nu1,Ann One,Bea Two\nu2,Cat Three,Dee Four\n")
+    write(tmp_path / "fight_stats.csv", STATS_HEADER + "u1,d,Ann One,Bea Two,1,1,1,20,50,1,3\nu1,d,Bea Two,Ann One,1,1,2,10,40,0,2\n")
+    assert validate_data.fight_stats_problems() == []
+
+    write(
+        tmp_path / "fight_stats.csv",
+        STATS_HEADER
+        + "u1,d,Ann One,Bea Two,1,1,1,20,50,1,3\n"  # only one side of u1
+        + "u2,d,Cat Three,Dee Four,1,1,1,60,50,0,0\nu2,d,Dee Four,Cat Three,1,1,2,45,40,0,0\n"  # more landed than attempted, on both sides
+        + "ghost,d,Eve Five,Fay Six,1,1,1,1,2,0,0\nghost,d,Fay Six,Eve Five,1,1,2,1,2,0,0\n",  # not in event_cards.csv
+    )
+    problems = validate_data.fight_stats_problems()
+    assert any("u1 has 1 rows" in p for p in problems)
+    assert any("more landed than attempted" in p for p in problems)
+    assert any("ghost is not a fight" in p for p in problems)
+
+
+def test_no_statistics_file_is_not_a_problem(tmp_path, monkeypatch):
+    monkeypatch.setattr(validate_data, "RAW_DIR", tmp_path)
+    assert validate_data.fight_stats_problems() == []
+
+
+def test_a_handful_of_odd_rows_from_the_source_do_not_block_the_update_but_a_pattern_does(tmp_path, monkeypatch):
+    monkeypatch.setattr(validate_data, "RAW_DIR", tmp_path)
+    good = [f"u{i},d,A{i} X,B{i} Y,1,1,1,20,50,1,3\nu{i},d,B{i} Y,A{i} X,1,1,2,10,40,0,2\n" for i in range(600)]
+    odd = "uodd,d,Odd One,Odd Two,1,1,1,13,0,0,0\nuodd,d,Odd Two,Odd One,1,1,2,10,40,0,2\n"  # landed but none attempted
+    write(tmp_path / "fight_stats.csv", STATS_HEADER + "".join(good) + odd)
+    assert validate_data.fight_stats_problems() == []  # one odd row in 1,200
+
+    many = [f"v{i},d,C{i} X,D{i} Y,1,1,1,13,0,0,0\nv{i},d,D{i} Y,C{i} X,1,1,2,10,40,0,2\n" for i in range(30)]
+    write(tmp_path / "fight_stats.csv", STATS_HEADER + "".join(good) + "".join(many))
+    assert any("more landed than attempted" in p for p in validate_data.fight_stats_problems())
