@@ -8,6 +8,7 @@ import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
 import { nationalityText } from '../shared/data/badges'
 import { getFighterImageUrl, useFighterImages } from '../shared/hooks/useFighterImages'
 import { useFighters } from '../shared/hooks/useFighters'
+import { formatProbability } from '../shared/data/probability'
 import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { usePrediction } from '../shared/hooks/usePrediction'
@@ -288,7 +289,7 @@ function Scorecard({
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#C8102E]">Projected winner</p>
               <p className="poster-display mt-1 break-words text-3xl leading-none sm:text-4xl">{prediction.predicted_winner}</p>
             </div>
-            <p className="poster-display text-5xl leading-none text-[#C8102E] sm:text-6xl">{(prediction.probability * 100).toFixed(0)}%</p>
+            <p className="poster-display text-5xl leading-none text-[#C8102E] sm:text-6xl">{formatProbability(prediction.probability)}</p>
           </div>
         ) : null}
 
@@ -298,7 +299,7 @@ function Scorecard({
               <div className="flex items-end">
                 <span className="min-w-0 truncate text-sm font-bold uppercase tracking-wide">{row.name}</span>
                 <span className="poster-leader" aria-hidden="true" />
-                <span className="poster-display text-xl">{row.value != null ? `${(row.value * 100).toFixed(1)}%` : '--'}</span>
+                <span className="poster-display text-xl">{row.value != null ? formatProbability(row.value) : '--'}</span>
               </div>
               <div className={`mt-1 h-4 border-2 ${INK} bg-[#EDE6D6]`}>
                 {row.value != null ? <div className={`h-full ${row.color}`} style={{ width: `${row.value * 100}%` }} /> : null}

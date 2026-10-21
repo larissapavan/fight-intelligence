@@ -1,3 +1,5 @@
+import { edgeLabel, formatProbability } from '../data/probability'
+
 interface WinProbabilityBarProps {
   nameA: string
   nameB: string
@@ -31,7 +33,7 @@ export function WinProbabilityBar({
             </p>
           ) : null}
           <p className={`data-value font-bold leading-none ${winnerIsA ? 'text-[var(--accent-red)]' : 'text-[var(--text-main)]'} ${compact ? 'text-3xl' : 'text-5xl sm:text-6xl'}`}>
-            {pctA}%
+            {formatProbability(probabilityA)}
           </p>
         </div>
         {showNames ? <p className="mb-1 shrink-0 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]">vs</p> : null}
@@ -42,7 +44,7 @@ export function WinProbabilityBar({
             </p>
           ) : null}
           <p className={`data-value font-bold leading-none ${!winnerIsA ? 'text-[var(--accent-red)]' : 'text-[var(--text-main)]'} ${compact ? 'text-3xl' : 'text-5xl sm:text-6xl'}`}>
-            {pctB}%
+            {formatProbability(probabilityB)}
           </p>
         </div>
       </div>
@@ -59,6 +61,7 @@ export function WinProbabilityBar({
       {predictedWinner ? (
         <p className={`mt-2 text-center text-[var(--text-muted)] ${compact ? 'text-xs' : 'text-sm'}`}>
           Model favors <span className="font-semibold text-[var(--text-main)]">{predictedWinner}</span>
+          <span> · {edgeLabel(Math.max(probabilityA, probabilityB)).toLowerCase()}</span>
         </p>
       ) : null}
     </div>

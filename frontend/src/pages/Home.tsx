@@ -12,6 +12,7 @@ import { LatestNewsCard } from '../shared/components/LatestNewsCard'
 import { FightMatchupCard } from '../shared/components/FightMatchupCard'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { WinProbabilityBar } from '../shared/components/WinProbabilityBar'
+import { useDataInfo } from '../shared/hooks/useDataInfo'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { usePrediction } from '../shared/hooks/usePrediction'
 import { useTrackRecord } from '../shared/hooks/useTrackRecord'
@@ -28,6 +29,7 @@ type Trend = { streak: number; finishRate: number | null }
 export function Home() {
   const { health, modelInfo, error: modelError } = useModelInfo()
   const { data: trackRecord } = useTrackRecord()
+  const { dataInfo } = useDataInfo()
   const { events, loading: eventsLoading, error: eventsError } = useUpcomingEvents()
   const { rankings, loading: rankingsLoading, error: rankingsError } = useRankings()
   const { prediction, loading: predicting, runPrediction } = usePrediction()
@@ -87,14 +89,30 @@ export function Home() {
           the pound-for-pound ranking, all from the same data the model uses.
         </p>
 
-        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Link
+            to="/predictor"
+            className="primary-action inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white max-xs:w-full"
+          >
+            Predict a fight
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/events"
+            className="ghost-action theme-text inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] max-xs:w-full"
+          >
+            See the full card
+          </Link>
+        </div>
+
+        <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2">
           <MiniStat
-            label="Fights analyzed"
-            value={health?.fights_tracked ? health.fights_tracked.toLocaleString('en-US') : '—'}
-            icon={Award}
+            label="Fighters tracked"
+            value={health?.fighters_loaded ? health.fighters_loaded.toLocaleString('en-US') : '—'}
+            icon={Swords}
           />
-          <MiniStat label="Fighters tracked" value={health?.fighters_loaded ? `${health.fighters_loaded}` : '—'} icon={Swords} />
           <MiniStat label="Next event" value={eventsLoading ? 'Loading...' : nextEvent ? formatShortDate(nextEvent.date) : '—'} icon={CalendarDays} />
+          <MiniStat label="Data through" value={dataInfo?.last_updated ? formatShortDate(dataInfo.last_updated) : '—'} icon={Award} />
         </div>
       </motion.section>
 
@@ -199,7 +217,7 @@ function MainEventCard({
     <article className="surface-card rounded-[20px] p-4 sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="broadcast-label text-[10px] text-[var(--accent-red)]">Upcoming event</p>
+          <p className="broadcast-label text-[11px] text-[var(--accent-red)]">Upcoming event</p>
           <h2 className="mt-1 text-2xl font-black uppercase leading-tight tracking-[0.03em] text-[var(--text-main)] sm:text-4xl">{nextEvent.name}</h2>
           <p className="mt-2 flex items-center gap-1.5 text-sm text-[var(--text-muted)]">
             <CalendarDays className="h-3.5 w-3.5" />
@@ -210,17 +228,17 @@ function MainEventCard({
 
       <div className="mt-5 rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-3)] p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="broadcast-label text-[10px] text-[var(--accent-red)]">Main event</p>
+          <p className="broadcast-label text-[11px] text-[var(--accent-red)]">Main event</p>
           <TitleFightBadge fight={mainEvent} />
         </div>
 
         <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
           <MainEventName name={mainEvent.fighter_1} align="right" />
-          <span className="broadcast-label border border-[var(--rule)] px-2 py-1 text-[10px] text-[var(--text-muted)]">VS</span>
+          <span className="broadcast-label border border-[var(--rule)] px-2 py-1 text-[11px] text-[var(--text-muted)]">VS</span>
           <MainEventName name={mainEvent.fighter_2} align="left" />
         </div>
         {mainEvent.weight_class ? (
-          <p className="type-tech mt-2 text-center text-[10px] uppercase tracking-[0.12em] text-[var(--text-muted)]">{mainEvent.weight_class}</p>
+          <p className="type-tech mt-2 text-center text-[11px] uppercase tracking-[0.12em] text-[var(--text-muted)]">{mainEvent.weight_class}</p>
         ) : null}
 
         {predicting ? (
@@ -290,7 +308,7 @@ function FullCardSection({ nextEvent }: { nextEvent: EventSummary | null }) {
     <section className="surface-card rounded-[20px] p-4 sm:p-5">
       <div className="flex items-center gap-2 text-[var(--accent-red)]">
         <ListOrdered className="h-4 w-4" />
-        <p className="broadcast-label text-[10px]">
+        <p className="broadcast-label text-[11px]">
           Rest of the card • {restOfCard.length} {restOfCard.length === 1 ? 'fight' : 'fights'}
         </p>
       </div>
@@ -323,7 +341,7 @@ function TrendingCard({
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center gap-2 text-[#C8102E]">
         <TrendingUp className="h-4 w-4" />
-        <p className="broadcast-label text-[10px]">Trending</p>
+        <p className="broadcast-label text-[11px]">Trending</p>
       </div>
       <div className="mt-2.5 space-y-1.5">
         <TrendRow name={mainEvent.fighter_1} trend={trends[mainEvent.fighter_1]} onOpenProfile={onOpenProfile} />
@@ -399,9 +417,9 @@ function RankingsCard({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 text-[#C8102E]">
           <Trophy className="h-4 w-4" />
-          <p className="broadcast-label text-[10px]">Pound-for-pound</p>
+          <p className="broadcast-label text-[11px]">Pound-for-pound</p>
         </div>
-        <Link to="/rankings" className="type-tech text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-red)]">
+        <Link to="/rankings" className="type-tech inline-flex min-h-10 items-center text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-red)]">
           View all
         </Link>
       </div>
@@ -480,12 +498,12 @@ function TrackRecordStrip({
     <section className="surface-card flex flex-wrap items-center justify-between gap-3 rounded-[20px] px-3 py-3 sm:px-4">
       <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
         <div>
-          <p className="broadcast-label text-[10px] text-[#999999]">Model accuracy</p>
+          <p className="broadcast-label text-[11px] text-[#999999]">Model accuracy</p>
           <p className="data-value text-xl font-bold text-[#FFFFFF]">{percentLabel(accuracy)}</p>
           <p className="text-[11px] text-[#999999]">{accuracyNote}</p>
         </div>
         <div>
-          <p className="broadcast-label text-[10px] text-[#999999]">Fights analyzed</p>
+          <p className="broadcast-label text-[11px] text-[#999999]">Fights analyzed</p>
           <p className="data-value text-xl font-bold text-[#FFFFFF]">
             {fightsAnalyzed ? fightsAnalyzed.toLocaleString('en-US') : '—'}
           </p>
@@ -494,7 +512,7 @@ function TrackRecordStrip({
       </div>
       <Link
         to="/track-record"
-        className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] transition hover:text-white"
+        className="inline-flex min-h-10 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] transition hover:text-white"
       >
         Track record
         <ArrowRight className="h-3.5 w-3.5" />
@@ -513,12 +531,12 @@ function MiniStat({
   icon: React.ComponentType<{ className?: string }>
 }) {
   return (
-    <div className="rounded-xl border border-white/6 bg-black/18 px-3 py-2">
-      <div className="flex items-center gap-2 text-[#C8102E]">
-        <Icon className="h-3.5 w-3.5" />
-        <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
+    <div className="min-w-0 rounded-xl border border-white/6 bg-black/18 px-2 py-1.5 sm:px-3 sm:py-2">
+      <div className="flex items-center gap-1.5 text-[#C8102E] sm:gap-2">
+        <Icon className="hidden h-3.5 w-3.5 shrink-0 sm:block" />
+        <p className="broadcast-label truncate text-[11px] text-[#999999]">{label}</p>
       </div>
-      <p className="data-value mt-1 text-xl font-bold text-[#FFFFFF]">{value}</p>
+      <p className="data-value mt-0.5 truncate text-base font-bold text-[#FFFFFF] sm:mt-1 sm:text-xl">{value}</p>
     </div>
   )
 }
