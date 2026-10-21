@@ -29,7 +29,7 @@ export function Model() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="The model"
           title="How the model works"
           description="The model, how it compares with simpler ones, and what goes into each prediction."
@@ -160,7 +160,7 @@ export function Model() {
 function MetricCard({ label, value, compact = false }: { label: string; value: string; compact?: boolean }) {
   return (
     <article className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
+      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
       <p className={`data-value mt-1.5 font-bold text-[#FFFFFF] ${compact ? 'text-xl' : 'text-2xl'}`}>
         {value}
       </p>

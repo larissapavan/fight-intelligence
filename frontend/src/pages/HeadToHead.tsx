@@ -80,7 +80,7 @@ export function HeadToHead() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="Rivalry lookup"
           title="Head-to-head history"
           description="Pick two fighters to see every time they've met, who won, and how."
@@ -158,7 +158,7 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
   return (
     <div className="space-y-3">
       <section className="surface-card rounded-[20px] p-4 text-center">
-        <p className="broadcast-label text-[10px] text-[#999999]">
+        <p className="broadcast-label text-[11px] text-[#999999]">
           {result.meetings.length} {result.meetings.length === 1 ? 'meeting' : 'meetings'}
         </p>
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
@@ -189,7 +189,7 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center gap-2 text-[#C8102E]">
         <Share2 className="h-4 w-4" />
-        <p className="broadcast-label text-[10px]">
+        <p className="broadcast-label text-[11px]">
           Connected via the fight network • {degrees} degree{degrees === 1 ? '' : 's'} of separation
         </p>
       </div>
@@ -219,12 +219,12 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center gap-2 text-[#C8102E]">
         <Users className="h-4 w-4" />
-        <p className="broadcast-label text-[10px]">Common opponents ({result.common_opponents.length})</p>
+        <p className="broadcast-label text-[11px]">Common opponents ({result.common_opponents.length})</p>
       </div>
       <div className="mt-2.5 grid grid-cols-[1fr_auto_auto] items-center gap-x-2.5 gap-y-1.5">
         <span />
-        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-red)]">{lastWord(result.fighter_a)}</span>
-        <span className="type-tech text-right text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-blue)]">{lastWord(result.fighter_b)}</span>
+        <span className="type-tech text-right text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-red)]">{lastWord(result.fighter_a)}</span>
+        <span className="type-tech text-right text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-blue)]">{lastWord(result.fighter_b)}</span>
         {result.common_opponents.map((common) => (
           <Fragment key={common.opponent}>
             <span className="min-w-0 truncate rounded-xl border border-white/6 bg-black/18 px-3 py-2 text-sm font-semibold text-[#FFFFFF]">
@@ -242,20 +242,20 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
 function ResultChip({ result }: { result: 'win' | 'loss' | null }) {
   if (result === 'win') {
     return (
-      <span className="type-tech justify-self-end rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#C8102E]">
+      <span className="type-tech justify-self-end rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#C8102E]">
         Win
       </span>
     )
   }
   if (result === 'loss') {
     return (
-      <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+      <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
         Loss
       </span>
     )
   }
   return (
-    <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+    <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
       NC
     </span>
   )

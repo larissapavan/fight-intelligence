@@ -18,7 +18,7 @@ export function DataIntelligence() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="The data"
           title="From raw data to a prediction"
           description="How public UFC data becomes the dataset the model learns from. Every record in it is real."
@@ -131,7 +131,7 @@ function PipelineMergeConnector() {
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <article className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
+      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
       <p className="data-value mt-1.5 text-2xl font-bold text-[#FFFFFF]">{value}</p>
     </article>
   )

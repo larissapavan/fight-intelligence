@@ -25,7 +25,7 @@ export function RecordBook() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="Career leaders"
           title="Record book"
           description="The UFC's all-time career leaders in 32 stats, counting every fight since UFC 28, the first event under the Unified Rules of MMA."

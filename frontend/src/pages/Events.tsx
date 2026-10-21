@@ -166,7 +166,7 @@ export function Events() {
     <div className="space-y-6 sm:space-y-8">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
-          <SectionHeading
+          <SectionHeading level={1}
             eyebrow="Event archive"
             title="UFC fight cards"
             description="Search the full event history and open a card to see every fight, the winner, method and round."
@@ -411,7 +411,7 @@ function FightRow({ eventName, fight, pick }: { eventName: string; fight: FightR
 function SummaryTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="metric-tile rounded-xl px-3 py-2.5">
-      <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
+      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
       <p className="data-value mt-1 text-2xl font-bold text-[#FFFFFF]">{value}</p>
     </div>
   )

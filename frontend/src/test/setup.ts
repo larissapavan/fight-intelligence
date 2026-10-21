@@ -2,7 +2,12 @@ import '@testing-library/jest-dom/vitest'
 import { afterEach } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
-afterEach(() => cleanup())
+afterEach(async () => {
+  cleanup()
+  // Imported here, not at the top: a static import would load the real axios before a test file can mock it.
+  const { resetFightersCache } = await import('../shared/hooks/useFighters')
+  resetFightersCache()
+})
 
 // jsdom has none of these; charts, the fighter picker and the page transitions expect them.
 class NoopObserver {

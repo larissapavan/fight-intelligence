@@ -46,7 +46,7 @@ export function AboutModel() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="About"
           title="A UFC analytics project built to learn"
           description="I built this to learn how to take a model from raw data to a working website."
@@ -80,7 +80,7 @@ export function AboutModel() {
 
       <section className="grid gap-3 xl:grid-cols-[1fr_1fr]">
         <article className="surface-card rounded-[20px] p-3 sm:p-4">
-          <p className="broadcast-label text-[10px] text-[#999999]">Core stack</p>
+          <p className="broadcast-label text-[11px] text-[#999999]">Core stack</p>
           <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">What it is built with</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {[
@@ -100,7 +100,7 @@ export function AboutModel() {
         </article>
 
         <article className="surface-card rounded-[20px] p-3 sm:p-4">
-          <p className="broadcast-label text-[10px] text-[#999999]">Links & contact</p>
+          <p className="broadcast-label text-[11px] text-[#999999]">Links & contact</p>
           <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Find the project</h2>
           <div className="mt-3 grid gap-2">
             {contactLinks.map(({ label, href, icon: Icon }) => {
@@ -165,7 +165,7 @@ export function AboutModel() {
       ) : modelInfo ? (
         <section className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
-            <p className="broadcast-label text-[10px] text-[#999999]">Technical snapshot</p>
+            <p className="broadcast-label text-[11px] text-[#999999]">Technical snapshot</p>
             <h2 className="mt-1 break-words text-xl sm:text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{modelInfo.model_name}</h2>
             <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
               <Metric label="Features" value={`${modelInfo.feature_count}`} />
@@ -177,7 +177,7 @@ export function AboutModel() {
           </article>
 
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
-            <p className="broadcast-label text-[10px] text-[#999999]">Important note</p>
+            <p className="broadcast-label text-[11px] text-[#999999]">Important note</p>
             <div className="mt-3 rounded-2xl border border-[#C8102E]/20 bg-[#C8102E]/8 p-3">
               <div className="mb-2 flex items-center gap-2 text-[#C8102E]">
                 <AlertTriangle className="h-4 w-4" />
@@ -230,7 +230,7 @@ function InfoCard({
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="metric-tile rounded-xl px-3 py-2.5">
-      <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
+      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
       <p className="data-value mt-1 text-xl font-semibold text-[#FFFFFF]">{value}</p>
     </div>
   )

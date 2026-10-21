@@ -30,7 +30,7 @@ export function Rankings() {
   return (
     <div className="space-y-4 sm:space-y-5">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="Official UFC rankings"
           title="Divisional & pound-for-pound rankings"
           description="The official ufc.com rankings, with each fighter's win rate and last fight added from our data."
@@ -287,7 +287,7 @@ function RankChangeBadge({ change }: { change: string | null }) {
 
   if (change === 'up') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-400">
         <ArrowUp className="h-3 w-3" />
       </span>
     )
@@ -295,14 +295,14 @@ function RankChangeBadge({ change }: { change: string | null }) {
 
   if (change === 'down') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-[#C8102E]/20 bg-[#C8102E]/10 px-2 py-0.5 text-[10px] font-semibold text-[#C8102E]">
+      <span className="inline-flex items-center gap-1 rounded-full border border-[#C8102E]/20 bg-[#C8102E]/10 px-2 py-0.5 text-[11px] font-semibold text-[#C8102E]">
         <ArrowDown className="h-3 w-3" />
       </span>
     )
   }
 
   return (
-    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-[#999999]">
+    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-semibold uppercase text-[#999999]">
       {change}
     </span>
   )

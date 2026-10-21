@@ -45,7 +45,7 @@ export function Champions() {
     <OpenProfileContext.Provider value={setProfileName}>
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="Title fight history"
           title="Champions & records"
           description="Every UFC title reign, defense and title record, compiled from published title histories."
@@ -221,7 +221,7 @@ function CompactChampionCard({
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <p className="truncate text-sm font-semibold text-[#FFFFFF]">{name}</p>
           {current ? (
-            <span className="type-tech rounded-full border border-[var(--rule)] bg-[#F2C230] px-2 py-0.5 text-[10px] font-bold uppercase text-[#0E0E0E]">
+            <span className="type-tech rounded-full border border-[var(--rule)] bg-[#F2C230] px-2 py-0.5 text-[11px] font-bold uppercase text-[#0E0E0E]">
               Current
             </span>
           ) : null}
@@ -246,14 +246,14 @@ function CompactChampionCard({
 function RankBadge({ rank, goat = false }: { rank: number; goat?: boolean }) {
   if (goat) {
     return (
-      <span className="type-num absolute -bottom-1 -left-1 grid h-5 place-items-center rounded-md border border-[var(--rule)] bg-[#F2C230] px-1 text-[9px] font-bold leading-none tracking-[0.04em] text-[#0E0E0E]">
+      <span className="type-num absolute -bottom-1 -left-1 grid h-5 place-items-center rounded-md border border-[var(--rule)] bg-[#F2C230] px-1 text-[11px] font-bold leading-none tracking-[0.04em] text-[#0E0E0E]">
         GOAT
       </span>
     )
   }
   return (
     <span
-      className={`type-num absolute -bottom-1 -left-1 grid h-5 min-w-5 place-items-center rounded-md border px-1 text-[10px] leading-none ${
+      className={`type-num absolute -bottom-1 -left-1 grid h-5 min-w-5 place-items-center rounded-md border px-1 text-[11px] leading-none ${
         rank === 1 ? 'border-[var(--rule)] bg-[#C8102E] text-white' : 'border-[var(--rule)] bg-[var(--rule)] text-[var(--card-bg)]'
       }`}
     >
@@ -410,7 +410,7 @@ function ReignRow({ reign, onOpen }: { reign: TitleReign; onOpen: (name: string)
     <li className="grid grid-cols-[3.25rem_minmax(0,1fr)] gap-x-2.5 border-l-2 border-[var(--rule)] py-1.5 pl-2.5 sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-x-3.5">
       <div className="pt-0.5">
         <p className="type-display text-lg leading-none text-[#FFFFFF] sm:text-xl">{reign.date_won?.slice(0, 4) ?? '—'}</p>
-        <p className="theme-muted mt-0.5 text-[10px] font-semibold uppercase leading-tight">{date?.replace(/,\s*\d{4}$/, '')}</p>
+        <p className="theme-muted mt-0.5 text-[11px] font-semibold uppercase leading-tight">{date?.replace(/,\s*\d{4}$/, '')}</p>
       </div>
 
       <div className="min-w-0">
@@ -423,13 +423,13 @@ function ReignRow({ reign, onOpen }: { reign: TitleReign; onOpen: (name: string)
             {reign.champion}
           </button>
           {reign.is_current ? (
-            <span className="bg-[#F2C230] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#0E0E0E]">Current</span>
+            <span className="bg-[#F2C230] px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[#0E0E0E]">Current</span>
           ) : null}
           {interim ? (
-            <span className="border border-[var(--rule)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#FFFFFF]">Interim</span>
+            <span className="border border-[var(--rule)] px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[#FFFFFF]">Interim</span>
           ) : null}
           {reign.fighter_reign_index > 1 ? (
-            <span className="theme-muted text-[10px] font-bold uppercase tracking-[0.1em]">{ordinal(reign.fighter_reign_index)} reign</span>
+            <span className="theme-muted text-[11px] font-bold uppercase tracking-[0.1em]">{ordinal(reign.fighter_reign_index)} reign</span>
           ) : null}
         </div>
         <p className="theme-muted mt-0.5 text-[11px] leading-4">
@@ -484,7 +484,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="data-value text-sm font-bold text-[#FFFFFF]">{value}</p>
-      <p className="broadcast-label text-[9px]">{label}</p>
+      <p className="broadcast-label text-[11px]">{label}</p>
     </div>
   )
 }
@@ -542,10 +542,10 @@ function RecordRow({ entry, unit }: { entry: RecordCategory['entries'][number]; 
       <span className="type-num w-4 shrink-0 text-right text-[11px] text-[#999999]">{entry.rank}</span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[13px] font-semibold leading-tight text-[#FFFFFF]">{entry.champion}</p>
-        {entry.division ? <p className="theme-muted truncate text-[9.5px] leading-tight">{entry.division}</p> : null}
+        {entry.division ? <p className="theme-muted truncate text-[11px] leading-tight">{entry.division}</p> : null}
       </div>
       <span className="data-value shrink-0 text-sm font-bold text-[#FFFFFF]">
-        {entry.value} <span className="theme-muted text-[10px] font-normal">{unit}</span>
+        {entry.value} <span className="theme-muted text-[11px] font-normal">{unit}</span>
       </span>
     </button>
   )
@@ -633,7 +633,7 @@ function ChampionTimeline({ entry }: { entry: RecordEntry }) {
         {stats.map((stat) => (
           <div key={stat.label} className="metric-tile px-3 py-2">
             <dd className="type-display text-2xl leading-none text-[#FFFFFF]">{stat.value}</dd>
-            <dt className="theme-muted mt-1 text-[10px] font-bold uppercase tracking-[0.14em]">{stat.label}</dt>
+            <dt className="theme-muted mt-1 text-[11px] font-bold uppercase tracking-[0.14em]">{stat.label}</dt>
           </div>
         ))}
       </dl>
@@ -676,22 +676,22 @@ function TitleFightRow({ fight, previous }: { fight: TitleFight; previous: Title
       <li className="grid grid-cols-[3.25rem_minmax(0,1fr)] gap-x-2.5 border-l-2 border-[var(--rule)] py-1.5 pl-2.5 sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-x-3.5">
         <div className="pt-0.5">
           <p className="type-display text-lg leading-none text-[#FFFFFF] sm:text-xl">{fight.date?.slice(0, 4) ?? '—'}</p>
-          <p className="theme-muted mt-0.5 text-[10px] font-semibold uppercase leading-tight">{date?.replace(/,\s*\d{4}$/, '')}</p>
+          <p className="theme-muted mt-0.5 text-[11px] font-semibold uppercase leading-tight">{date?.replace(/,\s*\d{4}$/, '')}</p>
         </div>
 
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] ${ROLE_STYLES[fight.role]}`}>
+            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] ${ROLE_STYLES[fight.role]}`}>
               {fight.role === 'won_title' ? <ChampionBelt className="h-3 w-6" /> : null}
               {fight.role === 'defense' ? <Shield className="h-3 w-3" /> : null}
               {fight.label}
             </span>
             {fight.title_type === 'interim' && !/interim/i.test(fight.label) ? (
-              <span className="border border-[var(--rule)] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[#FFFFFF]">Interim</span>
+              <span className="border border-[var(--rule)] px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[#FFFFFF]">Interim</span>
             ) : null}
           </div>
           <p className="mt-1 flex min-w-0 items-center gap-2 text-sm font-bold text-[#FFFFFF]">
-            <span className={`type-num grid h-5 min-w-5 shrink-0 place-items-center px-1 text-[10px] leading-none ${result.className}`} title={result.name}>
+            <span className={`type-num grid h-5 min-w-5 shrink-0 place-items-center px-1 text-[11px] leading-none ${result.className}`} title={result.name}>
               <span className="sr-only">{result.name}</span>
               <span aria-hidden>{result.letter}</span>
             </span>
