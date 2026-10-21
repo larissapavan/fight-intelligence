@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom'
 
 import { Header } from '../shared/components/Header'
 import { PageMeta } from '../shared/components/PageMeta'
+import { useOrg } from '../shared/hooks/useOrg'
 import { ServerLoadingState } from '../shared/components/ServerLoadingState'
-import { waitForHealth } from '../shared/services/api'
+import { getOrgDataInfo, waitForHealth } from '../shared/services/api'
 
 function formatDataDate(iso: string) {
   const date = new Date(`${iso}T00:00:00`)
@@ -16,7 +17,26 @@ function formatDataDate(iso: string) {
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const [dataDate, setDataDate] = useState<string | null>(null)
+  const [orgDataDate, setOrgDataDate] = useState<{ org: string; date: string | null } | null>(null)
   const [apiState, setApiState] = useState<'pending' | 'slow' | 'ready' | 'down'>('pending')
+  const org = useOrg()
+
+  // Each organization has its own accent color (see index.css); the attribute is what the stylesheet reads.
+  useEffect(() => {
+    document.documentElement.dataset.org = org.id
+  }, [org.id])
+
+  // The footer says how fresh the data of the organization on screen is (the health check only knows the UFC's).
+  useEffect(() => {
+    if (org.id === 'ufc') return
+    let active = true
+    getOrgDataInfo(org.id)
+      .then((info) => active && setOrgDataDate({ org: org.id, date: info.last_updated ? formatDataDate(info.last_updated) : null }))
+      .catch(() => active && setOrgDataDate({ org: org.id, date: null }))
+    return () => {
+      active = false
+    }
+  }, [org.id])
 
   useEffect(() => {
     // The free hosting tier puts the API to sleep when idle, so the first visit can wait a while for it to wake up.
@@ -32,6 +52,8 @@ export function MainLayout({ children }: { children: ReactNode }) {
       })
     return () => window.clearTimeout(slowTimer)
   }, [])
+
+  const footerDate = org.id === 'ufc' ? dataDate : orgDataDate?.org === org.id ? orgDataDate.date : null
 
   return (
     <div className="dashboard-shell min-h-screen text-[#FFFFFF]">
@@ -64,13 +86,13 @@ export function MainLayout({ children }: { children: ReactNode }) {
         </motion.main>
         <footer className="mt-6 border-[3px] border-[var(--rule)] bg-[var(--card-bg)] px-4 py-3 text-sm font-medium text-[var(--text-main)] shadow-[5px_5px_0_var(--hard)]">
           <p className="type-tech text-xs uppercase tracking-[0.14em]">Fight Intelligence • AI sports analytics for matchup analysis</p>
-          {dataDate ? <p className="mt-1.5">Data up to {dataDate}</p> : null}
+          {footerDate ? <p className="mt-1.5">Data up to {footerDate}</p> : null}
           <p className="mt-1.5">
             <Link
               to="/about"
               className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
             >
-              Independent fan project, not affiliated with the UFC
+              Independent fan project, not affiliated with the {org.shortName}
             </Link>
           </p>
         </footer>

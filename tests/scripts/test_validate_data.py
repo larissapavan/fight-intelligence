@@ -160,3 +160,17 @@ def test_a_handful_of_odd_rows_from_the_source_do_not_block_the_update_but_a_pat
     many = [f"v{i},d,C{i} X,D{i} Y,1,1,1,13,0,0,0\nv{i},d,D{i} Y,C{i} X,1,1,2,10,40,0,2\n" for i in range(30)]
     write(tmp_path / "fight_stats.csv", STATS_HEADER + "".join(good) + "".join(many))
     assert any("more landed than attempted" in p for p in validate_data.fight_stats_problems())
+
+
+def test_gym_rosters_must_belong_to_a_listed_gym(tmp_path, monkeypatch):
+    monkeypatch.setattr(validate_data, "RAW_DIR", tmp_path)
+    assert validate_data.gym_problems() == []  # no gym files yet
+
+    write(tmp_path / "gyms.csv", "slug,name,url,fighters_count,checked\nok,Fine Gym,u,2,2026-10-01\nnoname, ,u,1,2026-10-01\n")
+    write(
+        tmp_path / "gym_fighters.csv",
+        "gym_slug,fighter,fighter_slug,nickname,division,country_code,record\nok,A,a,,,,1-0-0\nghost,B,b,,,,1-0-0\n",
+    )
+    problems = validate_data.gym_problems()
+    assert any("has no name (noname)" in problem for problem in problems)
+    assert any("1 gyms are not in gyms.csv (first: ghost)" in problem for problem in problems)

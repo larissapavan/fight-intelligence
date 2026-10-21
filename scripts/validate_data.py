@@ -23,11 +23,18 @@ MAX_ROW_LOSS = 0.02  # tolerated shrink per file
 # A finished card leaves upcoming_events.csv and is appended to event_cards.csv, so that file can shrink by one card.
 ROW_LOSS = {"upcoming_events.csv": 0.40}
 # Files the refresh rewrites; the others are maintained by hand or by other pipelines.
-CHECKED = ["events.csv", "fights.csv", "event_cards.csv", "fighters.csv", "rankings.csv", "upcoming_events.csv", "fight_stats.csv"]
+CHECKED = ["events.csv", "fights.csv", "event_cards.csv", "fighters.csv", "rankings.csv", "upcoming_events.csv", "fight_stats.csv", "gyms.csv", "gym_fighters.csv"]
 # fight_stats.csv has two rows (one per fighter) for every fight ESPN has numbers for, about 17,000 in all.
-MIN_ROWS = {"rankings.csv": 100, "fights.csv": 8000, "fighters.csv": 4000, "events.csv": 700, "fight_stats.csv": 10000}
+MIN_ROWS = {"rankings.csv": 100, "fights.csv": 8000, "fighters.csv": 4000, "events.csv": 700, "fight_stats.csv": 10000, "gyms.csv": 800, "gym_fighters.csv": 1400}
 MAX_CONTRADICTORY_SHARE = 0.005  # share of fight_stats.csv rows that may have more landed than attempted (it is 0.11% today)
 MAX_RANK = 15  # the UFC ranks 15 fighters per division (rank 0 is the champion)
+# Organisations other than the UFC keep their three files in data/raw/<org>/ (see scripts/scrape_pfl.py).
+ORG_DIRS = ["pfl", "bellator"]
+ORG_FILES = ["fights.csv", "fighters.csv", "rankings.csv"]
+ORG_MIN_ROWS = {
+    "pfl": {"fights.csv": 1300, "fighters.csv": 900, "rankings.csv": 50},
+    "bellator": {"fights.csv": 2500, "fighters.csv": 1500, "rankings.csv": 8},  # an archive: the numbers will not change
+}
 STALE_UPCOMING_DAYS = 3  # a card this far past its date should have turned into results by now
 
 
@@ -59,7 +66,7 @@ def validate() -> list[str]:
         old_n, new_n = len(old_rows) - 1, len(new_rows) - 1
         if old_n > 0 and new_n < old_n * (1 - ROW_LOSS.get(name, MAX_ROW_LOSS)):
             problems.append(f"{name}: rows dropped from {old_n} to {new_n}")
-    return problems + structure_problems()
+    return problems + structure_problems() + org_problems()
 
 
 def warnings() -> list[str]:
@@ -67,6 +74,7 @@ def warnings() -> list[str]:
         [f"champion mismatch: {note}" for note in champion_mismatches()]
         + [f"no fighter profile: {name}" for name in unmatched_names()]
         + [f"stale card: {note}" for note in stale_upcoming()]
+        + org_warnings()
     )
 
 
@@ -175,8 +183,97 @@ def fight_stats_problems() -> list[str]:
     return problems[:20]  # enough to see what is wrong
 
 
+def gym_problems() -> list[str]:
+    """A gym roster row for a gym that is not in gyms.csv, or a gym with no name, would show up as a broken page."""
+    gyms = read_dicts(RAW_DIR / "gyms.csv")
+    if not gyms:
+        return []
+    slugs = {row["slug"] for row in gyms}
+    problems = [f"gyms.csv: a gym has no name ({row['slug']})" for row in gyms if not row["name"].strip()]
+    orphans = {row["gym_slug"] for row in read_dicts(RAW_DIR / "gym_fighters.csv") if row["gym_slug"] not in slugs}
+    if orphans:
+        problems.append(f"gym_fighters.csv: {len(orphans)} gyms are not in gyms.csv (first: {sorted(orphans)[0]})")
+    return problems
+
+
 def structure_problems() -> list[str]:
-    return rankings_structure_problems() + upcoming_structure_problems() + fighter_record_problems() + photo_manifest_problems() + fight_stats_problems()
+    return rankings_structure_problems() + upcoming_structure_problems() + fighter_record_problems() + photo_manifest_problems() + fight_stats_problems() + gym_problems()
+
+
+def org_problems() -> list[str]:
+    """The files of every other organisation: present, same header and not shrunk since the last commit, plus bouts that
+    would break its pages (a fighter against themself, a winner who is not in the bout, a photo that is not on disk)."""
+    problems: list[str] = []
+    for org in ORG_DIRS:
+        folder = RAW_DIR / org
+        for name in ORG_FILES:
+            path = folder / name
+            label = f"{org}/{name}"
+            if not path.exists():
+                problems.append(f"{label}: file is missing")
+                continue
+            new_rows = read_rows(path.read_text(encoding="utf-8"))
+            if len(new_rows) - 1 < ORG_MIN_ROWS[org][name]:
+                problems.append(f"{label}: only {max(len(new_rows) - 1, 0)} rows (minimum {ORG_MIN_ROWS[org][name]})")
+            old_text = committed_text(path)
+            if old_text is None:
+                continue
+            old_rows = read_rows(old_text)
+            if old_rows and new_rows and old_rows[0] != new_rows[0]:
+                problems.append(f"{label}: header changed {old_rows[0]} -> {new_rows[0]}")
+            old_n, new_n = len(old_rows) - 1, len(new_rows) - 1
+            if old_n > 0 and new_n < old_n * (1 - MAX_ROW_LOSS):
+                problems.append(f"{label}: rows dropped from {old_n} to {new_n}")
+
+        problems.extend(org_fight_problems(org))
+        photos_missing = [
+            row["name"]
+            for row in read_dicts(folder / "fighters.csv")
+            if row.get("image_url", "").strip() and not (Path("frontend") / "public" / row["image_url"].lstrip("/")).exists()
+        ]
+        if photos_missing:
+            problems.append(f"{org}/fighters.csv: {len(photos_missing)} listed photos are missing on disk (first: {photos_missing[0]})")
+    return problems
+
+
+def org_fight_problems(org: str) -> list[str]:
+    problems: list[str] = []
+    seen: set[str] = set()
+    for row in read_dicts(RAW_DIR / org / "fights.csv"):
+        label = f"{org}/fights.csv: {row.get('event_name', '?')}"
+        one, two, winner = row["fighter_1"].strip(), row["fighter_2"].strip(), row["winner"].strip()
+        if not (one and two):
+            problems.append(f"{label}: a bout is missing a fighter")
+        elif name_key(one) == name_key(two):
+            problems.append(f"{label}: {one} is booked against themself")
+        if winner and name_key(winner) not in (name_key(one), name_key(two)):
+            problems.append(f"{label}: the winner {winner} is not in the bout {one} vs {two}")
+        try:
+            date.fromisoformat(row["event_date"])
+        except ValueError:
+            problems.append(f"{label}: event_date {row['event_date']!r} is not an ISO date")
+        if row["fight_url"] in seen:
+            problems.append(f"{label}: the bout {row['fight_url']} is listed twice")
+        seen.add(row["fight_url"])
+    return problems[:20]  # enough to see what is wrong
+
+
+def org_warnings() -> list[str]:
+    """Fighters on a card without a profile page (the site links to some pages that do not exist): the pages still list them."""
+    notes = []
+    for org in ORG_DIRS:
+        known = {name_key(row["name"]) for row in read_dicts(RAW_DIR / org / "fighters.csv")}
+        if not known:
+            continue
+        missing = {
+            fighter
+            for row in read_dicts(RAW_DIR / org / "fights.csv")
+            for fighter in (row["fighter_1"], row["fighter_2"])
+            if name_key(fighter) not in known
+        }
+        if missing:
+            notes.append(f"{org}: {len(missing)} fighters on cards have no profile (first: {sorted(missing)[0]})")
+    return notes
 
 
 def unmatched_names() -> list[str]:

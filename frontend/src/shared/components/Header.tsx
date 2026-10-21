@@ -3,21 +3,39 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { CircleDot, FolderGit2, Menu, Moon, Sun, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
+import { orgPath, type OrgConfig } from '../data/orgs'
 import { useModelInfo } from '../hooks/useModelInfo'
+import { useOrg } from '../hooks/useOrg'
 import { BrandMark } from './BrandMark'
 import { FighterSearch } from './FighterSearch'
+import { OrgSwitcher } from './OrgSwitcher'
 
-const navItems: { to: string; label: string; group?: string[] }[] = [
+type NavItem = { to: string; label: string; group?: string[]; /** Also active on the pages below it (a gym under Gyms). */ section?: boolean }
+
+const ufcNavItems: NavItem[] = [
   { to: '/predictor', label: 'Predict', group: ['/predictor', '/head-to-head', '/matchup-intelligence'] },
   { to: '/fighters', label: 'Fighters' },
   { to: '/events', label: 'Events' },
   { to: '/rankings', label: 'Rankings' },
+  { to: '/gyms', label: 'Gyms', section: true },
   { to: '/champions', label: 'Champions', group: ['/champions', '/record-book'] },
   { to: '/about', label: 'About', group: ['/about', '/data', '/model', '/track-record'] },
 ]
 
-function isItemActive(item: (typeof navItems)[number], pathname: string) {
+/** Every organization other than the UFC has the same three sections. */
+function navItemsFor(org: OrgConfig): NavItem[] {
+  if (org.id === 'ufc') return ufcNavItems
+  return [
+    { to: orgPath(org, 'fighters'), label: 'Fighters' },
+    { to: orgPath(org, 'events'), label: 'Events' },
+    { to: orgPath(org, 'rankings'), label: 'Rankings' },
+    { to: orgPath(org, 'gyms'), label: 'Gyms', section: true },
+  ]
+}
+
+function isItemActive(item: NavItem, pathname: string) {
   const current = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
+  if (item.section && current.startsWith(`${item.to}/`)) return true
   return (item.group ?? [item.to]).includes(current)
 }
 
@@ -27,6 +45,8 @@ const THEME_STORAGE_KEY = 'ufc-predictor:theme'
 export function Header() {
   const { health, loading } = useModelInfo()
   const { pathname } = useLocation()
+  const org = useOrg()
+  const navItems = navItemsFor(org)
   const [theme, setTheme] = useState<ThemeMode>(() => readThemePreference())
   const [menuOpen, setMenuOpen] = useState(false)
   const apiLabel = loading ? 'Waking up' : health?.model_loaded ? 'Live' : 'Offline'
@@ -64,7 +84,7 @@ export function Header() {
       <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2.5 sm:px-3.5 sm:py-3">
         <div className="flex items-center justify-between gap-2">
           <Link
-            to="/"
+            to={org.basePath || '/'}
             aria-label="Fight Intelligence home"
             className="brand-badge flex min-w-0 items-center gap-2.5 border-2 border-black bg-[#EFECE6] px-2.5 py-2 text-black xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5"
           >
@@ -95,6 +115,8 @@ export function Header() {
             >
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
             </div>
+
+            <OrgSwitcher className="hidden xs:block" />
 
             <FighterSearch />
 
@@ -164,6 +186,8 @@ export function Header() {
                   <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
                   {apiLabel}
                 </div>
+
+                <OrgSwitcher className="xs:hidden" onNavigate={() => setMenuOpen(false)} />
 
                 <nav className="flex flex-col gap-1">
                   {navItems.map((item) => (

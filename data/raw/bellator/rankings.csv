@@ -1,0 +1,12 @@
+category,is_p4p,rank,fighter,rank_change,status,athlete_url
+Heavyweight,False,0,Ryan Bader,,champion,
+Heavyweight,False,0,Valentin Moldavsky,,interim,
+Light Heavyweight,False,0,Vadim Nemkov,,champion,
+Middleweight,False,0,Johnny Eblen,,champion,
+Welterweight,False,0,Jason Jackson,,champion,
+Lightweight,False,0,Usman Nurmagomedov,,champion,
+Featherweight,False,0,Patrício Pitbull,,champion,
+Bantamweight,False,0,Patchy Mix,,champion,
+Women's Featherweight,False,0,Cris Cyborg,,champion,
+Women's Flyweight,False,0,Liz Carmouche,,champion,
+Women's Strawweight,False,0,,,vacant,

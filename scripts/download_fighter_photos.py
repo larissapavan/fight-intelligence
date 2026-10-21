@@ -79,14 +79,14 @@ CHAMPION_HEADER_LABELS = {  # ufc.com (pt-BR) division header -> title_reigns.cs
 # --------------------------------------------------------------------------- images
 
 
-def to_webp(data: bytes, *, max_width: int | None = None, max_side: int | None = None) -> bytes:
+def to_webp(data: bytes, *, max_width: int | None = None, max_side: int | None = None, method: int = 6) -> bytes:
     image = Image.open(io.BytesIO(data)).convert("RGBA")
     if max_width and image.width > max_width:
         image = image.resize((max_width, round(image.height * max_width / image.width)), Image.LANCZOS)
     if max_side and max(image.size) > max_side:
         image.thumbnail((max_side, max_side), Image.LANCZOS)
     out = io.BytesIO()
-    image.save(out, format="WEBP", quality=WEBP_QUALITY, method=6)
+    image.save(out, format="WEBP", quality=WEBP_QUALITY, method=method)
     return out.getvalue()
 
 

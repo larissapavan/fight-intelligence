@@ -3,12 +3,14 @@ import { Search, X } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { FighterAvatar } from './FighterAvatar'
-import { searchFighters } from '../data/searchFighters'
+import { searchFighters, type SearchableFighter } from '../data/searchFighters'
 import { getFighterImageUrl, useFighterImages } from '../hooks/useFighterImages'
 import { useFighters } from '../hooks/useFighters'
-import type { FighterProfile } from '../types/api'
+import { useOrg } from '../hooks/useOrg'
+import { useOrgFighters } from '../hooks/useOrgData'
+import { orgPath } from '../data/orgs'
 
-function recordOf(fighter: FighterProfile) {
+function recordOf(fighter: SearchableFighter) {
   if (fighter.wins == null || fighter.losses == null) return null
   return `${fighter.wins}-${fighter.losses}${fighter.draws ? `-${fighter.draws}` : ''}`
 }
@@ -17,7 +19,11 @@ function recordOf(fighter: FighterProfile) {
 export function FighterSearch() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { fighters } = useFighters()
+  const org = useOrg()
+  const isUfc = org.id === 'ufc'
+  const { fighters: ufcFighters } = useFighters(isUfc)
+  const { fighters: orgFighters } = useOrgFighters(isUfc ? null : org.id)
+  const fighters: SearchableFighter[] = isUfc ? ufcFighters : orgFighters
   const { imageByName } = useFighterImages()
   // The box belongs to the page it was opened on: moving to another page closes it.
   const [openAt, setOpenAt] = useState<string | null>(null)
@@ -65,9 +71,9 @@ export function FighterSearch() {
     return () => document.removeEventListener('mousedown', onPointer)
   }, [open, close])
 
-  const pick = (fighter: FighterProfile) => {
+  const pick = (fighter: SearchableFighter) => {
     close()
-    navigate(`/fighters?fighter=${encodeURIComponent(fighter.name)}`)
+    navigate(`${orgPath(org, 'fighters')}?fighter=${encodeURIComponent(fighter.name)}`)
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {

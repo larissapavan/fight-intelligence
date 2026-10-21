@@ -141,6 +141,144 @@ const titleFight = {
   round: 2,
 }
 
+
+/** A made-up PFL: a champion, a contender, an inactive veteran, one past card and one upcoming card. */
+const orgFighter = (name: string, extra: Record<string, unknown> = {}) => ({
+  name,
+  nickname: null,
+  is_active: true,
+  age: 31,
+  height_cm: 175.3,
+  weight_lbs: 155,
+  reach_cm: 180.3,
+  leg_reach_cm: 95,
+  wins: 15,
+  losses: 3,
+  draws: 0,
+  no_contests: 0,
+  total_fights: 18,
+  win_rate: 0.8333,
+  division: 'Lightweight',
+  belt: false,
+  title_status: null,
+  ranking: null,
+  image_url: null,
+  profile_url: `https://pflmma.com/wt-fighter/${name.replace(/\s/g, '-').toLowerCase()}`,
+  hometown: 'Houston, TX',
+  country: 'United States',
+  country_code: 'us',
+  camp: 'Iron Gym',
+  fighting_out_of: 'Houston, TX',
+  circuit: 'PFL',
+  org_record: '3-1-0',
+  org_fights: 4,
+  first_fight_date: '2023-04-01',
+  last_fight_date: '2026-04-11',
+  next_fight: null,
+  ...extra,
+})
+
+export const pflChampion = orgFighter('Riko Stone', {
+  nickname: 'The Wall',
+  belt: true,
+  title_status: 'champion',
+  ranking: 'Champion · Lightweight',
+  next_fight: { event: 'PFL Future', date: '2030-02-02', opponent: 'Dax Moore' },
+})
+export const pflContender = orgFighter('Dax Moore', { ranking: '#1 Lightweight', country_code: 'br', country: 'Brazil', hometown: 'Sao Paulo, Brazil' })
+export const pflVeteran = orgFighter('Lena Ortiz', { is_active: false, division: 'Heavyweight', ranking: null })
+
+const orgFight = (extra: Record<string, unknown> = {}) => ({
+  fighter_1: 'Riko Stone',
+  fighter_2: 'Dax Moore',
+  winner: null,
+  weight_class: 'Lightweight',
+  stage: null,
+  method: null,
+  method_detail: null,
+  round: null,
+  time: null,
+  fight_url: null,
+  title_fight: null,
+  ...extra,
+})
+
+const orgEvent = (name: string, date: string, fights: unknown[], extra: Record<string, unknown> = {}) => ({
+  name,
+  date,
+  location: 'Test Arena, Chicago',
+  fight_count: fights.length,
+  fights,
+  event_url: `https://pflmma.com/event/${name.replace(/\s/g, '-').toLowerCase()}`,
+  slug: name.replace(/\s/g, '-').toLowerCase(),
+  circuit: 'PFL',
+  ...extra,
+})
+
+const pflRankings = [
+  {
+    category: 'Lightweight',
+    is_p4p: false,
+    entries: [
+      { rank: 0, fighter: 'Riko Stone', status: 'champion', win_rate: 0.83, last_fight: '2026-04-11', rank_change: null, athlete_url: null },
+      { rank: 1, fighter: 'Dax Moore', status: null, win_rate: 0.8, last_fight: '2026-04-11', rank_change: 'up 2', athlete_url: null },
+    ],
+  },
+  {
+    category: "Pound-for-Pound (Men's)",
+    is_p4p: true,
+    entries: [{ rank: 1, fighter: 'Riko Stone', status: null, win_rate: 0.83, last_fight: '2026-04-11', rank_change: null, athlete_url: null }],
+  },
+]
+
+const pflFights = [
+  { event_name: 'PFL Future', date: '2030-02-02', opponent: 'Dax Moore', result: null, weight_class: 'Lightweight', method: null, method_detail: null, round: null, time: null, winner: null, location: 'Test Arena, Chicago', fight_url: 'https://x/#1', title_fight: true, outcome: null },
+  { event_name: 'PFL Chicago', date: '2026-04-11', opponent: 'Dax Moore', result: 'win', weight_class: 'Lightweight', method: 'SUB', method_detail: 'Armbar', round: 2, time: '3:10', winner: 'Riko Stone', location: 'Test Arena, Chicago', fight_url: 'https://x/#2', title_fight: null, outcome: 'win' },
+]
+
+export const orgRoutes: Record<string, unknown> = {
+  '/orgs/pfl/fighters': [pflChampion, pflContender, pflVeteran],
+  '/orgs/pfl/events': [
+    orgEvent('PFL Chicago', '2026-04-11', [orgFight({ winner: 'Riko Stone', method: 'SUB', method_detail: 'Armbar', round: 2, time: '3:10', fight_url: 'https://x/#2' })]),
+    orgEvent('PFL Old Night', '2024-06-01', [orgFight({ fighter_1: 'Lena Ortiz', fighter_2: 'Dax Moore', winner: 'Dax Moore', method: 'U-DEC', round: 3, time: '5:00', weight_class: 'Heavyweight' })]),
+  ],
+  '/orgs/pfl/events/upcoming': [orgEvent('PFL Future', '2030-02-02', [orgFight({ title_fight: true, stage: 'Championship', fight_url: 'https://x/#1' })])],
+  '/orgs/pfl/rankings': pflRankings,
+  '/orgs/pfl/data-info': { last_updated: '2026-10-17', fighters_count: 3, events_count: 2, fights_count: 2, sources: ['pflmma.com'] },
+  '/orgs/pfl/fighters/Riko Stone/fights': pflFights,
+  // Bellator: an archive, so there is no upcoming card and the fighters are mostly retired.
+  '/orgs/bellator/fighters': [pflChampion, pflVeteran],
+  '/orgs/bellator/events': [orgEvent('Bellator 301', '2023-11-17', [orgFight({ winner: 'Riko Stone', method: 'U-DEC', round: 3, time: '5:00' })], { circuit: null })],
+  '/orgs/bellator/events/upcoming': [],
+  '/orgs/bellator/rankings': [{ category: 'Lightweight', is_p4p: false, entries: [{ rank: 0, fighter: 'Riko Stone', status: 'champion', win_rate: 0.83, last_fight: '2023-11-17', rank_change: null, athlete_url: null }] }],
+  '/orgs/bellator/data-info': { last_updated: '2026-10-21', fighters_count: 2, events_count: 1, fights_count: 1, sources: ['espn.com'] },
+}
+
+
+const gymFighter = (name: string, extra: Record<string, unknown> = {}) => ({
+  name, nickname: null, division: 'Lightweight', country_code: 'br', record: '10-2-0', orgs: [], image_url: null, belt: false, is_active: true, ...extra,
+})
+
+const gymSummaries = [
+  { slug: 'iron-gym', name: 'Iron Gym', url: 'https://fighthub-app.com/br/gyms/iron-gym/', fighters_count: 4, orgs: { ufc: 2, pfl: 1 }, champions: 1 },
+  { slug: 'pfl-only-club', name: 'PFL Only Club', url: null, fighters_count: 2, orgs: { pfl: 2 }, champions: 0 },
+  { slug: 'lonely-room', name: 'Lonely Room', url: null, fighters_count: 1, orgs: {}, champions: 0 },
+]
+
+export const gymRoutes: Record<string, unknown> = {
+  '/gyms': gymSummaries,
+  '/gyms/iron-gym': {
+    ...gymSummaries[0],
+    fighters: [
+      gymFighter('Alpha One', { orgs: ['ufc'], belt: true, nickname: 'The First' }),
+      gymFighter('Riko Stone', { orgs: ['pfl', 'ufc'], division: 'Welterweight' }),
+      gymFighter('Beta Two', { orgs: ['ufc'] }),
+      gymFighter('Nobody Known', { record: '1-0-0' }),
+    ],
+  },
+  '/gyms/pfl-only-club': { ...gymSummaries[1], fighters: [gymFighter('Dax Moore', { orgs: ['pfl'] }), gymFighter('Nobody Known', { record: '1-0-0' })] },
+}
+
 export const routes: Record<string, unknown> = {
   '/health': { status: 'ok', model_loaded: true, fighters_loaded: 2, fights_tracked: 10, latest_fight_date: '2026-10-10' },
   '/model-info': {
@@ -209,6 +347,9 @@ export const routes: Record<string, unknown> = {
 export function respond(rawUrl: string): unknown {
   const url = decodeURIComponent(rawUrl).replace(/^https?:\/\/[^/]+/, '').split('?')[0]
   if (url in routes) return routes[url]
+  if (url in orgRoutes) return orgRoutes[url]
+  if (url in gymRoutes) return gymRoutes[url]
+  if (/^\/orgs\/[a-z]+\/fighters\/.+\/fights$/.test(url)) return []
   if (url.endsWith('/performance')) return { ...performance, fighter: url.split('/')[2] }
   if (url.endsWith('/opponents')) return { fighter: '', opponents: [] }
   if (url.endsWith('/similar')) return []

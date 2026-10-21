@@ -6,6 +6,9 @@ import type {
   FighterPerformance,
   FighterProfile,
   HeadToHeadResponse,
+  FightRecord,
+  GymDetail,
+  GymSummary,
   HealthInfo,
   UpcomingPick,
   TrackRecord,
@@ -13,6 +16,9 @@ import type {
   OpponentsResponse,
   RecordBookResponse,
   ModelInfo,
+  OrgEvent,
+  OrgFighter,
+  OrgRankingCategory,
   PredictionResponse,
   RankingCategory,
   SimilarFighter,
@@ -137,5 +143,49 @@ export const predictFight = async (fighter_a_name: string, fighter_b_name: strin
     fighter_a: fighter_a_name,
     fighter_b: fighter_b_name,
   })
+  return response.data
+}
+
+// Organizations other than the UFC share one set of endpoints, /orgs/{id}/...
+
+export const getOrgFighters = async (org: string) => {
+  const response = await api.get<OrgFighter[]>(`/orgs/${org}/fighters`)
+  return response.data
+}
+
+export const getOrgEvents = async (org: string) => {
+  const response = await api.get<OrgEvent[]>(`/orgs/${org}/events`)
+  return response.data
+}
+
+export const getOrgUpcomingEvents = async (org: string) => {
+  const response = await api.get<OrgEvent[]>(`/orgs/${org}/events/upcoming`)
+  return response.data
+}
+
+export const getOrgRankings = async (org: string) => {
+  const response = await api.get<OrgRankingCategory[]>(`/orgs/${org}/rankings`)
+  return response.data
+}
+
+export const getOrgFighterFights = async (org: string, fighter: string) => {
+  const response = await api.get<FightRecord[]>(`/orgs/${org}/fighters/${encodeURIComponent(fighter)}/fights`)
+  return response.data
+}
+
+export const getOrgDataInfo = async (org: string) => {
+  const response = await api.get<DataInfo>(`/orgs/${org}/data-info`)
+  return response.data
+}
+
+// Gyms are shared by every organization: a gym is matched with the fighters of each one.
+
+export const getGyms = async () => {
+  const response = await api.get<GymSummary[]>('/gyms')
+  return response.data
+}
+
+export const getGym = async (slug: string) => {
+  const response = await api.get<GymDetail>(`/gyms/${encodeURIComponent(slug)}`)
   return response.data
 }

@@ -7,6 +7,8 @@ afterEach(async () => {
   // Imported here, not at the top: a static import would load the real axios before a test file can mock it.
   const { resetFightersCache } = await import('../shared/hooks/useFighters')
   resetFightersCache()
+  const { resetOrgData } = await import('../shared/hooks/useOrgData')
+  resetOrgData()
 })
 
 // jsdom has none of these; charts, the fighter picker and the page transitions expect them.

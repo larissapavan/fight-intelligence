@@ -29,6 +29,7 @@ def build_meta_router(get_service) -> APIRouter:
             "champions": "/champions",
             "record_book": "/record-book",
             "news": "/news",
+            "organizations": "/orgs",
             "track_record": "/track-record",
             "predict": "/predict",
             "model_info": "/model-info",

@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import { ServerLoadingState } from './shared/components/ServerLoadingState'
 import { TabbedLayout, type SectionTab } from './shared/components/TabbedLayout'
 import { ErrorBoundary } from './shared/components/ErrorBoundary'
+import { GENERIC_ORGS } from './shared/data/orgs'
 import { MainLayout } from './layouts/MainLayout'
 import { NotFound } from './pages/NotFound'
 
@@ -25,6 +26,13 @@ const DataIntelligence = lazy(() =>
 const MatchupIntelligence = lazy(() =>
   import('./pages/MatchupIntelligence').then((module) => ({ default: module.MatchupIntelligence })),
 )
+
+const Gyms = lazy(() => import('./pages/Gyms').then((module) => ({ default: module.Gyms })))
+const GymDetail = lazy(() => import('./pages/GymDetail').then((module) => ({ default: module.GymDetail })))
+const OrgHome = lazy(() => import('./pages/org/OrgHome').then((module) => ({ default: module.OrgHome })))
+const OrgFighters = lazy(() => import('./pages/org/OrgFighters').then((module) => ({ default: module.OrgFighters })))
+const OrgEvents = lazy(() => import('./pages/org/OrgEvents').then((module) => ({ default: module.OrgEvents })))
+const OrgRankings = lazy(() => import('./pages/org/OrgRankings').then((module) => ({ default: module.OrgRankings })))
 
 const matchupTabs: SectionTab[] = [
   { to: '/predictor', label: 'Predict' },
@@ -60,6 +68,8 @@ function App() {
             <Route path="/fighters" element={<Fighters />} />
             <Route path="/events" element={<Events />} />
             <Route path="/rankings" element={<Rankings />} />
+            <Route path="/gyms" element={<Gyms />} />
+            <Route path="/gyms/:slug" element={<GymDetail />} />
             <Route element={<TabbedLayout label="Champions and records" tabs={championsTabs} />}>
               <Route path="/champions" element={<Champions />} />
               <Route path="/record-book" element={<RecordBook />} />
@@ -71,6 +81,16 @@ function App() {
               <Route path="/track-record" element={<TrackRecord />} />
             </Route>
             <Route path="/about-model" element={<AboutModel />} />
+            {GENERIC_ORGS.map((org) => (
+              <Route key={org.id} path={org.basePath}>
+                <Route index element={<OrgHome />} />
+                <Route path="fighters" element={<OrgFighters />} />
+                <Route path="events" element={<OrgEvents />} />
+                <Route path="rankings" element={<OrgRankings />} />
+                <Route path="gyms" element={<Gyms />} />
+                <Route path="gyms/:slug" element={<GymDetail />} />
+              </Route>
+            ))}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

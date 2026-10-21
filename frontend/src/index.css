@@ -106,6 +106,31 @@
   --accent-gold: #f2c230;
 }
 
+/* Each organization gets its own accent: the red marks of the UFC pages turn corner blue on the others. */
+:root[data-org='pfl'],
+:root[data-org='pfl'][data-theme='light'] {
+  --accent-red: #1f4e9c;
+  --text-red: #1f4e9c;
+}
+
+:root[data-org='bellator'],
+:root[data-org='bellator'][data-theme='light'] {
+  --accent-red: #2e7d4f;
+  --text-red: #1f6a3f;
+}
+
+:root[data-org='bellator'][data-theme='dark'] {
+  --accent-red: #3fb27f;
+  --text-red: #6fd0a3;
+  --hard: #2e7d4f;
+}
+
+:root[data-org='pfl'][data-theme='dark'] {
+  --accent-red: #4a82d6;
+  --text-red: #8fb3e8;
+  --hard: #1f4e9c;
+}
+
 html {
   scroll-behavior: smooth;
 }

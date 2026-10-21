@@ -27,13 +27,14 @@ export function resetFightersCache() {
   loaded = null
 }
 
-export function useFighters() {
+/** Pass false to skip the request (pages of another organization do not need the UFC catalog). */
+export function useFighters(enabled = true) {
   const [fighters, setFighters] = useState<FighterProfile[]>(loaded ?? [])
-  const [loading, setLoading] = useState(loaded === null)
+  const [loading, setLoading] = useState(enabled && loaded === null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (loaded) return
+    if (!enabled || loaded) return
     let active = true
     loadCatalog()
       .then((data) => active && setFighters(data))
@@ -42,7 +43,7 @@ export function useFighters() {
     return () => {
       active = false
     }
-  }, [])
+  }, [enabled])
 
   return { fighters, loading, error }
 }

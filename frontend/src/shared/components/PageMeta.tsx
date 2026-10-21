@@ -4,6 +4,9 @@ import { useLocation } from 'react-router-dom'
 const SITE = 'Fight Intelligence'
 const DEFAULT_DESCRIPTION = 'Predict UFC fights with machine learning and see exactly why. Fighter stats, rankings and champions.'
 
+const GYM_PAGE = /^(\/pfl|\/bellator)?\/gyms\/[^/]+$/
+const GYM_DETAIL = { title: 'Gym', description: 'Who trains at this gym: its fighters, champions and records.' }
+
 const PAGES: Record<string, { title: string; description: string }> = {
   '/predictor': { title: 'Predict a fight', description: 'Pick two UFC fighters and get a win probability with the stats that drove it.' },
   '/head-to-head': { title: 'Head-to-head history', description: 'Every time two UFC fighters have met, who won and how, plus their common opponents.' },
@@ -17,6 +20,17 @@ const PAGES: Record<string, { title: string; description: string }> = {
   '/data': { title: 'Data', description: 'How raw UFC data becomes the dataset the model predicts from.' },
   '/model': { title: 'System', description: 'The prediction model, how it was trained and how it compares with simpler ones.' },
   '/track-record': { title: 'Track record', description: 'How the model\'s picks hold up against real fights: saved before the event, checked after.' },
+  '/pfl': { title: 'PFL', description: 'Professional Fighters League: the next card, the champions and the latest results.' },
+  '/pfl/fighters': { title: 'PFL fighters', description: 'PFL fighter profiles: records, builds, camps and every fight.' },
+  '/pfl/events': { title: 'PFL events', description: 'The full PFL event archive with results, plus upcoming cards.' },
+  '/gyms': { title: 'Gyms', description: 'Where UFC fighters train: every gym and team with its fighters, champions and records.' },
+  '/pfl/gyms': { title: 'PFL gyms', description: 'Where PFL fighters train: every gym and team with its fighters and records.' },
+  '/bellator': { title: 'Bellator', description: 'The Bellator archive: every event from 2009 to 2023, its fighters and the champions it ended with.' },
+  '/bellator/fighters': { title: 'Bellator fighters', description: 'Bellator fighter profiles: records, builds, camps and every fight.' },
+  '/bellator/events': { title: 'Bellator events', description: 'Every Bellator event from 2009 to 2023 with results.' },
+  '/bellator/rankings': { title: 'Bellator champions', description: 'The champions Bellator ended with, division by division.' },
+  '/bellator/gyms': { title: 'Bellator gyms', description: 'Where Bellator fighters train: every gym and team with its fighters.' },
+  '/pfl/rankings': { title: 'PFL rankings', description: 'The official PFL divisional and pound-for-pound rankings.' },
   '/about-model': { title: 'About the model', description: 'A full-stack applied AI project: data pipeline, model and API.' },
 }
 
@@ -30,7 +44,7 @@ export function PageMeta() {
 
   useEffect(() => {
     const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
-    const page = PAGES[path]
+    const page = PAGES[path] ?? (GYM_PAGE.test(path) ? GYM_DETAIL : undefined)
     const title = page ? `${page.title} · ${SITE}` : path === '/' || path === '/home' ? SITE : `Page not found · ${SITE}`
     const description = page?.description ?? DEFAULT_DESCRIPTION
 

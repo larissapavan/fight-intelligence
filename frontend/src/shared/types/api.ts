@@ -418,3 +418,96 @@ export interface UpcomingPick {
   probability: number
   fighter_1_probability: number
 }
+
+/** Organizations served by the generic /orgs/{id} endpoints (everything except the UFC). */
+export interface NextFight {
+  event: string
+  date: string | null
+  opponent: string
+}
+
+export interface OrgFighter {
+  name: string
+  nickname: string | null
+  is_active: boolean
+  age: number | null
+  height_cm: number | null
+  weight_lbs: number | null
+  reach_cm: number | null
+  leg_reach_cm: number | null
+  wins: number | null
+  losses: number | null
+  draws: number | null
+  no_contests: number | null
+  total_fights: number | null
+  win_rate: number | null
+  division: string | null
+  belt: boolean
+  /** "champion" or "interim" for a title holder. */
+  title_status: string | null
+  /** "#3 Bantamweight" or "Champion · Heavyweight". */
+  ranking: string | null
+  image_url: string | null
+  profile_url: string | null
+  hometown: string | null
+  country: string | null
+  country_code: string | null
+  camp: string | null
+  fighting_out_of: string | null
+  circuit: string | null
+  org_record: string | null
+  org_fights: number
+  first_fight_date: string | null
+  last_fight_date: string | null
+  next_fight: NextFight | null
+}
+
+export interface OrgFightResult extends FightResult {
+  /** "Semifinal", "Championship"... */
+  stage?: string | null
+}
+
+export interface OrgEvent extends Omit<EventSummary, 'fights'> {
+  slug: string | null
+  circuit: string | null
+  fights: OrgFightResult[]
+}
+
+export interface OrgRankingEntry extends RankingEntry {
+  /** "champion", "interim" or null for a contender. */
+  status: string | null
+}
+
+export interface OrgRankingCategory {
+  category: string
+  is_p4p: boolean
+  entries: OrgRankingEntry[]
+}
+
+export interface GymSummary {
+  slug: string
+  name: string
+  url: string | null
+  /** Fighters FightHub lists for the gym. */
+  fighters_count: number
+  /** How many of them are in each organization's data here ({ ufc: 12, pfl: 3 }). */
+  orgs: Record<string, number>
+  champions: number
+}
+
+export interface GymFighter {
+  name: string
+  nickname: string | null
+  division: string | null
+  country_code: string | null
+  record: string | null
+  /** Organizations whose profile has this fighter, the one he is active in first. Empty when we have no profile. */
+  orgs: string[]
+  image_url: string | null
+  belt: boolean
+  is_active: boolean
+}
+
+export interface GymDetail extends GymSummary {
+  fighters: GymFighter[]
+}

@@ -31,6 +31,21 @@ const sources: { name: string; href?: string; use: string }[] = [
     use: 'The UFC roster, current and former: who is on it, nationalities, debut and last fight dates, and the origin and honor badges (Contender Series, TUF, Road to UFC, BMF, Hall of Fame).',
   },
   {
+    name: 'pflmma.com',
+    href: 'https://pflmma.com',
+    use: 'The Professional Fighters League: events, results, fighter profiles, photos and the official rankings. Only the pages its robots.txt allows are read.',
+  },
+  {
+    name: 'FightHub',
+    href: 'https://fighthub-app.com/br/gyms/',
+    use: 'The gyms and teams and the fighters who train in each. Only the pages its robots.txt allows are read.',
+  },
+  {
+    name: 'Wikipedia',
+    href: 'https://en.wikipedia.org/wiki/List_of_Bellator_MMA_champions',
+    use: 'The list of Bellator MMA champions: every title reign, which gives the champions Bellator ended with and its title fights (text under CC BY-SA, used as data).',
+  },
+  {
     name: 'Sherdog',
     href: 'https://www.sherdog.com',
     use: 'A few archive photos of former fighters.',
@@ -91,7 +106,7 @@ export function About() {
       <AboutSection id="data" icon={Database} title="Data & System">
         <p>
           Fighter profiles, events, results and rankings are collected from public sources (UFCStats.com, ESPN and
-          UFC.com), the title history is compiled by hand from published UFC title records, and everything is saved as
+          UFC.com, and pflmma.com for the PFL), the title history is compiled by hand from published UFC title records, and everything is saved as
           CSV files that an automated job refreshes once a day, after a validation step that rejects broken updates
           (title changes are still entered by hand, so a new champion can appear a little late). For each matchup the system compares the two fighters (age, height, reach, record, striking and
           takedown accuracy, stance) and feeds those differences into a machine-learning model that estimates each

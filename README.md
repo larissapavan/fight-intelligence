@@ -9,6 +9,8 @@ UFC fight stats, rankings and win predictions, with an explanation for every pre
 
 **[Open Fight Intelligence →](https://fight-intelligence.vercel.app/)**
 
+It also covers the **Professional Fighters League** (fighters, every event and the official rankings, at [/pfl](https://fight-intelligence.vercel.app/pfl)) and, as an archive, **Bellator MMA** (every event from 2009 to 2023, its fighters and the champions it ended with, at [/bellator](https://fight-intelligence.vercel.app/bellator)). The UFC / PFL / Bellator switch in the header moves between the two, and keeps you on the same section (events stay events). Predictions, head-to-head and the track record are UFC-only for now, because the model is trained on UFC fights.
+
 **Contents:** [Try it](#try-it-in-30-seconds) · [In plain words](#part-1-in-plain-words) · [What you can do](#what-you-can-do) · [Under the hood](#part-2-under-the-hood) · [Run it locally](#run-it-locally) · [Limitations](#limitations) · [Author](#author)
 
 ---
@@ -75,6 +77,12 @@ Everything is public: ESPN, ufc.com, UFC Stats, roster.watch and a few Kaggle da
 | **Track record** | How the model's picks hold up against real fights. |
 | **Data, Model, About** | Where the numbers come from, how the model works, and the credits. |
 
+**The PFL** has its own Home, Fighters, Events and Rankings pages under `/pfl`, in the same look with a blue accent instead of red. Fighters show record, build, camp, country, the title they hold and every fight (with a link to the next one); events show the card with weight class, stage (quarterfinal, semifinal, championship), method, round and time; rankings show the champions (vacant and interim belts included), the top 10 of each division and the men's pound-for-pound.
+
+**Bellator** has the same pages in green, as an archive: Bellator held its last event in 2023 and was absorbed by the PFL, so nothing there updates. It has no rankings; the page shows the champions it ended with. Its title fights are flagged and given their division from the champion lists, and every other bout takes the division both fighters' ESPN profiles agree on (ESPN gives none per bout).
+
+**Gyms** (`/gyms` for the UFC, `/pfl/gyms` for the PFL) list where fighters train: every gym and team with its roster, the champions in it, and how many of its fighters are in each organization's data. A gym's roster comes from FightHub; each fighter is matched by name with the UFC and PFL profiles here, so the ones we know show our photo, title and profile, and the rest are listed as FightHub has them.
+
 A few details worth knowing:
 
 - **Fighter profiles** have the photo, record, nickname, flags and hometown, a career timeline you can click through fight by fight, win and finish rate by year, how the wins came, and similar fighters.
@@ -118,6 +126,8 @@ ESPN / ufc.com / roster.watch / statleaders.ufc.com
 | `GET /fighters`, `/fighters/{name}/performance`, `/similar`, `/opponents` | Profiles, career timeline and trends, similar fighters, past opponents |
 | `GET /head-to-head` | Fights between two fighters, common opponents, distance in fights |
 | `GET /events`, `/events/upcoming` | The archive and the upcoming cards |
+| `GET /gyms`, `/gyms/{slug}` | Every gym with its counts per organization; one gym with its fighters, matched with the UFC and PFL profiles |
+| `GET /orgs`, `/orgs/{org}/fighters`, `/fighters/{name}/fights`, `/events`, `/events/upcoming`, `/rankings`, `/data-info` | The same data for every organization other than the UFC (today `pfl` and `bellator`) |
 | `GET /rankings`, `/champions`, `/record-book` | Rankings; reigns, records and title histories; career leaders |
 | `GET /track-record` | Live accuracy of the saved picks |
 | `GET /news` | Headlines from ESPN |
@@ -158,6 +168,9 @@ The same accuracy, but better probabilities: when the candidate says 70% to 80%,
 - [ESPN](https://www.espn.com/mma/): results, upcoming cards, records, debut fighters, per-fight statistics (strikes, takedowns, control time), photos and the news headlines on the home and events pages (cached for a few minutes, each one links to the original story).
 - [ufc.com](https://www.ufc.com/rankings): the official rankings, the champions' photos and hometowns.
 - [UFC Stats Leaders](https://statleaders.ufc.com/en/career): the career leaders behind the Record Book.
+- [pflmma.com](https://pflmma.com): the Professional Fighters League's own site: events, results, fighter profiles, photos and rankings. Only the pages its `robots.txt` allows are read (the events list and sitemap, one page per event and per fighter, and the rankings); its `/ajax/` and `/smt/` endpoints, which `robots.txt` disallows, are never called. Requests are spaced half a second apart and use an identifiable User-Agent.
+- [FightHub](https://fighthub-app.com/br/gyms/): the gym directory (about 900 gyms and teams) and who trains in each. Only the pages its `robots.txt` allows are read, spaced half a second apart.
+- [Wikipedia: List of Bellator MMA champions](https://en.wikipedia.org/wiki/List_of_Bellator_MMA_champions): every Bellator title reign, through Wikipedia's API. It gives the champions Bellator ended with and flags the title fights. The Bellator events, results and fighter profiles come from ESPN's public JSON API, the same one the UFC data uses.
 - [roster.watch](https://www.roster.watch/): who is on the UFC roster (active or former), nationalities, debut and last-fight dates, weight classes, and the Contender Series, TUF, Road to UFC, BMF and Hall of Fame badges.
 - [UFC data by scarekrow](https://www.kaggle.com/datasets/scarekrow/ufc-data) on Kaggle: referees, scheduled rounds, title-fight flags and judges' scores.
 - My own [UFC Historical Fight Dataset (1993–2026)](https://www.kaggle.com/datasets/larissapavan/ufc-historical-fight-dataset-19942026) on Kaggle, which is the data this site is built on.
@@ -170,11 +183,13 @@ The same accuracy, but better probabilities: when the candidate says 70% to 80%,
 5. Refresh the official rankings.
 6. Photos: the champions' belt photos, plus ESPN headshots for new fighters and for active fighters still without one (ESPN often publishes a debutant's photo days after the profile exists, so those are asked again every run).
 7. Refresh hometowns, the roster and the record book.
-8. Validate, run the tests and, only if everything passes, commit the CSVs and the new photos.
+8. Refresh the PFL: the events of the last 45 days and the upcoming ones, the fighters on them, new fighters and the ranked ones (the first run reads about 1,400 pages; later runs read a few dozen), plus headshots for new fighters.
+9. Refresh the gym directory: the directory pages, and only the gyms that are new or whose fighter count changed.
+10. Validate, run the tests and, only if everything passes, commit the CSVs and the new photos.
 
 One failing source does not cost the whole day: the steps that worked are still validated and committed, and the run is marked as failed so the problem is not hidden.
 
-**Validation.** Each CSV is compared with the last committed version, and the update is rejected if a header changed or the row count drops, which is what protects the site when one of the sources changes its format. It also checks the shape of the data: a partial rankings page never replaces the stored one, a fighter appears at most once per ranking, a bout never has a missing or repeated fighter, records are numbers, and every photo the manifest lists exists on disk. Softer problems are reported as warnings and do not stop the update: the official champion disagreeing with the hand-kept reigns, a ranked or booked fighter with no profile, and a card whose date has passed but is still listed as upcoming.
+**Validation.** Each CSV is compared with the last committed version, and the update is rejected if a header changed or the row count drops, which is what protects the site when one of the sources changes its format. It also checks the shape of the data: a partial rankings page never replaces the stored one, a fighter appears at most once per ranking, a bout never has a missing or repeated fighter, records are numbers, and every photo the manifest lists exists on disk. The PFL files get the same treatment (same header, no shrinking, no bout with a repeated fighter or a winner who is not in it, every photo on disk). Softer problems are reported as warnings and do not stop the update: the official champion disagreeing with the hand-kept reigns, a ranked or booked fighter with no profile, and a card whose date has passed but is still listed as upcoming.
 
 **Kept by hand.** A few small files in `data/raw/` are edited manually:
 
@@ -217,6 +232,9 @@ npm run dev                              # http://localhost:5173
 python -m scripts.update_all --dry-run   # preview the ESPN update; nothing is written
 python -m scripts.update_all             # the full daily refresh
 python -m scripts.validate_data          # check data/raw against the last commit
+python -m scripts.scrape_gyms --dry-run  # read FightHub's gyms and report; nothing is written (--full re-reads every gym page)
+python -m scripts.scrape_bellator --cache-dir .bellator-cache  # the Bellator archive (one-off, about 6,000 calls; resumable)
+python -m scripts.scrape_pfl --dry-run   # read the PFL site and report; nothing is written (--full re-reads every page, --photos downloads headshots)
 python -m scripts.log_predictions --refresh-unresolved   # after a model change: re-pick fights still to come
 python -m scripts.scrape_fight_stats --dry-run          # per-fight statistics from ESPN: what is still to collect (resumable)
 python -m src.ufc_predictor.train_prefight              # train the pre-fight candidate and write docs/prefight-model-report.md
@@ -242,17 +260,27 @@ models/             the deployed model (read by the API); `train_prefight` write
 src/ufc_predictor/  feature engineering and training code (prefight.py builds the training data from what was known before each fight)
 scripts/            scrapers, daily update, prediction log, photos, data validation
 .github/workflows/  CI and the daily data update
-data/raw/           the CSV data
+data/raw/           the CSV data (data/raw/pfl/ and data/raw/bellator/ hold those organizations' fights, fighters and rankings)
 notebooks/          exploratory analysis
 docs/               brand assets, the Kaggle dataset README and the model reports
 tests/              backend, model and script tests (the frontend tests sit next to the app in frontend/src/test)
 ```
+
+### Adding another organization
+
+The UFC has its own pipeline; every other organization is three CSV files in `data/raw/<org>/` and one entry in a registry, so adding one (ONE, Bellator, KSW...) does not mean touching the pages:
+
+1. **A scraper** that writes `fights.csv` (one row per bout, with the event on every row, ISO `event_date`, `card_order`, `winner`, `method` in the UFC codes `U-DEC`, `KO/TKO`, `SUB`...), `fighters.csv` and `rankings.csv` (rank 0 is the champion). `scripts/scrape_pfl.py` is the reference: its header lists the exact columns. Read only what the site's `robots.txt` allows.
+2. **The backend** serves it as soon as it is registered: add an `Org(...)` to `ORGS` in `backend/app/services/org_service.py`, and `/orgs/<id>/fighters`, `/events`, `/events/upcoming`, `/rankings` and `/fighters/{name}/fights` exist.
+3. **The frontend**: add the organization to `ORGS` and `ORG_LIST` in `frontend/src/shared/data/orgs.ts`. The switcher, the menu, the routes (`/<id>`, `/<id>/fighters`, `/<id>/events`, `/<id>/rankings`) and the header search follow from it. For a new accent color, add a `:root[data-org='<id>']` block next to the PFL one in `index.css`.
+4. **The daily update**: call the scraper from `scripts/update_all.py` and list its folder in `ORG_DIRS` in `scripts/validate_data.py`.
 
 ---
 
 ## Limitations
 
 - The data comes from public sources, so it can have mistakes or lag behind real events. The numbers are not official.
+- The PFL pages have no predictions: the model learned from UFC fights and the PFL's site publishes no per-fight statistics (strikes, takedowns) to train another one on. PFL results are also thinner than the UFC's: no referee, scorecards or finish detail beyond what the event page prints.
 - The model only knows what is in the stats. It has no idea about injuries, weight cuts, camp changes or style quirks.
 - Fighters with few UFC fights give the model little to work with, so their predictions are less reliable.
 - The model has a built-in lean toward the red corner, because that is what its training fights looked like. Averaging both orders removes the effect on a single matchup, but it does not make the model more accurate, and how well its probabilities are calibrated, such as whether a 90% pick really wins nine times in ten, has not been measured yet. Read very confident picks with caution.

@@ -3,11 +3,17 @@ import type { FighterProfile } from '../types/api'
 
 const RESULT_LIMIT = 8
 
+/** What the header search needs from a fighter: a UFC profile and a fighter of another organization both have it. */
+export type SearchableFighter = Pick<
+  FighterProfile,
+  'name' | 'nickname' | 'division' | 'wins' | 'losses' | 'draws' | 'total_fights' | 'image_url'
+>
+
 /** Fighters whose name (or nickname) matches: names that start with the text first, then the ones with more fights. */
-export function searchFighters(fighters: FighterProfile[], text: string, limit = RESULT_LIMIT) {
+export function searchFighters<T extends SearchableFighter>(fighters: T[], text: string, limit = RESULT_LIMIT): T[] {
   const term = normalizeFighterName(text)
   if (!term) return []
-  const scored: { fighter: FighterProfile; rank: number }[] = []
+  const scored: { fighter: T; rank: number }[] = []
   for (const fighter of fighters) {
     const name = normalizeFighterName(fighter.name)
     const nickname = fighter.nickname ? normalizeFighterName(fighter.nickname) : ''
