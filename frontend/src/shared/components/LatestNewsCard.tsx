@@ -32,7 +32,7 @@ export function LatestNewsCard({ limit = 6, quiet = false }: { limit?: number; q
       <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div className="flex items-center gap-2">
           <Newspaper className={`h-3.5 w-3.5 ${quiet ? 'text-[var(--text-muted)]' : 'text-[var(--accent-red)]'}`} />
-          <h2 id="latest-news-title" className={`broadcast-label text-[10px] ${quiet ? 'text-[var(--text-muted)]' : 'text-[var(--text-main)]'}`}>
+          <h2 id="latest-news-title" className={`broadcast-label text-[11px] ${quiet ? 'text-[var(--text-muted)]' : 'text-[var(--text-main)]'}`}>
             Latest from the UFC
           </h2>
         </div>
@@ -83,7 +83,7 @@ function NewsRow({ item, quiet = false }: { item: NewsItem; quiet?: boolean }) {
           <Newspaper className={`m-auto text-[var(--text-muted)] ${quiet ? 'mt-3 h-4 w-4' : 'mt-6 h-6 w-6'}`} />
         )}
         {item.kind === 'video' ? (
-          <span className="absolute bottom-0 left-0 inline-flex items-center gap-1 bg-[#C8102E] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+          <span className="absolute bottom-0 left-0 inline-flex items-center gap-1 bg-[#C8102E] px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.1em] text-white">
             <Play className="h-2.5 w-2.5 fill-current" />
             Video
           </span>

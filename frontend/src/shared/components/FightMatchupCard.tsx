@@ -38,7 +38,7 @@ export function FightMatchupCard({
       <div className="relative z-10 grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 pointer-events-none">
         <CornerPhoto name={fight.fighter_1} />
         <CornerName name={fight.fighter_1} align="right" won={fighter1Won} onOpenFighter={onOpenFighter} />
-        <span className="broadcast-label px-0.5 text-[10px] text-[var(--text-muted)]">vs</span>
+        <span className="broadcast-label px-0.5 text-[11px] text-[var(--text-muted)]">vs</span>
         <CornerName name={fight.fighter_2} align="left" won={fighter2Won} onOpenFighter={onOpenFighter} />
         <CornerPhoto name={fight.fighter_2} />
       </div>
@@ -48,7 +48,7 @@ export function FightMatchupCard({
         <span className="pointer-events-auto">
           <PickChip pick={pick} />
         </span>
-        {fight.weight_class ? <span className="selector-chip text-[10px] text-[var(--text-main)]">{fight.weight_class}</span> : null}
+        {fight.weight_class ? <span className="selector-chip text-[11px] text-[var(--text-main)]">{fight.weight_class}</span> : null}
       </div>
 
       {details?.length ? (

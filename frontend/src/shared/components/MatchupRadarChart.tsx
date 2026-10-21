@@ -96,7 +96,7 @@ export function MatchupRadarChart({
 
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <p className="broadcast-label text-[10px] text-[#999999]">Style comparison</p>
+      <p className="broadcast-label text-[11px] text-[#999999]">Style comparison</p>
       <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Radar</h2>
       {loading ? (
         <LoadingSkeleton className="mt-3 h-[280px] rounded-2xl sm:h-[320px]" label="Loading style comparison" />

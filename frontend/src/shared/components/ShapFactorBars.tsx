@@ -20,7 +20,7 @@ export function ShapFactorBars({
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="broadcast-label text-[10px] text-[#999999]">SHAP explainability</p>
+          <p className="broadcast-label text-[11px] text-[#999999]">SHAP explainability</p>
           <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Key matchup factors</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.12em]">

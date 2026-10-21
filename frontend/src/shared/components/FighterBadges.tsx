@@ -21,7 +21,7 @@ export function FighterBadges({ badges, variant = 'short', className = '' }: Fig
           <li
             key={key}
             title={info.label}
-            className={`border-2 border-[var(--rule)] px-1.5 py-px text-[10px] font-bold uppercase leading-4 tracking-[0.08em] ${
+            className={`border-2 border-[var(--rule)] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] ${
               CHAMPION_SEALS.has(key)
                 ? 'bg-[#C9CDD3] text-[#0E0E0E]'
                 : info.honor
@@ -46,7 +46,7 @@ export function CurrentChampionSeals({ titles, className = '' }: { titles: strin
       {titles.map((title) => (
         <li
           key={title}
-          className="border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[10px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]"
+          className="border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]"
         >
           Current {title} Champion
         </li>
@@ -63,7 +63,7 @@ export function FormerChampionSeals({ titles, className = '' }: { titles: string
       {titles.map((title) => (
         <li
           key={title}
-          className="border-2 border-[var(--rule)] bg-[#C8102E] px-1.5 py-px text-[10px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
+          className="border-2 border-[var(--rule)] bg-[#C8102E] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
         >
           Former {title} Champion
         </li>
@@ -80,7 +80,7 @@ export function InterimChampionSeals({ titles, className = '' }: { titles: strin
       {titles.map((title) => (
         <li
           key={title}
-          className="border-2 border-[var(--rule)] bg-[#1F4E9C] px-1.5 py-px text-[10px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
+          className="border-2 border-[var(--rule)] bg-[#1F4E9C] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
         >
           Interim {title} Champion
         </li>
@@ -129,7 +129,7 @@ type TitleFightBadgeProps = {
  */
 export function TitleFightBadge({ fight, className = '' }: TitleFightBadgeProps) {
   const division = fight.weight_class && !/catch/i.test(fight.weight_class) ? fight.weight_class : null
-  const base = `border-2 border-[var(--rule)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${className}`
+  const base = `border-2 border-[var(--rule)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] ${className}`
 
   if (fight.interim_title) {
     return (

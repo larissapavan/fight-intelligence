@@ -5,20 +5,20 @@ import { LoadingSkeleton } from './LoadingSkeleton'
 function ResultChip({ result }: { result: FightRecord['result'] }) {
   if (result === 'win') {
     return (
-      <span className="type-tech rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#C8102E]">
+      <span className="type-tech rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#C8102E]">
         Win
       </span>
     )
   }
   if (result === 'loss') {
     return (
-      <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+      <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
         Loss
       </span>
     )
   }
   return (
-    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
       N/C
     </span>
   )
@@ -103,7 +103,7 @@ export function RecentFightsPanel({
 }) {
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <p className="broadcast-label text-[10px] text-[#999999]">Last five</p>
+      <p className="broadcast-label text-[11px] text-[#999999]">Last five</p>
       <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Recent fights</h2>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <Column name={nameA} fights={performanceA?.last_performances ?? []} loading={loading} tone="red" />

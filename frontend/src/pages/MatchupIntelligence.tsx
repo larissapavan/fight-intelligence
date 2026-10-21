@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState, type ComponentType } from 'react'
 import { LoaderCircle, Ruler, ShieldAlert, Swords, Target } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 
+import { CopyLinkButton } from '../shared/components/CopyLinkButton'
 import { FighterSelect } from '../shared/components/FighterSelect'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { MatchupRadarChart } from '../shared/components/MatchupRadarChart'
@@ -121,7 +122,7 @@ export function MatchupIntelligence() {
         </nav>
       ) : null}
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading
+        <SectionHeading level={1}
           eyebrow="Matchup"
           title="Why this matchup is interesting"
           description="Striking, grappling and physical numbers for both fighters, plus the factors the model weighed most."
@@ -172,9 +173,13 @@ export function MatchupIntelligence() {
           <section className="surface-card rounded-[20px] p-4 sm:p-5">
             <div className="flex items-end justify-between gap-3">
               <div>
-                <p className="broadcast-label text-[10px] text-[var(--text-muted)]">Model odds</p>
+                <p className="broadcast-label text-[11px] text-[var(--text-muted)]">Model odds</p>
                 <h2 className="mt-0.5 text-xl font-black uppercase tracking-[0.03em] text-[var(--text-main)] sm:text-2xl">Win probability</h2>
               </div>
+              <CopyLinkButton
+                href={`/matchup-intelligence?a=${encodeURIComponent(fighterAName)}&b=${encodeURIComponent(fighterBName)}`}
+                label="Copy matchup link"
+              />
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end">
               <FighterSelect
@@ -186,7 +191,7 @@ export function MatchupIntelligence() {
                 placeholder="Select Fighter A"
                 onChange={(name) => chooseFighter('a', name)}
               />
-              <span className="broadcast-label pb-4 text-center text-[10px] text-[var(--text-muted)]">vs</span>
+              <span className="broadcast-label pb-4 text-center text-[11px] text-[var(--text-muted)]">vs</span>
               <FighterSelect
                 label="Fighter B"
                 corner="blue"

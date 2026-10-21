@@ -5,6 +5,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 
 import { useModelInfo } from '../hooks/useModelInfo'
 import { BrandMark } from './BrandMark'
+import { FighterSearch } from './FighterSearch'
 
 const navItems: { to: string; label: string; group?: string[] }[] = [
   { to: '/predictor', label: 'Predict', group: ['/predictor', '/head-to-head', '/matchup-intelligence'] },
@@ -60,19 +61,19 @@ export function Header() {
 
   return (
     <header>
-      <div className="surface-card border-b border-white/10 rounded-[18px] px-2.5 py-2.5 sm:px-3.5 sm:py-3">
+      <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2.5 sm:px-3.5 sm:py-3">
         <div className="flex items-center justify-between gap-2">
           <Link
             to="/"
             aria-label="Fight Intelligence home"
-            className="brand-badge flex min-w-0 items-center gap-3.5 border-2 border-black bg-[#EFECE6] px-4 py-2.5 text-black sm:px-5"
+            className="brand-badge flex min-w-0 items-center gap-2.5 border-2 border-black bg-[#EFECE6] px-2.5 py-2 text-black xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5"
           >
-            <BrandMark className="h-9 w-9 shrink-0 rounded-none sm:h-10 sm:w-10" />
+            <BrandMark className="h-8 w-8 shrink-0 rounded-none xs:h-9 xs:w-9 sm:h-10 sm:w-10" />
             <span className="flex min-w-0 flex-col items-start justify-center gap-1">
-              <span className="truncate font-mono text-[10px] font-bold uppercase leading-none tracking-widest text-[#A80D26] sm:text-[11px]">
+              <span className="truncate font-mono text-[11px] font-bold uppercase leading-none tracking-widest text-[#A80D26] sm:text-[11px]">
                 Matchup analytics
               </span>
-              <span className="truncate font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.4rem] font-normal uppercase leading-none tracking-[0.04em] text-black sm:text-[1.75rem]">
+              <span className="truncate font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.2rem] font-normal xs:text-[1.4rem] uppercase leading-none tracking-[0.04em] text-black sm:text-[1.75rem] lg:text-[1.4rem] xl:text-[1.75rem]">
                 Fight Intelligence
               </span>
             </span>
@@ -81,11 +82,21 @@ export function Header() {
           <div className="flex shrink-0 items-center gap-1.5">
             <div
               title={apiTitle}
-              className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:inline-flex ${apiClasses}`}
+              className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xs:inline-flex lg:hidden xl:inline-flex ${apiClasses}`}
             >
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
               {apiLabel}
             </div>
+            <div
+              title={apiTitle}
+              role="status"
+              aria-label={`API ${apiLabel}`}
+              className={`hidden h-8 w-8 items-center justify-center border-2 lg:flex xl:hidden ${apiClasses}`}
+            >
+              <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
+            </div>
+
+            <FighterSearch />
 
             <nav className="hidden items-center gap-1.5 rounded-full border border-white/14 bg-white/[0.04] p-1 lg:flex">
               {navItems.map((item) => (
@@ -127,7 +138,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMenuOpen((current) => !current)}
-              className="ghost-action theme-text inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full lg:hidden"
+              className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full lg:hidden"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
             >
@@ -148,7 +159,7 @@ export function Header() {
               <div className="mt-2.5 flex flex-col gap-2 border-t border-white/8 pt-2.5">
                 <div
                   title={apiTitle}
-                  className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] xs:hidden ${apiClasses}`}
+                  className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xs:hidden ${apiClasses}`}
                 >
                   <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
                   {apiLabel}

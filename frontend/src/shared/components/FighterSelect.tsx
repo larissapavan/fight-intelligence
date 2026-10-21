@@ -159,7 +159,7 @@ export function FighterSelect({
 
   return (
     <div className="relative z-30 flex flex-col gap-1.5">
-      <span className={`broadcast-label text-[10px] ${styles.accent}`}>{label}</span>
+      <span className={`broadcast-label text-[11px] ${styles.accent}`}>{label}</span>
       <button
         type="button"
         onClick={openSearch}
@@ -204,7 +204,7 @@ export function FighterSelect({
               <div className={`h-1 w-full ${styles.bar}`} />
               <div className="flex shrink-0 items-start justify-between gap-3 border-b border-[var(--line-soft)] px-4 py-3 sm:px-5 sm:py-4">
                 <div className="min-w-0">
-                  <p className={`broadcast-label text-[10px] ${styles.accent}`}>{label}</p>
+                  <p className={`broadcast-label text-[11px] ${styles.accent}`}>{label}</p>
                   <h2 className="theme-text mt-1 text-[clamp(1.35rem,5vw,2rem)] font-bold uppercase leading-tight tracking-[0.03em]">
                     {placeholder}
                   </h2>
@@ -253,7 +253,7 @@ export function FighterSelect({
                   ) : (
                     <Search className="h-3.5 w-3.5 shrink-0" />
                   )}
-                  <span className="broadcast-label truncate text-[9px]">
+                  <span className="broadcast-label truncate text-[11px]">
                     {opponentView
                       ? `${results.length} ${results.length === 1 ? 'opponent' : 'opponents'} of ${suggestions?.label}`
                       : showRecent && recentFighters.length
@@ -268,13 +268,13 @@ export function FighterSelect({
                       setOnlyOpponents((value) => !value)
                       setActiveIndex(0)
                     }}
-                    className="type-tech ghost-action theme-text shrink-0 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] hover:!bg-[#F2C230] hover:!text-[#0E0E0E]"
+                    className="type-tech ghost-action theme-text shrink-0 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] hover:!bg-[#F2C230] hover:!text-[#0E0E0E]"
                   >
                     {onlyOpponents ? 'Show all fighters' : 'Only opponents'}
                   </button>
                 ) : null}
                 {selectedFighter ? (
-                  <span className={`type-tech rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
+                  <span className={`type-tech rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
                     Selected: {selectedFighter.name}
                   </span>
                 ) : null}
@@ -320,7 +320,7 @@ export function FighterSelect({
                                 {fighter.name}
                               </span>
                               {isSelected ? (
-                                <span className={`type-tech rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
+                                <span className={`type-tech rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
                                   Selected
                                 </span>
                               ) : null}
@@ -340,7 +340,7 @@ export function FighterSelect({
                           </span>
                           <span className="hidden items-center justify-end sm:flex">
                             {isDisabled ? (
-                              <span className="type-tech theme-muted inline-flex items-center gap-1.5 rounded-full border border-[var(--line-soft)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em]">
+                              <span className="type-tech theme-muted inline-flex items-center gap-1.5 rounded-full border border-[var(--line-soft)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
                                 <Lock className="h-3 w-3" />
                                 Other corner
                               </span>

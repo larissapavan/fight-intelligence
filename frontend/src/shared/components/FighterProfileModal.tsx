@@ -106,7 +106,7 @@ export function FighterProfileModal({
               className="h-16 w-16 sm:h-20 sm:w-20"
             />
             <div className="min-w-0">
-              <p className="broadcast-label text-[10px] text-[#999999]">Performance profile</p>
+              <p className="broadcast-label text-[11px] text-[#999999]">Performance profile</p>
               <h2 className="flex items-center gap-2 text-xl font-bold uppercase tracking-[0.02em] text-[#FFFFFF]">
                 {profile ? <FlagList fighter={profile} className="h-4 w-6" /> : null}
                 <span className="min-w-0 truncate">{name}</span>
@@ -172,7 +172,7 @@ export function FighterProfileModal({
 
               {performance.weight_class_history.length > 0 ? (
                 <div className="metric-tile rounded-2xl p-3">
-                  <p className="broadcast-label text-[10px] text-[#999999]">Weight class history</p>
+                  <p className="broadcast-label text-[11px] text-[#999999]">Weight class history</p>
                   <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-sm font-semibold text-[#FFFFFF]">
                     {performance.weight_class_history.map((weightClass, index) => (
                       <span key={`${weightClass}-${index}`} className="inline-flex items-center gap-1.5">
@@ -186,7 +186,7 @@ export function FighterProfileModal({
 
               {Object.keys(performance.method_breakdown).length > 0 ? (
                 <div className="metric-tile rounded-2xl p-3">
-                  <p className="broadcast-label text-[10px] text-[#999999]">Favorite finishing methods</p>
+                  <p className="broadcast-label text-[11px] text-[#999999]">Favorite finishing methods</p>
                   <div className="mt-2 space-y-1.5">
                     {Object.entries(performance.method_breakdown)
                       .sort(([, a], [, b]) => b - a)
@@ -220,7 +220,7 @@ export function FighterProfileModal({
             <div className="metric-tile mt-3 rounded-2xl p-3">
               <div className="mb-1.5 flex items-center gap-1.5 text-[#999999]">
                 <Sparkles className="h-3.5 w-3.5 text-[#C8102E]" />
-                <p className="broadcast-label text-[10px]">Similar fighters</p>
+                <p className="broadcast-label text-[11px]">Similar fighters</p>
               </div>
               <div className="grid gap-1.5">
                 {similarFighters.map((fighter, index) => (
@@ -230,10 +230,10 @@ export function FighterProfileModal({
                     onClick={() => onSelectFighter(fighter.name)}
                     className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition hover:bg-white/[0.05]"
                   >
-                    <span className="broadcast-label w-4 shrink-0 text-[10px] text-[#666666]">{index + 1}</span>
+                    <span className="broadcast-label w-4 shrink-0 text-[11px] text-[#666666]">{index + 1}</span>
                     <span className="min-w-0 flex-1 truncate text-sm font-semibold text-[#FFFFFF]">{fighter.name}</span>
                     {fighter.division ? (
-                      <span className="type-tech hidden shrink-0 text-[10px] uppercase tracking-[0.1em] text-[#999999] sm:inline">
+                      <span className="type-tech hidden shrink-0 text-[11px] uppercase tracking-[0.1em] text-[#999999] sm:inline">
                         {fighter.division}
                       </span>
                     ) : null}
@@ -284,7 +284,7 @@ function CareerTimeline({
 
   return (
     <div className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[10px] text-[#999999]">Career timeline <span className="normal-case tracking-normal opacity-80">· tap a fight for details</span></p>
+      <p className="broadcast-label text-[11px] text-[#999999]">Career timeline <span className="normal-case tracking-normal opacity-80">· tap a fight for details</span></p>
       <div className="pill-scroll mt-3 overflow-x-auto pb-1">
         <div className="relative flex min-w-max items-end gap-3 px-1">
           <div className="pointer-events-none absolute inset-x-1 top-[26px] h-px bg-white/12" />
@@ -294,14 +294,14 @@ function CareerTimeline({
 
             return (
               <div key={index} className="relative z-10 flex shrink-0 flex-col items-center gap-1">
-                <span className="h-3 whitespace-nowrap text-[9px] font-semibold text-[#666666]">{showYear ? year : ''}</span>
+                <span className="h-3 whitespace-nowrap text-[11px] font-semibold text-[#666666]">{showYear ? year : ''}</span>
                 <button
                   type="button"
                   onClick={() => onSelect(fight)}
                   aria-pressed={selected !== null && fightKey(selected) === fightKey(fight)}
                   aria-label={`${isWin ? 'Win' : isLoss ? 'Loss' : 'No result'} vs ${fight.opponent}, ${fight.date ?? 'date unknown'}. Open fight details`}
                   title={`${fight.opponent}, ${fight.date ?? 'date unknown'}`}
-                  className={`grid h-6 w-6 cursor-pointer place-items-center rounded-full border text-[10px] font-bold transition hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230] ${
+                  className={`grid h-6 w-6 cursor-pointer place-items-center rounded-full border text-[11px] font-bold transition hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230] ${
                     selected !== null && fightKey(selected) === fightKey(fight) ? 'ring-2 ring-[var(--rule)] ring-offset-2 ring-offset-[var(--card-bg)]' : ''
                   } ${
                     isWin
@@ -364,7 +364,7 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
   return (
     <div className="space-y-3">
       <div className="metric-tile rounded-2xl p-3">
-        <p className="broadcast-label text-[10px] text-[#999999]">Win rate &amp; finish rate over time</p>
+        <p className="broadcast-label text-[11px] text-[#999999]">Win rate &amp; finish rate over time</p>
         <div className="mt-2 h-[140px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={rateData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
@@ -395,7 +395,7 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-1 flex items-center gap-3 text-[10px] text-[#999999]">
+        <div className="mt-1 flex items-center gap-3 text-[11px] text-[#999999]">
           <span className="inline-flex items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-[#C8102E]" />
             Win rate
@@ -409,7 +409,7 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
 
       {roundData.length > 0 && rounds.length > 0 ? (
         <div className="metric-tile rounded-2xl p-3">
-          <p className="broadcast-label text-[10px] text-[#999999]">Round distribution by year (wins)</p>
+          <p className="broadcast-label text-[11px] text-[#999999]">Round distribution by year (wins)</p>
           <div className="mt-2 h-[140px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={roundData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
@@ -430,7 +430,7 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-1 flex flex-wrap items-center gap-3 text-[10px] text-[#999999]">
+          <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-[#999999]">
             {rounds.map((round, index) => (
               <span key={round} className="inline-flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: ROUND_COLORS[index % ROUND_COLORS.length] }} />
@@ -443,7 +443,7 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
 
       {timeData.length > 1 ? (
         <div className="metric-tile rounded-2xl p-3">
-          <p className="broadcast-label text-[10px] text-[#999999]">Average win time over time</p>
+          <p className="broadcast-label text-[11px] text-[#999999]">Average win time over time</p>
           <div className="mt-2 h-[120px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={timeData} margin={{ top: 4, right: 4, left: -8, bottom: 0 }}>
@@ -473,20 +473,20 @@ function FighterTrends({ trends }: { trends: YearlyTrend[] | undefined }) {
 function ResultBadge({ result }: { result: 'win' | 'loss' | null }) {
   if (result === 'win') {
     return (
-      <span className="type-tech rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#C8102E]">
+      <span className="type-tech rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#C8102E]">
         Win
       </span>
     )
   }
   if (result === 'loss') {
     return (
-      <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+      <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
         Loss
       </span>
     )
   }
   return (
-    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-bold uppercase text-[#999999]">
+    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
       NC
     </span>
   )
@@ -540,7 +540,7 @@ function FightDetailPanel({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-1.5">
             <TitleFightBadge fight={fight} />
-            <p className="broadcast-label truncate text-[10px] text-[#999999]">{fight.event_name}</p>
+            <p className="broadcast-label truncate text-[11px] text-[#999999]">{fight.event_name}</p>
           </div>
           <p className="theme-muted mt-0.5 text-[11px]">{formatFightDate(fight.date)}</p>
         </div>
@@ -556,7 +556,7 @@ function FightDetailPanel({
 
       <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-stretch gap-2">
         <FightSide name={fighterName} isWinner={fight.winner === fighterName} />
-        <span className="broadcast-label self-center text-[10px] text-[#999999]">vs</span>
+        <span className="broadcast-label self-center text-[11px] text-[#999999]">vs</span>
         <FightSide name={fight.opponent} isWinner={fight.winner === fight.opponent} onOpen={() => onSelectFighter(fight.opponent)} />
       </div>
 
@@ -569,7 +569,7 @@ function FightDetailPanel({
           .filter(([, value]) => value)
           .map(([label, value]) => (
             <div key={label} className="min-w-0">
-              <dt className="broadcast-label text-[9px] text-[#999999]">{label}</dt>
+              <dt className="broadcast-label text-[11px] text-[#999999]">{label}</dt>
               <dd className="truncate font-semibold text-[#FFFFFF]">{value}</dd>
             </div>
           ))}
@@ -577,7 +577,7 @@ function FightDetailPanel({
 
       {fight.result_details ? (
         <p className="mt-2.5 border-t-2 border-[var(--line-soft)] pt-2 text-[12px] leading-5 text-[#FFFFFF]">
-          <span className="broadcast-label mr-1.5 text-[9px] text-[#999999]">{isScorecard ? 'Scorecards' : 'Finish'}</span>
+          <span className="broadcast-label mr-1.5 text-[11px] text-[#999999]">{isScorecard ? 'Scorecards' : 'Finish'}</span>
           {fight.result_details}
         </p>
       ) : null}
@@ -590,9 +590,9 @@ function FightSide({ name, isWinner, onOpen }: { name: string; isWinner: boolean
     <>
       <span className="min-w-0 break-words text-sm font-bold uppercase leading-tight text-[#FFFFFF]">{name}</span>
       {isWinner ? (
-        <span className="mt-1 inline-block w-fit bg-[#C8102E] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white">Winner</span>
+        <span className="mt-1 inline-block w-fit bg-[#C8102E] px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white">Winner</span>
       ) : null}
-      {onOpen ? <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--accent-red)]">View profile →</span> : null}
+      {onOpen ? <span className="mt-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent-red)]">View profile →</span> : null}
     </>
   )
   const base = `flex min-w-0 flex-col items-start rounded-xl border-2 p-2 text-left ${isWinner ? 'border-[var(--rule)] bg-[var(--surface-3)]' : 'border-[var(--line-soft)]'}`
@@ -630,7 +630,7 @@ function FightRecordList({
   return (
     <div>
       <div className="mb-1.5 flex items-end justify-between gap-2">
-        <p className="broadcast-label text-[10px] text-[#999999]">UFC fight record</p>
+        <p className="broadcast-label text-[11px] text-[#999999]">UFC fight record</p>
         <p className="type-num text-lg leading-none text-[#FFFFFF]">
           {wins}-{losses}
           {others ? `-${others}` : ''}
@@ -651,7 +651,7 @@ function FightRecordList({
               <div className="flex items-center justify-between gap-2">
                 <span className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
                   <span className="truncate text-sm font-semibold text-[#FFFFFF]">vs {fight.opponent}</span>
-                  <TitleFightBadge fight={fight} className="!px-1 !text-[9px]" />
+                  <TitleFightBadge fight={fight} className="!px-1 !text-[11px]" />
                 </span>
                 <ResultBadge result={fight.result} />
               </div>
@@ -714,7 +714,7 @@ function UfcStatusLine({ fighter }: { fighter: FighterProfile }) {
 function NoUfcFightsNotice() {
   return (
     <div className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[10px] text-[#999999]">No UFC fights on record</p>
+      <p className="broadcast-label text-[11px] text-[#999999]">No UFC fights on record</p>
       <p className="mt-1.5 text-sm leading-6 text-[#FFFFFF]">
         This fighter has no UFC fights in our data, and is not on the UFC's former-roster list either. The record shown
         on their card is their overall professional record, which includes fights in other organizations.

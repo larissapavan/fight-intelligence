@@ -65,7 +65,7 @@ export function About() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4" aria-labelledby="about-title">
-        <p className="broadcast-label text-[10px] text-[#999999]">About</p>
+        <p className="broadcast-label text-[11px] text-[#999999]">About</p>
         <h1 id="about-title" className="mt-1.5 text-3xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF] md:text-4xl">
           An independent fan project
         </h1>
