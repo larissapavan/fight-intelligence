@@ -1,17 +1,17 @@
 fight_key,event_name,event_date,fighter_1,fighter_2,prob_fighter_1,predicted_winner,confidence,logged_at,winner,correct,resolved_at
-2026-10-17|cody chovancek|suyoung you,UFC Fight Night: Buckley vs. Malott,2026-10-17,Cody Chovancek,SuYoung You,0.9422,Cody Chovancek,0.9422,2026-10-15,,,
-2026-10-17|chelsea chandler|melissa croden,UFC Fight Night: Buckley vs. Malott,2026-10-17,Melissa Croden,Chelsea Chandler,0.6657,Melissa Croden,0.6657,2026-10-15,,,
-2026-10-17|chad anheliger|steven koslow,UFC Fight Night: Buckley vs. Malott,2026-10-17,Chad Anheliger,Steven Koslow,0.4543,Steven Koslow,0.5457,2026-10-15,,,
-2026-10-17|katlyn cerminara|mackenzie stiller,UFC Fight Night: Buckley vs. Malott,2026-10-17,Katlyn Cerminara,Mackenzie Stiller,0.5948,Katlyn Cerminara,0.5948,2026-10-15,,,
-2026-10-17|javad mahjoub|joel faglier,UFC Fight Night: Buckley vs. Malott,2026-10-17,Javad Mahjoub,Joel Faglier,0.8904,Javad Mahjoub,0.8904,2026-10-15,,,
-2026-10-17|julien leblanc|nick galanti,UFC Fight Night: Buckley vs. Malott,2026-10-17,Julien Leblanc,Nick Galanti,0.5081,Julien Leblanc,0.5081,2026-10-15,,,
-2026-10-17|jhonata diniz|tanner boser,UFC Fight Night: Buckley vs. Malott,2026-10-17,Tanner Boser,Jhonata Diniz,0.3754,Jhonata Diniz,0.6246,2026-10-15,,,
-2026-10-17|mandel nallo|nate landwehr,UFC Fight Night: Buckley vs. Malott,2026-10-17,Mandel Nallo,Nate Landwehr,0.4766,Nate Landwehr,0.5234,2026-10-15,,,
-2026-10-17|louis jourdain|timmy cuamba,UFC Fight Night: Buckley vs. Malott,2026-10-17,Louis Jourdain,Timmy Cuamba,0.4559,Timmy Cuamba,0.5441,2026-10-15,,,
-2026-10-17|kyle daukaus|marc andre barriault,UFC Fight Night: Buckley vs. Malott,2026-10-17,Marc-Andre Barriault,Kyle Daukaus,0.3621,Kyle Daukaus,0.6379,2026-10-15,,,
-2026-10-17|cristian perez|kyle nelson,UFC Fight Night: Buckley vs. Malott,2026-10-17,Kyle Nelson,Cristian Perez,0.2000,Cristian Perez,0.8000,2026-10-15,,,
-2026-10-17|erin blanchfield|jasmine jasudavicius,UFC Fight Night: Buckley vs. Malott,2026-10-17,Erin Blanchfield,Jasmine Jasudavicius,0.7020,Erin Blanchfield,0.7020,2026-10-15,,,
-2026-10-17|joaquin buckley|mike malott,UFC Fight Night: Buckley vs. Malott,2026-10-17,Joaquin Buckley,Mike Malott,0.5983,Joaquin Buckley,0.5983,2026-10-15,,,
+2026-10-17|cody chovancek|suyoung you,UFC Fight Night: Buckley vs. Malott,2026-10-17,Cody Chovancek,SuYoung You,0.9422,Cody Chovancek,0.9422,2026-10-15,SuYoung You,False,2026-10-21
+2026-10-17|chelsea chandler|melissa croden,UFC Fight Night: Buckley vs. Malott,2026-10-17,Melissa Croden,Chelsea Chandler,0.6657,Melissa Croden,0.6657,2026-10-15,Chelsea Chandler,False,2026-10-21
+2026-10-17|chad anheliger|steven koslow,UFC Fight Night: Buckley vs. Malott,2026-10-17,Chad Anheliger,Steven Koslow,0.4543,Steven Koslow,0.5457,2026-10-15,Steven Koslow,True,2026-10-21
+2026-10-17|katlyn cerminara|mackenzie stiller,UFC Fight Night: Buckley vs. Malott,2026-10-17,Katlyn Cerminara,Mackenzie Stiller,0.5948,Katlyn Cerminara,0.5948,2026-10-15,Katlyn Cerminara,True,2026-10-21
+2026-10-17|javad mahjoub|joel faglier,UFC Fight Night: Buckley vs. Malott,2026-10-17,Javad Mahjoub,Joel Faglier,0.8904,Javad Mahjoub,0.8904,2026-10-15,Joel Faglier,False,2026-10-21
+2026-10-17|julien leblanc|nick galanti,UFC Fight Night: Buckley vs. Malott,2026-10-17,Julien Leblanc,Nick Galanti,0.5081,Julien Leblanc,0.5081,2026-10-15,Nick Galanti,False,2026-10-21
+2026-10-17|jhonata diniz|tanner boser,UFC Fight Night: Buckley vs. Malott,2026-10-17,Tanner Boser,Jhonata Diniz,0.3754,Jhonata Diniz,0.6246,2026-10-15,Tanner Boser,False,2026-10-21
+2026-10-17|mandel nallo|nate landwehr,UFC Fight Night: Buckley vs. Malott,2026-10-17,Mandel Nallo,Nate Landwehr,0.4766,Nate Landwehr,0.5234,2026-10-15,Mandel Nallo,False,2026-10-21
+2026-10-17|louis jourdain|timmy cuamba,UFC Fight Night: Buckley vs. Malott,2026-10-17,Louis Jourdain,Timmy Cuamba,0.4559,Timmy Cuamba,0.5441,2026-10-15,Timmy Cuamba,True,2026-10-21
+2026-10-17|kyle daukaus|marc andre barriault,UFC Fight Night: Buckley vs. Malott,2026-10-17,Marc-Andre Barriault,Kyle Daukaus,0.3621,Kyle Daukaus,0.6379,2026-10-15,Marc-Andre Barriault,False,2026-10-21
+2026-10-17|cristian perez|kyle nelson,UFC Fight Night: Buckley vs. Malott,2026-10-17,Kyle Nelson,Cristian Perez,0.2000,Cristian Perez,0.8000,2026-10-15,Cristian Perez,True,2026-10-21
+2026-10-17|erin blanchfield|jasmine jasudavicius,UFC Fight Night: Buckley vs. Malott,2026-10-17,Erin Blanchfield,Jasmine Jasudavicius,0.7020,Erin Blanchfield,0.7020,2026-10-15,Jasmine Jasudavicius,False,2026-10-21
+2026-10-17|joaquin buckley|mike malott,UFC Fight Night: Buckley vs. Malott,2026-10-17,Joaquin Buckley,Mike Malott,0.5983,Joaquin Buckley,0.5983,2026-10-15,Mike Malott,False,2026-10-21
 2026-10-24|asaf chopurov|colby thicknesse,UFC 333: Volkanovski vs. Evloev,2026-10-24,Colby Thicknesse,Asaf Chopurov,0.2060,Asaf Chopurov,0.7940,2026-10-20,,,
 2026-10-24|aaron pico|losene keita,UFC 333: Volkanovski vs. Evloev,2026-10-24,Aaron Pico,Losene Keita,0.3375,Losene Keita,0.6625,2026-10-20,,,
 2026-10-24|grant dawson|nurullo aliev,UFC 333: Volkanovski vs. Evloev,2026-10-24,Grant Dawson,Nurullo Aliev,0.1956,Nurullo Aliev,0.8044,2026-10-20,,,
@@ -71,3 +71,11 @@ fight_key,event_name,event_date,fighter_1,fighter_2,prob_fighter_1,predicted_win
 2026-11-07|mantas kondratavicius|wes schultz,UFC Fight Night: Bonfim vs. Brady,2026-11-07,Mantas Kondratavicius,Wes Schultz,0.8489,Mantas Kondratavicius,0.8489,2026-10-20,,,
 2026-11-07|seokhyeon ko|wellington turman,UFC Fight Night: Bonfim vs. Brady,2026-11-07,Seokhyeon Ko,Wellington Turman,0.5422,Seokhyeon Ko,0.5422,2026-10-20,,,
 2026-12-05|israel adesanya|shara magomedov,UFC Fight Night: Adesanya vs. Magomedov,2026-12-05,Israel Adesanya,Shara Magomedov,0.2256,Shara Magomedov,0.7744,2026-10-20,,,
+2026-10-24|abubakar vagaev|jacob malkoun,UFC 333: Volkanovski vs. Evloev,2026-10-24,Abubakar Vagaev,Jacob Malkoun,0.5114,Abubakar Vagaev,0.5114,2026-10-21,,,
+2026-10-24|bolaji oki|daniel santos,UFC 333: Volkanovski vs. Evloev,2026-10-24,Bolaji Oki,Daniel Santos,0.2086,Daniel Santos,0.7914,2026-10-21,,,
+2026-10-24|kody steele|noah gugnon,UFC 333: Volkanovski vs. Evloev,2026-10-24,Kody Steele,Noah Gugnon,0.3750,Noah Gugnon,0.6250,2026-10-21,,,
+2026-10-24|iasmin lucindo|nicolle caliari,UFC 333: Volkanovski vs. Evloev,2026-10-24,Iasmin Lucindo,Nicolle Caliari,0.7437,Iasmin Lucindo,0.7437,2026-10-21,,,
+2026-11-07|jonny parsons|jose henrique,UFC Fight Night: Bonfim vs. Brady,2026-11-07,Jonny Parsons,Jose Henrique,0.1522,Jose Henrique,0.8478,2026-10-21,,,
+2026-12-12|brandon moreno|charles johnson,UFC 335: Oliveira vs. Lopes,2026-12-12,Brandon Moreno,Charles Johnson,0.6349,Brandon Moreno,0.6349,2026-10-21,,,
+2026-12-12|carli judice|maycee barber,UFC 335: Oliveira vs. Lopes,2026-12-12,Maycee Barber,Carli Judice,0.8928,Maycee Barber,0.8928,2026-10-21,,,
+2026-12-12|junior tafa|quentin pasley,UFC 335: Oliveira vs. Lopes,2026-12-12,Quentin Pasley,Junior Tafa,0.6080,Quentin Pasley,0.6080,2026-10-21,,,
