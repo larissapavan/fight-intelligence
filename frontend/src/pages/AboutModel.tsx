@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 
 const contactLinks = [
@@ -168,10 +169,11 @@ export function AboutModel() {
             <h2 className="mt-1 break-words text-xl sm:text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">{modelInfo.model_name}</h2>
             <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
               <Metric label="Features" value={`${modelInfo.feature_count}`} />
-              <Metric label="Accuracy" value={`${(modelInfo.metrics.accuracy * 100).toFixed(1)}%`} />
-              <Metric label="ROC AUC" value={modelInfo.metrics.roc_auc.toFixed(3)} />
-              <Metric label="Log loss" value={modelInfo.metrics.log_loss.toFixed(3)} />
+              <Metric label={`Accuracy (${shownMetrics(modelInfo).caption})`} value={`${((shownMetrics(modelInfo).accuracy ?? 0) * 100).toFixed(1)}%`} />
+              <Metric label="ROC AUC" value={(shownMetrics(modelInfo).rocAuc ?? 0).toFixed(3)} />
+              <Metric label="Log loss" value={(shownMetrics(modelInfo).logLoss ?? 0).toFixed(3)} />
             </div>
+            {modelInfo.metrics_note ? <p className="mt-3 text-xs leading-5 text-[#CCCCCC]">{modelInfo.metrics_note}</p> : null}
           </article>
 
           <article className="surface-card rounded-[20px] p-3 sm:p-4">

@@ -8,6 +8,7 @@ import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
 import { nationalityText } from '../shared/data/badges'
 import { getFighterImageUrl, useFighterImages } from '../shared/hooks/useFighterImages'
 import { useFighters } from '../shared/hooks/useFighters'
+import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { usePrediction } from '../shared/hooks/usePrediction'
 import type { FighterProfile, MainFactor, PredictionResponse } from '../shared/types/api'
@@ -38,7 +39,7 @@ export function Predictor() {
   }
 
   const activeFighters = useMemo(() => fighters.filter((fighter) => fighter.is_active).length, [fighters])
-  const baseline = modelInfo?.baseline_metrics?.logistic_regression?.accuracy
+  const shown = shownMetrics(modelInfo)
   const isOnline = Boolean(health?.model_loaded)
   const problem = error ?? predictionError ?? fightersError
 
@@ -66,8 +67,8 @@ export function Predictor() {
           },
           {
             label: 'Model accuracy',
-            value: modelInfo ? `${(modelInfo.metrics.accuracy * 100).toFixed(1)}%` : '—',
-            note: baseline ? `vs ${(baseline * 100).toFixed(1)}% baseline` : undefined,
+            value: shown.accuracy != null ? `${(shown.accuracy * 100).toFixed(1)}%` : '—',
+            note: shown.caption || undefined,
           },
           { label: 'Backend', value: isOnline ? 'On air' : 'Offline', note: isOnline ? 'Model loaded' : 'Unreachable', alert: !isOnline },
         ]}

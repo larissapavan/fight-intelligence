@@ -2,6 +2,7 @@ import { CalendarClock, Check, Target, X } from 'lucide-react'
 
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { useTrackRecord } from '../shared/hooks/useTrackRecord'
 import type { ConfidenceBand, TrackedFight } from '../shared/types/api'
@@ -19,7 +20,7 @@ function formatDate(date: string | null | undefined) {
 export function TrackRecord() {
   const { data, loading, error } = useTrackRecord()
   const { modelInfo } = useModelInfo()
-  const testAccuracy = modelInfo?.metrics?.accuracy ?? null
+  const shown = shownMetrics(modelInfo)
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -41,7 +42,7 @@ export function TrackRecord() {
             <Tile label="Picks logged" value={`${data.logged}`} />
             <Tile label="Settled" value={`${data.resolved}`} hint={data.pending ? `${data.pending} waiting` : undefined} />
             <Tile label="Live accuracy" value={percent(data.accuracy)} hint={data.resolved ? `${data.correct} of ${data.resolved}` : 'after the first card'} />
-            <Tile label="Held-out test" value={percent(testAccuracy)} hint="measured when the model was trained" />
+            <Tile label={shown.source === 'recent' ? 'Recent fights' : 'Reported test'} value={percent(shown.accuracy)} hint={shown.source === 'recent' ? `${shown.caption}, not live` : 'could not be checked'} />
           </section>
 
           {data.resolved === 0 ? <WaitingCard data={data} /> : null}
@@ -60,7 +61,7 @@ export function TrackRecord() {
             <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-6 text-[#FFFFFF] marker:text-[#C8102E]">
               <li>The daily update saves the model&apos;s pick and confidence for every announced fight, using each fighter&apos;s numbers that day.</li>
               <li>After the event the result is matched to the saved pick. Draws and no contests count for neither side.</li>
-              <li>The held-out test number comes from fights the model never saw in training, but it used career stats as they stand today. Live accuracy is the fairer test, and it only counts fights predicted in advance.</li>
+              <li>The recent-fights number is my own re-check of the model on past fights, using each fighter&apos;s age and record as of that fight. It is the best estimate until enough live picks are settled, but those fights were not predicted in advance, so live accuracy is the fairer test.</li>
               <li>A few dozen fights is a small sample. Read the live number as a trend, not a verdict.</li>
               {data.earlier_model_note ? <li>{data.earlier_model_note}</li> : null}
             </ul>

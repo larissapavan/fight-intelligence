@@ -2,11 +2,14 @@ import { motion } from 'framer-motion'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
+import { MetricsNote } from '../shared/components/MetricsNote'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 
 export function Model() {
   const { modelInfo, health, loading, error } = useModelInfo()
+  const shown = shownMetrics(modelInfo)
 
   const baselineChart =
     modelInfo == null
@@ -45,17 +48,19 @@ export function Model() {
         <>
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Model" value={modelInfo.model_name} />
-            <MetricCard label="Accuracy" value={`${(modelInfo.metrics.accuracy * 100).toFixed(1)}%`} />
-            <MetricCard label="ROC AUC" value={modelInfo.metrics.roc_auc.toFixed(3)} />
-            <MetricCard label="Log Loss" value={modelInfo.metrics.log_loss.toFixed(3)} />
+            <MetricCard label={`Accuracy (${shown.caption})`} value={shown.accuracy != null ? `${(shown.accuracy * 100).toFixed(1)}%` : '—'} />
+            <MetricCard label="ROC AUC" value={shown.rocAuc != null ? shown.rocAuc.toFixed(3) : '—'} />
+            <MetricCard label="Log Loss" value={shown.logLoss != null ? shown.logLoss.toFixed(3) : '—'} />
           </section>
+
+          <MetricsNote note={modelInfo.metrics_note} />
 
           <section className="grid gap-3 xl:grid-cols-[1fr_1fr]">
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
                 eyebrow="Baseline comparison"
                 title="Why this model"
-                description="It was tested against simpler models, and gradient boosting had the best accuracy and log loss."
+                description="As reported in the model's file, it was tested against simpler models, and gradient boosting had the best accuracy and log loss."
               />
               <div className="mt-3 h-[210px] min-w-0 sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%" minWidth={280}>

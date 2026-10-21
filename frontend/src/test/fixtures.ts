@@ -151,6 +151,8 @@ export const routes: Record<string, unknown> = {
     features: ['age_diff'],
     highlights: ['Temporal validation'],
     limitations: ['Estimates only'],
+    metrics_note: 'These numbers could not be reproduced.',
+    recent_evaluation: { fights: 1752, start: '2023-06-03', end: '2026-10-17', accuracy: 0.6216, roc_auc: 0.669, log_loss: 0.7084 },
   },
   '/data-info': { last_updated: '2026-10-10', fighters_count: 2, events_count: 2, fights_count: 10, sources: ['ESPN'] },
   '/fighters': [alpha, beta],

@@ -7,6 +7,7 @@ import { FighterAvatar } from '../shared/components/FighterAvatar'
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { FighterBadges, FlagList, TitleFightBadge } from '../shared/components/FighterBadges'
 import { badgesForRankings } from '../shared/data/badges'
+import { shownMetrics } from '../shared/data/modelAccuracy'
 import { LatestNewsCard } from '../shared/components/LatestNewsCard'
 import { FightMatchupCard } from '../shared/components/FightMatchupCard'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
@@ -99,7 +100,8 @@ export function Home() {
 
       <TrackRecordStrip
         fightsAnalyzed={health?.fights_tracked ?? null}
-        testAccuracy={modelInfo?.metrics?.accuracy ?? null}
+        testAccuracy={shownMetrics(modelInfo).accuracy}
+        testNote={shownMetrics(modelInfo).caption}
         liveAccuracy={trackRecord?.accuracy ?? null}
         resolved={trackRecord?.resolved ?? null}
       />
@@ -461,16 +463,18 @@ function percentLabel(value: number | null | undefined) {
 function TrackRecordStrip({
   fightsAnalyzed,
   testAccuracy,
+  testNote,
   liveAccuracy,
   resolved,
 }: {
   fightsAnalyzed: number | null
   testAccuracy: number | null
+  testNote: string
   liveAccuracy: number | null
   resolved: number | null
 }) {
   const accuracy = resolved && resolved > 0 && liveAccuracy != null ? liveAccuracy : testAccuracy
-  const accuracyNote = resolved && resolved > 0 && liveAccuracy != null ? 'live picks' : 'held-out test'
+  const accuracyNote = resolved && resolved > 0 && liveAccuracy != null ? 'live picks' : testNote
 
   return (
     <section className="surface-card flex flex-wrap items-center justify-between gap-3 rounded-[20px] px-3 py-3 sm:px-4">

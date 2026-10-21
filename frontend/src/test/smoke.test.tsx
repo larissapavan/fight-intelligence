@@ -88,6 +88,18 @@ describe('the pages that depend on the API', () => {
     expect(await screen.findByText(/saved before 2026-10-20, by an earlier version of the model/i, undefined, { timeout: 10000 })).toBeInTheDocument()
   })
 
+  it('the model page says its metrics could not be reproduced', async () => {
+    renderAt('/model')
+    expect(await screen.findByLabelText('About these metrics', undefined, { timeout: 10000 })).toHaveTextContent(/could not be reproduced/i)
+  })
+
+  it('the model page shows the accuracy measured on recent fights, not the one in the model file', async () => {
+    renderAt('/model')
+    expect(await screen.findByText('62.2%', undefined, { timeout: 10000 })).toBeInTheDocument()
+    expect(screen.getByText(/Accuracy \(1,752 recent fights\)/)).toBeInTheDocument()
+    expect(screen.queryByText('75.0%')).not.toBeInTheDocument()  // the reported figure (fixture: 0.75) is not shown as a result
+  })
+
   it('an unknown address shows the not-found page', async () => {
     renderAt('/nothing-here')
     expect(await screen.findByRole('heading', { name: /page not found/i })).toBeInTheDocument()

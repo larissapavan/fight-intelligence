@@ -73,6 +73,21 @@ export interface PredictionResponse {
   main_factors: MainFactor[]
 }
 
+export interface RecentEvaluation {
+  /** The deployed model scored again on the newest fights, with each fighter's age and record as of the fight. */
+  fights: number
+  start: string
+  end: string
+  accuracy: number
+  roc_auc: number
+  log_loss: number
+  brier?: number | null
+  ece?: number | null
+  confident_threshold?: number | null
+  confident_fights?: number | null
+  confident_hit_rate?: number | null
+}
+
 export interface ModelInfo {
   model_name: string
   feature_count: number
@@ -81,6 +96,9 @@ export interface ModelInfo {
   features: string[]
   highlights: string[]
   limitations: string[]
+  /** What to keep in mind about the metrics above (they could not be reproduced). */
+  metrics_note?: string | null
+  recent_evaluation?: RecentEvaluation | null
 }
 
 export interface HealthInfo {
