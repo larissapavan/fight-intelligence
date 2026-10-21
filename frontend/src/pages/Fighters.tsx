@@ -16,6 +16,7 @@ import {
   Ruler,
   Search,
   Shield,
+  SlidersHorizontal,
   Swords,
   Target,
   Timer,
@@ -125,6 +126,9 @@ const toneStyles = {
   },
 }
 
+/** Cards rendered per page in a division; the biggest divisions hold several hundred fighters. A phone gets fewer: each card is tall. */
+const PAGE_SIZE = typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches ? 12 : 24
+
 export function Fighters() {
   const { fighters, loading, error } = useFighters()
   const { imageByName } = useFighterImages()
@@ -132,6 +136,7 @@ export function Fighters() {
   const [stanceFilter, setStanceFilter] = useState('All stances')
   const [badgeFilter, setBadgeFilter] = useState('')
   const [activeFilter, setActiveFilter] = useState<ActiveFilter>('all')
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [activeDivision, setActiveDivision] = useState('lightweight')
   const [searchParams, setSearchParams] = useSearchParams()
   // Deep link from other pages (e.g. Champions): /fighters?fighter=<name> opens that profile.
@@ -196,28 +201,47 @@ export function Fighters() {
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 xs:px-4 xs:py-3.5 md:px-5 md:py-5 lg:px-6 lg:py-6">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
-          <SectionHeading
+          <SectionHeading level={1}
             eyebrow="Fighters"
             title="Weight classes"
             description="Browse fighters by weight class and open a profile for their record, career timeline and stats."
           />
 
-          <div className="grid gap-2 xs:grid-cols-2">
-            <SummaryTile label="Fighters" value={`${visibleFighters.length}`} />
+          <div className="grid grid-cols-2 gap-2">
+            <SummaryTile label="Fighters" value={visibleFighters.length.toLocaleString('en-US')} />
             <SummaryTile label="Divisions" value={`${divisionGroups.length}`} />
           </div>
         </div>
 
         <div className="mt-3 grid gap-2.5 md:grid-cols-[1fr_220px_240px]">
-          <div className="soft-input flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5">
-            <Search className="h-4 w-4 shrink-0 text-[#C8102E]" />
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search fighter or nickname"
-              className="theme-text w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-[var(--text-muted)] md:min-w-[300px]"
-            />
+          <div className="flex gap-2">
+            <div className="soft-input flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-3 py-2.5">
+              <Search className="h-4 w-4 shrink-0 text-[#C8102E]" />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search fighter or nickname"
+                aria-label="Search fighter or nickname"
+                className="theme-text w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-[var(--text-muted)] md:min-w-[300px]"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setFiltersOpen((current) => !current)}
+              aria-expanded={filtersOpen}
+              aria-controls="fighter-extra-filters"
+              className="ghost-action theme-text inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold uppercase tracking-[0.1em] md:hidden"
+            >
+              <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+              Filters
+              {stanceFilter !== 'All stances' || badgeFilter !== '' ? (
+                <span className="grid h-5 min-w-5 place-items-center bg-[var(--accent-red)] px-1 text-[11px] text-white">
+                  {(stanceFilter !== 'All stances' ? 1 : 0) + (badgeFilter !== '' ? 1 : 0)}
+                </span>
+              ) : null}
+            </button>
           </div>
+          <div id="fighter-extra-filters" className={`${filtersOpen ? 'grid' : 'hidden'} gap-2.5 md:contents`}>
           <select
             value={stanceFilter}
             onChange={(event) => setStanceFilter(event.target.value)}
@@ -243,6 +267,7 @@ export function Fighters() {
               </option>
             ))}
           </select>
+          </div>
         </div>
 
         <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/8 pt-2.5">
@@ -257,7 +282,7 @@ export function Fighters() {
               Former UFC
             </ActiveTabButton>
           </div>
-          <p className="broadcast-label text-[10px] text-[#999999]">
+          <p className="broadcast-label text-[11px] text-[#999999]">
             <span className="tabular-nums text-[#FFFFFF]">{visibleFighters.length}</span> shown
           </p>
         </div>
@@ -330,7 +355,7 @@ function ActiveTabButton({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
+      className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-[5px] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] transition ${
         active
           ? 'bg-[var(--rule)] text-[var(--card-bg)]'
           : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]'
@@ -345,7 +370,7 @@ function ActiveTabButton({
 function CountPill({ active, children }: { active: boolean; children: React.ReactNode }) {
   return (
     <span
-      className={`inline-flex min-w-[1.6em] items-center justify-center rounded-full px-1.5 py-px text-[10px] font-bold tabular-nums tracking-normal ${
+      className={`inline-flex min-w-[1.6em] items-center justify-center rounded-full px-1.5 py-px text-[11px] font-bold tabular-nums tracking-normal ${
         active ? 'bg-[var(--tape)] text-[#0E0E0E]' : 'bg-[var(--surface-3)] text-[var(--text-muted)]'
       }`}
     >
@@ -433,7 +458,7 @@ function ScrollArrow({ direction, visible, onClick }: { direction: 'left' | 'rig
       disabled={!visible}
       tabIndex={visible ? 0 : -1}
       aria-label={direction === 'left' ? 'Scroll weight classes left' : 'Scroll weight classes right'}
-      className={`absolute top-1/2 z-10 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-neutral-900/80 text-[#CCCCCC] backdrop-blur-sm transition hover:text-[#FF1E27] focus-visible:text-[#FF1E27] focus-visible:outline-none ${
+      className={`absolute top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-neutral-900/80 text-[#CCCCCC] backdrop-blur-sm transition hover:text-[#FF1E27] focus-visible:text-[#FF1E27] focus-visible:outline-none ${
         direction === 'left' ? 'left-1' : 'right-1'
       } ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
     >
@@ -453,6 +478,13 @@ function DivisionPanel({
   imageByName: Map<string, FighterImageRecord>
   onSelectFighter: (name: string) => void
 }) {
+  // Show a page at a time; the list starts over whenever the filters hand it a different set of fighters.
+  const [paging, setPaging] = useState({ source: fighters, limit: PAGE_SIZE })
+  if (paging.source !== fighters) setPaging({ source: fighters, limit: PAGE_SIZE })
+  const limit = paging.source === fighters ? paging.limit : PAGE_SIZE
+  const shown = fighters.slice(0, limit)
+  const remaining = fighters.length - shown.length
+
   return (
     <motion.section
       className="surface-card overflow-hidden rounded-[20px]"
@@ -467,7 +499,7 @@ function DivisionPanel({
             <group.icon className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <p className="broadcast-label text-[10px] text-[#999999]">Active division</p>
+            <p className="broadcast-label text-[11px] text-[#999999]">Active division</p>
             <h2 className="mt-0.5 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF] sm:text-2xl">
               {group.label}
             </h2>
@@ -476,15 +508,15 @@ function DivisionPanel({
             </p>
           </div>
         </div>
-        <span className="type-tech w-fit border-2 border-[var(--rule)] bg-[var(--card-bg)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-main)]">
+        <span className="type-tech w-fit border-2 border-[var(--rule)] bg-[var(--card-bg)] px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--text-main)]">
           {group.shortLabel}
         </span>
       </div>
 
-      <div className="max-h-[72vh] overflow-y-auto border-t border-white/8 px-3 py-3 pr-2 xs:px-4 md:px-5 xl:max-h-[calc(100vh-240px)]">
+      <div className="border-t border-white/8 px-3 py-3 xs:px-4 md:px-5">
         {fighters.length ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-            {fighters.map((fighter, index) => (
+            {shown.map((fighter, index) => (
               <FighterDivisionCard
                 key={fighter.name}
                 fighter={fighter}
@@ -505,6 +537,29 @@ function DivisionPanel({
             </p>
           </div>
         )}
+        {remaining > 0 ? (
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPaging({ source: fighters, limit: limit + PAGE_SIZE })}
+              className="primary-action inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
+            >
+              Show {Math.min(PAGE_SIZE, remaining)} more
+            </button>
+            <button
+              type="button"
+              onClick={() => setPaging({ source: fighters, limit: fighters.length })}
+              className="ghost-action theme-text inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em]"
+            >
+              Show all {fighters.length.toLocaleString('en-US')}
+            </button>
+          </div>
+        ) : null}
+        {fighters.length > PAGE_SIZE ? (
+          <p className="mt-2 text-center text-[11px] text-[#999999]" aria-live="polite">
+            Showing {shown.length.toLocaleString('en-US')} of {fighters.length.toLocaleString('en-US')}
+          </p>
+        ) : null}
       </div>
     </motion.section>
   )
@@ -527,7 +582,7 @@ function DivisionPill({
       onClick={onClick}
       aria-pressed={isActive}
       className={[
-        'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition duration-200 md:px-3 md:text-xs',
+        'inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition duration-200 md:px-3 md:text-xs',
         isActive
           ? 'border-[var(--rule)] bg-[var(--rule)] text-[var(--card-bg)]'
           : 'border-[var(--rule)] bg-[var(--card-bg)] text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
@@ -571,7 +626,7 @@ function FighterDivisionCard({
           <div className="min-w-0 max-sm:w-full">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 max-sm:w-full">
-                <p className={`broadcast-label text-[10px] ${styles.text}`}>{fighter.division ?? group.shortLabel}</p>
+                <p className={`broadcast-label text-[11px] ${styles.text}`}>{fighter.division ?? group.shortLabel}</p>
                 <h3 className="mt-1 flex max-w-full flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[#FFFFFF] sm:justify-start">
                   <FlagList fighter={fighter} />
                   <span className="min-w-0 break-words">{fighter.name}</span>
@@ -682,9 +737,9 @@ function FighterPortrait({
 
 function SummaryTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="metric-tile rounded-xl px-3 py-2.5">
-      <p className="broadcast-label text-[10px] text-[#999999]">{label}</p>
-      <p className="data-value mt-1 text-2xl font-bold text-[#FFFFFF]">{value}</p>
+    <div className="metric-tile rounded-xl px-3 py-2 sm:py-2.5">
+      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
+      <p className="data-value mt-0.5 text-xl font-bold text-[#FFFFFF] sm:mt-1 sm:text-2xl">{value}</p>
     </div>
   )
 }
