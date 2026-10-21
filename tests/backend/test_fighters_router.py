@@ -200,3 +200,13 @@ def test_a_lost_interim_title_fight_and_an_interim_defense_are_marked_too(client
     assert history("Renan Barao")[("2013-09-21", "Eddie Wineland")]["interim_title"]
     assert not history("Max Holloway")[("2017-12-02", "Jose Aldo")]["interim_title"]  # an undisputed title fight
 
+
+
+def test_large_responses_are_gzipped(client):
+    compressed = client.get("/fighters", headers={"Accept-Encoding": "gzip"})
+    assert compressed.headers.get("content-encoding") == "gzip"
+    assert compressed.headers.get("x-total-count")
+
+    plain = client.get("/fighters", headers={"Accept-Encoding": "identity"})
+    assert "content-encoding" not in plain.headers
+    assert compressed.json() == plain.json()
