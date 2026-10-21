@@ -11,6 +11,22 @@ class HealthResponse(BaseModel):
     latest_fight_date: str | None = None
 
 
+class RecentEvaluation(BaseModel):
+    """The deployed model scored again on the newest fights (see scripts/compare_models.py)."""
+
+    fights: int
+    start: str
+    end: str
+    accuracy: float
+    roc_auc: float
+    log_loss: float
+    brier: float | None = None
+    ece: float | None = None
+    confident_threshold: float | None = None
+    confident_fights: int | None = None
+    confident_hit_rate: float | None = None
+
+
 class ModelInfoResponse(BaseModel):
     model_name: str
     feature_count: int
@@ -19,3 +35,5 @@ class ModelInfoResponse(BaseModel):
     features: list[str]
     highlights: list[str]
     limitations: list[str]
+    metrics_note: str | None = None
+    recent_evaluation: RecentEvaluation | None = None

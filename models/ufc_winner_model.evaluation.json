@@ -1,0 +1,13 @@
+{
+  "fights": 1752,
+  "start": "2023-06-03",
+  "end": "2026-10-17",
+  "accuracy": 0.6216,
+  "roc_auc": 0.669,
+  "log_loss": 0.7084,
+  "brier": 0.2405,
+  "ece": 0.0854,
+  "confident_threshold": 0.9,
+  "confident_fights": 229,
+  "confident_hit_rate": 0.7118
+}

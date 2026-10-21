@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 
 import joblib
 import numpy as np
@@ -13,14 +12,17 @@ except ImportError:  # pragma: no cover
     shap = None
 
 from backend.app.utils.constants import MODEL_HIGHLIGHTS, MODEL_LIMITATIONS, MODEL_NAME
+from src.ufc_predictor.config import MODEL_PATH
 from src.ufc_predictor.features import align_feature_columns, build_inference_frame
 
 from .catalog_service import get_fighter_profile
+from .model_evaluation import evaluation_limitations, load_recent_evaluation, metrics_note
 
 logger = logging.getLogger(__name__)
 
 
-BACKEND_MODEL_PATH = Path(__file__).resolve().parents[2] / "model" / "model.pkl"
+# The one model file: the trainer writes it (src/ufc_predictor/train.py) and the API reads it, both through
+# src.ufc_predictor.config.MODEL_PATH. There is no second copy to keep in sync.
 
 
 # What a fighter-owned column measures, for the columns pretty_feature_name has no hand-written label for.
@@ -94,18 +96,19 @@ def _first_wins(probability: float, name_first: str, name_second: str) -> bool:
 
 class PredictionService:
     def __init__(self) -> None:
-        if not BACKEND_MODEL_PATH.exists():
+        if not MODEL_PATH.exists():
             raise FileNotFoundError(
-                f"Backend model artifact not found at {BACKEND_MODEL_PATH}. "
-                "Copy the trained artifact into backend/model/model.pkl."
+                f"Model artifact not found at {MODEL_PATH}. Restore models/ufc_winner_model.joblib from the repository, "
+                "or write a new one with python -m src.ufc_predictor.train."
             )
 
-        bundle = joblib.load(BACKEND_MODEL_PATH)
+        bundle = joblib.load(MODEL_PATH)
         self.model = bundle["model"]
         self.feature_columns: list[str] = bundle["feature_columns"]
         self.metrics: dict = bundle.get("metrics", {})
         self.baseline_metrics: dict = bundle.get("baseline_metrics", {})
         self.shap_background = bundle.get("shap_background")
+        self.recent_evaluation = load_recent_evaluation()
         self.shap_explainer = self._build_shap_explainer()
         # Position of each feature's counterpart under a corner swap (see _counterpart).
         self._counterpart_index = [self.feature_columns.index(_counterpart(column)) for column in self.feature_columns]
@@ -213,7 +216,14 @@ class PredictionService:
             "baseline_metrics": self.baseline_metrics,
             "features": self.feature_columns,
             "highlights": MODEL_HIGHLIGHTS,
-            "limitations": MODEL_LIMITATIONS,
+            # the closing "not betting advice" line stays last, after what the re-check found
+            "limitations": [
+                *MODEL_LIMITATIONS[:-1],
+                *evaluation_limitations(self.recent_evaluation, self.metrics.get("accuracy")),
+                *MODEL_LIMITATIONS[-1:],
+            ],
+            "metrics_note": metrics_note(self.recent_evaluation, self.metrics.get("accuracy")),
+            "recent_evaluation": self.recent_evaluation,
         }
 
     def _combined_attributions(self, x_ab: pd.DataFrame, x_ba: pd.DataFrame) -> np.ndarray | None:

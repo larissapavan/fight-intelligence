@@ -46,3 +46,14 @@ def test_data_info_reports_real_counts_and_sources(client):
     import datetime
 
     assert datetime.date.fromisoformat(body["last_updated"]) <= datetime.date.today()
+
+
+def test_model_info_sends_the_measured_result_and_says_the_reported_one_could_not_be_reproduced(client):
+    body = client.get("/model-info").json()
+    measured = body["recent_evaluation"]
+    assert measured["fights"] > 1000 and 0.5 < measured["accuracy"] < 0.7  # what the model really does on recent fights
+    assert f"Measured on {measured['fights']:,} recent fights" in body["metrics_note"]
+    assert "could not be reproduced" in body["metrics_note"] and f"{body['metrics']['accuracy']:.1%}" in body["metrics_note"]
+    assert any("could not be reproduced" in item for item in body["limitations"])
+    assert any("overconfident" in item for item in body["limitations"])
+    assert body["limitations"][-1].startswith("This is a personal project")  # the disclaimer stays last

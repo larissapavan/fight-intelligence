@@ -1,7 +1,7 @@
 """Training-data loading for the UFC winner model.
 
 KNOWN LIMITATION (data provenance): the model currently deployed at
-backend/model/model.pkl was trained on a Kaggle-style dataset
+models/ufc_winner_model.joblib was trained on a Kaggle-style dataset
 (data/raw/ufc_fights.csv or data/raw/UFC.csv) that is NOT checked into this
 repository, so `python -m src.ufc_predictor.train` cannot reproduce it today.
 If neither file is present, load_or_create_dataset() falls back to
