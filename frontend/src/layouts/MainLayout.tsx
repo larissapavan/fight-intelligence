@@ -1,9 +1,10 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import { Header } from '../shared/components/Header'
 import { PageMeta } from '../shared/components/PageMeta'
+import { isLandingPath } from '../shared/data/orgs'
 import { useOrg } from '../shared/hooks/useOrg'
 import { ServerLoadingState } from '../shared/components/ServerLoadingState'
 import { getOrgDataInfo, waitForHealth } from '../shared/services/api'
@@ -20,6 +21,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
   const [orgDataDate, setOrgDataDate] = useState<{ org: string; date: string | null } | null>(null)
   const [apiState, setApiState] = useState<'pending' | 'slow' | 'ready' | 'down'>('pending')
   const org = useOrg()
+  const landing = isLandingPath(useLocation().pathname)
 
   // Each organization has its own accent color (see index.css); the attribute is what the stylesheet reads.
   useEffect(() => {
@@ -53,7 +55,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(slowTimer)
   }, [])
 
-  const footerDate = org.id === 'ufc' ? dataDate : orgDataDate?.org === org.id ? orgDataDate.date : null
+  const footerDate = landing ? null : org.id === 'ufc' ? dataDate : orgDataDate?.org === org.id ? orgDataDate.date : null
 
   return (
     <div className="dashboard-shell min-h-screen text-[#FFFFFF]">
@@ -78,7 +80,8 @@ export function MainLayout({ children }: { children: ReactNode }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {apiState === 'pending' || apiState === 'slow' ? (
+          {/* The chooser needs no data, so it opens at once while the API wakes up in the background. */}
+          {(apiState === 'pending' || apiState === 'slow') && !landing ? (
             <ServerLoadingState waking={apiState === 'slow'} />
           ) : (
             children
@@ -92,7 +95,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
               to="/about"
               className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
             >
-              Independent fan project, not affiliated with the {org.shortName}
+              Independent fan project, not affiliated with {landing ? 'any of these organizations' : `the ${org.shortName}`}
             </Link>
           </p>
           <p className="mt-1.5">

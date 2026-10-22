@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { CircleDot, FolderGit2, Menu, Moon, Sun, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
-import { orgPath, type OrgConfig } from '../data/orgs'
+import { isLandingPath, LANDING_PATH, orgPath, type OrgConfig } from '../data/orgs'
 import { useModelInfo } from '../hooks/useModelInfo'
 import { useOrg } from '../hooks/useOrg'
 import { BrandMark } from './BrandMark'
@@ -46,7 +46,10 @@ export function Header() {
   const { health, loading } = useModelInfo()
   const { pathname } = useLocation()
   const org = useOrg()
-  const navItems = navItemsFor(org)
+  // On the page that chooses an organization there is no organization yet: no switcher, no section links, no fighter search
+  // (the menu button stays: on a phone it holds the light/dark switch).
+  const landing = isLandingPath(pathname)
+  const navItems = landing ? [] : navItemsFor(org)
   const [theme, setTheme] = useState<ThemeMode>(() => readThemePreference())
   const [menuOpen, setMenuOpen] = useState(false)
   const apiLabel = loading ? 'Waking up' : health?.model_loaded ? 'Live' : 'Offline'
@@ -82,14 +85,16 @@ export function Header() {
   return (
     <header>
       {/* Which organization is on screen: its own strip, so the bar below keeps room for the menu. */}
-      <div className="mb-2 flex items-center justify-between gap-3">
-        <OrgSwitcher />
-        <p className="type-tech hidden truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)] xs:block">{org.name}</p>
-      </div>
+      {landing ? null : (
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <OrgSwitcher />
+          <p className="type-tech hidden truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)] xs:block">{org.name}</p>
+        </div>
+      )}
       <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2.5 sm:px-3.5 sm:py-3">
         <div className="flex items-center justify-between gap-2">
           <Link
-            to={org.basePath || '/'}
+            to={LANDING_PATH}
             aria-label="Fight Intelligence home"
             className="brand-badge flex min-w-0 items-center lg:shrink-0 gap-2.5 border-2 border-black bg-[#EFECE6] px-2.5 py-2 text-black xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5"
           >
@@ -121,7 +126,7 @@ export function Header() {
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
             </div>
 
-            <FighterSearch />
+            {landing ? null : <FighterSearch />}
 
             <nav className="hidden items-center gap-1.5 rounded-full border border-white/14 bg-white/[0.04] p-1 lg:flex">
               {navItems.map((item) => (

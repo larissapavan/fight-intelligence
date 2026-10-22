@@ -6,6 +6,7 @@ import { TabbedLayout, type SectionTab } from './shared/components/TabbedLayout'
 import { ErrorBoundary } from './shared/components/ErrorBoundary'
 import { GENERIC_ORGS } from './shared/data/orgs'
 import { MainLayout } from './layouts/MainLayout'
+import { Landing } from './pages/Landing'
 import { NotFound } from './pages/NotFound'
 
 const Predictor = lazy(() => import('./pages/Predictor').then((module) => ({ default: module.Predictor })))
@@ -58,7 +59,7 @@ function App() {
       <ErrorBoundary>
         <Suspense fallback={<ServerLoadingState />}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Landing />} />
             <Route path="/home" element={<Home />} />
             <Route element={<TabbedLayout label="Matchup tools" tabs={matchupTabs} />}>
               <Route path="/predictor" element={<Predictor />} />

@@ -41,7 +41,7 @@ describe('organization paths', () => {
     expect(orgFromPathname('/pfl/fighters')).toBe(ORGS.pfl)
     expect(orgFromPathname('/pflx/fighters')).toBe(ORGS.ufc)
 
-    expect(orgPath(ORGS.ufc)).toBe('/')
+    expect(orgPath(ORGS.ufc)).toBe('/home')  // the site root is the page that chooses an organization
     expect(orgPath(ORGS.ufc, 'events')).toBe('/events')
     expect(orgPath(ORGS.pfl)).toBe('/pfl')
     expect(orgPath('pfl', 'rankings')).toBe('/pfl/rankings')
@@ -52,7 +52,47 @@ describe('organization paths', () => {
     expect(switchOrgPath(ORGS.pfl, '/rankings')).toBe('/pfl/rankings')
     expect(switchOrgPath(ORGS.ufc, '/pfl/fighters')).toBe('/fighters')
     expect(switchOrgPath(ORGS.pfl, '/predictor')).toBe('/pfl')
-    expect(switchOrgPath(ORGS.ufc, '/pfl')).toBe('/')
+    expect(switchOrgPath(ORGS.ufc, '/pfl')).toBe('/home')
+    expect(switchOrgPath(ORGS.pfl, '/')).toBe('/pfl')  // from the chooser there is no section to keep
+  })
+})
+
+describe('the page that chooses an organization', () => {
+  it('lists every organization with a way in, and says which one has predictions', async () => {
+    renderAt('/')
+    const list = await screen.findByRole('list', { name: 'Organizations' }, WAIT)
+    const links = within(list).getAllByRole('link')
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/home', '/pfl', '/bellator'])
+    expect(within(list).getAllByText('Win predictions')).toHaveLength(1)  // only the UFC
+    expect(within(list).getByText('Archive')).toBeInTheDocument()  // Bellator
+  })
+
+  it('has no switcher, section menu or fighter search until an organization is chosen', async () => {
+    renderAt('/')
+    await screen.findByRole('list', { name: 'Organizations' }, WAIT)
+    expect(screen.queryByRole('group', { name: 'Organization' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Fighters' })).not.toBeInTheDocument()
+  })
+
+  it('opens at once, without waiting for the API to wake up', async () => {
+    renderAt('/')
+    expect(screen.getByRole('list', { name: 'Organizations' })).toBeInTheDocument()  // synchronously: no loading screen first
+  })
+
+  it('choosing one opens its home page, where the switcher and the logo lead back', async () => {
+    renderAt('/')
+    await userEvent.click(await screen.findByRole('link', { name: 'Open Professional Fighters League' }, WAIT))
+    expect(await screen.findByText(/PFL fight intelligence/i, undefined, WAIT)).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: 'Organization' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Fight Intelligence home' })).toHaveAttribute('href', '/')
+  })
+
+  it('the UFC home page is still reachable and its other pages keep their addresses', async () => {
+    renderAt('/home')
+    expect(await screen.findAllByText('Alpha One', undefined, WAIT)).not.toHaveLength(0)
+    const nav = screen.getByRole('group', { name: 'Organization' })
+    expect(within(nav).getByRole('link', { name: 'UFC' })).toHaveAttribute('href', '/home')
+    expect(screen.getAllByRole('link', { name: 'Events' })[0]).toHaveAttribute('href', '/events')
   })
 })
 

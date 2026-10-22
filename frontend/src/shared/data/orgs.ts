@@ -71,11 +71,21 @@ export function orgFromPathname(pathname: string): OrgConfig {
   return GENERIC_ORGS.find((org) => org.id === first) ?? ORGS.ufc
 }
 
-/** A page of an organization: orgPath(ORGS.pfl, 'events') is "/pfl/events", orgPath(ORGS.ufc) is "/". */
+/** The page where the reader chooses an organization. */
+export const LANDING_PATH = '/'
+
+/** The UFC's own home page: the site root belongs to the organization chooser, the UFC's other pages keep their paths. */
+export const UFC_HOME_PATH = '/home'
+
+export function isLandingPath(pathname: string): boolean {
+  return pathname === LANDING_PATH || pathname === ''
+}
+
+/** A page of an organization: orgPath(ORGS.pfl, 'events') is "/pfl/events", orgPath(ORGS.ufc, 'events') is "/events", orgPath(ORGS.ufc) is "/home". */
 export function orgPath(org: OrgConfig | OrgId, section: OrgSection | '' = ''): string {
   const config = typeof org === 'string' ? ORGS[org] : org
   const tail = section ? `/${section}` : ''
-  return `${config.basePath}${tail}` || '/'
+  return `${config.basePath}${tail}` || UFC_HOME_PATH
 }
 
 /** The section of the page being viewed, if it exists in every organization ("/pfl/events" and "/events" are both "events"). */
@@ -85,7 +95,8 @@ export function sectionOfPathname(pathname: string): OrgSection | '' {
   return SECTIONS.find((section) => section === last) ?? ''
 }
 
-/** Where the switcher sends the reader: the same section in the other organization, or its home page. */
+/** Where the switcher sends the reader: the same section in the other organization, or its home page.
+ *  From the chooser page there is no section to keep, so it goes to the organization's home page. */
 export function switchOrgPath(target: OrgConfig, pathname: string): string {
   const section = sectionOfPathname(pathname)
   return orgPath(target, section === 'rankings' && !target.hasRankings ? '' : section)

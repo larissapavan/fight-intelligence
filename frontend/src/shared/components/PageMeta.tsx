@@ -2,12 +2,14 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
 const SITE = 'Fight Intelligence'
-const DEFAULT_DESCRIPTION = 'Predict UFC fights with machine learning and see exactly why. Fighter stats, rankings and champions.'
+const DEFAULT_DESCRIPTION =
+  'Fight stats, rankings and results for the UFC, the PFL and the Bellator archive, plus UFC win predictions with the reasons behind each one.'
 
 const GYM_PAGE = /^(\/pfl|\/bellator)?\/gyms\/[^/]+$/
 const GYM_DETAIL = { title: 'Gym', description: 'Who trains at this gym: its fighters, champions and records.' }
 
 const PAGES: Record<string, { title: string; description: string }> = {
+  '/home': { title: 'UFC', description: 'The next UFC card with the model\'s picks, who is on a streak and the latest headlines.' },
   '/predictor': { title: 'Predict a fight', description: 'Pick two UFC fighters and get a win probability with the stats that drove it.' },
   '/head-to-head': { title: 'Head-to-head history', description: 'Every time two UFC fighters have met, who won and how, plus their common opponents.' },
   '/matchup-intelligence': { title: 'Matchup analysis', description: 'Striking, grappling and physical numbers for any two UFC fighters, and the factors the model weighed most.' },
@@ -44,7 +46,7 @@ export function PageMeta() {
   useEffect(() => {
     const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
     const page = PAGES[path] ?? (GYM_PAGE.test(path) ? GYM_DETAIL : undefined)
-    const title = page ? `${page.title} · ${SITE}` : path === '/' || path === '/home' ? SITE : `Page not found · ${SITE}`
+    const title = page ? `${page.title} · ${SITE}` : path === '/' ? SITE : `Page not found · ${SITE}`
     const description = page?.description ?? DEFAULT_DESCRIPTION
 
     document.title = title

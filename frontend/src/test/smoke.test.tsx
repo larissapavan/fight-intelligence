@@ -25,7 +25,8 @@ function renderAt(path: string) {
 
 /** Page, a route that exercises it, and text only that page shows once its data has loaded. */
 const pages: [string, string, string | RegExp][] = [
-  ['Home', '/', 'Alpha One'],
+  ['Landing', '/', /pick an organization/i],
+  ['UFC home', '/home', 'Alpha One'],
   ['Fighters', '/fighters', /weight classes/i],
   ['Events', '/events', 'UFC fight cards'],
   ['Rankings', '/rankings', /divisional & pound-for-pound/i],
@@ -49,7 +50,7 @@ describe('every page opens and shows its data', () => {
 
 describe('the pages that depend on the API', () => {
   it('the home page shows the model pick next to the upcoming fights', async () => {
-    renderAt('/')
+    renderAt('/home')
     expect(await screen.findByText(/Model: Gamma Three 72%/i, undefined, { timeout: 10000 })).toBeInTheDocument()
   })
 

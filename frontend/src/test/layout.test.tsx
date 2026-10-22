@@ -83,7 +83,8 @@ describe('searching fighters by name', () => {
 
 describe('one h1 per page', () => {
   const pages: [string, string, string | RegExp][] = [
-    ['Home', '/', 'Alpha One'],
+    ['Landing', '/', /pick an organization/i],
+    ['UFC home', '/home', 'Alpha One'],
     ['Fighters', '/fighters', /weight classes/i],
     ['Events', '/events', 'UFC fight cards'],
     ['Rankings', '/rankings', /divisional & pound-for-pound/i],
@@ -110,7 +111,7 @@ describe('the fighter catalog is requested once', () => {
   it('however many parts of the home page use it', async () => {
     api.fighterRequests = 0
     api.extraFighters = 0
-    renderAt('/')
+    renderAt('/home')
     await screen.findAllByText('Alpha One', undefined, { timeout: 10000 })
     await waitFor(() => expect(api.fighterRequests).toBeGreaterThan(0))
     expect(api.fighterRequests).toBe(1)
