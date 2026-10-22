@@ -9,6 +9,7 @@ import { nationalityText } from '../shared/data/badges'
 import { getFighterImageUrl, useFighterImages } from '../shared/hooks/useFighterImages'
 import { useFighters } from '../shared/hooks/useFighters'
 import { formatProbability } from '../shared/data/probability'
+import { DataConfidenceNote } from '../shared/components/DataConfidenceNote'
 import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { usePrediction } from '../shared/hooks/usePrediction'
@@ -309,7 +310,10 @@ function Scorecard({
         </div>
 
         {prediction ? (
-          <p className="text-sm font-medium leading-6">{prediction.message}</p>
+          <>
+            <p className="text-sm font-medium leading-6">{prediction.message}</p>
+            <DataConfidenceNote confidence={prediction.data_confidence} />
+          </>
         ) : (
           <div className="flex justify-end pt-2 text-[#C8102E]">
             <span className="poster-display poster-stamp text-3xl">Awaiting bout</span>

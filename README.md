@@ -69,7 +69,7 @@ Everything is public: ESPN, ufc.com, UFC Stats, roster.watch, pflmma.com (the PF
 | --- | --- |
 | **Home** | The next UFC card: the main event, the model's pick and win probabilities, who is on a streak, the top of the pound-for-pound ranking, and the latest UFC headlines (via ESPN). |
 | **Fighters** | About 2,800 profiles, browsable by weight class. Searching a name jumps to the right division. |
-| **Rankings** | The official divisional and pound-for-pound rankings, with photos, win rate and last fight. |
+| **Rankings** | The official divisional and pound-for-pound rankings, with photos, win rate and last fight. Each division can also be run as a round robin: the model's pick for every pair of the top 8, and the average chance each fighter has of beating the rest. |
 | **Champions** | Current champions, the greatest reigns, and title-fight records. |
 | **Record book** | The UFC's all-time career leaders in 32 stats. |
 | **Events** | The full event archive and the upcoming cards, with the model's pick for each fight. |
@@ -90,7 +90,9 @@ A few details worth knowing:
 - **Champions** shows, under each division, a collapsed **title history** with every fighter who has held that belt: date, how it was won, days held, defenses and how the reign ended. The record lists (most defenses, longest reigns, most times dethroned and more) open to their top 10, and the multi-division champions open to every title fight of their career.
 - **Predict** gives the win probability and the factors behind it. **Head-to-Head** lists every meeting between two fighters and their common opponents. **Matchup** breaks the pairing into striking, grappling and physical numbers.
 - **Events** include each fight's result, method, round, referee and the judges' scores, and you can search by name, date or place.
-- **Track record** starts at zero and fills up as fights happen. It shows live accuracy, how often the model is right at each confidence level, the latest results and the biggest misses.
+- **Track record** starts at zero and fills up as fights happen. It shows live accuracy, how often the model is right at each confidence level, the latest results and the biggest misses. It also compares the model with simple rules (pick at random, pick the fighter with more wins, pick the better-rated one) on the same recent fights, and shows the model's calibration on those fights, so the percentage can be checked against what happened.
+- **Thin data is flagged.** When a prediction rests on a fighter with only a few fights, a long layoff or a missing measurement, the Predict and Matchup pages say so next to the percentage.
+- **An RSS feed** (`/feed.xml`) lists the model's picks for each announced card and how it did once the card was settled. Any feed reader, or an RSS-to-email service, turns it into an alert.
 
 The layout works from 320px phones to ultrawide monitors, in dark or light mode.
 
@@ -122,7 +124,8 @@ ESPN / ufc.com / roster.watch / statleaders.ufc.com
 
 | Endpoint | Returns |
 | --- | --- |
-| `POST /predict`, `GET /predict/upcoming` | A win probability with its SHAP factors; the model's pick for every announced fight |
+| `POST /predict`, `GET /predict/upcoming` | A win probability with its SHAP factors and a note on how much data it had; the model's pick for every announced fight |
+| `GET /predict/division?category=Lightweight&top=8` | The ranked fighters of a division against each other, and the round-robin standings |
 | `GET /fighters`, `/fighters/{name}/performance`, `/similar`, `/opponents` | Profiles, career timeline and trends, similar fighters, past opponents |
 | `GET /head-to-head` | Fights between two fighters, common opponents, distance in fights |
 | `GET /events`, `/events/upcoming` | The archive and the upcoming cards |
@@ -249,7 +252,7 @@ The deployed model is a single file, `models/ufc_winner_model.joblib`: the API r
 
 **Deployment.** The frontend is on Vercel (`frontend/vercel.json` rewrites `/api/*` to the API and every other path to the app). The API is on Render's free plan (`render.yaml`), which sleeps when idle, so the first visit after a quiet spell can take up to a minute; the site says so while it waits. The API redeploys on every push to `main` (`autoDeploy`). The daily data refresh runs in GitHub Actions and commits the new CSVs to `main`, which is how fresh data reaches the API.
 
-**Tests.** There are 367 pytest tests covering the routers, the catalog and champions services, the model API, the feature code and the scrapers, and 47 frontend tests: smoke tests that open every page against a fake API and check the main flows (opening a profile, the multi-division champions, the division title histories, the model's picks, the track record note), and layout tests (one top-level heading per page, one request for the fighter catalog, the paged fighter list, the header search, the matchup link, how probabilities are shown). Among them, the model tests hold the prediction to the same answer whichever fighter is typed first, on three headline matchups and on 25 real pairs of active fighters. Every push runs pytest, ESLint, the frontend tests and the Vite build (which includes a strict TypeScript check) in CI. The pages were also checked with an automated accessibility audit (axe, WCAG 2 A and AA) in light and dark mode.
+**Tests.** There are 523 pytest tests covering the routers, the catalog and champions services, the model API, the feature code and the scrapers, and 83 frontend tests: smoke tests that open every page against a fake API and check the main flows (opening a profile, the multi-division champions, the division title histories, the model's picks, the track record note), and layout tests (one top-level heading per page, one request for the fighter catalog, the paged fighter list, the header search, the matchup link, how probabilities are shown). Among them, the model tests hold the prediction to the same answer whichever fighter is typed first, on three headline matchups and on 25 real pairs of active fighters. A model regression test retrains the pre-fight candidate from the repository's own files and fails if its accuracy, ranking power or calibration fall below set floors, or if the deployed model stops beating the simple rules; it runs in CI on every push, not in the daily data refresh, so a bad day of data cannot block the refresh. Every push runs pytest, ESLint, the frontend tests and the Vite build (which includes a strict TypeScript check) in CI. The pages were also checked with an automated accessibility audit (axe, WCAG 2 A and AA) in light and dark mode.
 
 **Repository layout**
 
@@ -283,7 +286,7 @@ The UFC has its own pipeline; every other organization is three CSV files in `da
 - The PFL pages have no predictions: the model learned from UFC fights and the PFL's site publishes no per-fight statistics (strikes, takedowns) to train another one on. PFL results are also thinner than the UFC's: no referee, scorecards or finish detail beyond what the event page prints.
 - The model only knows what is in the stats. It has no idea about injuries, weight cuts, camp changes or style quirks.
 - Fighters with few UFC fights give the model little to work with, so their predictions are less reliable.
-- The model has a built-in lean toward the red corner, because that is what its training fights looked like. Averaging both orders removes the effect on a single matchup, but it does not make the model more accurate, and how well its probabilities are calibrated, such as whether a 90% pick really wins nine times in ten, has not been measured yet. Read very confident picks with caution.
+- The model has a built-in lean toward the red corner, because that is what its training fights looked like. Averaging both orders removes the effect on a single matchup, but it does not make the model more accurate, and its probabilities are overconfident: on the 1,752 recent fights, the picks it rated 90% or more were right 71% of the time (the Track record page shows the whole calibration chart). Read very confident picks with caution.
 - The factors shown for a pick are a good guide to which stats mattered and how much, not an exact breakdown: SHAP's probability output is approximate, and across random matchups the factors miss the final probability by 0.25 percentage points at the median and by up to about 4 points at worst.
 - The deployed model cannot be rebuilt from this repository: its training data is not checked in, and without it the old training script falls back to randomly generated data that says nothing about real fights. Its reported accuracy could not be reproduced (see [The model](#the-model)). A different model, trained only on what was known before each fight, can be rebuilt here, and it is what the comparison above is about.
 - The track record keeps picks exactly as they were shown. Those saved before 2026-10-20 come from the first version of the model, which answered differently depending on which fighter was listed first, and the page says so.

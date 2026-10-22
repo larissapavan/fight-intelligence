@@ -40,17 +40,18 @@ jobs:
         run: python -m scripts.validate_data
 
       - name: Run tests
-        run: pytest -q
+        # The model regression test (about 40 s) runs in CI on every push; a bad day of data must not block the refresh commit.
+        run: pytest -q -m "not model_regression"
 
       - name: Commit and push changes
         run: |
-          if git diff --quiet -- data/raw frontend/public/fighter-photos && [ -z "$(git ls-files --others --exclude-standard frontend/public/fighter-photos)" ]; then
+          if git diff --quiet -- data/raw frontend/public/fighter-photos frontend/public/feed.xml && [ -z "$(git ls-files --others --exclude-standard frontend/public/fighter-photos)" ]; then
             echo "No data changes."
             exit 0
           fi
           git config user.name "fight-intelligence-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/raw frontend/public/fighter-photos
+          git add data/raw frontend/public/fighter-photos frontend/public/feed.xml
           git commit -m "chore(data): daily refresh $(date -u +%F)"
           git push
 

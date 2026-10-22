@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ArrowDown, ArrowUp, Crown, Sparkles, Trophy } from 'lucide-react'
 
+import { DivisionMatrixCard } from '../shared/components/DivisionMatrixCard'
 import { FighterAvatar } from '../shared/components/FighterAvatar'
 import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
 import { badgesForRankings } from '../shared/data/badges'
@@ -115,6 +116,8 @@ function DivisionView({
       </div>
 
       <RankingList entries={active.entries} />
+
+      <DivisionMatrixCard key={active.category} category={active.category} />
     </div>
   )
 }

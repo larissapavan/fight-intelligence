@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Fight Intelligence: picks and results</title>
+    <link>https://fight-intelligence.vercel.app</link>
+    <description>The model's pick for every announced UFC fight, saved before the card, and how it did once the results were in. For fun and learning, not betting advice.</description>
+    <language>en</language>
+    <atom:link href="https://fight-intelligence.vercel.app/feed.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 21 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Results: UFC Fight Night: Buckley vs. Malott (2026-10-17)</title>
+      <link>https://fight-intelligence.vercel.app/track-record</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/results/2026-10-17/UFC Fight Night: Buckley vs. Malott</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
+      <description>The model got 4 of 13 right.
+Biggest miss: Cody Chovancek at 94%, but SuYoung You won.</description>
+    </item>
+    <item>
+      <title>Picks for UFC 333: Volkanovski vs. Evloev (2026-10-24)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-10-24/UFC 333: Volkanovski vs. Evloev</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Colby Thicknesse vs. Asaf Chopurov: the model picks Asaf Chopurov (79%)
+Aaron Pico vs. Losene Keita: the model picks Losene Keita (66%)
+Grant Dawson vs. Nurullo Aliev: the model picks Nurullo Aliev (80%)
+Abus Magomedov vs. Cam Rowston: the model picks Abus Magomedov (54%)
+Nikita Krylov vs. Abdul Rakhman Yakhyaev: the model picks Abdul Rakhman Yakhyaev (96%)
+Azamat Murzakanov vs. Dominick Reyes: the model picks Azamat Murzakanov (81%)
+Alexander Volkov vs. Rizvan Kuniev: the model picks Rizvan Kuniev (63%)
+Lone'er Kavanagh vs. Ramazan Temirov: the model picks Ramazan Temirov (77%)
+Petr Yan vs. Merab Dvalishvili: the model picks Petr Yan (57%)
+Alexander Volkanovski vs. Movsar Evloev: the model picks Movsar Evloev (93%)
+Abubakar Vagaev vs. Jacob Malkoun: the model picks Abubakar Vagaev (51%)
+Bolaji Oki vs. Daniel Santos: the model picks Daniel Santos (79%)
+Kody Steele vs. Noah Gugnon: the model picks Noah Gugnon (62%)
+Iasmin Lucindo vs. Nicolle Caliari: the model picks Iasmin Lucindo (74%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC Fight Night: Bonfim vs. Brady (2026-11-07)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-11-07/UFC Fight Night: Bonfim vs. Brady</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Jonny Parsons vs. Jose Souza: the model picks Jose Souza (79%)
+Austin Bashi vs. Lucas Brennan: the model picks Austin Bashi (96%)
+Keiichiro Nakamura vs. Ollie Schmid: the model picks Keiichiro Nakamura (94%)
+Karine Silva vs. Gabriella Fernandes: the model picks Karine Silva (52%)
+Gabriel Lorenco vs. Alvin Hines: the model picks Gabriel Lorenco (94%)
+Billy Elekana vs. Lucas Fernando: the model picks Billy Elekana (54%)
+Davey Grant vs. Elijah Smith: the model picks Elijah Smith (67%)
+Tatiana Suarez vs. Virna Jandiroba: the model picks Tatiana Suarez (60%)
+Gabriel Bonfim vs. Sean Brady: the model picks Gabriel Bonfim (84%)
+Priscila Cachoeira vs. Nina Milosevic: the model picks Nina Milosevic (77%)
+Jose Delano vs. Murtazali Magomedov: the model picks Murtazali Magomedov (94%)
+Mantas Kondratavicius vs. Wes Schultz: the model picks Mantas Kondratavicius (85%)
+Seokhyeon Ko vs. Wellington Turman: the model picks Seokhyeon Ko (54%)
+Jonny Parsons vs. Jose Henrique: the model picks Jose Henrique (85%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC 335: Oliveira vs. Lopes (2026-12-12)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-12-12/UFC 335: Oliveira vs. Lopes</guid>
+      <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Joe Pyfer vs. Bo Nickal: the model picks Joe Pyfer (57%)
+Sergei Pavlovich vs. Alex Pereira: the model picks Sergei Pavlovich (82%)
+Charles Oliveira vs. Diego Lopes: the model picks Diego Lopes (66%)
+Brandon Moreno vs. Charles Johnson: the model picks Brandon Moreno (63%)
+Maycee Barber vs. Carli Judice: the model picks Maycee Barber (89%)
+Quentin Pasley vs. Junior Tafa: the model picks Quentin Pasley (61%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC Fight Night: Moicano vs. Nolan (2026-10-31)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-10-31/UFC Fight Night: Moicano vs. Nolan</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Lucia Szabova vs. Tainara Lisboa: the model picks Lucia Szabova (85%)
+Talita Alencar vs. Piera Rodriguez: the model picks Piera Rodriguez (73%)
+Nick Klein vs. Joe Kropschot: the model picks Joe Kropschot (83%)
+Rodrigo Sezinando vs. Theodor Berggren: the model picks Theodor Berggren (51%)
+Azamat Bekoev vs. Andre Petroski: the model picks Azamat Bekoev (81%)
+Francis Marshall vs. Gaston Bolanos: the model picks Francis Marshall (71%)
+Jean-Paul Lebosnoyani vs. Farman Hasanov: the model picks Jean-Paul Lebosnoyani (61%)
+Yana Santos vs. Luana Santos: the model picks Luana Santos (81%)
+Randy Brown vs. Carlos Leal: the model picks Carlos Leal (52%)
+Renato Moicano vs. Tom Nolan: the model picks Tom Nolan (63%)
+Julian Erosa vs. JeongYeong Lee: the model picks Julian Erosa (52%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC 334: Gane vs. Hokit (2026-11-14)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-11-14/UFC 334: Gane vs. Hokit</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Nazim Sadykhov vs. Jefferson Nascimento: the model picks Jefferson Nascimento (69%)
+Adrian Yanez vs. Juan Diaz: the model picks Juan Diaz (89%)
+Bia Mesquita vs. Macy Chiasson: the model picks Bia Mesquita (97%)
+Donte Johnson vs. Baisangur Susurkaev: the model picks Baisangur Susurkaev (72%)
+Jim Miller vs. Terrance McKinney: the model picks Terrance McKinney (57%)
+Drew Dober vs. Chris Duncan: the model picks Chris Duncan (65%)
+Stephen Thompson vs. Charles Radtke: the model picks Charles Radtke (59%)
+Bilal Hasan vs. Luis Gurule: the model picks Bilal Hasan (99%)
+Uros Medic vs. Kevin Holland: the model picks Kevin Holland (58%)
+Caio Borralho vs. Yousri Belgaroui: the model picks Caio Borralho (74%)
+Kayla Harrison vs. Amanda Nunes: the model picks Kayla Harrison (85%)
+Ciryl Gane vs. Josh Hokit: the model picks Josh Hokit (82%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC Fight Night: Prochazka vs. Stirling (2026-11-21)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-11-21/UFC Fight Night: Prochazka vs. Stirling</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Amir Albazi vs. Alessandro Costa: the model picks Alessandro Costa (62%)
+Asu Almabayev vs. Kyoji Horiguchi: the model picks Asu Almabayev (66%)
+Aleksandre Topuria vs. Santiago Luna: the model picks Santiago Luna (69%)
+Jake Matthews vs. Tahir Abdullayev: the model picks Tahir Abdullayev (64%)
+Shamil Gaziev vs. Tallison Teixeira: the model picks Tallison Teixeira (52%)
+Jared Cannonier vs. Ikram Aliskerov: the model picks Ikram Aliskerov (91%)
+Dan Hooker vs. Brian Ortega: the model picks Brian Ortega (54%)
+Aljamain Sterling vs. Kevin Vallejos: the model picks Kevin Vallejos (82%)
+Jiri Prochazka vs. Navajo Stirling: the model picks Navajo Stirling (91%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC Fight Night: Adesanya vs. Magomedov (2026-12-05)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-12-05/UFC Fight Night: Adesanya vs. Magomedov</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Israel Adesanya vs. Shara Magomedov: the model picks Shara Magomedov (77%)</description>
+    </item>
+  </channel>
+</rss>

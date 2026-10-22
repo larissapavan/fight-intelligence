@@ -18,13 +18,14 @@ def calls(monkeypatch):
     monkeypatch.setattr(update_all.scrape_pfl, "main", lambda argv=None: log.append(("pfl", list(argv or []))) or 0)
     monkeypatch.setattr(update_all.scrape_gyms, "main", lambda argv=None: log.append(("gyms", list(argv or []))) or 0)
     monkeypatch.setattr(update_all.log_predictions, "log_upcoming", lambda: log.append(("log", None)) or 0)
+    monkeypatch.setattr(update_all.build_feed, "main", lambda argv=None: log.append(("feed", None)) or 0)
     monkeypatch.setattr(update_all.log_predictions, "resolve", lambda: log.append(("settle", None)) or 0)
     return log
 
 
 def test_logs_picks_before_espn_and_settles_them_after(calls):
     assert update_all.main([]) == 0
-    assert [name for name, _ in calls] == ["log", "espn", "settle", "stats", "rankings", "photos", "origins", "roster", "records", "pfl", "gyms"]
+    assert [name for name, _ in calls] == ["log", "espn", "settle", "stats", "rankings", "photos", "origins", "roster", "records", "pfl", "gyms", "feed"]
 
 
 def test_dry_run_only_previews_the_espn_and_pfl_steps(calls):
@@ -43,7 +44,7 @@ def test_a_failing_step_does_not_stop_the_others_and_sets_exit_status(monkeypatc
 
     monkeypatch.setattr(update_all.scrape_espn, "main", boom)
     assert update_all.main([]) == 1
-    assert [name for name, _ in calls] == ["log", "settle", "stats", "rankings", "photos", "origins", "roster", "records", "pfl", "gyms"]
+    assert [name for name, _ in calls] == ["log", "settle", "stats", "rankings", "photos", "origins", "roster", "records", "pfl", "gyms", "feed"]
     assert "FAILED" in capsys.readouterr().out
 
 

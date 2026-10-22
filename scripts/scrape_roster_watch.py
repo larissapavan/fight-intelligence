@@ -28,12 +28,12 @@ import unicodedata
 from datetime import datetime
 from pathlib import Path
 
-import requests
 from bs4 import BeautifulSoup
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from scripts.http_retry import get_with_retry
 from src.ufc_predictor.config import RAW_DATA_DIR
 from src.ufc_predictor.countries import country_code
 
@@ -212,8 +212,7 @@ def link_rows(rows: list[dict], fighters: list[dict]) -> None:
 def fetch_rows() -> list[dict]:
     rows: list[dict] = []
     for status, url in PAGES.items():
-        response = requests.get(url, headers=HEADERS, timeout=60)
-        response.raise_for_status()
+        response = get_with_retry(url, headers=HEADERS, timeout=60)
         page_rows = parse(response.content.decode("utf-8", errors="replace"), status)
         minimum = 400 if status == "active" else 1000
         if len(page_rows) < minimum:

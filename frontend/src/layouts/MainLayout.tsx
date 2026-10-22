@@ -95,6 +95,14 @@ export function MainLayout({ children }: { children: ReactNode }) {
               Independent fan project, not affiliated with the {org.shortName}
             </Link>
           </p>
+          <p className="mt-1.5">
+            <a
+              href="/feed.xml"
+              className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
+            >
+              RSS feed: new picks and results
+            </a>
+          </p>
         </footer>
       </div>
     </div>

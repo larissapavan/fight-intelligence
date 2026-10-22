@@ -43,3 +43,26 @@ def test_the_evaluation_record_has_what_the_site_needs():
     assert {"roc_auc", "log_loss", "brier", "ece"} <= set(record)
     none_confident = compare.evaluation_record(test, np.array([0.6, 0.55, 0.4, 0.6]), y)
     assert none_confident["confident_fights"] == 0 and none_confident["confident_hit_rate"] is None
+
+
+def test_simple_rules_are_scored_on_the_same_fights():
+    import numpy as np
+    import pandas as pd
+
+    test = pd.DataFrame({"ufc_wins_diff": [3.0, -2.0, 0.0, 4.0], "elo_diff": [10.0, 5.0, -30.0, 0.0]})
+    y = np.array([1, 0, 1, 0])  # A won, B won, A won, B won
+    rules = {row["label"]: row["accuracy"] for row in compare.baseline_accuracies(test, y)}
+    assert rules["Pick at random"] == 0.5
+    assert rules["Pick the fighter with more UFC wins"] == pytest.approx((1 + 1 + 0.5 + 0) / 4)  # the tie counts half
+    assert rules["Pick the fighter with the better rating (Elo)"] == pytest.approx((1 + 0 + 0 + 0.5) / 4)
+    assert [row["label"] for row in compare.baseline_accuracies(test[["elo_diff"]], y)] == ["Pick at random", "Pick the fighter with the better rating (Elo)"]
+
+
+def test_the_calibration_bins_compare_what_was_said_with_what_happened():
+    import numpy as np
+
+    p = np.array([0.57, 0.58, 0.85, 0.15])
+    y = np.array([1, 0, 1, 0])
+    bins = {row["label"]: row for row in compare.calibration_bins(p, y)}
+    assert bins["55%-60%"]["fights"] == 2 and bins["55%-60%"]["accuracy"] == 0.5
+    assert bins["80%-90%"]["fights"] == 2 and bins["80%-90%"]["accuracy"] == 1.0

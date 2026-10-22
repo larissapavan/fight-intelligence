@@ -1,11 +1,11 @@
-import { CalendarClock, Check, Target, X } from 'lucide-react'
+import { CalendarClock, Check, Scale, Target, X } from 'lucide-react'
 
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { useTrackRecord } from '../shared/hooks/useTrackRecord'
-import type { ConfidenceBand, TrackedFight } from '../shared/types/api'
+import type { ConfidenceBand, RecentEvaluation, TrackedFight } from '../shared/types/api'
 
 const percent = (value: number | null | undefined) => (value == null ? '—' : `${Math.round(value * 100)}%`)
 
@@ -47,7 +47,19 @@ export function TrackRecord() {
 
           {data.resolved === 0 ? <WaitingCard data={data} /> : null}
 
-          {data.bands.length ? <CalibrationCard bands={data.bands} /> : null}
+          {data.bands.length ? (
+            <CalibrationCard title="Live picks: when the model says X%, how often is it right?" bands={data.bands} />
+          ) : null}
+
+          {modelInfo?.recent_evaluation?.baselines?.length ? <BaselineCard evaluation={modelInfo.recent_evaluation} /> : null}
+
+          {modelInfo?.recent_evaluation?.calibration?.length ? (
+            <CalibrationCard
+              title="Back-test: when the model says X%, how often is it right?"
+              note={`The same check on ${modelInfo.recent_evaluation.fights.toLocaleString('en-US')} recent fights. A well-calibrated model has the two bars level.`}
+              bands={modelInfo.recent_evaluation.calibration}
+            />
+          ) : null}
 
           {data.recent.length ? (
             <FightList title="Recent results" fights={data.recent} />
@@ -99,13 +111,14 @@ function WaitingCard({ data }: { data: NonNullable<ReturnType<typeof useTrackRec
   )
 }
 
-function CalibrationCard({ bands }: { bands: ConfidenceBand[] }) {
+function CalibrationCard({ title, note, bands }: { title: string; note?: string; bands: ConfidenceBand[] }) {
   return (
     <section className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center gap-2">
         <Target className="h-4 w-4 text-[#C8102E]" />
-        <h2 className="broadcast-label text-xs text-[#FFFFFF]">When the model says X%, how often is it right?</h2>
+        <h2 className="broadcast-label text-xs text-[#FFFFFF]">{title}</h2>
       </div>
+      {note ? <p className="theme-muted mt-0.5 text-xs">{note}</p> : null}
       <ul className="mt-3 grid gap-3">
         {bands.map((band) => (
           <li key={band.label}>
@@ -115,6 +128,37 @@ function CalibrationCard({ bands }: { bands: ConfidenceBand[] }) {
             </div>
             <Bar label="Model said" value={band.average_confidence} tone="muted" />
             <Bar label="Actually right" value={band.accuracy} tone="strong" />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+function BaselineCard({ evaluation }: { evaluation: RecentEvaluation }) {
+  const rows = [
+    { label: 'The model', accuracy: evaluation.accuracy, strong: true },
+    ...(evaluation.baselines ?? []).map((rule) => ({ label: rule.label, accuracy: rule.accuracy, strong: false })),
+  ].sort((a, b) => b.accuracy - a.accuracy)
+  return (
+    <section className="surface-card rounded-[20px] p-3 sm:p-4">
+      <div className="flex items-center gap-2">
+        <Scale className="h-4 w-4 text-[#C8102E]" />
+        <h2 className="broadcast-label text-xs text-[#FFFFFF]">Does it beat simple rules?</h2>
+      </div>
+      <p className="theme-muted mt-0.5 text-xs">
+        Accuracy on the same {evaluation.fights.toLocaleString('en-US')} recent fights. A model is only worth something if it beats these.
+      </p>
+      <ul className="mt-3 grid gap-2">
+        {rows.map((row) => (
+          <li key={row.label}>
+            <div className="flex items-baseline justify-between gap-2 text-sm text-[#FFFFFF]">
+              <span className={row.strong ? 'font-bold' : ''}>{row.label}</span>
+              <span className="type-num font-bold">{percent(row.accuracy)}</span>
+            </div>
+            <div className="mt-1 h-3 border-2 border-[var(--rule)] bg-[var(--surface-3)]">
+              <div className={`h-full ${row.strong ? 'bg-[#C8102E]' : 'bg-[#F2C230]'}`} style={{ width: `${Math.round(row.accuracy * 100)}%` }} />
+            </div>
           </li>
         ))}
       </ul>

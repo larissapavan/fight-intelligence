@@ -19,12 +19,12 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-import requests
 from bs4 import BeautifulSoup
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from scripts.http_retry import get_with_retry
 from src.ufc_predictor.config import RAW_DATA_DIR
 
 URL = "https://statleaders.ufc.com/en/career"
@@ -83,8 +83,7 @@ def parse(html: str) -> list[dict]:
 
 
 def main() -> None:
-    response = requests.get(URL, headers=HEADERS, timeout=60)
-    response.raise_for_status()
+    response = get_with_retry(URL, headers=HEADERS, timeout=60)
     rows = parse(response.content.decode("utf-8", errors="replace"))
     stats = {row["stat_key"] for row in rows}
     if len(stats) < MINIMUM_STATS or any(not row["fighter"] or not row["value"] for row in rows):

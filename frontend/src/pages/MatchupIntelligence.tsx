@@ -11,6 +11,7 @@ import { SectionHeading } from '../shared/components/SectionHeading'
 import { ShapFactorBars } from '../shared/components/ShapFactorBars'
 import { WinProbabilityBar } from '../shared/components/WinProbabilityBar'
 import { useFighters } from '../shared/hooks/useFighters'
+import { DataConfidenceNote } from '../shared/components/DataConfidenceNote'
 import { usePrediction } from '../shared/hooks/usePrediction'
 import { getFighterPerformance } from '../shared/services/api'
 import type { FighterPerformance, FighterProfile } from '../shared/types/api'
@@ -217,6 +218,11 @@ export function MatchupIntelligence() {
               )}
             </div>
             {!analyzing && prediction?.message ? <p className="mt-3 text-sm leading-6 text-[#999999]">{prediction.message}</p> : null}
+            {!analyzing && prediction ? (
+              <div className="mt-3">
+                <DataConfidenceNote confidence={prediction.data_confidence} />
+              </div>
+            ) : null}
           </section>
 
           {showResults && fighterA && fighterB && prediction ? (

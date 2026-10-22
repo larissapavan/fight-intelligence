@@ -11,6 +11,18 @@ class HealthResponse(BaseModel):
     latest_fight_date: str | None = None
 
 
+class BaselineRule(BaseModel):
+    label: str
+    accuracy: float
+
+
+class CalibrationBin(BaseModel):
+    label: str
+    fights: int
+    average_confidence: float
+    accuracy: float
+
+
 class RecentEvaluation(BaseModel):
     """The deployed model scored again on the newest fights (see scripts/compare_models.py)."""
 
@@ -25,6 +37,8 @@ class RecentEvaluation(BaseModel):
     confident_threshold: float | None = None
     confident_fights: int | None = None
     confident_hit_rate: float | None = None
+    baselines: list[BaselineRule] = []
+    calibration: list[CalibrationBin] = []
 
 
 class ModelInfoResponse(BaseModel):

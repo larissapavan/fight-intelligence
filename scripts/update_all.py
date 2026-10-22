@@ -13,6 +13,7 @@ ufc.com page as the rankings, and fighters created from ESPN need their headshot
     6. Records   scripts.scrape_stat_leaders         the UFC's career Record Book (statleaders.ufc.com)
     7. PFL       scripts.scrape_pfl                  the Professional Fighters League: events, results, fighters, rankings, photos (pflmma.com)
     8. Gyms      scripts.scrape_gyms                 the gyms and the fighters who train in them (fighthub-app.com)
+    9. Feed      scripts.build_feed                  the RSS feed of picks and results (frontend/public/feed.xml)
 
 Usage (from the repo root):
     python -m scripts.update_all --dry-run      # ESPN preview only; rankings and photos write files, so they are skipped
@@ -36,7 +37,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from scripts import (
-    download_fighter_photos, log_predictions, scrape_espn, scrape_fight_stats, scrape_fighter_origins, scrape_gyms, scrape_pfl, scrape_rankings,
+    build_feed, download_fighter_photos, log_predictions, scrape_espn, scrape_fight_stats, scrape_fighter_origins, scrape_gyms, scrape_pfl, scrape_rankings,
     scrape_roster_watch, scrape_stat_leaders, validate_data,
 )
 
@@ -148,6 +149,7 @@ def main(argv: list[str] | None = None) -> int:
             None if args.skip_pfl else run_step("PFL (pflmma.com)", lambda: run_pfl(dry_run=False, photos=not args.skip_photos))
         )
         results["Gyms (FightHub)"] = None if args.skip_gyms else run_step("Gyms (FightHub)", lambda: run_gyms(dry_run=False))
+        results["RSS feed"] = None if args.skip_predictions else run_step("RSS feed (picks and results)", build_feed.main)
         results["Validate"] = run_step("Validate refreshed data", require_valid)
 
     print("\n=== Summary ===")

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type {
+  DivisionMatrix,
   ChampionsResponse,
   DataInfo,
   EventSummary,
@@ -57,6 +58,11 @@ export const getUpcomingEvents = async () => {
 
 export const getRankings = async () => {
   const response = await api.get<RankingCategory[]>('/rankings')
+  return response.data
+}
+
+export const getDivisionMatrix = async (category: string, top = 8) => {
+  const response = await api.get<DivisionMatrix>('/predict/division', { params: { category, top } })
   return response.data
 }
 

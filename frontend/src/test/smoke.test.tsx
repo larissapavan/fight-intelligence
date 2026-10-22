@@ -88,6 +88,29 @@ describe('the pages that depend on the API', () => {
     expect(await screen.findByText(/saved before 2026-10-20, by an earlier version of the model/i, undefined, { timeout: 10000 })).toBeInTheDocument()
   })
 
+  it('the track record compares the model with simple rules and shows its back-tested calibration', async () => {
+    renderAt('/track-record')
+    expect(await screen.findByText('Does it beat simple rules?', undefined, { timeout: 10000 })).toBeInTheDocument()
+    expect(screen.getByText('Pick at random')).toBeInTheDocument()
+    expect(screen.getByText(/Back-test: when the model says X%/)).toBeInTheDocument()
+  })
+
+  it('a matchup built on thin data says so next to the percentage', async () => {
+    renderAt('/matchup-intelligence?a=Alpha%20One&b=Beta%20Two')
+    const note = await screen.findByLabelText('Data behind this prediction', undefined, { timeout: 10000 })
+    expect(note).toHaveTextContent(/thin data/i)
+    expect(note).toHaveTextContent(/Beta Two has only 2 recorded fights/)
+  })
+
+  it('a division can be run as a round robin, with the full grid under the standings', async () => {
+    renderAt('/rankings')
+    await userEvent.click(await screen.findByRole('button', { name: /run the round robin/i }, { timeout: 10000 }))
+    const section = await screen.findByLabelText('Division round robin')
+    expect(await screen.findByText('1. Alpha One')).toBeInTheDocument()
+    expect(section).toHaveTextContent('65%')
+    expect(screen.getByRole('table')).toHaveTextContent(/Chance that the fighter in the row beats/)
+  })
+
   it('the model page says its metrics could not be reproduced', async () => {
     renderAt('/model')
     expect(await screen.findByLabelText('About these metrics', undefined, { timeout: 10000 })).toHaveTextContent(/could not be reproduced/i)

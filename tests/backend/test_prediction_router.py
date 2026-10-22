@@ -71,3 +71,45 @@ def test_a_pick_matches_the_full_prediction(client):
 
     assert full["predicted_winner"] == pick["predicted_winner"]
     assert abs(full["fighter_a_probability"] - pick["fighter_1_probability"]) < 1e-9
+
+
+def test_predict_says_how_much_data_it_had(client, two_fighter_names):
+    fighter_a, fighter_b = two_fighter_names
+    body = client.post("/predict", json={"fighter_a": fighter_a, "fighter_b": fighter_b}).json()
+
+    confidence = body["data_confidence"]
+    assert confidence["level"] in {"solid", "some_gaps", "thin"}
+    assert confidence["label"]
+    assert (confidence["level"] == "solid") == (confidence["reasons"] == [])
+
+
+def _division(client):
+    rankings = [c for c in client.get("/rankings").json() if not c["is_p4p"]]
+    assert rankings, "the repository ships divisional rankings"
+    return rankings[0]["category"]
+
+
+def test_a_division_matrix_is_symmetric_and_ranks_the_round_robin(client):
+    category = _division(client)
+    response = client.get("/predict/division", params={"category": category, "top": 5})
+    assert response.status_code == 200
+    body = response.json()
+
+    names, matrix = body["fighters"], body["matrix"]
+    assert 2 <= len(names) <= 5 and len(matrix) == len(names)
+    for i in range(len(names)):
+        assert matrix[i][i] is None
+        for j in range(len(names)):
+            if i != j:
+                assert abs(matrix[i][j] + matrix[j][i] - 1.0) < 1e-9  # one answer whichever fighter is listed first
+    standings = body["round_robin"]
+    assert {row["fighter"] for row in standings} == set(names)
+    averages = [row["average_win_probability"] for row in standings]
+    assert averages == sorted(averages, reverse=True)
+    assert abs(sum(row["expected_wins"] for row in standings) - len(names) * (len(names) - 1) / 2) < 1e-6  # every fight has one winner
+
+
+def test_a_division_matrix_rejects_an_unknown_division_and_a_bad_size(client):
+    assert client.get("/predict/division", params={"category": "Nonexistent Weight"}).status_code == 404
+    assert client.get("/predict/division", params={"category": _division(client), "top": 1}).status_code == 422
+    assert client.get("/predict/division", params={"category": _division(client), "top": 50}).status_code == 422

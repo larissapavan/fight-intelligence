@@ -15,6 +15,14 @@ class MainFactor(BaseModel):
     magnitude: float
 
 
+class DataConfidence(BaseModel):
+    """How much the prediction has to go on (fights on record, time since the last one, missing measurements)."""
+
+    level: str  # "solid" | "some_gaps" | "thin"
+    label: str
+    reasons: list[str]
+
+
 class PredictionResponse(BaseModel):
     predicted_winner: str
     probability: float
@@ -25,6 +33,7 @@ class PredictionResponse(BaseModel):
     fighter_b_profile: dict
     comparison_stats: dict
     main_factors: list[MainFactor]
+    data_confidence: DataConfidence | None = None
 
 
 class UpcomingPick(BaseModel):
@@ -35,3 +44,20 @@ class UpcomingPick(BaseModel):
     predicted_winner: str
     probability: float
     fighter_1_probability: float
+
+
+class RoundRobinRow(BaseModel):
+    fighter: str
+    rank: int
+    average_win_probability: float
+    expected_wins: float
+
+
+class DivisionMatrix(BaseModel):
+    """Every ranked fighter of a division against every other, by the model: who would come out on top in a round robin."""
+
+    category: str
+    fighters: list[str]  # in ranking order; the rows and columns of `matrix`
+    matrix: list[list[float | None]]  # matrix[i][j] = chance that fighters[i] beats fighters[j]; None on the diagonal
+    round_robin: list[RoundRobinRow]  # best first
+    skipped: list[str]  # ranked fighters the catalog has no profile for

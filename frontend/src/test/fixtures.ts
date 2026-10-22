@@ -290,7 +290,19 @@ export const routes: Record<string, unknown> = {
     highlights: ['Temporal validation'],
     limitations: ['Estimates only'],
     metrics_note: 'These numbers could not be reproduced.',
-    recent_evaluation: { fights: 1752, start: '2023-06-03', end: '2026-10-17', accuracy: 0.6216, roc_auc: 0.669, log_loss: 0.7084 },
+    recent_evaluation: {
+      fights: 1752,
+      start: '2023-06-03',
+      end: '2026-10-17',
+      accuracy: 0.6216,
+      roc_auc: 0.669,
+      log_loss: 0.7084,
+      baselines: [
+        { label: 'Pick at random', accuracy: 0.5 },
+        { label: 'Pick the fighter with the better rating (Elo)', accuracy: 0.5559 },
+      ],
+      calibration: [{ label: '90%-100%', fights: 229, average_confidence: 0.9487, accuracy: 0.7118 }],
+    },
   },
   '/data-info': { last_updated: '2026-10-10', fighters_count: 2, events_count: 2, fights_count: 10, sources: ['ESPN'] },
   '/fighters': [alpha, beta],
@@ -303,6 +315,17 @@ export const routes: Record<string, unknown> = {
     { category: 'Lightweight', is_p4p: false, entries: [{ rank: 0, fighter: 'Alpha One', win_rate: 0.857, last_fight: '2026-06-01', rank_change: null, athlete_url: null }, { rank: 1, fighter: 'Beta Two', win_rate: 0.8, last_fight: '2026-05-01', rank_change: null, athlete_url: null }] },
     { category: "Pound-for-Pound (Men's)", is_p4p: true, entries: [{ rank: 1, fighter: 'Alpha One', win_rate: 0.857, last_fight: '2026-06-01', rank_change: null, athlete_url: null }] },
   ],
+  '/predict/division': {
+    category: 'Lightweight',
+    fighters: ['Alpha One', 'Beta Two', 'Gamma Three'],
+    matrix: [[null, 0.6, 0.7], [0.4, null, 0.55], [0.3, 0.45, null]],
+    round_robin: [
+      { fighter: 'Alpha One', rank: 0, average_win_probability: 0.65, expected_wins: 1.3 },
+      { fighter: 'Beta Two', rank: 1, average_win_probability: 0.475, expected_wins: 0.95 },
+      { fighter: 'Gamma Three', rank: 2, average_win_probability: 0.375, expected_wins: 0.75 },
+    ],
+    skipped: [],
+  },
   '/champions': {
     current_champions: [reign],
     reigns: [
@@ -335,6 +358,7 @@ export const routes: Record<string, unknown> = {
     fighter_a_profile: alpha,
     fighter_b_profile: beta,
     comparison_stats: { fighter_a_win_rate: 0.857, fighter_b_win_rate: 0.8, reach_difference: 0, age_difference: 0 },
+    data_confidence: { level: 'thin', label: 'Thin data', reasons: ['Beta Two has only 2 recorded fights, so their numbers are not settled yet.'] },
     main_factors: [
       { feature: 'Striking volume', impact: 'Alpha One', explanation: 'Lands more significant strikes per minute.', magnitude: 0.12 },
       { feature: 'Takedown defense', impact: 'Beta Two', explanation: 'Stops a higher share of takedown attempts.', magnitude: 0.08 },

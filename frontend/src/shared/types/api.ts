@@ -71,6 +71,14 @@ export interface PredictionResponse {
     age_difference: number
   }
   main_factors: MainFactor[]
+  data_confidence?: DataConfidence | null
+}
+
+/** How much a prediction has to go on: fights on record, time since the last one, missing measurements. */
+export interface DataConfidence {
+  level: 'solid' | 'some_gaps' | 'thin'
+  label: string
+  reasons: string[]
 }
 
 export interface RecentEvaluation {
@@ -86,6 +94,10 @@ export interface RecentEvaluation {
   confident_threshold?: number | null
   confident_fights?: number | null
   confident_hit_rate?: number | null
+  /** What simple rules get right on the same fights. */
+  baselines?: { label: string; accuracy: number }[]
+  /** How often a pick was right at each confidence level, on the same fights. */
+  calibration?: ConfidenceBand[]
 }
 
 export interface ModelInfo {
@@ -510,4 +522,22 @@ export interface GymFighter {
 
 export interface GymDetail extends GymSummary {
   fighters: GymFighter[]
+}
+
+export interface RoundRobinRow {
+  fighter: string
+  rank: number
+  average_win_probability: number
+  expected_wins: number
+}
+
+/** Every ranked fighter of a division against every other, by the model. */
+export interface DivisionMatrix {
+  category: string
+  /** In ranking order; the rows and columns of `matrix`. */
+  fighters: string[]
+  /** matrix[i][j] is the chance that fighters[i] beats fighters[j]; null on the diagonal. */
+  matrix: (number | null)[][]
+  round_robin: RoundRobinRow[]
+  skipped: string[]
 }

@@ -16,6 +16,7 @@ from src.ufc_predictor.config import MODEL_PATH
 from src.ufc_predictor.features import align_feature_columns, build_inference_frame
 
 from .catalog_service import get_fighter_profile
+from .data_confidence import assess as assess_data
 from .model_evaluation import evaluation_limitations, load_recent_evaluation, metrics_note
 
 logger = logging.getLogger(__name__)
@@ -180,6 +181,44 @@ class PredictionService:
             "fighter_a_probability": fighter_a_probability,
         }
 
+    def division_matrix(self, category: str, entries: list[dict]) -> dict:
+        """Each ranked fighter against each other one (pick only, no SHAP), and the round-robin standings that follow.
+
+        entries are the ranking rows in order (champion first). The standings are the average chance of beating the
+        rest and the sum of those chances (expected wins); they say who the model likes in a division as a whole, not
+        who would win a tournament, because no bracket is simulated."""
+        profiles, skipped = [], []
+        for entry in entries:
+            try:
+                profiles.append((entry, get_fighter_profile(entry["fighter"])))
+            except KeyError:
+                skipped.append(entry["fighter"])
+        size = len(profiles)
+        matrix: list[list[float | None]] = [[None] * size for _ in range(size)]
+        for i in range(size):
+            for j in range(i + 1, size):
+                p = self._symmetric_probability(*self._both_orders(profiles[i][1], profiles[j][1]))
+                matrix[i][j], matrix[j][i] = p, 1.0 - p
+        rows = []
+        for i, (entry, profile) in enumerate(profiles):
+            chances = [p for p in matrix[i] if p is not None]
+            rows.append(
+                {
+                    "fighter": profile["name"],
+                    "rank": int(entry["rank"]),
+                    "average_win_probability": sum(chances) / len(chances) if chances else 0.0,
+                    "expected_wins": sum(chances),
+                }
+            )
+        rows.sort(key=lambda row: (-row["average_win_probability"], row["rank"]))
+        return {
+            "category": category,
+            "fighters": [profile["name"] for _, profile in profiles],
+            "matrix": matrix,
+            "round_robin": rows,
+            "skipped": skipped,
+        }
+
     def predict_matchup(self, fighter_a_name: str, fighter_b_name: str) -> dict:
         fighter_a = get_fighter_profile(fighter_a_name)
         fighter_b = get_fighter_profile(fighter_b_name)
@@ -206,6 +245,7 @@ class PredictionService:
             "fighter_b_profile": fighter_b,
             "comparison_stats": self._build_comparison(fighter_a, fighter_b),
             "main_factors": main_factors,
+            "data_confidence": assess_data(fighter_a, fighter_b),
         }
 
     def model_info(self) -> dict:

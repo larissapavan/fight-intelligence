@@ -17,8 +17,9 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-import requests
 from bs4 import BeautifulSoup
+
+from scripts.http_retry import get_with_retry
 
 RANKINGS_URL = "https://www.ufc.com/rankings"
 OUTPUT_PATH = Path("data") / "raw" / "rankings.csv"
@@ -61,8 +62,7 @@ OUTPUT_FIELDS = ["category", "is_p4p", "rank", "fighter", "rank_change", "athlet
 
 
 def fetch_rankings_html() -> str:
-    response = requests.get(RANKINGS_URL, headers=HEADERS, timeout=TIMEOUT_SECONDS)
-    response.raise_for_status()
+    response = get_with_retry(RANKINGS_URL, headers=HEADERS, timeout=TIMEOUT_SECONDS)
     response.encoding = "utf-8"
     return response.text
 

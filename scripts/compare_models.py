@@ -145,6 +145,40 @@ def leak_demo(split: tp.Split, totals, settings) -> dict[str, dict[str, float]]:
     return results
 
 
+BASELINES = [
+    ("Pick at random", None),
+    ("Pick the fighter with more UFC wins", "ufc_wins_diff"),
+    ("Pick the fighter with the better rating (Elo)", "elo_diff"),
+]
+
+
+def baseline_accuracies(test: pd.DataFrame, y: np.ndarray) -> list[dict]:
+    """What simple rules get right on the same fights, so the model's accuracy has something to be compared with.
+
+    Fighter A is drawn at random, so a rule that favors A or B at random is the 50% coin flip. A tie (equal wins or ratings)
+    counts as half a win, which is what guessing would get."""
+    rows = []
+    for label, column in BASELINES:
+        if column is None:
+            rows.append({"label": label, "accuracy": 0.5})
+            continue
+        if column not in test:
+            continue
+        diff = test[column].to_numpy(dtype=float)
+        picked_a = diff > 0
+        credit = np.where(diff == 0, 0.5, (picked_a == (y == 1)).astype(float))
+        rows.append({"label": label, "accuracy": round(float(credit.mean()), 4)})
+    return rows
+
+
+def calibration_bins(p: np.ndarray, y: np.ndarray) -> list[dict]:
+    """How often a pick at each confidence level was right, for the reliability chart."""
+    return [
+        {"label": row.band, "fights": int(row.fights), "average_confidence": round(float(row.average_confidence), 4), "accuracy": round(float(row.hit_rate), 4)}
+        for row in tp.confidence_table(p, y).itertuples()
+    ]
+
+
 def evaluation_record(test: pd.DataFrame, p: np.ndarray, y: np.ndarray) -> dict:
     """The deployed model's result on the test fights, in the shape the API sends to the site."""
     confidence = np.maximum(p, 1 - p)
@@ -158,6 +192,8 @@ def evaluation_record(test: pd.DataFrame, p: np.ndarray, y: np.ndarray) -> dict:
         "confident_threshold": CONFIDENT,
         "confident_fights": int(confident.sum()),
         "confident_hit_rate": round(float(((p[confident] >= 0.5) == (y[confident] == 1)).mean()), 4) if confident.any() else None,
+        "baselines": baseline_accuracies(test, y),
+        "calibration": calibration_bins(p, y),
     }
 
 
