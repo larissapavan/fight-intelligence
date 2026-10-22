@@ -24,6 +24,17 @@ class FightRecord(BaseModel):
     result_details: str | None = None
 
 
+class OtherOrganization(BaseModel):
+    """What a UFC fighter did in another organization (see crossorg_service): the record there and every bout."""
+
+    org_id: str
+    short_name: str
+    name: str
+    fighter_name: str  # the spelling that organization uses
+    org_record: str | None = None
+    fights: list[FightRecord]
+
+
 class CommonOpponent(BaseModel):
     opponent: str
     fighter_a_result: str | None = None

@@ -4,7 +4,9 @@ from backend.app.rate_limit import limiter
 from backend.app.schemas.data_info import DataInfoResponse
 from backend.app.schemas.fight_history import FightRecord
 from backend.app.schemas.orgs import OrgEvent, OrgFighter, OrgInfo, OrgRankingCategory
+from backend.app.services.crossorg_service import ufc_names_for_org
 from backend.app.services.org_service import (
+    _name_key,
     get_org,
     get_org_data_info,
     get_org_events,
@@ -49,7 +51,8 @@ def org_fighters(
     response.headers["Cache-Control"] = "public, max-age=300"
     response.headers["X-Total-Count"] = str(len(fighters))
     page = fighters[offset : offset + limit] if limit is not None else fighters[offset:]
-    return [OrgFighter(**fighter) for fighter in page]
+    ufc_names = ufc_names_for_org(org_id)
+    return [OrgFighter(**fighter, ufc_name=ufc_names.get(_name_key(fighter["name"]))) for fighter in page]
 
 
 @router.get("/{org_id}/fighters/{name}/fights", response_model=list[FightRecord])

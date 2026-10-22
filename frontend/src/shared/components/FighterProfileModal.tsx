@@ -10,6 +10,7 @@ import { FighterAvatar } from './FighterAvatar'
 import { FighterOrigin } from './FighterOrigin'
 import { LoadingSkeleton } from './LoadingSkeleton'
 import { MiniStat } from './MiniStat'
+import { OtherOrganizationsPanel } from './OtherOrganizationsPanel'
 import { METHOD_LABELS } from '../data/fightLabels'
 import { getFighterImageUrl, useFighterImages } from '../hooks/useFighterImages'
 import { useFighters } from '../hooks/useFighters'
@@ -213,6 +214,8 @@ export function FighterProfileModal({
               />
             </div>
           ) : null}
+
+          {!loading ? <OtherOrganizationsPanel name={name} /> : null}
 
           {similarLoading ? (
             <LoadingSkeleton className="mt-3 h-[180px]" />

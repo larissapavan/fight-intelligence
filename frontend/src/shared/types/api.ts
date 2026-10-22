@@ -81,6 +81,17 @@ export interface DataConfidence {
   reasons: string[]
 }
 
+/** What a UFC fighter did in another organization (the PFL or Bellator): the record there and every bout. */
+export interface OtherOrganization {
+  org_id: string
+  short_name: string
+  name: string
+  /** The spelling that organization uses. */
+  fighter_name: string
+  org_record: string | null
+  fights: FightRecord[]
+}
+
 export interface RecentEvaluation {
   /** The deployed model scored again on the newest fights, with each fighter's age and record as of the fight. */
   fights: number
@@ -468,6 +479,8 @@ export interface OrgFighter {
   fighting_out_of: string | null
   circuit: string | null
   org_record: string | null
+  /** The UFC profile of the same person, when they have fought in the UFC too. */
+  ufc_name?: string | null
   org_fights: number
   first_fight_date: string | null
   last_fight_date: string | null

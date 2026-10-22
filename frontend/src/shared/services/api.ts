@@ -1,6 +1,7 @@
 import axios from 'axios'
 import type {
   DivisionMatrix,
+  OtherOrganization,
   ChampionsResponse,
   DataInfo,
   EventSummary,
@@ -105,6 +106,11 @@ export const getHeadToHead = async (fighterA: string, fighterB: string) => {
 
 export const getFighterPerformance = async (fighterName: string) => {
   const response = await api.get<FighterPerformance>(`/fighters/${encodeURIComponent(fighterName)}/performance`)
+  return response.data
+}
+
+export const getOtherOrganizations = async (fighterName: string) => {
+  const response = await api.get<OtherOrganization[]>(`/fighters/${encodeURIComponent(fighterName)}/other-organizations`)
   return response.data
 }
 

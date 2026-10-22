@@ -184,6 +184,7 @@ export const pflChampion = orgFighter('Riko Stone', {
   title_status: 'champion',
   ranking: 'Champion · Lightweight',
   next_fight: { event: 'PFL Future', date: '2030-02-02', opponent: 'Dax Moore' },
+  ufc_name: 'Riko Stone',
 })
 export const pflContender = orgFighter('Dax Moore', { ranking: '#1 Lightweight', country_code: 'br', country: 'Brazil', hometown: 'Sao Paulo, Brazil' })
 export const pflVeteran = orgFighter('Lena Ortiz', { is_active: false, division: 'Heavyweight', ranking: null })
@@ -347,6 +348,31 @@ export const routes: Record<string, unknown> = {
   '/news': { source_name: 'ESPN', source_url: 'https://www.espn.com/mma/', items: [{ title: 'Alpha One retains the title', summary: null, url: 'https://www.espn.com/ufc/story/1', image_url: null, published: '2026-10-15T10:00:00Z', kind: 'story' }] },
   '/track-record': { tracking_since: '2026-10-15', logged: 4, resolved: 0, correct: 0, accuracy: null, average_confidence: null, pending: 4, earlier_model_picks: 1, earlier_model_note: '1 of these picks were saved before 2026-10-20, by an earlier version of the model.', next_event: { name: 'UFC 900: Alpha vs. Beta', date: '2030-01-01' }, bands: [], recent: [], biggest_misses: [] },
   '/head-to-head': { fighter_a: 'Alpha One', fighter_b: 'Beta Two', fighter_a_wins: 1, fighter_b_wins: 0, no_contests: 0, meetings: [], common_opponents: [], network_path: [], degrees_of_separation: 0 },
+  '/fighters/Alpha One/other-organizations': [
+    {
+      org_id: 'bellator',
+      short_name: 'Bellator',
+      name: 'Bellator MMA',
+      fighter_name: 'Alpha One',
+      org_record: '12-4-0',
+      fights: Array.from({ length: 6 }, (_, index) => ({
+        event_name: `Bellator ${200 - index}`,
+        date: `2019-0${6 - index}-01`,
+        opponent: `Rival ${index + 1}`,
+        result: 'win',
+        weight_class: 'Lightweight',
+        method: 'KO/TKO',
+        method_detail: 'Punches',
+        round: 1,
+        time: '2:00',
+        winner: 'Alpha One',
+        location: null,
+        fight_url: `https://x/bellator#${index}`,
+        title_fight: null,
+        outcome: 'win',
+      })),
+    },
+  ],
   '/fighters/Alpha One/opponents': { fighter: 'Alpha One', opponents: [{ name: 'Beta Two', fights: 1, last_date: '2026-06-01' }] },
   '/fighters/Alpha One/performance': performance,
   '/predict': {

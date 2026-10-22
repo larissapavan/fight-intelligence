@@ -50,6 +50,7 @@ class OrgFighter(BaseModel):
     fighting_out_of: str | None = None
     circuit: str | None = None
     org_record: str | None = None
+    ufc_name: str | None = None  # the UFC profile of the same person, when they have fought in the UFC too
     org_fights: int = 0
     first_fight_date: str | None = None
     last_fight_date: str | None = None

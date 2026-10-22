@@ -57,6 +57,19 @@ describe('organization paths', () => {
   })
 })
 
+describe('one history for a fighter who fought in several organizations', () => {
+  it('the UFC profile lists the fights elsewhere, newest first, and says they are not counted in the UFC numbers', async () => {
+    renderAt('/fighters?fighter=Alpha%20One')
+    const panel = await screen.findByRole('region', { name: 'Fights in other organizations' }, WAIT)
+    expect(within(panel).getByText(/Also fought in the Bellator · 12-4-0 there/)).toBeInTheDocument()
+    expect(within(panel).getAllByRole('listitem')).toHaveLength(4)  // the newest four first
+    expect(within(panel).getByText(/UFC record, trends and the model's picks above count UFC fights only/)).toBeInTheDocument()
+
+    await userEvent.click(within(panel).getByRole('button', { name: 'Show all 6 Bellator fights' }))
+    expect(within(panel).getAllByRole('listitem')).toHaveLength(6)
+  })
+})
+
 describe('the page that chooses an organization', () => {
   it('lists every organization with a way in, and says which one has predictions', async () => {
     renderAt('/')
@@ -169,6 +182,20 @@ describe('the PFL pages', () => {
 
     await userEvent.click(within(dialog).getByRole('button', { name: 'Close fighter profile' }))
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  })
+
+  it('a fighter who also fought in the UFC links to the UFC profile', async () => {
+    renderAt('/pfl/fighters')
+    await userEvent.click(await screen.findByRole('button', { name: /Riko Stone\. View profile/ }, WAIT))
+    const dialog = await screen.findByRole('dialog', { name: /Riko Stone/ }, WAIT)
+    expect(within(dialog).getByRole('link', { name: /open the UFC profile/i })).toHaveAttribute('href', '/fighters?fighter=Riko%20Stone')
+  })
+
+  it('a fighter who never fought in the UFC has no such link', async () => {
+    renderAt('/pfl/fighters')
+    await userEvent.click(await screen.findByRole('button', { name: /Dax Moore\. View profile/ }, WAIT))
+    const dialog = await screen.findByRole('dialog', { name: /Dax Moore/ }, WAIT)
+    expect(within(dialog).queryByRole('link', { name: /open the UFC profile/i })).not.toBeInTheDocument()
   })
 
   it('a profile can be opened from a link (?fighter=)', async () => {

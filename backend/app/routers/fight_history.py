@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 
 from backend.app.rate_limit import limiter
-from backend.app.schemas.fight_history import FighterPerformance, HeadToHeadResponse, OpponentsResponse
+from backend.app.schemas.fight_history import FighterPerformance, HeadToHeadResponse, OpponentsResponse, OtherOrganization
 from backend.app.services.catalog_service import get_fighter_profile
+from backend.app.services.crossorg_service import other_organizations
 from backend.app.services.fight_history_service import (
     get_fighter_performance,
     get_head_to_head,
@@ -54,3 +55,16 @@ def fighter_opponents(request: Request, response: Response, name: str) -> Oppone
 
     response.headers["Cache-Control"] = "public, max-age=300"
     return OpponentsResponse(fighter=name, opponents=get_opponents(name))
+
+
+@router.get("/fighters/{name}/other-organizations", response_model=list[OtherOrganization])
+@limiter.limit("60/minute")
+def fighter_other_organizations(request: Request, response: Response, name: str) -> list[OtherOrganization]:
+    """The same person's fights in the PFL and Bellator, when they have fought there (empty otherwise)."""
+    try:
+        profile = get_fighter_profile(name)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    response.headers["Cache-Control"] = "public, max-age=300"
+    return [OtherOrganization(**found) for found in other_organizations(profile["name"])]
