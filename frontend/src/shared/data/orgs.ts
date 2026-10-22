@@ -16,8 +16,8 @@ export interface OrgConfig {
   hasPredictions: boolean
   /** Set for an organization that no longer holds events: what happened to it. Its pages read as an archive. */
   archived?: string
-  /** Replaces the default description of the rankings page. */
-  rankingsNote?: string
+  /** False for an organization with no rankings page (its champions still show on its home page). */
+  hasRankings: boolean
 }
 
 export const ORGS: Record<OrgId, OrgConfig> = {
@@ -30,6 +30,7 @@ export const ORGS: Record<OrgId, OrgConfig> = {
     sourceUrl: 'https://www.ufc.com',
     tagline: 'Fight stats, rankings and win predictions, with an explanation for every pick.',
     hasPredictions: true,
+    hasRankings: true,
   },
   pfl: {
     id: 'pfl',
@@ -40,6 +41,7 @@ export const ORGS: Record<OrgId, OrgConfig> = {
     sourceUrl: 'https://pflmma.com',
     tagline: 'PFL fighters, every event result and the official rankings.',
     hasPredictions: false,
+    hasRankings: true,
   },
   bellator: {
     id: 'bellator',
@@ -51,7 +53,7 @@ export const ORGS: Record<OrgId, OrgConfig> = {
     tagline: 'The Bellator archive: every event from 2009 to 2023, its fighters and the champions it ended with.',
     hasPredictions: false,
     archived: 'Bellator held its last event in 2023 and was absorbed by the PFL, so this is an archive: nothing here is updated any more.',
-    rankingsNote: 'Bellator kept no rankings. These are the champions it ended with, division by division.',
+    hasRankings: false,
   },
 }
 
@@ -85,5 +87,6 @@ export function sectionOfPathname(pathname: string): OrgSection | '' {
 
 /** Where the switcher sends the reader: the same section in the other organization, or its home page. */
 export function switchOrgPath(target: OrgConfig, pathname: string): string {
-  return orgPath(target, sectionOfPathname(pathname))
+  const section = sectionOfPathname(pathname)
+  return orgPath(target, section === 'rankings' && !target.hasRankings ? '' : section)
 }

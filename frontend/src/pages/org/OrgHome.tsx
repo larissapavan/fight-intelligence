@@ -51,7 +51,7 @@ export function OrgHome() {
             <div className="mt-4 flex flex-wrap gap-2">
               <HeroLink to={orgPath(org, 'events')}>Fight cards</HeroLink>
               <HeroLink to={orgPath(org, 'fighters')}>Fighters</HeroLink>
-              <HeroLink to={orgPath(org, 'rankings')}>Rankings</HeroLink>
+              {org.hasRankings ? <HeroLink to={orgPath(org, 'rankings')}>Rankings</HeroLink> : null}
             </div>
           </div>
           <div className="grid gap-2 sm:grid-cols-3">

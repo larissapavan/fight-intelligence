@@ -28,7 +28,6 @@ const PAGES: Record<string, { title: string; description: string }> = {
   '/bellator': { title: 'Bellator', description: 'The Bellator archive: every event from 2009 to 2023, its fighters and the champions it ended with.' },
   '/bellator/fighters': { title: 'Bellator fighters', description: 'Bellator fighter profiles: records, builds, camps and every fight.' },
   '/bellator/events': { title: 'Bellator events', description: 'Every Bellator event from 2009 to 2023 with results.' },
-  '/bellator/rankings': { title: 'Bellator champions', description: 'The champions Bellator ended with, division by division.' },
   '/bellator/gyms': { title: 'Bellator gyms', description: 'Where Bellator fighters train: every gym and team with its fighters.' },
   '/pfl/rankings': { title: 'PFL rankings', description: 'The official PFL divisional and pound-for-pound rankings.' },
   '/about-model': { title: 'About the model', description: 'A full-stack applied AI project: data pipeline, model and API.' },

@@ -13,7 +13,7 @@ const sources: { name: string; href?: string; use: string }[] = [
   {
     name: 'ESPN',
     href: 'https://www.espn.com/mma/',
-    use: 'Events, results, upcoming cards, fighter records, new-fighter profiles, fighter photos and the news headlines on the home and events pages (each links back to the original story).',
+    use: 'Events, results, upcoming cards, fighter records, new-fighter profiles, fighter photos and the news headlines on the home and events pages (each links back to the original story). Also the whole Bellator archive: its events, results, fighter profiles and headshots.',
   },
   {
     name: 'UFC.com',
@@ -33,17 +33,17 @@ const sources: { name: string; href?: string; use: string }[] = [
   {
     name: 'pflmma.com',
     href: 'https://pflmma.com',
-    use: 'The Professional Fighters League: events, results, fighter profiles, photos and the official rankings. Only the pages its robots.txt allows are read.',
+    use: 'The Professional Fighters League’s own site: its events, results, fighter profiles, headshots and the official rankings. Only the pages its robots.txt allows are read; the headshots are stored here as small copies.',
   },
   {
     name: 'FightHub',
     href: 'https://fighthub-app.com/br/gyms/',
-    use: 'The gyms and teams and the fighters who train in each. Only the pages its robots.txt allows are read.',
+    use: 'The directory of gyms and teams and the fighters who train in each, shown on the Gyms pages and matched by name with the fighters of each organization. Only the pages its robots.txt allows are read.',
   },
   {
     name: 'Wikipedia',
     href: 'https://en.wikipedia.org/wiki/List_of_Bellator_MMA_champions',
-    use: 'The list of Bellator MMA champions: every title reign, which gives the champions Bellator ended with and its title fights (text under CC BY-SA, used as data).',
+    use: 'The list of Bellator MMA champions: every title reign, which gives the champions Bellator ended with and flags its title fights. Text from Wikipedia contributors, available under the Creative Commons Attribution-ShareAlike license (CC BY-SA 4.0); only facts (names, dates, divisions) are taken from it.',
   },
   {
     name: 'Sherdog',
@@ -93,12 +93,14 @@ export function About() {
         <ul className="list-disc space-y-2 pl-5 marker:text-[#C8102E]">
           <li>This project is built independently by an MMA fan.</li>
           <li>
-            It has no affiliation, partnership, sponsorship or endorsement from the UFC, Zuffa LLC, TKO or any
-            organization or athlete mentioned on this site.
+            It has no affiliation, partnership, sponsorship or endorsement from the UFC, Zuffa LLC, TKO, the
+            Professional Fighters League (PFL), Bellator MMA, ESPN, FightHub, Wikipedia or any other organization,
+            company or athlete mentioned on this site.
           </li>
           <li>
-            “UFC” and all fighter and event names are trademarks and names of their respective owners, used here for
-            informational and study purposes only.
+            “UFC”, “PFL”, “Bellator”, “ESPN”, “FightHub” and all fighter, gym and event names, logos and photos are
+            trademarks and property of their respective owners, used here for informational and study purposes only.
+            Photos come from the organizations’ own sites and from ESPN; if you own one and want it removed, get in touch.
           </li>
         </ul>
       </AboutSection>
@@ -106,7 +108,7 @@ export function About() {
       <AboutSection id="data" icon={Database} title="Data & System">
         <p>
           Fighter profiles, events, results and rankings are collected from public sources (UFCStats.com, ESPN and
-          UFC.com, and pflmma.com for the PFL), the title history is compiled by hand from published UFC title records, and everything is saved as
+          UFC.com; pflmma.com for the PFL; ESPN and Wikipedia for Bellator; FightHub for the gyms), the title history is compiled by hand from published UFC title records, and everything is saved as
           CSV files that an automated job refreshes once a day, after a validation step that rejects broken updates
           (title changes are still entered by hand, so a new champion can appear a little late). For each matchup the system compares the two fighters (age, height, reach, record, striking and
           takedown accuracy, stance) and feeds those differences into a machine-learning model that estimates each
@@ -123,7 +125,7 @@ export function About() {
             Predictions are statistical estimates, made as a hobby and for study. They are not a guarantee of any
             outcome and they are not betting advice.
           </li>
-          <li>This site is not an official UFC product and does not speak for the UFC or for any athlete.</li>
+          <li>This site is not an official product of the UFC, the PFL or Bellator and does not speak for them or for any athlete.</li>
         </ul>
       </AboutSection>
 

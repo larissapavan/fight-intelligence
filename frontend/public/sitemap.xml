@@ -89,10 +89,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://fight-intelligence.vercel.app/bellator/rankings</loc>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://fight-intelligence.vercel.app/bellator/gyms</loc>
     <priority>0.5</priority>
   </url>

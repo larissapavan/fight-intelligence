@@ -59,7 +59,7 @@ It runs in the browser. No account, nothing to install.
 
 ### Where the numbers come from
 
-Everything is public: ESPN, ufc.com, UFC Stats, roster.watch and a few Kaggle datasets, all credited on the site's About page. A script refreshes the data once a day, and a set of checks refuses the update if something looks broken, for example when a source changes its format.
+Everything is public: ESPN, ufc.com, UFC Stats, roster.watch, pflmma.com (the PFL's own site), FightHub (gyms), Wikipedia (Bellator's champions) and a few Kaggle datasets, all credited on the site's About page. A script refreshes the data once a day, and a set of checks refuses the update if something looks broken, for example when a source changes its format.
 
 ---
 
@@ -79,7 +79,7 @@ Everything is public: ESPN, ufc.com, UFC Stats, roster.watch and a few Kaggle da
 
 **The PFL** has its own Home, Fighters, Events and Rankings pages under `/pfl`, in the same look with a blue accent instead of red. Fighters show record, build, camp, country, the title they hold and every fight (with a link to the next one); events show the card with weight class, stage (quarterfinal, semifinal, championship), method, round and time; rankings show the champions (vacant and interim belts included), the top 10 of each division and the men's pound-for-pound.
 
-**Bellator** has the same pages in green, as an archive: Bellator held its last event in 2023 and was absorbed by the PFL, so nothing there updates. It has no rankings; the page shows the champions it ended with. Its title fights are flagged and given their division from the champion lists, and every other bout takes the division both fighters' ESPN profiles agree on (ESPN gives none per bout).
+**Bellator** has the same pages in green, as an archive: Bellator held its last event in 2023 and was absorbed by the PFL, so nothing there updates. It has no rankings page; its home page lists the champions it ended with. Its title fights are flagged and given their division from the champion lists, and every other bout takes the division both fighters' ESPN profiles agree on (ESPN gives none per bout).
 
 **Gyms** (`/gyms` for the UFC, `/pfl/gyms` for the PFL) list where fighters train: every gym and team with its roster, the champions in it, and how many of its fighters are in each organization's data. A gym's roster comes from FightHub; each fighter is matched by name with the UFC and PFL profiles here, so the ones we know show our photo, title and profile, and the rest are listed as FightHub has them.
 
@@ -165,12 +165,12 @@ The same accuracy, but better probabilities: when the candidate says 70% to 80%,
 
 **Where it comes from.** Everything is public, and every source is credited in the site's About page.
 - [UFC Stats](http://ufcstats.com): the historical base for fighter profiles, events, fights and career stats. It now sits behind a browser check, so the daily update does not use it.
-- [ESPN](https://www.espn.com/mma/): results, upcoming cards, records, debut fighters, per-fight statistics (strikes, takedowns, control time), photos and the news headlines on the home and events pages (cached for a few minutes, each one links to the original story).
+- [ESPN](https://www.espn.com/mma/): results, upcoming cards, records, debut fighters, per-fight statistics (strikes, takedowns, control time), photos, the whole Bellator archive (events, results, profiles and headshots) and the news headlines on the home and events pages (cached for a few minutes, each one links to the original story).
 - [ufc.com](https://www.ufc.com/rankings): the official rankings, the champions' photos and hometowns.
 - [UFC Stats Leaders](https://statleaders.ufc.com/en/career): the career leaders behind the Record Book.
-- [pflmma.com](https://pflmma.com): the Professional Fighters League's own site: events, results, fighter profiles, photos and rankings. Only the pages its `robots.txt` allows are read (the events list and sitemap, one page per event and per fighter, and the rankings); its `/ajax/` and `/smt/` endpoints, which `robots.txt` disallows, are never called. Requests are spaced half a second apart and use an identifiable User-Agent.
+- [pflmma.com](https://pflmma.com): the Professional Fighters League's own site: events, results, fighter profiles, headshots and rankings. Only the pages its `robots.txt` allows are read (the events list and sitemap, one page per event and per fighter, and the rankings); its `/ajax/` and `/smt/` endpoints, which `robots.txt` disallows, are never called. Requests are spaced half a second apart and use an identifiable User-Agent.
 - [FightHub](https://fighthub-app.com/br/gyms/): the gym directory (about 900 gyms and teams) and who trains in each. Only the pages its `robots.txt` allows are read, spaced half a second apart.
-- [Wikipedia: List of Bellator MMA champions](https://en.wikipedia.org/wiki/List_of_Bellator_MMA_champions): every Bellator title reign, through Wikipedia's API. It gives the champions Bellator ended with and flags the title fights. The Bellator events, results and fighter profiles come from ESPN's public JSON API, the same one the UFC data uses.
+- [Wikipedia: List of Bellator MMA champions](https://en.wikipedia.org/wiki/List_of_Bellator_MMA_champions): every Bellator title reign, through Wikipedia's API. It gives the champions Bellator ended with and flags the title fights. Text from Wikipedia contributors, available under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); only facts (names, dates, divisions) are taken from it. The Bellator events, results and fighter profiles come from ESPN's public JSON API, the same one the UFC data uses.
 - [roster.watch](https://www.roster.watch/): who is on the UFC roster (active or former), nationalities, debut and last-fight dates, weight classes, and the Contender Series, TUF, Road to UFC, BMF and Hall of Fame badges.
 - [UFC data by scarekrow](https://www.kaggle.com/datasets/scarekrow/ufc-data) on Kaggle: referees, scheduled rounds, title-fight flags and judges' scores.
 - My own [UFC Historical Fight Dataset (1993–2026)](https://www.kaggle.com/datasets/larissapavan/ufc-historical-fight-dataset-19942026) on Kaggle, which is the data this site is built on.
@@ -305,4 +305,4 @@ The UFC has its own pipeline; every other organization is three CSV files in `da
 
 Made by Larissa Pavan ([GitHub](https://github.com/larissapavan)). If you find a data error or have an idea, open an [issue](https://github.com/larissapavan/fight-intelligence/issues).
 
-This is a personal, non-commercial project I built to learn. It isn't connected to the UFC, Zuffa, TKO, any fighter or any employer, and UFC and related marks belong to their owners. Predictions are for fun and learning, not betting advice.
+This is a personal, non-commercial project I built to learn. It isn't connected to the UFC, Zuffa, TKO, the PFL, Bellator, ESPN, FightHub, Wikipedia, any gym, any fighter or any employer. UFC, PFL, Bellator and related names, logos and photos belong to their owners; photos come from the organizations' own sites and from ESPN, and I will remove one on request. Predictions are for fun and learning, not betting advice.

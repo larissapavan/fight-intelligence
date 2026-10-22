@@ -188,16 +188,27 @@ describe('the Bellator archive', () => {
     expect(screen.getByRole('button', { name: 'All time' })).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('the rankings page presents the final champions', async () => {
+  it('has no rankings page: no menu entry, no route, and the final champions sit on the home page', async () => {
+    renderAt('/bellator')
+    const champions = await screen.findByRole('region', { name: 'Champions' }, WAIT)
+    expect(await within(champions).findByRole('button', { name: /Riko Stone/ }, WAIT)).toBeInTheDocument()
+    expect(screen.getAllByRole('link').map((link) => link.getAttribute('href'))).not.toContain('/bellator/rankings')
+  })
+
+  it('an address that does not exist for it is the not-found page', async () => {
     renderAt('/bellator/rankings')
-    expect(await screen.findByText(/Bellator kept no rankings/, undefined, WAIT)).toBeInTheDocument()
-    expect(await screen.findByRole('button', { name: /Riko Stone, rank champion/ }, WAIT)).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /page not found/i }, WAIT)).toBeInTheDocument()
+  })
+
+  it('switching from the UFC rankings to Bellator lands on its home page', () => {
+    expect(switchOrgPath(ORGS.bellator, '/rankings')).toBe('/bellator')
+    expect(switchOrgPath(ORGS.pfl, '/rankings')).toBe('/pfl/rankings')
   })
 
   it('is one more choice in the switcher, keeping the section', async () => {
     renderAt('/events')
     await screen.findByRole('heading', { name: 'UFC fight cards' }, WAIT)
-    const switcher = screen.getAllByRole('navigation', { name: 'Organization' })[0]
+    const switcher = screen.getAllByRole('group', { name: 'Organization' })[0]
     expect(within(switcher).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['/events', '/pfl/events', '/bellator/events'])
   })
 })
@@ -206,12 +217,12 @@ describe('the organization switcher', () => {
   it('moves to the same section of the other organization', async () => {
     renderAt('/events')
     await screen.findByRole('heading', { name: 'UFC fight cards' }, WAIT)
-    const switcher = screen.getAllByRole('navigation', { name: 'Organization' })[0]
+    const switcher = screen.getAllByRole('group', { name: 'Organization' })[0]
     await userEvent.click(within(switcher).getByRole('link', { name: 'PFL' }))
     expect(await screen.findByRole('heading', { name: 'PFL fight cards' }, WAIT)).toBeInTheDocument()
     expect(document.documentElement.dataset.org).toBe('pfl')
 
-    await userEvent.click(within(screen.getAllByRole('navigation', { name: 'Organization' })[0]).getByRole('link', { name: 'UFC' }))
+    await userEvent.click(within(screen.getAllByRole('group', { name: 'Organization' })[0]).getByRole('link', { name: 'UFC' }))
     expect(await screen.findByRole('heading', { name: 'UFC fight cards' }, WAIT)).toBeInTheDocument()
     expect(document.documentElement.dataset.org).toBe('ufc')
   })

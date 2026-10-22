@@ -32,9 +32,9 @@ export function OrgRankings() {
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
           level={1}
-          eyebrow={org.rankingsNote ? `${org.shortName} champions` : `Official ${org.shortName} rankings`}
+          eyebrow={`Official ${org.shortName} rankings`}
           title="Divisional & pound-for-pound rankings"
-          description={org.rankingsNote ?? `The official ${org.sourceName} rankings, with each fighter's win rate and last fight added from our data.`}
+          description={`The official ${org.sourceName} rankings, with each fighter's win rate and last fight added from our data.`}
         />
         {p4p.length ? (
           <div className="mt-4 inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">

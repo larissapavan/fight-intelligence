@@ -28,7 +28,7 @@ function navItemsFor(org: OrgConfig): NavItem[] {
   return [
     { to: orgPath(org, 'fighters'), label: 'Fighters' },
     { to: orgPath(org, 'events'), label: 'Events' },
-    { to: orgPath(org, 'rankings'), label: 'Rankings' },
+    ...(org.hasRankings ? [{ to: orgPath(org, 'rankings'), label: 'Rankings' }] : []),
     { to: orgPath(org, 'gyms'), label: 'Gyms', section: true },
   ]
 }
@@ -81,12 +81,17 @@ export function Header() {
 
   return (
     <header>
+      {/* Which organization is on screen: its own strip, so the bar below keeps room for the menu. */}
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <OrgSwitcher />
+        <p className="type-tech hidden truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)] xs:block">{org.name}</p>
+      </div>
       <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2.5 sm:px-3.5 sm:py-3">
         <div className="flex items-center justify-between gap-2">
           <Link
             to={org.basePath || '/'}
             aria-label="Fight Intelligence home"
-            className="brand-badge flex min-w-0 items-center gap-2.5 border-2 border-black bg-[#EFECE6] px-2.5 py-2 text-black xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5"
+            className="brand-badge flex min-w-0 items-center lg:shrink-0 gap-2.5 border-2 border-black bg-[#EFECE6] px-2.5 py-2 text-black xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5"
           >
             <BrandMark className="h-8 w-8 shrink-0 rounded-none xs:h-9 xs:w-9 sm:h-10 sm:w-10" />
             <span className="flex min-w-0 flex-col items-start justify-center gap-1">
@@ -116,8 +121,6 @@ export function Header() {
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
             </div>
 
-            <OrgSwitcher className="hidden xs:block" />
-
             <FighterSearch />
 
             <nav className="hidden items-center gap-1.5 rounded-full border border-white/14 bg-white/[0.04] p-1 lg:flex">
@@ -126,7 +129,7 @@ export function Header() {
                   key={item.to}
                   to={item.to}
                   className={[
-                    'rounded-full px-3 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] transition xl:px-4 xl:py-2.5 xl:text-sm xl:tracking-[0.1em]',
+                    'rounded-full px-2 py-2 text-[13px] font-semibold uppercase tracking-[0.06em] transition xl:px-4 xl:py-2.5 xl:text-sm xl:tracking-[0.1em]',
                     isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
                   ].join(' ')}
                 >
@@ -151,7 +154,7 @@ export function Header() {
               target="_blank"
               rel="noreferrer"
               title="GitHub"
-              className="ghost-action hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] lg:inline-flex"
+              className="ghost-action hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] xl:inline-flex"
             >
               <FolderGit2 className="h-4 w-4" />
               <span className="hidden xl:inline">GitHub</span>
@@ -186,8 +189,6 @@ export function Header() {
                   <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
                   {apiLabel}
                 </div>
-
-                <OrgSwitcher className="xs:hidden" onNavigate={() => setMenuOpen(false)} />
 
                 <nav className="flex flex-col gap-1">
                   {navItems.map((item) => (

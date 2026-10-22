@@ -86,7 +86,7 @@ function App() {
                 <Route index element={<OrgHome />} />
                 <Route path="fighters" element={<OrgFighters />} />
                 <Route path="events" element={<OrgEvents />} />
-                <Route path="rankings" element={<OrgRankings />} />
+                {org.hasRankings ? <Route path="rankings" element={<OrgRankings />} /> : null}
                 <Route path="gyms" element={<Gyms />} />
                 <Route path="gyms/:slug" element={<GymDetail />} />
               </Route>
