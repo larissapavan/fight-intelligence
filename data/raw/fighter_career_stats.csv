@@ -1,7 +1,7 @@
 fighter_url,dob,sig_str_acc,takedown_acc,slpm,sapm,str_def,td_avg,td_def,sub_avg,wins,losses,draws
 http://ufcstats.com/fighter-details/0e46690e55a8df75,"Feb 08, 1999",42%,31%,2.88,3.72,55%,1.18,71%,0.0,11,4,0
 http://ufcstats.com/fighter-details/040a74bb0a465c54,"Jan 22, 1994",43%,60%,3.52,3.15,60%,1.24,73%,0.3,21,4,0
-http://ufcstats.com/fighter-details/b67d6bacc68d4c92,"Mar 12, 1995",40%,33%,5.15,5.38,50%,2.60,73%,0.0,14,3,0
+http://ufcstats.com/fighter-details/b67d6bacc68d4c92,"Mar 12, 1995",40%,33%,5.15,5.38,50%,2.60,73%,0.0,15,3,0
 http://ufcstats.com/fighter-details/9c442aaf149ea982,"Oct 23, 1993",44%,0%,3.85,3.25,45%,0.00,47%,0.5,7,3,0
 http://ufcstats.com/fighter-details/74939a16c7b56f33,"Jun 03, 1998",41%,50%,3.72,3.40,59%,5.50,0%,0.8,16,1,1
 http://ufcstats.com/fighter-details/29162be25ebef5f0,"Nov 16, 1993",43%,15%,5.44,5.35,57%,0.64,60%,0.2,11,4,0
@@ -24,12 +24,12 @@ http://ufcstats.com/fighter-details/64ad3e3b0efa30bb,"Nov 15, 1991",49%,37%,2.53
 http://ufcstats.com/fighter-details/f14f644d41ade29f,"May 16, 1994",51%,41%,2.50,2.95,50%,1.80,66%,0.5,12,9,1
 http://ufcstats.com/fighter-details/e3964ece586e0635,"Aug 29, 1997",46%,0%,5.30,2.98,68%,0.00,85%,0.0,10,2,0
 http://ufcstats.com/fighter-details/f5d82eccdea4e2dd,"Nov 05, 1998",50%,0%,2.40,2.40,55%,0.00,0%,0.0,9,5,0
-http://ufcstats.com/fighter-details/fc0a4053eb8a3a59,"Nov 04, 1996",39%,29%,2.88,5.59,52%,3.38,50%,1.0,9,4,0
+http://ufcstats.com/fighter-details/fc0a4053eb8a3a59,"Nov 04, 1996",39%,29%,2.88,5.59,52%,3.38,50%,1.0,9,5,0
 http://ufcstats.com/fighter-details/312f7d7b2b2f7de4,"Aug 01, 1997",42%,28%,6.43,6.63,48%,0.47,85%,0.0,11,4,0
 http://ufcstats.com/fighter-details/7026eca45f65377b,"Sep 06, 1988",53%,34%,5.57,4.11,55%,1.91,60%,0.0,21,9,0
 http://ufcstats.com/fighter-details/767755fd74662dbf,"May 01, 1994",54%,58%,4.01,2.98,52%,5.32,87%,1.4,15,1,0
 http://ufcstats.com/fighter-details/b8bbdeff718dbb7d,"Nov 09, 1990",54%,41%,1.69,1.16,54%,4.27,50%,1.3,22,5,0
-http://ufcstats.com/fighter-details/99bd51917728c25d,"Feb 20, 1994",51%,39%,3.14,2.14,44%,3.58,66%,1.4,24,3,1
+http://ufcstats.com/fighter-details/99bd51917728c25d,"Feb 20, 1994",51%,39%,3.14,2.14,44%,3.58,66%,1.4,25,3,1
 http://ufcstats.com/fighter-details/d1feea7a4bdcd503,"Jan 08, 2001",54%,26%,5.74,4.45,58%,2.09,100%,0.8,12,0,0
 http://ufcstats.com/fighter-details/887961364be5ceb3,"Sep 09, 1986",53%,43%,6.49,3.63,62%,1.32,71%,0.3,36,18,1
 http://ufcstats.com/fighter-details/b62d5280966b2460,"Jun 09, 1996",50%,35%,3.88,4.47,49%,1.75,50%,1.0,8,3,0
@@ -48,12 +48,12 @@ http://ufcstats.com/fighter-details/9d83f6da776ff7d6,"May 04, 1992",50%,50%,4.54
 http://ufcstats.com/fighter-details/fc08099550072fe4,"Oct 03, 1991",47%,50%,5.03,3.44,55%,0.36,69%,0.1,17,4,0
 http://ufcstats.com/fighter-details/9384e71bca6c409d,"Jun 13, 1994",53%,26%,6.02,2.97,56%,1.05,0%,0.3,14,3,0
 http://ufcstats.com/fighter-details/2f815ed5f8278ba6,"Apr 10, 2002",43%,100%,4.32,2.60,54%,0.41,93%,0.0,11,2,0
-http://ufcstats.com/fighter-details/279566840aa55bf2,"Oct 24, 1988",57%,62%,4.84,2.90,54%,0.54,68%,0.2,40,11,0
+http://ufcstats.com/fighter-details/279566840aa55bf2,"Oct 24, 1988",57%,62%,4.84,2.90,54%,0.54,68%,0.2,41,11,0
 http://ufcstats.com/fighter-details/d1941565abf50b16,"Aug 30, 1983",42%,45%,2.92,3.43,56%,1.49,47%,1.7,39,19,0
 http://ufcstats.com/fighter-details/88be62d6c1e6dadb,"Dec 31, 2000",47%,25%,5.16,2.99,58%,0.30,65%,0.9,9,2,0
-http://ufcstats.com/fighter-details/aebaa8cec15b083d,"Apr 21, 1995",32%,25%,3.85,6.20,52%,1.07,100%,0.5,8,1,0
+http://ufcstats.com/fighter-details/aebaa8cec15b083d,"Apr 21, 1995",32%,25%,3.85,6.20,52%,1.07,100%,0.5,9,1,0
 http://ufcstats.com/fighter-details/b4443fae47e7eb9d,"Aug 09, 1996",48%,25%,3.31,3.96,46%,2.56,0%,3.6,9,4,0
-http://ufcstats.com/fighter-details/d4270315cbcf2569,"Aug 26, 1995",56%,42%,4.23,2.33,55%,5.39,55%,0.8,10,3,0
+http://ufcstats.com/fighter-details/d4270315cbcf2569,"Aug 26, 1995",56%,42%,4.23,2.33,55%,5.39,55%,0.8,10,4,0
 http://ufcstats.com/fighter-details/d0fd0d9ee560dae7,"Aug 03, 1994",57%,0%,11.00,4.26,58%,0.00,71%,0.0,7,1,0
 http://ufcstats.com/fighter-details/08af939f41b5a57b,"May 06, 1989",49%,38%,3.74,2.63,57%,2.21,82%,0.8,23,8,1
 http://ufcstats.com/fighter-details/b701f095e6ccb149,"Dec 28, 2000",30%,0%,3.23,7.90,45%,0.00,0%,0.0,4,3,0
@@ -75,8 +75,8 @@ http://ufcstats.com/fighter-details/40f3cb27fc7305a1,"Jan 23, 1991",56%,62%,2.70
 http://ufcstats.com/fighter-details/c15fa95b9a12fde4,"Sep 21, 1996",52%,0%,3.53,2.70,52%,0.00,72%,0.0,7,6,0
 http://ufcstats.com/fighter-details/cdb7b38b1b357f26,"Feb 08, 1994",69%,40%,1.80,1.95,35%,4.49,33%,0.0,11,6,0
 http://ufcstats.com/fighter-details/32ab52e5de93092d,"Jul 27, 1995",46%,27%,4.56,4.14,55%,1.09,67%,0.4,14,5,0
-http://ufcstats.com/fighter-details/8ebc3a8da015d70c,"Jan 19, 1995",48%,44%,4.60,2.12,52%,1.34,33%,0.3,15,3,0
-http://ufcstats.com/fighter-details/ed7d329d7c29428d,"Jun 23, 1999",41%,7%,3.24,2.93,54%,0.67,33%,1.7,9,1,0
+http://ufcstats.com/fighter-details/8ebc3a8da015d70c,"Jan 19, 1995",48%,44%,4.60,2.12,52%,1.34,33%,0.3,15,4,0
+http://ufcstats.com/fighter-details/ed7d329d7c29428d,"Jun 23, 1999",41%,7%,3.24,2.93,54%,0.67,33%,1.7,10,1,0
 http://ufcstats.com/fighter-details/cc8c623cca88f54f,"Aug 22, 1991",56%,23%,3.52,4.71,51%,0.46,64%,1.3,10,7,1
 http://ufcstats.com/fighter-details/52c2ae6d2f2d2613,"Sep 04, 1996",50%,31%,2.78,1.79,64%,1.84,55%,1.3,18,6,1
 http://ufcstats.com/fighter-details/e3b30b573e7f0d19,"Aug 20, 1995",58%,33%,8.80,9.30,47%,2.00,100%,0.0,17,2,0
@@ -130,7 +130,7 @@ http://ufcstats.com/fighter-details/5fa2974cbd18e05c,"Dec 18, 1991",51%,37%,4.95
 http://ufcstats.com/fighter-details/c4d039123e62f6a9,"Oct 01, 1997",44%,27%,4.28,4.76,48%,0.55,72%,0.2,12,7,0
 http://ufcstats.com/fighter-details/3a46b268013afede,"Nov 05, 1992",49%,36%,4.24,3.21,50%,0.79,57%,0.6,29,15,0
 http://ufcstats.com/fighter-details/c6aee362c7a7d482,"Jul 08, 1990",47%,34%,4.39,3.35,53%,0.71,74%,0.5,20,8,0
-http://ufcstats.com/fighter-details/e90a2f22417af68e,"Apr 12, 1989",56%,20%,4.40,3.20,56%,0.68,88%,0.2,16,1,0
+http://ufcstats.com/fighter-details/e90a2f22417af68e,"Apr 12, 1989",56%,20%,4.40,3.20,56%,0.68,88%,0.2,16,2,0
 http://ufcstats.com/fighter-details/8c0580d4fff106c1,"Oct 24, 1991",42%,35%,3.65,3.52,57%,1.04,60%,0.1,21,11,0
 http://ufcstats.com/fighter-details/8e5d953bdb9ae5e7,"Sep 06, 1993",49%,42%,4.43,3.94,62%,2.99,76%,0.8,15,6,0
 http://ufcstats.com/fighter-details/d247691a6c0e9034,"Nov 02, 1983",51%,50%,4.84,3.99,59%,1.00,63%,0.4,31,14,0
@@ -139,7 +139,7 @@ http://ufcstats.com/fighter-details/6d4b63c767106d3a,"Nov 27, 1991",50%,46%,4.69
 http://ufcstats.com/fighter-details/fa6796c55d6c5440,"Feb 18, 1991",51%,47%,3.99,2.70,55%,5.04,35%,0.0,20,6,0
 http://ufcstats.com/fighter-details/3920d0cc288f9b0d,"Jun 16, 2002",43%,19%,3.68,4.31,54%,0.76,40%,0.8,13,5,0
 http://ufcstats.com/fighter-details/e2be0c1a9b886d92,"Nov 30, 1996",60%,6%,5.94,5.21,51%,0.21,80%,0.0,12,1,1
-http://ufcstats.com/fighter-details/2e19380f34871c6a,"Dec 26, 1989",53%,28%,4.99,3.40,49%,0.25,82%,0.2,16,5,0
+http://ufcstats.com/fighter-details/2e19380f34871c6a,"Dec 26, 1989",53%,28%,4.99,3.40,49%,0.25,82%,0.2,17,5,0
 http://ufcstats.com/fighter-details/955da1675ad58a50,"Nov 12, 1997",64%,47%,9.29,5.28,48%,3.73,77%,0.4,10,0,0
 http://ufcstats.com/fighter-details/323d4ca260dfa0ba,"Apr 27, 1996",43%,66%,7.43,5.74,54%,0.32,66%,0.2,17,3,0
 http://ufcstats.com/fighter-details/2e5c2aa8e4ab9d82,"Apr 21, 1991",59%,42%,6.15,5.96,49%,0.30,77%,0.0,16,4,0
@@ -149,7 +149,7 @@ http://ufcstats.com/fighter-details/feedf3053472fe56,"Jul 09, 1990",53%,44%,2.50
 http://ufcstats.com/fighter-details/c21f26bbde777573,"Mar 30, 1992",54%,50%,3.90,2.99,46%,0.36,57%,0.7,23,10,0
 http://ufcstats.com/fighter-details/9014c02eff8b3d62,"Nov 07, 1990",55%,60%,6.57,4.03,51%,0.53,85%,0.2,15,1,0
 http://ufcstats.com/fighter-details/b08012bbe542592a,"Dec 19, 1990",60%,45%,2.86,1.63,44%,4.52,57%,0.7,13,1,0
-http://ufcstats.com/fighter-details/5537efc6e496dd84,"Sep 23, 1996",53%,50%,6.16,3.11,45%,6.54,0%,0.0,14,5,0
+http://ufcstats.com/fighter-details/5537efc6e496dd84,"Sep 23, 1996",53%,50%,6.16,3.11,45%,6.54,0%,0.0,15,5,0
 http://ufcstats.com/fighter-details/72db2a14ffa73ece,"Dec 11, 1990",51%,38%,3.14,2.79,60%,5.08,76%,0.4,26,5,0
 http://ufcstats.com/fighter-details/98a58c26c5b1ed17,"Jul 07, 1987",46%,33%,3.06,4.66,55%,1.21,74%,0.5,38,9,0
 http://ufcstats.com/fighter-details/6b0a6def604de298,"Dec 15, 1997",47%,83%,11.13,5.06,58%,1.58,78%,0.9,12,0,0
@@ -174,7 +174,7 @@ http://ufcstats.com/fighter-details/65db4065e2bc107d,"Aug 25, 1994",48%,45%,3.16
 http://ufcstats.com/fighter-details/d7c4956d61ae76a9,"Sep 11, 1996",64%,0%,8.43,3.50,68%,0.00,75%,0.0,17,3,0
 http://ufcstats.com/fighter-details/27b388f0aab49780,"May 08, 1992",45%,44%,2.15,2.29,64%,2.47,63%,2.1,10,4,0
 http://ufcstats.com/fighter-details/d25240135aee03e5,"Feb 21, 1995",36%,34%,3.77,4.79,58%,2.37,54%,0.1,12,5,0
-http://ufcstats.com/fighter-details/95aff2fd8d09a5f0,"Jan 03, 2001",68%,75%,8.64,2.22,59%,11.11,100%,7.4,10,0,0
+http://ufcstats.com/fighter-details/95aff2fd8d09a5f0,"Jan 03, 2001",68%,75%,8.64,2.22,59%,11.11,100%,7.4,11,0,0
 http://ufcstats.com/fighter-details/7dda2cf308f24a02,"May 30, 1988",41%,39%,2.27,2.86,55%,3.13,72%,1.4,23,4,0
 http://ufcstats.com/fighter-details/81d2c551886bd5a1,"Dec 20, 2005",36%,0%,2.83,3.11,66%,0.00,75%,0.0,8,1,0
 http://ufcstats.com/fighter-details/83455a9d17f57dae,"Aug 10, 1996",39%,33%,2.40,3.90,45%,4.91,66%,0.2,14,1,0
@@ -210,8 +210,8 @@ http://ufcstats.com/fighter-details/3cc506f115cbb9d5,"Jul 17, 1999",65%,60%,4.97
 http://ufcstats.com/fighter-details/1c23ec2f1b71be40,"Nov 20, 1998",56%,20%,5.83,5.03,59%,0.80,83%,0.0,9,1,0
 http://ufcstats.com/fighter-details/327d5f279895110d,"Jul 15, 1988",41%,43%,3.12,4.02,46%,1.13,32%,0.7,15,6,0
 http://ufcstats.com/fighter-details/e564146b9cf6dbef,"Jan 22, 2001",57%,40%,2.55,2.39,43%,3.70,87%,0.0,11,3,0
-http://ufcstats.com/fighter-details/76e2870ffafbe38f,"Feb 11, 1994",47%,52%,3.91,2.80,61%,4.78,61%,0.2,20,0,0
-http://ufcstats.com/fighter-details/5b43d68174b6e2ab,"Dec 30, 1997",46%,0%,3.91,3.97,64%,0.00,100%,0.0,17,2,0
+http://ufcstats.com/fighter-details/76e2870ffafbe38f,"Feb 11, 1994",47%,52%,3.91,2.80,61%,4.78,61%,0.2,20,1,0
+http://ufcstats.com/fighter-details/5b43d68174b6e2ab,"Dec 30, 1997",46%,0%,3.91,3.97,64%,0.00,100%,0.0,17,3,0
 http://ufcstats.com/fighter-details/b1de86d835638319,"Jun 30, 1999",58%,0%,6.67,3.86,61%,0.00,37%,0.0,14,0,0
 http://ufcstats.com/fighter-details/39d309957c5c210d,"Mar 14, 1998",70%,42%,3.68,1.98,58%,4.41,100%,0.8,13,0,0
 http://ufcstats.com/fighter-details/8b6e5dc2ba1edbe7,"Apr 30, 1996",41%,50%,3.58,2.82,59%,0.67,50%,1.3,15,3,1
@@ -245,7 +245,7 @@ http://ufcstats.com/fighter-details/e56cee1ad697db04,"Jul 16, 1998",53%,0%,7.88,
 http://ufcstats.com/fighter-details/6fc506e1099afe20,"Jan 07, 1993",42%,39%,4.06,6.15,49%,2.82,66%,0.6,13,4,0
 http://ufcstats.com/fighter-details/cad24459b28592ca,"Apr 21, 1987",47%,25%,3.44,4.03,50%,1.83,80%,0.1,18,9,0
 http://ufcstats.com/fighter-details/7478b7f959ba61f5,"Sep 05, 2002",48%,53%,4.18,2.96,46%,2.98,53%,1.1,10,1,0
-http://ufcstats.com/fighter-details/4bdedbdeedff7d1d,"Nov 15, 1995",45%,57%,6.42,5.12,61%,1.02,75%,0.0,10,4,0
+http://ufcstats.com/fighter-details/4bdedbdeedff7d1d,"Nov 15, 1995",45%,57%,6.42,5.12,61%,1.02,75%,0.0,10,5,0
 http://ufcstats.com/fighter-details/2dbc60c52de126d8,"Sep 29, 1994",42%,0%,5.47,8.54,44%,0.00,0%,0.0,13,5,1
 http://ufcstats.com/fighter-details/3df5493bb279226f,"May 22, 1987",55%,57%,2.84,3.22,44%,0.93,63%,0.7,15,7,1
 http://ufcstats.com/fighter-details/fba03cd6cc28dc41,"Mar 04, 1985",35%,36%,3.67,4.52,59%,1.07,43%,0.1,19,7,0
@@ -278,7 +278,7 @@ http://ufcstats.com/fighter-details/69898645d600abdb,"Feb 05, 1996",60%,35%,5.37
 http://ufcstats.com/fighter-details/1e719d4b676dc19a,"Nov 04, 1992",45%,22%,3.08,3.80,50%,0.83,51%,0.5,15,5,0
 http://ufcstats.com/fighter-details/cd3d7e37ff2d679c,"Jun 05, 1993",39%,17%,4.68,3.84,51%,0.85,44%,0.3,13,6,0
 http://ufcstats.com/fighter-details/d6a8edb7410223a0,"Mar 20, 2003",32%,40%,2.17,5.95,37%,2.00,100%,1.0,14,3,0
-http://ufcstats.com/fighter-details/bb2c3c3a466224af,"Jun 09, 1999",50%,46%,4.13,3.94,53%,1.12,82%,0.4,10,2,0
+http://ufcstats.com/fighter-details/bb2c3c3a466224af,"Jun 09, 1999",50%,46%,4.13,3.94,53%,1.12,82%,0.4,11,2,0
 http://ufcstats.com/fighter-details/4148802ae4a50768,"Jul 07, 1999",38%,25%,5.45,6.17,54%,0.14,81%,0.3,15,4,0
 http://ufcstats.com/fighter-details/e463ce0a2ca474f4,"May 08, 1995",49%,0%,10.51,2.04,69%,0.00,100%,0.0,11,1,0
 http://ufcstats.com/fighter-details/9a97acbfd5a08bfa,"Aug 03, 1998",44%,33%,4.50,2.65,71%,0.70,100%,0.0,15,1,0
@@ -325,7 +325,7 @@ http://ufcstats.com/fighter-details/64facb6cc564262d,"Nov 22, 1992",50%,47%,4.04
 http://ufcstats.com/fighter-details/85497ffd934ecf7e,"Jan 17, 1996",67%,91%,6.89,2.78,47%,7.78,100%,0.7,13,0,0
 http://ufcstats.com/fighter-details/e2f6b2769aaedd6c,"Jan 24, 1995",46%,57%,3.35,4.23,50%,3.42,52%,0.4,18,7,0
 http://ufcstats.com/fighter-details/aa0c573da7119292,"May 07, 1996",41%,31%,2.74,3.84,45%,2.38,44%,1.3,6,4,0
-http://ufcstats.com/fighter-details/739fd4fbb5d862f4,"Mar 10, 1992",54%,75%,4.32,2.22,49%,0.79,93%,0.0,14,3,1
+http://ufcstats.com/fighter-details/739fd4fbb5d862f4,"Mar 10, 1992",54%,75%,4.32,2.22,49%,0.79,93%,0.0,14,4,1
 http://ufcstats.com/fighter-details/bc711b6dd95c1af6,"Jul 01, 1993",50%,38%,5.52,4.17,54%,2.49,57%,1.1,18,3,0
 http://ufcstats.com/fighter-details/a54660deb6a8489c,"May 17, 1996",47%,28%,3.36,2.51,55%,1.57,70%,0.0,20,7,0
 http://ufcstats.com/fighter-details/18d01f7f8338ae72,"Nov 30, 1995",47%,43%,5.44,2.86,58%,1.27,71%,0.2,24,4,0
@@ -363,7 +363,7 @@ http://ufcstats.com/fighter-details/c814b4c899793af6,"Mar 05, 1993",52%,71%,4.71
 http://ufcstats.com/fighter-details/a264d4e9a4d6bfe4,"Oct 17, 1993",55%,22%,5.11,5.82,44%,1.77,72%,1.2,13,4,0
 http://ufcstats.com/fighter-details/fbb60f24af5d5a02,"Oct 24, 1998",54%,59%,1.78,3.34,40%,6.86,75%,0.8,11,1,0
 http://ufcstats.com/fighter-details/6b56e94a59b7b134,"Dec 19, 1997",48%,38%,3.62,2.36,60%,1.48,52%,0.0,12,5,0
-http://ufcstats.com/fighter-details/e1248941344b3288,"Sep 29, 1988",57%,34%,5.99,3.31,58%,1.63,68%,0.2,28,4,0
+http://ufcstats.com/fighter-details/e1248941344b3288,"Sep 29, 1988",57%,34%,5.99,3.31,58%,1.63,68%,0.2,29,4,0
 http://ufcstats.com/fighter-details/07a74004d964c7f4,"May 28, 1995",56%,22%,2.71,3.59,46%,0.85,0%,0.8,10,2,0
 http://ufcstats.com/fighter-details/3618e0632ecdba9c,"Dec 02, 1998",41%,0%,4.48,4.28,63%,0.00,78%,0.0,8,1,0
 http://ufcstats.com/fighter-details/0859524157a19045,"Jun 04, 2000",46%,0%,9.13,3.90,63%,0.00,91%,0.0,8,0,0
@@ -378,7 +378,7 @@ http://ufcstats.com/fighter-details/2b6fc1c02736833d,"Jan 03, 1996",56%,46%,3.76
 http://ufcstats.com/fighter-details/52ef95b5860fb28c,"Dec 13, 1996",51%,58%,4.55,4.29,54%,1.19,79%,0.7,18,3,0
 http://ufcstats.com/fighter-details/b50a426a33da0012,"Oct 24, 1994",60%,42%,5.98,3.40,59%,0.23,60%,0.2,20,3,0
 http://ufcstats.com/fighter-details/d3df1add9d9a7efb,"Feb 07, 1985",48%,25%,2.41,2.79,38%,0.53,51%,0.0,29,14,0
-http://ufcstats.com/fighter-details/1091d4d957141094,"Mar 07, 1992",54%,38%,4.38,2.75,48%,2.19,53%,1.1,31,12,0
+http://ufcstats.com/fighter-details/1091d4d957141094,"Mar 07, 1992",54%,38%,4.38,2.75,48%,2.19,53%,1.1,31,13,0
 http://ufcstats.com/fighter-details/efb96bf3e9ada36f,"Dec 02, 1997",43%,41%,4.26,3.76,54%,0.79,73%,0.3,24,9,1
 http://ufcstats.com/fighter-details/aa72b0f831d0bfe5,"Dec 18, 1987",53%,34%,2.57,3.43,49%,1.61,57%,1.2,25,8,1
 http://ufcstats.com/fighter-details/9211aae062b799d6,"Oct 08, 1977",22%,0%,0.73,2.93,52%,0.00,0%,0.0,19,12,3
@@ -403,11 +403,11 @@ http://ufcstats.com/fighter-details/6e743a33d56bdaa4,"Sep 09, 1998",56%,44%,6.62
 http://ufcstats.com/fighter-details/8d11d9c13e2ccdf7,"Aug 07, 1994",39%,30%,2.48,3.44,44%,1.45,68%,0.2,13,5,0
 http://ufcstats.com/fighter-details/99df7d0a2a08a8a8,"Feb 24, 1983",50%,48%,3.53,3.23,51%,0.97,70%,0.4,29,12,2
 http://ufcstats.com/fighter-details/64a50dad704d1d49,"Jan 21, 1986",44%,50%,4.15,4.76,55%,0.42,73%,0.1,24,15,0
-http://ufcstats.com/fighter-details/d661ce4da776fc20,"Feb 11, 1993",54%,49%,5.16,4.24,59%,1.70,86%,0.1,20,5,0
+http://ufcstats.com/fighter-details/d661ce4da776fc20,"Feb 11, 1993",54%,49%,5.16,4.24,59%,1.70,86%,0.1,21,5,0
 http://ufcstats.com/fighter-details/ff62013d2fce6d13,"May 16, 1994",48%,45%,4.69,5.42,49%,1.08,72%,0.2,11,3,1
 http://ufcstats.com/fighter-details/4d8fa64202cee4c1,"May 18, 1995",49%,55%,5.84,4.53,41%,0.75,75%,1.1,16,9,0
 http://ufcstats.com/fighter-details/480779d7f9a424d3,"Jun 10, 2000",48%,0%,3.33,2.24,65%,0.00,69%,0.0,18,1,0
-http://ufcstats.com/fighter-details/c03520b5c88ed6b4,"Jan 10, 1991",41%,35%,4.42,2.80,54%,5.97,76%,0.3,21,5,0
+http://ufcstats.com/fighter-details/c03520b5c88ed6b4,"Jan 10, 1991",41%,35%,4.42,2.80,54%,5.97,76%,0.3,21,6,0
 http://ufcstats.com/fighter-details/7acbb0972e75281a,"Sep 20, 1993",45%,43%,4.74,4.55,56%,1.41,68%,0.4,19,11,1
 http://ufcstats.com/fighter-details/056c493bbd76a918,"Feb 09, 1987",47%,29%,3.83,3.84,57%,1.78,72%,0.1,16,6,0
 http://ufcstats.com/fighter-details/a0f0004aadf10b71,"Apr 16, 1990",50%,44%,4.54,4.23,48%,2.82,69%,0.9,30,7,0
@@ -429,7 +429,7 @@ http://ufcstats.com/fighter-details/eae48ff31db420c2,"Oct 11, 1996",49%,34%,3.78
 http://ufcstats.com/fighter-details/6a96ad1bc34fb113,"Aug 18, 1996",52%,40%,3.66,1.75,64%,1.48,73%,0.2,26,8,0
 http://ufcstats.com/fighter-details/a495f599e787614f,"Oct 18, 1987",51%,28%,3.87,3.86,50%,0.53,77%,0.2,19,6,1
 http://ufcstats.com/fighter-details/4a6dff1b260bcf61,"Jan 28, 1996",55%,33%,2.93,2.57,68%,1.50,100%,0.0,7,1,0
-http://ufcstats.com/fighter-details/ca28cdf526d6b6e9,"Dec 08, 2000",44%,51%,2.29,1.59,55%,3.48,80%,0.5,12,0,0
+http://ufcstats.com/fighter-details/ca28cdf526d6b6e9,"Dec 08, 2000",44%,51%,2.29,1.59,55%,3.48,80%,0.5,12,1,0
 http://ufcstats.com/fighter-details/8d3273573b85be09,"Jan 25, 1994",51%,45%,2.28,1.94,53%,4.74,44%,1.4,24,3,0
 http://ufcstats.com/fighter-details/d6c0cdd7e467c440,"Feb 27, 1993",53%,25%,3.16,2.94,42%,1.97,79%,2.0,17,6,0
 http://ufcstats.com/fighter-details/68d4a891e5cf2029,"Dec 10, 1993",48%,40%,3.95,3.61,53%,2.04,59%,0.3,12,4,0
@@ -501,7 +501,7 @@ http://ufcstats.com/fighter-details/1ae8f3c723aacff4,"Aug 01, 1995",36%,57%,2.91
 http://ufcstats.com/fighter-details/710f0f8c5d5c9d41,"Jan 31, 1991",39%,0%,4.94,5.36,44%,0.00,53%,0.0,15,5,0
 http://ufcstats.com/fighter-details/103e2e33a60683e1,"Jun 27, 1990",38%,20%,3.42,5.02,45%,0.38,50%,0.4,5,4,0
 http://ufcstats.com/fighter-details/d802174b0c0c1f4e,"Jun 02, 1992",52%,24%,3.52,2.49,55%,0.85,87%,0.2,22,2,1
-http://ufcstats.com/fighter-details/36b8f265bcd1b7a4,"Sep 02, 1990",48%,59%,3.06,3.34,56%,2.50,100%,0.6,29,7,1
+http://ufcstats.com/fighter-details/36b8f265bcd1b7a4,"Sep 02, 1990",48%,59%,3.06,3.34,56%,2.50,100%,0.6,30,7,1
 http://ufcstats.com/fighter-details/e5549c82bfb5582d,"Jul 07, 1987",61%,50%,5.01,3.72,52%,0.11,80%,0.2,13,4,0
 http://ufcstats.com/fighter-details/4333a8e70a672eb7,"Aug 02, 1988",32%,75%,1.84,3.32,47%,1.02,11%,0.0,8,5,0
 http://ufcstats.com/fighter-details/65f09bacd3957381,"Apr 20, 1992",45%,33%,4.92,3.72,55%,1.14,57%,0.2,18,7,0
@@ -562,7 +562,7 @@ http://ufcstats.com/fighter-details/148bb103cfbf123e,"May 15, 1997",53%,16%,1.49
 http://ufcstats.com/fighter-details/a78a87d8c2bbb1cb,"Apr 08, 1993",38%,20%,2.74,4.45,46%,0.78,54%,1.4,11,10,2
 http://ufcstats.com/fighter-details/5ec591b78349ba7e,"Dec 17, 1997",50%,40%,3.90,2.94,56%,1.81,67%,1.1,13,4,0
 http://ufcstats.com/fighter-details/b12fb759e02378de,"Apr 05, 1996",57%,44%,6.68,4.72,47%,2.73,0%,0.7,8,5,0
-http://ufcstats.com/fighter-details/abcf2cc6efc42031,"Jan 08, 2002",45%,55%,3.22,2.80,62%,2.28,68%,0.1,18,6,0
+http://ufcstats.com/fighter-details/abcf2cc6efc42031,"Jan 08, 2002",45%,55%,3.22,2.80,62%,2.28,68%,0.1,19,6,0
 http://ufcstats.com/fighter-details/351c4ec637380ad5,"Dec 30, 1994",55%,48%,5.47,4.28,49%,1.08,72%,0.1,19,8,0
 http://ufcstats.com/fighter-details/d8c811df0386d5e8,"Mar 23, 1995",52%,81%,3.27,1.72,63%,2.58,100%,1.4,10,2,0
 http://ufcstats.com/fighter-details/d3f89fa685bd8420,"Sep 29, 2001",42%,35%,1.89,2.34,52%,6.09,63%,1.4,14,2,0
@@ -672,7 +672,7 @@ http://ufcstats.com/fighter-details/369ea36e450ae62a,"Nov 03, 1990",53%,33%,5.84
 http://ufcstats.com/fighter-details/2f43a3e82661fa99,"Jun 22, 2002",54%,37%,2.85,1.79,43%,5.17,50%,2.1,12,1,0
 http://ufcstats.com/fighter-details/05fa626cb33d15b8,"Feb 11, 1989",45%,52%,4.62,3.91,61%,1.65,53%,0.6,13,11,0
 http://ufcstats.com/fighter-details/d0e1b42d41dab603,"May 08, 1990",45%,0%,5.06,5.35,50%,0.00,54%,2.6,9,6,0
-http://ufcstats.com/fighter-details/7d0a1968b38ca439,"Jan 31, 1997",41%,50%,4.73,3.65,62%,0.68,100%,0.0,20,3,0
+http://ufcstats.com/fighter-details/7d0a1968b38ca439,"Jan 31, 1997",41%,50%,4.73,3.65,62%,0.68,100%,0.0,20,4,0
 http://ufcstats.com/fighter-details/a52bc1e62cf0b7c6,"Jan 28, 1992",58%,0%,4.98,3.15,56%,0.00,70%,0.0,8,4,0
 http://ufcstats.com/fighter-details/a817e238b2747404,"Jan 14, 2000",38%,38%,1.06,1.80,42%,1.93,76%,0.4,7,5,0
 http://ufcstats.com/fighter-details/86d9dbe1bfcbade7,"May 11, 1988",42%,37%,2.81,3.28,55%,0.63,52%,0.2,9,4,0
@@ -4362,7 +4362,7 @@ http://ufcstats.com/fighter-details/4252b09f0c8c4472,"Feb 18, 1997",43%,0%,1.01,
 http://ufcstats.com/fighter-details/e78c4c3d329c531b,"Sep 26, 1985",45%,0%,3.61,5.06,36%,0.00,0%,0.0,10,3,0
 http://ufcstats.com/fighter-details/fe30c5f5cc3e028b,"May 08, 2000",0%,0%,0.00,0.00,0%,0.00,0%,0.0,4,1,0
 http://ufcstats.com/fighter-details/0d1190beced94f7c,"Jun 27, 1998",38%,50%,1.87,0.93,67%,3.00,100%,3.0,14,2,0
-http://ufcstats.com/fighter-details/f7adc1fd115f8fdd,"Apr 14, 1993",38%,40%,1.80,2.20,60%,4.00,71%,0.0,25,4,0
+http://ufcstats.com/fighter-details/f7adc1fd115f8fdd,"Apr 14, 1993",38%,40%,1.80,2.20,60%,4.00,71%,0.0,26,4,0
 http://ufcstats.com/fighter-details/43e549b803ec7375,"Apr 04, 1991",85%,0%,3.88,0.68,80%,0.00,100%,0.0,3,1,0
 http://ufcstats.com/fighter-details/fc1868f56d3036eb,"Dec 23, 1978",0%,0%,0.00,0.00,0%,0.00,0%,0.0,29,12,0
 http://ufcstats.com/fighter-details/45b82ebf0b9e0fd2,"Nov 17, 1992",0%,0%,0.00,9.60,33%,0.00,0%,0.0,8,2,0
@@ -4508,7 +4508,7 @@ http://ufcstats.com/fighter-details/651d209fa8c8cd83,"Nov 16, 2002",52%,57%,3.73
 http://ufcstats.com/fighter-details/eabece0edc2d62ca,"Aug 08, 1996",53%,0%,5.70,3.53,72%,0.00,100%,0.0,9,1,0
 http://ufcstats.com/fighter-details/5f926979c980b87e,"Jan 29, 1993",38%,100%,3.80,2.80,58%,1.00,62%,2.0,17,2,0
 http://ufcstats.com/fighter-details/5847c1a960bb23af,"Jul 11, 1994",47%,0%,7.50,6.00,57%,0.00,50%,0.0,7,2,0
-http://ufcstats.com/fighter-details/6266abf6e4245c72,"Oct 18, 2000",45%,0%,3.70,4.44,68%,0.00,0%,11.1,10,2,0
+http://ufcstats.com/fighter-details/6266abf6e4245c72,"Oct 18, 2000",45%,0%,3.70,4.44,68%,0.00,0%,11.1,10,3,0
 http://ufcstats.com/fighter-details/dfcadfcbd3a3f097,"May 03, 1997",31%,0%,4.44,3.70,54%,0.00,0%,0.0,19,4,0
 http://ufcstats.com/fighter-details/b01a5e0dcd9f231d,"Jan 10, 1996",45%,0%,6.11,3.46,63%,0.00,0%,0.0,10,0,0
 http://ufcstats.com/fighter-details/bc5a51159ec2fdf2,"Dec 30, 1999",43%,57%,2.33,2.60,66%,8.00,100%,1.0,7,0,0
@@ -4543,7 +4543,7 @@ https://www.espn.com.br/mma/fighter/_/id/5130806/mackenzie-stiller,"Jul 15, 1999
 https://www.espn.com.br/mma/fighter/_/id/5405986/javad-mahjoub,"May 26, 1991",--,--,--,--,--,--,--,--,5,1,0
 https://www.espn.com.br/mma/fighter/_/id/5454260/joel-faglier,"Jan 18, 2001",--,--,--,--,--,--,--,--,7,0,0
 https://www.espn.com.br/mma/fighter/_/id/5296770/nick-galanti,"Jun 18, 1998",--,--,--,--,--,--,--,--,9,1,0
-https://www.espn.com.br/mma/fighter/_/id/5454811/asaf-chopurov,"Nov 17, 2001",--,--,--,--,--,--,--,--,11,0,0
+https://www.espn.com.br/mma/fighter/_/id/5454811/asaf-chopurov,"Nov 17, 2001",--,--,--,--,--,--,--,--,11,1,0
 https://www.espn.com.br/mma/fighter/_/id/5130185/lucia-szabova,"Dec 23, 1997",--,--,--,--,--,--,--,--,12,0,0
 https://www.espn.com.br/mma/fighter/_/id/5215710/gabriel-lorenco,"Sep 30, 1999",--,--,--,--,--,--,--,--,8,1,0
 https://www.espn.com.br/mma/fighter/_/id/5345640/mehemmedeli-osmanli,"Aug 05, 2004",--,--,--,--,--,--,--,--,12,2,0
