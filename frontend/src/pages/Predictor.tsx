@@ -11,7 +11,7 @@ import { getFighterImageUrl, useFighterImages } from '../shared/hooks/useFighter
 import { useFighters } from '../shared/hooks/useFighters'
 import { formatProbability, localizePredictionMessage } from '../shared/data/probability'
 import { DataConfidenceNote } from '../shared/components/DataConfidenceNote'
-import { localizeFeature } from '../shared/components/ShapFactorBars'
+import { localizeFeature } from '../shared/utils/localizeFeature'
 import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 import { usePrediction } from '../shared/hooks/usePrediction'

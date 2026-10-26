@@ -23,8 +23,29 @@ export function useTrackRecord() {
   }, [])
 
   useEffect(() => {
-    reload()
-  }, [reload])
+    let ignore = false
+    getTrackRecord()
+      .then((result) => {
+        if (!ignore) {
+          setData(result)
+          setError(null)
+        }
+      })
+      .catch((requestError) => {
+        if (!ignore) {
+          console.error(requestError)
+          setError('Unable to load the track record from the API.')
+        }
+      })
+      .finally(() => {
+        if (!ignore) {
+          setLoading(false)
+        }
+      })
+    return () => {
+      ignore = true
+    }
+  }, [])
 
   return { data, loading, error, reload }
 }

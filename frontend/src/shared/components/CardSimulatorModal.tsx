@@ -33,7 +33,7 @@ export function CardSimulatorModal({ event, pickFor, onClose }: CardSimulatorMod
       const updated = { ...prev, [fightId]: winner }
       try {
         localStorage.setItem(storageKey, JSON.stringify(updated))
-      } catch {}
+      } catch { /* ignore storage error */ }
       return updated
     })
   }
@@ -42,11 +42,11 @@ export function CardSimulatorModal({ event, pickFor, onClose }: CardSimulatorMod
     setUserPicks({})
     try {
       localStorage.removeItem(storageKey)
-    } catch {}
+    } catch { /* ignore storage error */ }
   }
 
   // Calculate statistics
-  const fights = event.fights ?? []
+  const fights = useMemo(() => event.fights ?? [], [event.fights])
   const stats = useMemo(() => {
     let totalPicked = 0
     let agreedWithAi = 0

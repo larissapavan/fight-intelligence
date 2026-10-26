@@ -262,8 +262,7 @@ def _merge_manual_fights(events: list[dict], manual: list[dict], today: str) -> 
     return merged
 
 
-_TITLE_OVERRIDE_PAIRS = {
-    _pair_key("Carlos Prates", "Michael Morales"): {"title_fight": True, "interim_title": True},
+_TITLE_OVERRIDE_PAIRS: dict = {
     _pair_key("Petr Yan", "Merab Dvalishvili"): {"title_fight": True, "interim_title": False},
     _pair_key("Alexander Volkanovski", "Movsar Evloev"): {"title_fight": True, "interim_title": False},
 }

@@ -202,11 +202,12 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
-    setError(null)
     getEloRankings(selectedDivision === 'all' ? undefined : selectedDivision, activeOnly, 50)
       .then((data) => {
-        if (!cancelled) setEloEntries(data)
+        if (!cancelled) {
+          setEloEntries(data)
+          setError(null)
+        }
       })
       .catch((err) => {
         console.error(err)
@@ -241,7 +242,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
           <select
             id="elo-division-select"
             value={selectedDivision}
-            onChange={(e) => setSelectedDivision(e.target.value)}
+            onChange={(e) => { setSelectedDivision(e.target.value); setLoading(true) }}
             className="soft-input theme-text w-full rounded-xl px-3 py-2 text-sm outline-none"
           >
             <option value="all">{t('rankings.allDivisions')}</option>
@@ -257,7 +258,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
           <div className="inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">
             <button
               type="button"
-              onClick={() => setActiveOnly(true)}
+              onClick={() => { setActiveOnly(true); setLoading(true) }}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] transition ${
                 activeOnly ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#CCCCCC] hover:text-white'
               }`}
@@ -266,7 +267,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
             </button>
             <button
               type="button"
-              onClick={() => setActiveOnly(false)}
+              onClick={() => { setActiveOnly(false); setLoading(true) }}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] transition ${
                 !activeOnly ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#CCCCCC] hover:text-white'
               }`}
