@@ -1,6 +1,8 @@
 import axios from 'axios'
 import type {
   DivisionMatrix,
+  EloRankingEntry,
+  SyncTrackRecordResponse,
   OtherOrganization,
   ChampionsResponse,
   DataInfo,
@@ -199,5 +201,37 @@ export const getGyms = async () => {
 
 export const getGym = async (slug: string) => {
   const response = await api.get<GymDetail>(`/gyms/${encodeURIComponent(slug)}`)
+  return response.data
+}
+
+export const getEloRankings = async (division?: string, activeOnly: boolean = true, limit = 50) => {
+  const response = await api.get<EloRankingEntry[]>('/rankings/elo', {
+    params: { division, active_only: activeOnly, limit },
+  })
+  return response.data
+}
+
+export const getFighterElo = async (name: string) => {
+  const response = await api.get<{
+    name: string
+    elo: number
+    peak_elo: number
+    ufc_fights: number
+    p4p_rank: number | null
+    all_time_rank: number | null
+    history: Array<{
+      date: string
+      event: string
+      opponent: string
+      result: string
+      elo_after: number
+      elo_change: number
+    }>
+  }>(`/fighters/${encodeURIComponent(name)}/elo`)
+  return response.data
+}
+
+export const syncTrackRecord = async () => {
+  const response = await api.post<SyncTrackRecordResponse>('/track-record/sync')
   return response.data
 }

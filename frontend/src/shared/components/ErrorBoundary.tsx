@@ -22,15 +22,20 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   render() {
     if (this.state.error) {
+      const isPt = typeof window !== 'undefined' && (localStorage.getItem('i18nextLng') === 'pt-BR' || navigator.language?.startsWith('pt'))
       return (
         <div className="flex min-h-[60vh] items-center justify-center px-3 py-8">
           <div className="surface-card w-full max-w-md rounded-[20px] p-5 text-center">
             <div className="mx-auto inline-flex rounded-xl bg-[#C8102E]/10 p-3 text-[var(--accent-red)]">
               <AlertTriangle className="h-6 w-6" />
             </div>
-            <h1 className="mt-3 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Something went wrong</h1>
+            <h1 className="mt-3 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
+              {isPt ? 'Algo deu errado' : 'Something went wrong'}
+            </h1>
             <p className="mt-2 text-sm leading-6 text-[#999999]">
-              An unexpected error interrupted this page. Reloading usually fixes it.
+              {isPt
+                ? 'Um erro inesperado interrompeu esta página. Recarregar geralmente resolve.'
+                : 'An unexpected error interrupted this page. Reloading usually fixes it.'}
             </p>
             <button
               type="button"
@@ -38,7 +43,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               className="primary-action mx-auto mt-4 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
             >
               <RotateCcw className="h-4 w-4" />
-              Reload page
+              {isPt ? 'Recarregar página' : 'Reload page'}
             </button>
           </div>
         </div>

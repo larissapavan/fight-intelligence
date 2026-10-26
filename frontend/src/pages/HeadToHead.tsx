@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ArrowRight, CalendarDays, LoaderCircle, Share2, Swords, Trophy, Users } from 'lucide-react'
 
 import { FighterSelect } from '../shared/components/FighterSelect'
@@ -7,7 +8,7 @@ import { useFighters } from '../shared/hooks/useFighters'
 import { getHeadToHead, getOpponents } from '../shared/services/api'
 import type { FightRecord, HeadToHeadResponse, Opponent } from '../shared/types/api'
 
-const METHOD_LABELS: Record<string, string> = {
+const METHOD_LABELS_EN: Record<string, string> = {
   'U-DEC': 'Unanimous Decision',
   'S-DEC': 'Split Decision',
   'M-DEC': 'Majority Decision',
@@ -16,7 +17,15 @@ const METHOD_LABELS: Record<string, string> = {
   DQ: 'Disqualification',
 }
 
-/** Everyone a fighter has faced, most recent first; empty until a fighter is chosen (or if the lookup fails). */
+const METHOD_LABELS_PT: Record<string, string> = {
+  'U-DEC': 'Decisão Unânime',
+  'S-DEC': 'Decisão Dividida',
+  'M-DEC': 'Decisão Majoritária',
+  'KO/TKO': 'Nocaute (KO/TKO)',
+  SUB: 'Finalização',
+  DQ: 'Desqualificação',
+}
+
 function useOpponents(fighterName: string): Opponent[] {
   const [loaded, setLoaded] = useState<{ name: string; opponents: Opponent[] } | null>(null)
 
@@ -37,6 +46,7 @@ function useOpponents(fighterName: string): Opponent[] {
 }
 
 export function HeadToHead() {
+  const { t } = useTranslation()
   const { fighters } = useFighters()
   const [fighterAName, setFighterAName] = useState('')
   const [fighterBName, setFighterBName] = useState('')
@@ -59,7 +69,7 @@ export function HeadToHead() {
 
   const handleCompare = async () => {
     if (!canCompare) {
-      setError('Select two different fighters to search their head-to-head history.')
+      setError(t('predictor.selectTwoDifferent'))
       return
     }
 
@@ -80,37 +90,38 @@ export function HeadToHead() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading level={1}
-          eyebrow="Rivalry lookup"
-          title="Head-to-head history"
-          description="Pick two fighters to see every time they've met, who won, and how."
+        <SectionHeading
+          level={1}
+          eyebrow={t('headToHead.eyebrow')}
+          title={t('headToHead.title')}
+          description={t('headToHead.description')}
         />
 
         <div className="mt-3 grid gap-2.5 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-end">
           <FighterSelect
-            label="Fighter A"
+            label={t('headToHead.fighterA')}
             corner="red"
             value={fighterAName}
             fighters={fighters}
             disabledFighterName={fighterBName}
-            placeholder="Select first fighter"
+            placeholder={t('headToHead.selectFirst')}
             suggestions={suggestionsForA}
             onChange={setFighterAName}
           />
 
           <div className="hidden justify-center pb-3.5 lg:flex">
             <span className="type-display rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-3 py-1.5 text-xl font-bold uppercase text-[#C8102E]">
-              VS
+              {t('common.vs')}
             </span>
           </div>
 
           <FighterSelect
-            label="Fighter B"
+            label={t('headToHead.fighterB')}
             corner="blue"
             value={fighterBName}
             fighters={fighters}
             disabledFighterName={fighterAName}
-            placeholder="Select second fighter"
+            placeholder={t('headToHead.selectSecond')}
             suggestions={suggestionsForB}
             onChange={setFighterBName}
           />
@@ -123,11 +134,11 @@ export function HeadToHead() {
           className="primary-action mt-3 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Swords className="h-4 w-4" />}
-          {loading ? 'Searching...' : 'Find their history'}
+          {loading ? t('headToHead.searching') : t('headToHead.findHistory')}
         </button>
 
         {error ? (
-          <p className="mt-3 rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">
+          <p className="mt-3 rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[var(--text-main)]">
             {error}
           </p>
         ) : null}
@@ -139,13 +150,16 @@ export function HeadToHead() {
 }
 
 function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   if (result.meetings.length === 0) {
     return (
       <div className="space-y-3">
         <section className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Never fought directly</p>
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{t('headToHead.neverFought')}</p>
           <p className="mt-2 text-sm text-[#999999]">
-            {result.fighter_a} and {result.fighter_b} have no recorded UFC meetings.
+            {t('headToHead.neverFoughtDesc', { fighterA: result.fighter_a, fighterB: result.fighter_b })}
           </p>
         </section>
 
@@ -159,15 +173,15 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
     <div className="space-y-3">
       <section className="surface-card rounded-[20px] p-4 text-center">
         <p className="broadcast-label text-[11px] text-[#999999]">
-          {result.meetings.length} {result.meetings.length === 1 ? 'meeting' : 'meetings'}
+          {isPt ? `${result.meetings.length} ${result.meetings.length === 1 ? 'confronto' : 'confrontos'}` : `${result.meetings.length} ${result.meetings.length === 1 ? 'meeting' : 'meetings'}`}
         </p>
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <p className="type-display truncate text-right text-lg font-bold uppercase text-[#FFFFFF] sm:text-xl">{result.fighter_a}</p>
+          <p className="type-display truncate text-right text-lg font-bold uppercase text-[var(--text-main)] sm:text-xl">{result.fighter_a}</p>
           <p className="data-value text-3xl font-bold text-[#C8102E] sm:text-4xl">
             {result.fighter_a_wins}-{result.fighter_b_wins}
             {result.no_contests ? `-${result.no_contests}` : ''}
           </p>
-          <p className="type-display truncate text-left text-lg font-bold uppercase text-[#FFFFFF] sm:text-xl">{result.fighter_b}</p>
+          <p className="type-display truncate text-left text-lg font-bold uppercase text-[var(--text-main)] sm:text-xl">{result.fighter_b}</p>
         </div>
       </section>
 
@@ -183,6 +197,8 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
 }
 
 function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const degrees = result.degrees_of_separation ?? 0
 
   return (
@@ -190,7 +206,7 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
       <div className="flex items-center gap-2 text-[#C8102E]">
         <Share2 className="h-4 w-4" />
         <p className="broadcast-label text-[11px]">
-          Connected via the fight network • {degrees} degree{degrees === 1 ? '' : 's'} of separation
+          {isPt ? `Conexão pela rede de lutas • ${degrees} grau${degrees === 1 ? '' : 's'} de separação` : `Bout network path • ${degrees} degree${degrees === 1 ? '' : 's'} of separation`}
         </p>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
@@ -215,11 +231,13 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
 }
 
 function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center gap-2 text-[#C8102E]">
         <Users className="h-4 w-4" />
-        <p className="broadcast-label text-[11px]">Common opponents ({result.common_opponents.length})</p>
+        <p className="broadcast-label text-[11px]">{isPt ? `Adversários em comum (${result.common_opponents.length})` : `Common opponents (${result.common_opponents.length})`}</p>
       </div>
       <div className="mt-2.5 grid grid-cols-[1fr_auto_auto] items-center gap-x-2.5 gap-y-1.5">
         <span />
@@ -227,7 +245,7 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
         <span className="type-tech text-right text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-blue)]">{lastWord(result.fighter_b)}</span>
         {result.common_opponents.map((common) => (
           <Fragment key={common.opponent}>
-            <span className="min-w-0 truncate rounded-xl border border-white/6 bg-black/18 px-3 py-2 text-sm font-semibold text-[#FFFFFF]">
+            <span className="min-w-0 truncate rounded-xl border border-white/6 bg-black/18 px-3 py-2 text-sm font-semibold text-[var(--text-main)]">
               {common.opponent}
             </span>
             <ResultChip result={common.fighter_a_result} />
@@ -240,17 +258,20 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
 }
 
 function ResultChip({ result }: { result: 'win' | 'loss' | null }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   if (result === 'win') {
     return (
       <span className="type-tech justify-self-end rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#C8102E]">
-        Win
+        {isPt ? 'Vitória' : 'Win'}
       </span>
     )
   }
   if (result === 'loss') {
     return (
       <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
-        Loss
+        {isPt ? 'Derrota' : 'Loss'}
       </span>
     )
   }
@@ -266,45 +287,48 @@ function lastWord(fullName: string) {
 }
 
 function MeetingRow({ meeting, fighterA, fighterB }: { meeting: FightRecord; fighterA: string; fighterB: string }) {
+  const { i18n } = useTranslation()
   const winnerName = meeting.result === 'win' ? fighterA : meeting.result === 'loss' ? fighterB : null
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   return (
     <article className="surface-card rounded-[18px] p-3 sm:p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-bold uppercase tracking-[0.02em] text-[#FFFFFF]">{meeting.event_name}</h3>
+        <h3 className="text-sm font-bold uppercase tracking-[0.02em] text-[var(--text-main)]">{meeting.event_name}</h3>
         {meeting.date ? (
           <span className="theme-muted inline-flex items-center gap-1.5 text-xs">
             <CalendarDays className="h-3.5 w-3.5" />
-            {formatDate(meeting.date)}
+            {formatDate(meeting.date, i18n.language)}
           </span>
         ) : null}
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
         {winnerName ? (
-          <span className="inline-flex items-center gap-1.5 font-semibold text-[#FFFFFF]">
+          <span className="inline-flex items-center gap-1.5 font-semibold text-[var(--text-main)]">
             <Trophy className="h-4 w-4 text-[#C8102E]" />
-            {winnerName} won
+            {winnerName} {isPt ? 'venceu' : 'won'}
           </span>
         ) : (
-          <span className="theme-muted">No official result</span>
+          <span className="theme-muted">{isPt ? 'Sem resultado oficial' : 'No official result'}</span>
         )}
         {meeting.weight_class ? <span className="selector-chip">{meeting.weight_class}</span> : null}
       </div>
 
-      <p className="theme-muted mt-1.5 text-xs">{formatMethod(meeting)} {meeting.round ? `· R${meeting.round}` : ''} {meeting.time ?? ''}</p>
+      <p className="theme-muted mt-1.5 text-xs">{formatMethod(meeting, isPt)} {meeting.round ? `· R${meeting.round}` : ''} {meeting.time ?? ''}</p>
     </article>
   )
 }
 
-function formatDate(date: string): string {
+function formatDate(date: string, lang: string = 'en-US'): string {
   const parsed = new Date(`${date}T00:00:00`)
   if (Number.isNaN(parsed.getTime())) return date
-  return parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return parsed.toLocaleDateString(lang === 'pt-BR' ? 'pt-BR' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
-function formatMethod(meeting: FightRecord): string {
-  if (!meeting.method) return 'Result pending'
-  const label = METHOD_LABELS[meeting.method] ?? meeting.method
+function formatMethod(meeting: FightRecord, isPt = false): string {
+  if (!meeting.method) return isPt ? 'Resultado a definir' : 'Result pending'
+  const labels = isPt ? METHOD_LABELS_PT : METHOD_LABELS_EN
+  const label = labels[meeting.method] ?? meeting.method
   return meeting.method_detail ? `${label} (${meeting.method_detail})` : label
 }

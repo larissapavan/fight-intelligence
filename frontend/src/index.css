@@ -186,6 +186,7 @@ h3,
   text-transform: uppercase;
   letter-spacing: 0.01em;
   line-height: 0.98;
+  color: var(--text-main);
 }
 
 .type-tech {
@@ -216,6 +217,7 @@ h3,
   letter-spacing: 0.01em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
+  color: var(--text-main);
 }
 
 .page-hero {
@@ -225,6 +227,7 @@ h3,
   background-size: 7px 7px;
   border: 3px solid var(--rule);
   box-shadow: 6px 6px 0 var(--hard);
+  color: var(--text-main);
 }
 
 /* Flat corner triangle, like a folded poster edge. */
@@ -245,6 +248,7 @@ h3,
   background: var(--card-bg);
   border: 3px solid var(--rule);
   box-shadow: 5px 5px 0 var(--hard);
+  color: var(--text-main);
 }
 
 .metric-tile {
@@ -252,6 +256,7 @@ h3,
   background: var(--tile-bg);
   border: 2px solid var(--rule);
   overflow: hidden;
+  color: var(--text-main);
   transition:
     transform 120ms ease,
     box-shadow 120ms ease,
@@ -315,6 +320,7 @@ h3,
   letter-spacing: 0.1em;
   background: var(--action-bg);
   border: 2px solid var(--rule);
+  color: var(--text-main);
   transition:
     background 120ms ease,
     transform 120ms ease,

@@ -16,6 +16,24 @@ export const BADGES: Record<string, BadgeInfo> = {
   pride: { short: 'PRIDE', label: 'Pride FC', honor: false },
 }
 
+export const BADGE_LABELS_PT: Record<string, string> = {
+  bmf_current: 'Atual Campeão BMF',
+  goat: 'Melhor de todos os tempos (GOAT)',
+  bmf: 'Ex-Campeão BMF',
+  hof: 'Hall da Fama do UFC',
+  dwcs: "Dana White's Contender Series",
+  tuf: 'The Ultimate Fighter',
+  r2u: 'Road to UFC',
+  sf: 'Strikeforce',
+  wec: 'World Extreme Cagefighting',
+  pride: 'Pride FC',
+}
+
+export function getBadgeLabel(key: string, isPt = false): string {
+  if (isPt && BADGE_LABELS_PT[key]) return BADGE_LABELS_PT[key]
+  return BADGES[key]?.label ?? key
+}
+
 /** The champion seals: shown on the profile, left off ranking and champion lists, and drawn in silver. */
 export const CHAMPION_SEALS = new Set(['bmf', 'bmf_current'])
 

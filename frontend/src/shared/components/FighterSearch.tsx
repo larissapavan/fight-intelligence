@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { Search, X } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { FighterAvatar } from './FighterAvatar'
 import { searchFighters, type SearchableFighter } from '../data/searchFighters'
@@ -9,6 +10,7 @@ import { useFighters } from '../hooks/useFighters'
 import { useOrg } from '../hooks/useOrg'
 import { useOrgFighters } from '../hooks/useOrgData'
 import { orgPath } from '../data/orgs'
+import { DIVISION_NAMES_PT } from '../data/divisions'
 
 function recordOf(fighter: SearchableFighter) {
   if (fighter.wins == null || fighter.losses == null) return null
@@ -19,6 +21,8 @@ function recordOf(fighter: SearchableFighter) {
 export function FighterSearch() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const org = useOrg()
   const isUfc = org.id === 'ufc'
   const { fighters: ufcFighters } = useFighters(isUfc)
@@ -99,9 +103,9 @@ export function FighterSearch() {
           setOpen(!open)
         }}
         className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
-        aria-label="Search fighters"
+        aria-label={isPt ? 'Buscar lutadores' : 'Search fighters'}
         aria-expanded={open}
-        title="Search fighters (press /)"
+        title={isPt ? 'Buscar lutadores (pressione /)' : 'Search fighters (press /)'}
       >
         <Search className="h-4 w-4" />
       </button>
@@ -118,8 +122,8 @@ export function FighterSearch() {
                 setActive(0)
               }}
               onKeyDown={onKeyDown}
-              placeholder="Find a fighter by name"
-              aria-label="Find a fighter by name"
+              placeholder={isPt ? 'Buscar lutador por nome...' : 'Find a fighter by name'}
+              aria-label={isPt ? 'Buscar lutador por nome' : 'Find a fighter by name'}
               role="combobox"
               aria-expanded={results.length > 0}
               aria-controls="fighter-search-results"
@@ -129,7 +133,7 @@ export function FighterSearch() {
             <button
               type="button"
               onClick={close}
-              aria-label="Close search"
+              aria-label={isPt ? 'Fechar busca' : 'Close search'}
               className="inline-flex h-8 w-8 items-center justify-center text-[var(--text-muted)]"
             >
               <X className="h-4 w-4" />
@@ -155,7 +159,11 @@ export function FighterSearch() {
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-bold text-[var(--text-main)]">{fighter.name}</span>
                         <span className="block truncate text-xs text-[var(--text-muted)]">
-                          {[recordOf(fighter), fighter.division, fighter.nickname ? `“${fighter.nickname}”` : null]
+                          {[
+                            recordOf(fighter),
+                            isPt && fighter.division ? (DIVISION_NAMES_PT[fighter.division] ?? fighter.division) : fighter.division,
+                            fighter.nickname ? `“${fighter.nickname}”` : null
+                          ]
                             .filter(Boolean)
                             .join(' · ')}
                         </span>
@@ -165,10 +173,14 @@ export function FighterSearch() {
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">No fighter matches “{text.trim()}”.</p>
+              <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">
+                {isPt ? `Nenhum atleta encontrado para “${text.trim()}”.` : `No fighter matches “${text.trim()}”.`}
+              </p>
             )
           ) : (
-            <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">Type a name or nickname. Enter opens the profile.</p>
+            <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">
+              {isPt ? 'Digite um nome ou apelido. Enter abre o perfil.' : 'Type a name or nickname. Enter opens the profile.'}
+            </p>
           )}
         </div>
       ) : null}

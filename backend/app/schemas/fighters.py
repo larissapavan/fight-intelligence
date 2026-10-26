@@ -12,6 +12,19 @@ class Nationality(BaseModel):
     code: str | None = None
 
 
+class UpcomingBout(BaseModel):
+    event_name: str
+    event_date: str
+    location: str | None = None
+    opponent: str
+    weight_class: str | None = None
+    title_fight: bool = False
+    interim_title: bool = False
+    bmf_title: bool = False
+    is_main_event: bool = False
+    event_url: str | None = None
+
+
 class FighterSummary(BaseModel):
     name: str
     is_active: bool = False
@@ -52,3 +65,8 @@ class FighterSummary(BaseModel):
     former_titles: list[str] = []
     interim_titles: list[str] = []
     nationalities: list[Nationality] = []
+    elo: int | None = None
+    peak_elo: int | None = None
+    elo_rank: int | None = None
+    next_fight: UpcomingBout | None = None
+    upcoming_fights: list[UpcomingBout] = []

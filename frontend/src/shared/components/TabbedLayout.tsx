@@ -1,12 +1,16 @@
 import { NavLink, Outlet } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export interface SectionTab {
   to: string
   label: string
+  labelKey?: string
 }
 
 /** Tab bar shared by a group of related pages; every tab keeps its own URL, so deep links still work. */
 export function TabbedLayout({ label, tabs }: { label: string; tabs: SectionTab[] }) {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-3 sm:space-y-4">
       <nav aria-label={label} className="flex">
@@ -24,7 +28,7 @@ export function TabbedLayout({ label, tabs }: { label: string; tabs: SectionTab[
                   ].join(' ')
                 }
               >
-                {tab.label}
+                {tab.labelKey ? t(tab.labelKey) : tab.label}
               </NavLink>
             </li>
           ))}

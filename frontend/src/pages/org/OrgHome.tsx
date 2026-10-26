@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react'
 import { ArrowRight, CalendarDays, Crown, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { FighterAvatar } from '../../shared/components/FighterAvatar'
 import { LoadingSkeleton } from '../../shared/components/LoadingSkeleton'
 import { OrgFightRow } from '../../shared/components/OrgFightRow'
 import { OrgFighterModal } from '../../shared/components/OrgFighterModal'
 import { SectionHeading } from '../../shared/components/SectionHeading'
+import { getDivisionName } from '../../shared/data/divisions'
 import { compareDivisions, formatDate } from '../../shared/data/orgFormat'
 import { orgPath, type OrgConfig } from '../../shared/data/orgs'
 import { useOrg } from '../../shared/hooks/useOrg'
@@ -17,6 +19,8 @@ import type { OrgEvent } from '../../shared/types/api'
 const LATEST_RESULTS = 4
 
 export function OrgHome() {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const org = useOrg()
   const { fighters } = useOrgFighters(org.id)
   const past = useOrgEvents(org.id)
@@ -47,17 +51,26 @@ export function OrgHome() {
       <section className="page-hero rounded-[20px] px-3 py-4 sm:px-5 sm:py-5">
         <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr] xl:items-end">
           <div>
-            <SectionHeading level={1} eyebrow={org.name} title={`${org.shortName} fight intelligence`} description={org.tagline} />
+            <SectionHeading
+              level={1}
+              eyebrow={org.name}
+              title={`${org.shortName} • Estatísticas & Inteligência`}
+              description={org.tagline}
+            />
             <div className="mt-4 flex flex-wrap gap-2">
-              <HeroLink to={orgPath(org, 'events')}>Fight cards</HeroLink>
-              <HeroLink to={orgPath(org, 'fighters')}>Fighters</HeroLink>
+              <HeroLink to={orgPath(org, 'events')}>{isPt ? 'Cards & Eventos' : 'Fight cards'}</HeroLink>
+              <HeroLink to={orgPath(org, 'fighters')}>{isPt ? 'Lutadores' : 'Fighters'}</HeroLink>
               {org.hasRankings ? <HeroLink to={orgPath(org, 'rankings')}>Rankings</HeroLink> : null}
             </div>
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
-            <Tile label="Fighters" value={fighters.length.toLocaleString('en-US')} note={`${activeCount.toLocaleString('en-US')} active`} />
-            <Tile label="Events" value={past.events.length.toLocaleString('en-US')} />
-            <Tile label="Fights" value={fightCount.toLocaleString('en-US')} />
+            <Tile
+              label={isPt ? 'Lutadores' : 'Fighters'}
+              value={fighters.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')}
+              note={`${activeCount.toLocaleString(isPt ? 'pt-BR' : 'en-US')} ${isPt ? 'em atividade' : 'active'}`}
+            />
+            <Tile label={isPt ? 'Eventos' : 'Events'} value={past.events.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={isPt ? 'Lutas Cadastradas' : 'Fights'} value={fightCount.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
           </div>
         </div>
       </section>
@@ -68,48 +81,62 @@ export function OrgHome() {
         </p>
       ) : (
         <section aria-label="Next event" className="space-y-3">
-          <SectionHeading eyebrow="Next card" title={nextEvent ? nextEvent.name : 'No event announced'} />
+          <SectionHeading
+            eyebrow={isPt ? 'Próximo Evento' : 'Next card'}
+            title={nextEvent ? nextEvent.name : (isPt ? 'Nenhum evento anunciado' : 'No event announced')}
+          />
           {upcoming.loading ? (
             <LoadingSkeleton className="h-[150px]" />
           ) : nextEvent ? (
-            <EventPanel org={org} event={nextEvent} limit={3} scheduled onOpenFighter={setProfileName} />
+            <EventPanel org={org} event={nextEvent} limit={3} scheduled onOpenFighter={setProfileName} isPt={isPt} />
           ) : (
             <p className="surface-card rounded-[20px] px-4 py-5 text-sm text-[var(--text-muted)]">
-              The next {org.shortName} card has not been announced yet.
+              {isPt
+                ? `O próximo card do ${org.shortName} ainda não foi confirmado.`
+                : `The next ${org.shortName} card has not been announced yet.`}
             </p>
           )}
         </section>
       )}
 
       <section aria-label="Champions" className="space-y-3">
-        <SectionHeading eyebrow={org.archived ? 'Final champions' : 'Titles'} title={`${org.shortName} champions`} />
+        <SectionHeading
+          eyebrow={isPt ? (org.archived ? 'Últimos Campeões' : 'Cinturões') : (org.archived ? 'Final champions' : 'Titles')}
+          title={isPt ? `Campeões do ${org.shortName}` : `${org.shortName} champions`}
+        />
         {rankingsLoading ? (
           <LoadingSkeleton className="h-[120px]" />
         ) : champions.length ? (
           <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
             {champions.map(({ division, holders }) => (
               <li key={division}>
-                <ChampionTile division={division} holders={holders} lookup={lookup} onOpen={setProfileName} />
+                <ChampionTile division={division} holders={holders} lookup={lookup} onOpen={setProfileName} isPt={isPt} />
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-[var(--text-muted)]">Champions are not available yet.</p>
+          <p className="text-sm text-[var(--text-muted)]">
+            {isPt ? 'Lista de campeões indisponível no momento.' : 'Champions are not available yet.'}
+          </p>
         )}
       </section>
 
       {latestEvent ? (
         <section aria-label="Latest results" className="space-y-3">
-          <SectionHeading eyebrow="Latest results" title={latestEvent.name} />
-          <EventPanel org={org} event={latestEvent} limit={LATEST_RESULTS} onOpenFighter={setProfileName} />
+          <SectionHeading eyebrow={isPt ? 'Últimos Resultados' : 'Latest results'} title={latestEvent.name} />
+          <EventPanel org={org} event={latestEvent} limit={LATEST_RESULTS} onOpenFighter={setProfileName} isPt={isPt} />
         </section>
       ) : null}
 
       <p className="text-xs leading-5 text-[var(--text-muted)]">
-        {org.archived ? `Archive built from ${org.sourceName}.` : `Data from ${org.sourceName}, refreshed daily.`} Predictions, head-to-head and the track record are UFC-only for now: the model is
-        trained on UFC fights.{' '}
+        {org.archived
+          ? (isPt ? `Arquivo histórico compilado a partir de ${org.sourceName}.` : `Archive built from ${org.sourceName}.`)
+          : (isPt ? `Dados oficiais via ${org.sourceName}, sincronizados diariamente.` : `Data from ${org.sourceName}, refreshed daily.`)}{' '}
+        {isPt
+          ? 'As previsões da IA e o histórico detalhado estão focados no UFC atualmente, onde o modelo preditivo foi validado.'
+          : 'Predictions, head-to-head and the track record are UFC-only for now: the model is trained on UFC fights.'}{' '}
         <Link to="/predictor" className="font-semibold underline decoration-2 underline-offset-2 hover:bg-[#F2C230] hover:text-[#0E0E0E]">
-          Try the UFC predictor
+          {isPt ? 'Simular lutas no UFC →' : 'Try the UFC predictor'}
         </Link>
       </p>
 
@@ -137,14 +164,28 @@ function Tile({ label, value, note }: { label: string; value: string; note?: str
   )
 }
 
-function EventPanel({ org, event, limit, scheduled = false, onOpenFighter }: { org: OrgConfig; event: OrgEvent; limit: number; scheduled?: boolean; onOpenFighter: (name: string) => void }) {
+function EventPanel({
+  org,
+  event,
+  limit,
+  scheduled = false,
+  onOpenFighter,
+  isPt,
+}: {
+  org: OrgConfig
+  event: OrgEvent
+  limit: number
+  scheduled?: boolean
+  onOpenFighter: (name: string) => void
+  isPt: boolean
+}) {
   const fights = event.fights.slice(0, limit)
   return (
     <div className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--text-muted)]">
         <span className="inline-flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5" />
-          {formatDate(event.date)}
+          {formatDate(event.date, true, isPt)}
         </span>
         {event.location ? (
           <span className="inline-flex items-center gap-1.5">
@@ -162,7 +203,9 @@ function EventPanel({ org, event, limit, scheduled = false, onOpenFighter }: { o
         to={`${orgPath(org, 'events')}?q=${encodeURIComponent(event.name)}`}
         className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-main)] underline decoration-2 underline-offset-4 hover:bg-[#F2C230] hover:text-[#0E0E0E]"
       >
-        {event.fight_count > fights.length ? `Full card (${event.fight_count} fights)` : 'Open the card'}
+        {event.fight_count > fights.length
+          ? (isPt ? `Card completo (${event.fight_count} lutas)` : `Full card (${event.fight_count} fights)`)
+          : (isPt ? 'Ver card completo' : 'Open the card')}
         <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </div>
@@ -174,11 +217,13 @@ function ChampionTile({
   holders,
   lookup,
   onOpen,
+  isPt,
 }: {
   division: string
   holders: { fighter: string; status: string | null }[]
   lookup: (name: string) => { image_url: string | null } | undefined
   onOpen: (name: string) => void
+  isPt: boolean
 }) {
   const champion = holders.find((entry) => entry.status !== 'interim') ?? null
   const interim = holders.find((entry) => entry.status === 'interim') ?? null
@@ -186,18 +231,18 @@ function ChampionTile({
     <div className="metric-tile flex h-full items-center gap-3 rounded-2xl px-3 py-3">
       <FighterAvatar name={champion?.fighter ?? division} imageUrl={champion ? (lookup(champion.fighter)?.image_url ?? null) : null} highlight={Boolean(champion)} className="h-14 w-12" />
       <div className="min-w-0 flex-1">
-        <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{division}</p>
+        <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{getDivisionName(division, isPt)}</p>
         {champion ? (
           <button type="button" onClick={() => onOpen(champion.fighter)} className="flex max-w-full items-center gap-1.5 text-left text-base font-bold text-[var(--text-main)]">
             <Crown className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" aria-hidden="true" />
             <span className="truncate">{champion.fighter}</span>
           </button>
         ) : (
-          <p className="text-base font-bold text-[var(--text-muted)]">Vacant</p>
+          <p className="text-base font-bold text-[var(--text-muted)]">{isPt ? 'Cinturão Vago' : 'Vacant'}</p>
         )}
         {interim ? (
           <button type="button" onClick={() => onOpen(interim.fighter)} className="block max-w-full truncate text-left text-xs text-[var(--text-muted)] underline decoration-2 underline-offset-2">
-            Interim: {interim.fighter}
+            {isPt ? 'Interino' : 'Interim'}: {interim.fighter}
           </button>
         ) : null}
       </div>

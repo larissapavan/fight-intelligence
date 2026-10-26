@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import {
   Award,
   Bell,
@@ -29,7 +30,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChampionBelt } from '../shared/components/ChampionBelt'
 import { FighterOrigin } from '../shared/components/FighterOrigin'
 import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
-import { BADGES } from '../shared/data/badges'
+import { BADGES, getBadgeLabel } from '../shared/data/badges'
+import { getDivisionName } from '../shared/data/divisions'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { MiniStat } from '../shared/components/MiniStat'
@@ -126,10 +128,20 @@ const toneStyles = {
   },
 }
 
+const STANCE_NAMES_PT: Record<string, string> = {
+  Orthodox: 'Destro (Ortodoxo)',
+  Southpaw: 'Canhoto',
+  Switch: 'Ambidestro (Troca de base)',
+  Open: 'Base Aberta',
+  'All stances': 'Todas as bases',
+}
+
 /** Cards rendered per page in a division; the biggest divisions hold several hundred fighters. A phone gets fewer: each card is tall. */
 const PAGE_SIZE = typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches ? 12 : 24
 
 export function Fighters() {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const { fighters, loading, error } = useFighters()
   const { imageByName } = useFighterImages()
   const [query, setQuery] = useState('')
@@ -202,14 +214,14 @@ export function Fighters() {
       <section className="page-hero rounded-[20px] px-3 py-3 xs:px-4 xs:py-3.5 md:px-5 md:py-5 lg:px-6 lg:py-6">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
           <SectionHeading level={1}
-            eyebrow="Fighters"
-            title="Weight classes"
-            description="Browse fighters by weight class and open a profile for their record, career timeline and stats."
+            eyebrow={t('fighters.title')}
+            title={t('fighters.division')}
+            description={t('fighters.subtitle')}
           />
 
           <div className="grid grid-cols-2 gap-2">
-            <SummaryTile label="Fighters" value={visibleFighters.length.toLocaleString('en-US')} />
-            <SummaryTile label="Divisions" value={`${divisionGroups.length}`} />
+            <SummaryTile label={t('fighters.title')} value={visibleFighters.length.toLocaleString('en-US')} />
+            <SummaryTile label={t('fighters.division')} value={`${divisionGroups.length}`} />
           </div>
         </div>
 
@@ -220,8 +232,8 @@ export function Fighters() {
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search fighter or nickname"
-                aria-label="Search fighter or nickname"
+                placeholder={t('fighters.search')}
+                aria-label={t('fighters.search')}
                 className="theme-text w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-[var(--text-muted)] md:min-w-[300px]"
               />
             </div>
@@ -233,7 +245,7 @@ export function Fighters() {
               className="ghost-action theme-text inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold uppercase tracking-[0.1em] md:hidden"
             >
               <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-              Filters
+              {isPt ? 'Filtros' : 'Filters'}
               {stanceFilter !== 'All stances' || badgeFilter !== '' ? (
                 <span className="grid h-5 min-w-5 place-items-center bg-[var(--accent-red)] px-1 text-[11px] text-white">
                   {(stanceFilter !== 'All stances' ? 1 : 0) + (badgeFilter !== '' ? 1 : 0)}
@@ -245,25 +257,25 @@ export function Fighters() {
           <select
             value={stanceFilter}
             onChange={(event) => setStanceFilter(event.target.value)}
-            aria-label="Filter by stance"
+            aria-label={isPt ? 'Filtrar por base' : 'Filter by stance'}
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
             {stances.map((stance) => (
               <option key={stance} value={stance}>
-                {stance}
+                {isPt ? (STANCE_NAMES_PT[stance] ?? stance) : stance}
               </option>
             ))}
           </select>
           <select
             value={badgeFilter}
             onChange={(event) => setBadgeFilter(event.target.value)}
-            aria-label="Filter by badge or origin"
+            aria-label={isPt ? 'Filtrar por selo ou origem' : 'Filter by badge or origin'}
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
-            <option value="">All badges and origins</option>
-            {Object.entries(BADGES).map(([key, info]) => (
+            <option value="">{isPt ? 'Todos os selos e origens' : 'All badges and origins'}</option>
+            {Object.entries(BADGES).map(([key]) => (
               <option key={key} value={key}>
-                {info.label}
+                {getBadgeLabel(key, isPt)}
               </option>
             ))}
           </select>
@@ -271,24 +283,24 @@ export function Fighters() {
         </div>
 
         <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-white/8 pt-2.5">
-          <div role="group" aria-label="Fighter status" className="inline-flex max-w-full overflow-x-auto rounded-md border border-white/8 bg-white/[0.035] p-0.5 chip-scroll">
+          <div role="group" aria-label={isPt ? 'Status do lutador' : 'Fighter status'} className="inline-flex max-w-full overflow-x-auto rounded-md border border-white/8 bg-white/[0.035] p-0.5 chip-scroll">
             <ActiveTabButton active={activeFilter === 'all'} onClick={() => setActiveFilter('all')} count={fighters.length}>
-              All
+              {t('fighters.all')}
             </ActiveTabButton>
             <ActiveTabButton active={activeFilter === 'active'} onClick={() => setActiveFilter('active')} count={statusCounts.active}>
-              <Radio className="h-3 w-3" /> Active
+              <Radio className="h-3 w-3" /> {t('fighters.activeOnly')}
             </ActiveTabButton>
             <ActiveTabButton active={activeFilter === 'former'} onClick={() => setActiveFilter('former')} count={statusCounts.former}>
-              Former UFC
+              {t('fighters.former')}
             </ActiveTabButton>
           </div>
           <p className="broadcast-label text-[11px] text-[#999999]">
-            <span className="tabular-nums text-[#FFFFFF]">{visibleFighters.length}</span> shown
+            <span className="tabular-nums text-[var(--text-main)]">{visibleFighters.length}</span> {isPt ? 'exibidos' : 'shown'}
           </p>
         </div>
       </section>
 
-      {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p> : null}
+      {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm font-semibold text-[var(--text-red)]">{error}</p> : null}
 
       {loading ? (
         <section className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
@@ -302,6 +314,7 @@ export function Fighters() {
             groups={divisionGroups}
             counts={groupedFighters}
             activeKey={shownDivision}
+            isPt={isPt}
             onSelect={setActiveDivision}
           />
 
@@ -319,8 +332,14 @@ export function Fighters() {
         </div>
       ) : (
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">No fighters found</p>
-          <p className="mt-2 text-sm text-[#999999]">Adjust the search or filter to explore another fighter profile in the database.</p>
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
+            {isPt ? 'Nenhum lutador encontrado' : 'No fighters found'}
+          </p>
+          <p className="mt-2 text-sm text-[#999999]">
+            {isPt
+              ? 'Tente ajustar os termos de busca ou mudar os filtros para encontrar outros lutadores.'
+              : 'Adjust the search or filter to explore another fighter profile in the database.'}
+          </p>
         </div>
       )}
 
@@ -384,11 +403,13 @@ function WeightClassBar({
   groups,
   counts,
   activeKey,
+  isPt,
   onSelect,
 }: {
   groups: DivisionGroup[]
   counts: Map<string, FighterProfile[]>
   activeKey: string
+  isPt: boolean
   onSelect: (key: string) => void
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -422,9 +443,9 @@ function WeightClassBar({
   const sectionOf = (key: string) => (key === 'open-class' ? 2 : key.startsWith('w-') ? 1 : 0)
 
   return (
-    <nav aria-label="Weight class filter" className="relative rounded-xl border border-white/8 bg-black/20 py-1.5">
-      <ScrollArrow direction="left" visible={edges.left} onClick={() => scrollByStep(-1)} />
-      <ScrollArrow direction="right" visible={edges.right} onClick={() => scrollByStep(1)} />
+    <nav aria-label={isPt ? 'Filtro por categoria de peso' : 'Weight class filter'} className="relative rounded-xl border border-white/8 bg-black/20 py-1.5">
+      <ScrollArrow direction="left" visible={edges.left} onClick={() => scrollByStep(-1)} isPt={isPt} />
+      <ScrollArrow direction="right" visible={edges.right} onClick={() => scrollByStep(1)} isPt={isPt} />
       <div
         ref={scrollRef}
         onScroll={updateEdges}
@@ -440,6 +461,7 @@ function WeightClassBar({
               group={group}
               count={counts.get(group.key)?.length ?? 0}
               isActive={activeKey === group.key}
+              isPt={isPt}
               onClick={() => onSelect(group.key)}
             />
           </div>
@@ -449,7 +471,17 @@ function WeightClassBar({
   )
 }
 
-function ScrollArrow({ direction, visible, onClick }: { direction: 'left' | 'right'; visible: boolean; onClick: () => void }) {
+function ScrollArrow({
+  direction,
+  visible,
+  onClick,
+  isPt,
+}: {
+  direction: 'left' | 'right'
+  visible: boolean
+  onClick: () => void
+  isPt: boolean
+}) {
   const Icon = direction === 'left' ? ChevronLeft : ChevronRight
   return (
     <button
@@ -457,7 +489,11 @@ function ScrollArrow({ direction, visible, onClick }: { direction: 'left' | 'rig
       onClick={onClick}
       disabled={!visible}
       tabIndex={visible ? 0 : -1}
-      aria-label={direction === 'left' ? 'Scroll weight classes left' : 'Scroll weight classes right'}
+      aria-label={
+        direction === 'left'
+          ? isPt ? 'Rolar categorias para a esquerda' : 'Scroll weight classes left'
+          : isPt ? 'Rolar categorias para a direita' : 'Scroll weight classes right'
+      }
       className={`absolute top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-white/12 bg-neutral-900/80 text-[#CCCCCC] backdrop-blur-sm transition hover:text-[#FF1E27] focus-visible:text-[#FF1E27] focus-visible:outline-none ${
         direction === 'left' ? 'left-1' : 'right-1'
       } ${visible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
@@ -478,12 +514,15 @@ function DivisionPanel({
   imageByName: Map<string, FighterImageRecord>
   onSelectFighter: (name: string) => void
 }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   // Show a page at a time; the list starts over whenever the filters hand it a different set of fighters.
   const [paging, setPaging] = useState({ source: fighters, limit: PAGE_SIZE })
   if (paging.source !== fighters) setPaging({ source: fighters, limit: PAGE_SIZE })
   const limit = paging.source === fighters ? paging.limit : PAGE_SIZE
   const shown = fighters.slice(0, limit)
   const remaining = fighters.length - shown.length
+  const groupLabel = getDivisionName(group.label, isPt)
 
   return (
     <motion.section
@@ -499,12 +538,12 @@ function DivisionPanel({
             <group.icon className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <p className="broadcast-label text-[11px] text-[#999999]">Active division</p>
-            <h2 className="mt-0.5 text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF] sm:text-2xl">
-              {group.label}
+            <p className="broadcast-label text-[11px] text-[#999999]">{isPt ? 'Categoria selecionada' : 'Active division'}</p>
+            <h2 className="mt-0.5 text-xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)] sm:text-2xl">
+              {groupLabel}
             </h2>
             <p className="mt-1 text-xs text-[#999999]">
-              {fighters.length} athletes • {group.limit} limit
+              {fighters.length} {isPt ? 'atletas' : 'athletes'} • {group.limit === 'Mixed' ? (isPt ? 'Misto' : 'Mixed') : group.limit}
             </p>
           </div>
         </div>
@@ -529,11 +568,13 @@ function DivisionPanel({
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-white/12 bg-white/[0.03] px-4 py-7 text-center">
-            <p className="type-display text-xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
-              No athletes in this division
+            <p className="type-display text-xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
+              {isPt ? 'Nenhum atleta nesta categoria' : 'No athletes in this division'}
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#999999]">
-              The current search or stance filter has no matching fighters in {group.label}.
+              {isPt
+                ? `Nenhum lutador correspondente aos filtros atuais em ${groupLabel}.`
+                : `The current search or stance filter has no matching fighters in ${group.label}.`}
             </p>
           </div>
         )}
@@ -544,20 +585,22 @@ function DivisionPanel({
               onClick={() => setPaging({ source: fighters, limit: limit + PAGE_SIZE })}
               className="primary-action inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
             >
-              Show {Math.min(PAGE_SIZE, remaining)} more
+              {isPt ? `Mostrar mais ${Math.min(PAGE_SIZE, remaining)}` : `Show ${Math.min(PAGE_SIZE, remaining)} more`}
             </button>
             <button
               type="button"
               onClick={() => setPaging({ source: fighters, limit: fighters.length })}
               className="ghost-action theme-text inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em]"
             >
-              Show all {fighters.length.toLocaleString('en-US')}
+              {isPt ? `Mostrar todos (${fighters.length.toLocaleString('pt-BR')})` : `Show all ${fighters.length.toLocaleString('en-US')}`}
             </button>
           </div>
         ) : null}
         {fighters.length > PAGE_SIZE ? (
           <p className="mt-2 text-center text-[11px] text-[#999999]" aria-live="polite">
-            Showing {shown.length.toLocaleString('en-US')} of {fighters.length.toLocaleString('en-US')}
+            {isPt
+              ? `Exibindo ${shown.length.toLocaleString('pt-BR')} de ${fighters.length.toLocaleString('pt-BR')}`
+              : `Showing ${shown.length.toLocaleString('en-US')} of ${fighters.length.toLocaleString('en-US')}`}
           </p>
         ) : null}
       </div>
@@ -569,11 +612,13 @@ function DivisionPill({
   group,
   count,
   isActive,
+  isPt,
   onClick,
 }: {
   group: DivisionGroup
   count: number
   isActive: boolean
+  isPt: boolean
   onClick: () => void
 }) {
   return (
@@ -589,7 +634,7 @@ function DivisionPill({
       ].join(' ')}
     >
       <group.icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      <span className="hidden sm:inline">{group.label}</span>
+      <span className="hidden sm:inline">{getDivisionName(group.label, isPt)}</span>
       <span className="sm:hidden">{group.shortLabel}</span>
       <CountPill active={isActive}>{count}</CountPill>
     </button>
@@ -609,6 +654,8 @@ function FighterDivisionCard({
   imageUrl?: string | null
   onSelect: () => void
 }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const styles = toneStyles[group.tone]
 
   return (
@@ -626,8 +673,10 @@ function FighterDivisionCard({
           <div className="min-w-0 max-sm:w-full">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 max-sm:w-full">
-                <p className={`broadcast-label text-[11px] ${styles.text}`}>{fighter.division ?? group.shortLabel}</p>
-                <h3 className="mt-1 flex max-w-full flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[#FFFFFF] sm:justify-start">
+                <p className={`broadcast-label text-[11px] ${styles.text}`}>
+                  {getDivisionName(fighter.division ?? group.shortLabel, isPt)}
+                </p>
+                <h3 className="mt-1 flex max-w-full flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-xl font-bold uppercase leading-none tracking-[0.03em] text-[var(--text-main)] sm:justify-start">
                   <FlagList fighter={fighter} />
                   <span className="min-w-0 break-words">{fighter.name}</span>
                   {fighter.belt ? <ChampionBelt /> : null}
@@ -636,7 +685,7 @@ function FighterDivisionCard({
             </div>
 
             <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#999999]">
-              {formatRecord(fighter)}
+              {formatRecord(fighter, isPt)}
               {fighter.nickname ? ` • "${fighter.nickname}"` : ''}
             </p>
             <FighterOrigin fighter={fighter} className="mt-1.5 max-sm:[&>li]:justify-center" />
@@ -645,10 +694,14 @@ function FighterDivisionCard({
         </div>
 
         <div className="mt-auto grid grid-cols-2 gap-2 pt-3">
-          <MiniStat icon={Shield} label="Win rate" value={formatPercent(fighter.win_rate)} />
-          <MiniStat icon={Weight} label="Weight" value={fighter.weight_lbs ? `${fighter.weight_lbs.toFixed(0)} lb` : '—'} />
-          <MiniStat icon={Ruler} label="Reach" value={fighter.reach_cm ? `${fighter.reach_cm.toFixed(0)} cm` : '—'} />
-          <MiniStat icon={Swords} label="Style" value={fighter.stance || 'Unknown'} />
+          <MiniStat icon={Shield} label={isPt ? 'Aproveitamento' : 'Win rate'} value={formatPercent(fighter.win_rate)} />
+          <MiniStat icon={Weight} label={isPt ? 'Peso' : 'Weight'} value={fighter.weight_lbs ? `${fighter.weight_lbs.toFixed(0)} lb` : '—'} />
+          <MiniStat icon={Ruler} label={isPt ? 'Envergadura' : 'Reach'} value={fighter.reach_cm ? `${fighter.reach_cm.toFixed(0)} cm` : '—'} />
+          <MiniStat
+            icon={Swords}
+            label={isPt ? 'Postura' : 'Style'}
+            value={fighter.stance ? (isPt ? (STANCE_NAMES_PT[fighter.stance] ?? fighter.stance) : fighter.stance) : (isPt ? 'Não informada' : 'Unknown')}
+          />
         </div>
 
         <div className="mt-3 flex gap-2">
@@ -658,7 +711,7 @@ function FighterDivisionCard({
             className="primary-action inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-white"
           >
             <Award className="h-3.5 w-3.5" />
-            Performance
+            {isPt ? 'Ver Perfil' : 'Performance'}
           </button>
           {fighter.fighter_url ? (
             <a
@@ -666,8 +719,8 @@ function FighterDivisionCard({
               target="_blank"
               rel="noreferrer"
               onClick={(event) => event.stopPropagation()}
-              aria-label={`${fighter.name} on UFCStats (opens in a new tab)`}
-              title="Open on UFCStats"
+              aria-label={isPt ? `${fighter.name} no UFCStats (abre em nova aba)` : `${fighter.name} on UFCStats (opens in a new tab)`}
+              title={isPt ? 'Abrir no UFCStats' : 'Open on UFCStats'}
               className="ghost-action inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E]"
             >
               <ExternalLink className="h-3.5 w-3.5" />
@@ -739,7 +792,7 @@ function SummaryTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="metric-tile rounded-xl px-3 py-2 sm:py-2.5">
       <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
-      <p className="data-value mt-0.5 text-xl font-bold text-[#FFFFFF] sm:mt-1 sm:text-2xl">{value}</p>
+      <p className="data-value mt-0.5 text-xl font-bold text-[var(--text-main)] sm:mt-1 sm:text-2xl">{value}</p>
     </div>
   )
 }
@@ -758,6 +811,6 @@ function getDivisionLabel(fighter: FighterProfile) {
   return (fighter.division ?? '').toLowerCase()
 }
 
-function formatRecord(fighter: FighterProfile) {
-  return `${fighter.wins ?? 0}-${fighter.losses ?? 0}${fighter.draws ? `-${fighter.draws}` : ''} record`
+function formatRecord(fighter: FighterProfile, isPt = false) {
+  return `${fighter.wins ?? 0}-${fighter.losses ?? 0}${fighter.draws ? `-${fighter.draws}` : ''} ${isPt ? 'cartel' : 'record'}`
 }

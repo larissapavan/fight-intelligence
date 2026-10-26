@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
@@ -8,8 +9,10 @@ import { shownMetrics } from '../shared/data/modelAccuracy'
 import { useModelInfo } from '../shared/hooks/useModelInfo'
 
 export function Model() {
+  const { t, i18n } = useTranslation()
   const { modelInfo, health, loading, error } = useModelInfo()
   const shown = shownMetrics(modelInfo)
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const baselineChart =
     modelInfo == null
@@ -29,10 +32,11 @@ export function Model() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading level={1}
-          eyebrow="The model"
-          title="How the model works"
-          description="The model, how it compares with simpler ones, and what goes into each prediction."
+        <SectionHeading
+          level={1}
+          eyebrow={t('model.eyebrow')}
+          title={t('model.title')}
+          description={t('model.description')}
         />
       </section>
 
@@ -47,9 +51,9 @@ export function Model() {
       ) : (
         <>
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <MetricCard label="Model" value={modelInfo.model_name} />
-            <MetricCard label={`Accuracy (${shown.caption})`} value={shown.accuracy != null ? `${(shown.accuracy * 100).toFixed(1)}%` : '—'} />
-            <MetricCard label="ROC AUC" value={shown.rocAuc != null ? shown.rocAuc.toFixed(3) : '—'} />
+            <MetricCard label={t('model.modelCard')} value={modelInfo.model_name} />
+            <MetricCard label={`${isPt ? 'Acurácia' : 'Accuracy'} (${shown.caption})`} value={shown.accuracy != null ? `${(shown.accuracy * 100).toFixed(1)}%` : '—'} />
+            <MetricCard label={t('model.rocAuc')} value={shown.rocAuc != null ? shown.rocAuc.toFixed(3) : '—'} />
             <MetricCard label="Log Loss" value={shown.logLoss != null ? shown.logLoss.toFixed(3) : '—'} />
           </section>
 
@@ -58,9 +62,9 @@ export function Model() {
           <section className="grid gap-3 xl:grid-cols-[1fr_1fr]">
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow="Baseline comparison"
-                title="Why this model"
-                description="As reported in the model's file, it was tested against simpler models, and gradient boosting had the best accuracy and log loss."
+                eyebrow={isPt ? 'Comparação com baselines' : 'Baseline comparison'}
+                title={t('model.baselines')}
+                description={isPt ? 'Testado contra modelos lineares simples para garantir que a abordagem traz ganho preditivo real.' : "As reported in the model's file, it was tested against simpler models, and gradient boosting had the best accuracy and log loss."}
               />
               <div className="mt-3 h-[210px] min-w-0 sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%" minWidth={280}>
@@ -70,12 +74,12 @@ export function Model() {
                     <YAxis tick={{ fill: '#999999', fontSize: 12 }} axisLine={false} tickLine={false} />
                     <Tooltip
                       contentStyle={{
-                          background: '#111111',
-                          border: '1px solid rgba(255,255,255,0.1)',
-                          borderRadius: '14px',
-                          color: '#FFFFFF',
-                        }}
-                      />
+                        background: '#111111',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '14px',
+                        color: '#FFFFFF',
+                      }}
+                    />
                     <Bar dataKey="accuracy" fill="#C8102E" radius={[6, 6, 0, 0]} />
                     <Bar dataKey="rocAuc" fill="#999999" radius={[6, 6, 0, 0]} />
                   </BarChart>
@@ -85,9 +89,9 @@ export function Model() {
 
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow="Feature design"
-                title="What the model looks at"
-                description="Mostly the difference between the two fighters: age, reach, record, striking and takedown accuracy."
+                eyebrow={isPt ? 'Engenharia de features' : 'Feature design'}
+                title={t('model.featureImportance')}
+                description={isPt ? 'Diferenças de idade, envergadura, histórico e taxas de golpes e quedas.' : 'Mostly the difference between the two fighters: age, reach, record, striking and takedown accuracy.'}
               />
               <div className="mt-3 h-[210px] min-w-0 sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%" minWidth={280}>
@@ -113,9 +117,9 @@ export function Model() {
           <section className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow="System design"
-                title="From data to this site"
-                description="Fight data is cleaned, turned into features and served by the API to this site."
+                eyebrow={isPt ? 'Arquitetura do sistema' : 'System design'}
+                title={isPt ? 'Do dado bruto ao site' : 'From data to this site'}
+                description={isPt ? 'Os dados são limpos, transformados em atributos e servidos via API.' : 'Fight data is cleaned, turned into features and served by the API to this site.'}
               />
               <div className="mt-3 space-y-2">
                 {modelInfo.highlights.map((item) => (
@@ -134,9 +138,9 @@ export function Model() {
 
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow="Limitations"
-                title="What it can't do"
-                description="Where the model falls short."
+                eyebrow={isPt ? 'Limitações' : 'Limitations'}
+                title={isPt ? 'O que o modelo não prevê' : "What it can't do"}
+                description={isPt ? 'Fatores intangíveis e limites da abordagem estatística.' : 'Where the model falls short.'}
               />
               <div className="mt-3 rounded-2xl border border-[#C8102E]/18 bg-[#C8102E]/8 p-3">
                 <ul className="space-y-2 text-xs leading-5 text-[#FFFFFF]">
@@ -146,8 +150,8 @@ export function Model() {
                 </ul>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2.5">
-                <MetricCard label="API status" value={health?.model_loaded ? 'Online' : 'Offline'} compact />
-                <MetricCard label="Fighters loaded" value={`${health?.fighters_loaded ?? 0}`} compact />
+                <MetricCard label="API status" value={health?.model_loaded ? (isPt ? 'Online' : 'Online') : (isPt ? 'Offline' : 'Offline')} compact />
+                <MetricCard label={isPt ? 'Lutadores no modelo' : 'Fighters loaded'} value={`${health?.fighters_loaded ?? 0}`} compact />
               </div>
             </article>
           </section>

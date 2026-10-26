@@ -129,6 +129,56 @@ def get_upcoming_events() -> list[dict]:
     return [_main_event_first(event) for event in merged]
 
 
+_upcoming_bouts_cache: dict = {"signature": None, "by_fighter": {}}
+
+
+def get_upcoming_bouts_by_fighter() -> dict[str, list[dict]]:
+    """Return map of normalized fighter name -> list of announced upcoming bouts."""
+    signature = _source_signature(UPCOMING_EVENTS_SOURCE_PATH)
+    manual_sig = MANUAL_FIGHTS_SOURCE_PATH.stat().st_mtime_ns if MANUAL_FIGHTS_SOURCE_PATH.exists() else None
+    cache_key = (signature, manual_sig)
+
+    if _upcoming_bouts_cache["signature"] != cache_key:
+        from .catalog_service import _normalize_name
+        events = get_upcoming_events()
+        by_fighter: dict[str, list[dict]] = {}
+        for event in events:
+            fights = event.get("fights", [])
+            for idx, fight in enumerate(fights):
+                f1 = canonical_name(fight.get("fighter_1"))
+                f2 = canonical_name(fight.get("fighter_2"))
+                if not f1 or not f2:
+                    continue
+                is_main = (idx == 0)
+                bout_common = {
+                    "event_name": event["name"],
+                    "event_date": event["date"],
+                    "location": event.get("location"),
+                    "weight_class": fight.get("weight_class"),
+                    "title_fight": bool(fight.get("title_fight")),
+                    "interim_title": bool(fight.get("interim_title")),
+                    "bmf_title": bool(fight.get("bmf_title")),
+                    "is_main_event": is_main,
+                    "event_url": event.get("event_url"),
+                }
+                for ftr, opp in ((f1, f2), (f2, f1)):
+                    key = _normalize_name(ftr)
+                    by_fighter.setdefault(key, []).append({
+                        **bout_common,
+                        "opponent": opp,
+                    })
+        _upcoming_bouts_cache["by_fighter"] = by_fighter
+        _upcoming_bouts_cache["signature"] = cache_key
+    return _upcoming_bouts_cache["by_fighter"]
+
+
+def get_fighter_upcoming_bouts(name: str) -> list[dict]:
+    bouts = get_upcoming_bouts_by_fighter()
+    c_name = canonical_name(name) or name
+    from .catalog_service import _normalize_name
+    return bouts.get(_normalize_name(c_name), [])
+
+
 def _surname_tokens(text: str) -> list[str]:
     plain = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
     return [part for part in re.split(r"[^a-z0-9]+", plain) if part]
@@ -212,14 +262,36 @@ def _merge_manual_fights(events: list[dict], manual: list[dict], today: str) -> 
     return merged
 
 
+_TITLE_OVERRIDE_PAIRS = {
+    _pair_key("Carlos Prates", "Michael Morales"): {"title_fight": True, "interim_title": True},
+    _pair_key("Petr Yan", "Merab Dvalishvili"): {"title_fight": True, "interim_title": False},
+    _pair_key("Alexander Volkanovski", "Movsar Evloev"): {"title_fight": True, "interim_title": False},
+}
+
+
 def _format_fight(row: pd.Series, champions: dict[str, set[str]] | None = None) -> dict:
+    fighter_1, fighter_2 = canonical_name(row["fighter_1"]), canonical_name(row["fighter_2"])
+    pair = _pair_key(fighter_1, fighter_2)
+
     title_fight = _to_bool(row.get("title_fight"))
+    interim_title = _to_bool(row.get("interim_title")) or False
+
+    if pair in _TITLE_OVERRIDE_PAIRS:
+        override = _TITLE_OVERRIDE_PAIRS[pair]
+        if "title_fight" in override:
+            title_fight = override["title_fight"]
+        if "interim_title" in override:
+            interim_title = override["interim_title"]
+
+    if interim_title:
+        title_fight = True
+
     if title_fight is None and champions:
         # Upcoming cards carry no title flag: a fight is a title defense when today's champion of that division is in it.
         holders = champions.get(_nullable_string(row.get("weight_class")) or "", set())
-        if holders & {str(canonical_name(row["fighter_1"])), str(canonical_name(row["fighter_2"]))}:
+        if holders & {str(fighter_1), str(fighter_2)}:
             title_fight = True
-    fighter_1, fighter_2 = canonical_name(row["fighter_1"]), canonical_name(row["fighter_2"])
+
     return {
         "fighter_1": fighter_1,
         "fighter_2": fighter_2,
@@ -234,6 +306,7 @@ def _format_fight(row: pd.Series, champions: dict[str, set[str]] | None = None) 
         "num_rounds": _to_int(row.get("num_rounds")),
         "title_fight": title_fight,
         "bmf_title": is_bmf_title_fight(_nullable_string(row.get("fight_url"))) or is_announced_bmf_bout(fighter_1, fighter_2),
+        "interim_title": interim_title,
         "result": _nullable_string(row.get("result")),
         "result_details": _nullable_string(row.get("result_details")),
     }

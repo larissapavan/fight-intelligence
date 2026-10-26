@@ -1,6 +1,32 @@
+import { useTranslation } from 'react-i18next'
 import type { MainFactor } from '../types/api'
 
 const TOP_FACTORS = 6
+
+const FEATURE_NAMES_PT: Record<string, string> = {
+  'Age difference': 'Diferença de idade',
+  'Height difference': 'Diferença de altura',
+  'Reach difference': 'Diferença de envergadura',
+  'Wins difference': 'Diferença de vitórias',
+  'Losses difference': 'Diferença de derrotas',
+  'Striking accuracy gap': 'Diferença na precisão de golpes',
+  'Takedown accuracy gap': 'Diferença no aproveitamento de quedas',
+  'Win rate difference': 'Diferença na taxa de vitória',
+  'Same stance': 'Mesma base / postura',
+  'Fight month': 'Mês do combate',
+  'Fight year': 'Ano do combate',
+  'Fighter A win rate': 'Taxa de vitória (Lutador A)',
+  'Fighter B win rate': 'Taxa de vitória (Lutador B)',
+  'Fighter A striking accuracy': 'Precisão de golpes (Lutador A)',
+  'Fighter B striking accuracy': 'Precisão de golpes (Lutador B)',
+  'Fighter A takedown accuracy': 'Aproveitamento de quedas (Lutador A)',
+  'Fighter B takedown accuracy': 'Aproveitamento de quedas (Lutador B)',
+}
+
+export function localizeFeature(name: string, isPt = false): string {
+  if (!isPt) return name
+  return FEATURE_NAMES_PT[name] ?? name
+}
 
 export function ShapFactorBars({
   factors,
@@ -11,6 +37,9 @@ export function ShapFactorBars({
   fighterAName: string
   fighterBName: string
 }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   const rows = factors.slice(0, TOP_FACTORS)
   if (rows.length === 0) return null
 
@@ -20,8 +49,8 @@ export function ShapFactorBars({
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="broadcast-label text-[11px] text-[#999999]">SHAP explainability</p>
-          <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Key matchup factors</h2>
+          <p className="broadcast-label text-[11px] text-[#999999]">{isPt ? 'Explicabilidade da IA (SHAP)' : 'SHAP explainability'}</p>
+          <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{isPt ? 'Fatores Decisivos do Combate' : 'Key matchup factors'}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.12em]">
           <span className="inline-flex items-center gap-1.5 text-[#C8102E]">
@@ -34,7 +63,11 @@ export function ShapFactorBars({
           </span>
         </div>
       </div>
-      <p className="mt-1 text-xs text-[#999999]">Bars are colored by the fighter they favored. Longer means a stronger push.</p>
+      <p className="mt-1 text-xs text-[#999999]">
+        {isPt
+          ? 'As barras indicam qual lutador foi favorecido por cada métrica estatística. Barras maiores indicam impacto mais forte.'
+          : 'Bars are colored by the fighter they favored. Longer means a stronger push.'}
+      </p>
 
       <div className="mt-3 space-y-3">
         {rows.map((factor) => {
@@ -44,17 +77,25 @@ export function ShapFactorBars({
           const nameColor = favorsA ? 'text-[#C8102E]' : 'text-[var(--accent-blue)]'
           const favoredName = favorsA ? fighterAName : favorsB ? fighterBName : factor.impact
           const width = Math.max((factor.magnitude / max) * 100, 8)
+          const featureTitle = localizeFeature(factor.feature, isPt)
+          const explanation = isPt
+            ? `${featureTitle} favoreceu a previsão para ${favoredName}.`
+            : factor.explanation
 
           return (
             <div key={factor.feature}>
               <div className="flex items-baseline justify-between gap-3">
-                <p className="min-w-0 truncate text-sm font-semibold text-[#FFFFFF]">{factor.feature}</p>
+                <p className="min-w-0 truncate text-sm font-semibold text-[var(--text-main)]">{featureTitle}</p>
                 <p className={`shrink-0 text-[11px] font-bold uppercase tracking-[0.12em] ${nameColor}`}>{favoredName}</p>
               </div>
-              <div className="mt-1.5 h-3 overflow-hidden rounded-full bg-[#262626]" role="img" aria-label={`${factor.feature} favored ${favoredName}`}>
+              <div
+                className="mt-1.5 h-3 overflow-hidden rounded-full bg-[#262626]"
+                role="img"
+                aria-label={isPt ? `${featureTitle} favoreceu ${favoredName}` : `${factor.feature} favored ${favoredName}`}
+              >
                 <div className={`h-full rounded-full ${color}`} style={{ width: `${width}%` }} />
               </div>
-              <p className="mt-1 text-[12px] leading-5 text-[#999999]">{factor.explanation}</p>
+              <p className="mt-1 text-[12px] leading-5 text-[#999999]">{explanation}</p>
             </div>
           )
         })}

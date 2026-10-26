@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ExternalLink, Newspaper, Play } from 'lucide-react'
 
 import { useNews } from '../hooks/useNews'
@@ -6,22 +7,22 @@ import { LoadingSkeleton } from './LoadingSkeleton'
 
 const UFC_X_URL = 'https://x.com/ufc'
 
-/** "3h ago", "2d ago" or a short date for anything older than a week. */
-function timeAgo(published: string | null) {
+function timeAgo(published: string | null, isPt: boolean) {
   if (!published) return null
   const time = new Date(published).getTime()
   if (Number.isNaN(time)) return null
   const minutes = Math.max(0, Math.round((Date.now() - time) / 60000))
-  if (minutes < 60) return `${Math.max(1, minutes)}m ago`
+  if (minutes < 60) return isPt ? `há ${Math.max(1, minutes)}m` : `${Math.max(1, minutes)}m ago`
   const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return isPt ? `há ${hours}h` : `${hours}h ago`
   const days = Math.round(hours / 24)
-  if (days <= 7) return `${days}d ago`
-  return new Date(time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  if (days <= 7) return isPt ? `há ${days}d` : `${days}d ago`
+  return new Date(time).toLocaleDateString(isPt ? 'pt-BR' : 'en-US', { month: 'short', day: 'numeric' })
 }
 
-/** The latest UFC headlines (via ESPN) with a link to the UFC's own X profile. Hidden when there is nothing to show. */
 export function LatestNewsCard({ limit = 6, quiet = false }: { limit?: number; quiet?: boolean }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const { data, loading } = useNews(limit)
 
   if (loading) return <LoadingSkeleton className="h-[180px]" />
@@ -33,7 +34,7 @@ export function LatestNewsCard({ limit = 6, quiet = false }: { limit?: number; q
         <div className="flex items-center gap-2">
           <Newspaper className={`h-3.5 w-3.5 ${quiet ? 'text-[var(--text-muted)]' : 'text-[var(--accent-red)]'}`} />
           <h2 id="latest-news-title" className={`broadcast-label text-[11px] ${quiet ? 'text-[var(--text-muted)]' : 'text-[var(--text-main)]'}`}>
-            Latest from the UFC
+            {isPt ? 'Últimas notícias do UFC' : 'Latest from the UFC'}
           </h2>
         </div>
         <a
@@ -42,7 +43,7 @@ export function LatestNewsCard({ limit = 6, quiet = false }: { limit?: number; q
           rel="noreferrer"
           className="ghost-action inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#FFFFFF] transition hover:!bg-[#F2C230] hover:!text-[#0E0E0E]"
         >
-          Follow @ufc on X
+          {isPt ? 'Seguir @ufc no X' : 'Follow @ufc on X'}
           <ExternalLink className="h-3 w-3" />
         </a>
       </div>
@@ -50,24 +51,24 @@ export function LatestNewsCard({ limit = 6, quiet = false }: { limit?: number; q
       <ul className={`grid gap-2 md:grid-cols-2 xl:grid-cols-3 ${quiet ? 'opacity-90' : ''}`}>
         {data.items.map((item) => (
           <li key={item.url} className="min-w-0">
-            <NewsRow item={item} quiet={quiet} />
+            <NewsRow item={item} quiet={quiet} isPt={isPt} />
           </li>
         ))}
       </ul>
 
       <p className="theme-muted mt-3 text-xs">
-        Headlines via{' '}
+        {isPt ? 'Notícias via ' : 'Headlines via '}
         <a href={data.source_url} target="_blank" rel="noreferrer" className="font-semibold underline decoration-2 underline-offset-2 hover:bg-[#F2C230] hover:text-[#0E0E0E]">
           {data.source_name}
         </a>
-        . Each story opens on their site.
+        {isPt ? '. Cada história abre no site oficial da fonte.' : '. Each story opens on their site.'}
       </p>
     </section>
   )
 }
 
-function NewsRow({ item, quiet = false }: { item: NewsItem; quiet?: boolean }) {
-  const age = timeAgo(item.published)
+function NewsRow({ item, quiet = false, isPt }: { item: NewsItem; quiet?: boolean; isPt: boolean }) {
+  const age = timeAgo(item.published, isPt)
 
   return (
     <a

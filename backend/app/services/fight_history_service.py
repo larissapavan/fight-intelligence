@@ -45,6 +45,37 @@ def _fold(name: str) -> str:
     return _normalize_name(unicodedata.normalize("NFKD", str(name)).encode("ascii", "ignore").decode())
 
 
+def _pair_key(fighter_1: str, fighter_2: str) -> tuple[str, str]:
+    first, second = sorted([_fold(fighter_1), _fold(fighter_2)])
+    return first, second
+
+
+_TITLE_OVERRIDE_PAIRS = {
+    _pair_key("Carlos Prates", "Michael Morales"): {"title_fight": True, "interim_title": True},
+    _pair_key("Petr Yan", "Merab Dvalishvili"): {"title_fight": True, "interim_title": False},
+    _pair_key("Alexander Volkanovski", "Movsar Evloev"): {"title_fight": True, "interim_title": False},
+}
+
+
+def _is_interim_title(fighter_a: str, fighter_b: str, interim_win: bool) -> bool:
+    pair = _pair_key(fighter_a, fighter_b)
+    if pair in _TITLE_OVERRIDE_PAIRS and "interim_title" in _TITLE_OVERRIDE_PAIRS[pair]:
+        return _TITLE_OVERRIDE_PAIRS[pair]["interim_title"]
+    return bool(interim_win)
+
+
+def _is_title_fight(row: pd.Series, fighter_a: str, fighter_b: str, interim_win: bool) -> bool | None:
+    pair = _pair_key(fighter_a, fighter_b)
+    if pair in _TITLE_OVERRIDE_PAIRS and "title_fight" in _TITLE_OVERRIDE_PAIRS[pair]:
+        return _TITLE_OVERRIDE_PAIRS[pair]["title_fight"]
+    tf = _to_bool(row.get("title_fight"))
+    if tf:
+        return True
+    if _is_interim_title(fighter_a, fighter_b, interim_win):
+        return True
+    return tf
+
+
 _DEFENSE = re.compile(r"def\.\s+.+?\s+at\s+(?P<event>.+?)\s+on\s+(?P<date>[A-Z][a-z]{2} \d{1,2}, \d{4})")
 
 
@@ -141,10 +172,10 @@ def get_fights_for_fighter(name: str) -> list[dict]:
                 "fight_url": _nullable(row.get("fight_url")),
                 "referee": _nullable(row.get("referee")),
                 "num_rounds": _to_int(row.get("num_rounds")),
-                "title_fight": _to_bool(row.get("title_fight")),
+                "title_fight": _is_title_fight(row, name, opponent_name, pd.notna(winner) and _won_interim(interim_wins, _fold(winner), date_iso, row["event_name"])),
                 "bmf_title": is_bmf_title_fight(_nullable(row.get("fight_url"))),
-                "interim_title": pd.notna(winner) and _won_interim(interim_wins, _fold(winner), date_iso, row["event_name"]),
-                "interim_title_win": result == "win" and _won_interim(interim_wins, _fold(winner), date_iso, row["event_name"]),
+                "interim_title": _is_interim_title(name, opponent_name, pd.notna(winner) and _won_interim(interim_wins, _fold(winner), date_iso, row["event_name"])),
+                "interim_title_win": result == "win" and _is_interim_title(name, opponent_name, pd.notna(winner) and _won_interim(interim_wins, _fold(winner), date_iso, row["event_name"])),
                 "outcome": _nullable(row.get("outcome")),
                 "result_details": _nullable(row.get("result_details")),
             }
@@ -302,6 +333,12 @@ def get_fighter_performance(name: str) -> dict:
         if weight_class and (not weight_class_history or weight_class_history[-1] != weight_class):
             weight_class_history.append(weight_class)
 
+    try:
+        from backend.app.services.events_service import get_fighter_upcoming_bouts
+        upcoming = get_fighter_upcoming_bouts(name)
+    except Exception:
+        upcoming = []
+
     return {
         "fighter": name,
         "total_fights": len(fights),
@@ -314,6 +351,8 @@ def get_fighter_performance(name: str) -> dict:
         "last_performances": fights[:5],
         "career_timeline": list(reversed(fights)),  # oldest first, for chronological display
         "yearly_trends": _build_yearly_trends(fights),
+        "next_fight": upcoming[0] if upcoming else None,
+        "upcoming_fights": upcoming,
     }
 
 

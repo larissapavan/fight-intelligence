@@ -459,7 +459,22 @@ def list_fighters(ufc_only: bool = False) -> list[dict]:
     catalog = get_fighter_catalog()
     if ufc_only:
         catalog = catalog[catalog["ufc_status"] != "never"]
-    return [_format_profile(row) for row in catalog.to_dict(orient="records")]
+    records = catalog.to_dict(orient="records")
+    try:
+        from backend.app.services.elo_service import _cache, _calculate_elo_ratings
+        _calculate_elo_ratings()
+        current_elo = _cache.get("current_elo", {})
+        peak_elo = _cache.get("peak_elo", {})
+        ranks_active = _cache.get("ranks_active", {})
+        for r in records:
+            key = _normalize_name(r["name"])
+            if key in current_elo:
+                r["elo"] = round(current_elo[key])
+                r["peak_elo"] = round(peak_elo.get(key, current_elo[key]))
+                r["elo_rank"] = ranks_active.get(key)
+    except Exception:
+        pass
+    return [_format_profile(row) for row in records]
 
 
 def get_fighter_profile(name: str) -> dict:
@@ -468,10 +483,26 @@ def get_fighter_profile(name: str) -> dict:
     if match.empty:
         raise KeyError(f"Fighter '{name}' was not found in the catalog.")
 
-    return _format_profile(match.iloc[0].to_dict())
+    rec = match.iloc[0].to_dict()
+    try:
+        from backend.app.services.elo_service import get_fighter_elo
+        elo_info = get_fighter_elo(rec["name"])
+        rec["elo"] = elo_info.get("elo")
+        rec["peak_elo"] = elo_info.get("peak_elo")
+        rec["elo_rank"] = elo_info.get("p4p_rank")
+    except Exception:
+        pass
+
+    return _format_profile(rec)
 
 
 def _format_profile(record: dict) -> dict:
+    try:
+        from backend.app.services.events_service import get_fighter_upcoming_bouts
+        upcoming = get_fighter_upcoming_bouts(record["name"])
+    except Exception:
+        upcoming = []
+
     return {
         "name": record["name"],
         "is_active": bool(record.get("is_active", False)),
@@ -512,6 +543,11 @@ def _format_profile(record: dict) -> dict:
         "ufc_debut": _nullable_string(record.get("ufc_debut")),
         "ufc_last_fight": _nullable_string(record.get("ufc_last_fight")),
         "roster_url": _nullable_string(record.get("roster_url")),
+        "elo": record.get("elo"),
+        "peak_elo": record.get("peak_elo"),
+        "elo_rank": record.get("elo_rank"),
+        "next_fight": upcoming[0] if upcoming else None,
+        "upcoming_fights": upcoming,
     }
 
 

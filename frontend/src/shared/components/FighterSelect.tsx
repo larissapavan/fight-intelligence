@@ -2,10 +2,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Check, ChevronDown, Clock3, Lock, Search, Swords, UserRound, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
+import { useTranslation } from 'react-i18next'
 
 import { FighterAvatar } from './FighterAvatar'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../hooks/useFighterImages'
 import type { FighterProfile, Opponent } from '../types/api'
+import { DIVISION_NAMES_PT } from '../data/divisions'
 
 interface FighterSelectProps {
   label: string
@@ -45,6 +47,8 @@ export function FighterSelect({
   suggestions,
   onChange,
 }: FighterSelectProps) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -209,14 +213,16 @@ export function FighterSelect({
                     {placeholder}
                   </h2>
                   <p className="theme-muted mt-1 hidden text-sm leading-6 sm:block">
-                    Search by name, nickname, weight class, record, or ranking. A fighter selected in the opposite corner is locked.
+                    {isPt
+                      ? 'Busque por nome, apelido, categoria, cartel ou ranking. Lutador selecionado no outro canto fica indisponível.'
+                      : 'Search by name, nickname, weight class, record, or ranking. A fighter selected in the opposite corner is locked.'}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   className="ghost-action theme-text grid h-9 w-9 shrink-0 place-items-center rounded-full"
-                  aria-label="Close fighter search"
+                  aria-label={isPt ? 'Fechar busca de atletas' : 'Close fighter search'}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -238,7 +244,7 @@ export function FighterSelect({
                       setActiveIndex(0)
                     }}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search fighter, nickname, or weight class"
+                    placeholder={isPt ? 'Buscar lutador, apelido ou categoria...' : 'Search fighter, nickname, or weight class'}
                     className="theme-text min-w-0 flex-1 bg-transparent text-base font-semibold outline-none placeholder:text-[var(--text-muted)]"
                   />
                 </div>
@@ -255,10 +261,12 @@ export function FighterSelect({
                   )}
                   <span className="broadcast-label truncate text-[11px]">
                     {opponentView
-                      ? `${results.length} ${results.length === 1 ? 'opponent' : 'opponents'} of ${suggestions?.label}`
+                      ? isPt
+                        ? `${results.length} ${results.length === 1 ? 'adversário' : 'adversários'} de ${suggestions?.label}`
+                        : `${results.length} ${results.length === 1 ? 'opponent' : 'opponents'} of ${suggestions?.label}`
                       : showRecent && recentFighters.length
-                        ? 'Recent fighters'
-                        : `${results.length} results`}
+                        ? isPt ? 'Lutadores recentes' : 'Recent fighters'
+                        : isPt ? `${results.length} resultados` : `${results.length} results`}
                   </span>
                 </div>
                 {opponentFighters.length > 0 ? (
@@ -270,12 +278,14 @@ export function FighterSelect({
                     }}
                     className="type-tech ghost-action theme-text shrink-0 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] hover:!bg-[#F2C230] hover:!text-[#0E0E0E]"
                   >
-                    {onlyOpponents ? 'Show all fighters' : 'Only opponents'}
+                    {onlyOpponents
+                      ? (isPt ? 'Ver todos os lutadores' : 'Show all fighters')
+                      : (isPt ? 'Apenas adversários' : 'Only opponents')}
                   </button>
                 ) : null}
                 {selectedFighter ? (
                   <span className={`type-tech rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
-                    Selected: {selectedFighter.name}
+                    {isPt ? 'Selecionado:' : 'Selected:'} {selectedFighter.name}
                   </span>
                 ) : null}
               </div>
@@ -291,7 +301,12 @@ export function FighterSelect({
                       const isSelected = fighter.name === value
                       const isDisabled = isFighterDisabled(fighter, disabledFighterName)
                       const isActive = index === activeIndex
-                      const ranking = getRankingLabel(fighter)
+                      const ranking = getRankingLabel(fighter, isPt)
+                      const rawDiv = getDivision(fighter)
+                      const divDisplay = isPt && rawDiv ? (DIVISION_NAMES_PT[rawDiv] ?? rawDiv) : rawDiv
+                      const stanceDisplay = isPt && fighter.stance
+                        ? (fighter.stance === 'Orthodox' ? 'Destro' : fighter.stance === 'Southpaw' ? 'Canhoto' : fighter.stance === 'Switch' ? 'Ambidestro' : fighter.stance)
+                        : (fighter.stance || (isPt ? 'Estilo não informado' : 'Style unavailable'))
 
                       return (
                         <button
@@ -321,16 +336,16 @@ export function FighterSelect({
                               </span>
                               {isSelected ? (
                                 <span className={`type-tech rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
-                                  Selected
+                                  {isPt ? 'Selecionado' : 'Selected'}
                                 </span>
                               ) : null}
                             </span>
                             <span className="theme-soft-text mt-1 block text-sm leading-5">
-                              {[fighter.nickname ? `"${fighter.nickname}"` : null, getDivision(fighter)].filter(Boolean).join(' • ')}
+                              {[fighter.nickname ? `"${fighter.nickname}"` : null, divDisplay].filter(Boolean).join(' • ')}
                             </span>
                             <span className="theme-muted mt-2 flex flex-wrap gap-2 text-xs">
-                              <span className="selector-chip">Record: {formatRecord(fighter)}</span>
-                              <span className="selector-chip">{fighter.stance || 'Style unavailable'}</span>
+                              <span className="selector-chip">{isPt ? 'Cartel:' : 'Record:'} {formatRecord(fighter)}</span>
+                              <span className="selector-chip">{stanceDisplay}</span>
                               {ranking ? (
                                 <span className={`rounded-full border px-2.5 py-1 ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
                                   {ranking}
@@ -342,7 +357,7 @@ export function FighterSelect({
                             {isDisabled ? (
                               <span className="type-tech theme-muted inline-flex items-center gap-1.5 rounded-full border border-[var(--line-soft)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
                                 <Lock className="h-3 w-3" />
-                                Other corner
+                                {isPt ? 'Outro canto' : 'Other corner'}
                               </span>
                             ) : isSelected ? (
                               <Check className={`h-5 w-5 ${styles.accent}`} />
@@ -356,9 +371,13 @@ export function FighterSelect({
                   </div>
                 ) : (
                   <div className="rounded-2xl border border-dashed border-[var(--line-soft)] bg-[var(--surface-3)] px-4 py-10 text-center">
-                    <p className="type-display theme-text text-2xl font-bold uppercase tracking-[0.03em]">No fighters found</p>
+                    <p className="type-display theme-text text-2xl font-bold uppercase tracking-[0.03em]">
+                      {isPt ? 'Nenhum lutador encontrado' : 'No fighters found'}
+                    </p>
                     <p className="theme-muted mx-auto mt-2 max-w-md text-sm leading-6">
-                      Adjust the search to find another name, nickname, weight class, or record.
+                      {isPt
+                        ? 'Ajuste a busca para encontrar outro nome, apelido, categoria de peso ou cartel.'
+                        : 'Adjust the search to find another name, nickname, weight class, or record.'}
                     </p>
                   </div>
                 )}
@@ -426,10 +445,10 @@ function getDivision(fighter: FighterProfile) {
   return fighter.division ?? formatWeight(fighter.weight_lbs)
 }
 
-function getRankingLabel(fighter: FighterProfile) {
+function getRankingLabel(fighter: FighterProfile, isPt = false) {
   if (fighter.ranking) return fighter.ranking.startsWith('#') ? fighter.ranking : `#${fighter.ranking}`
   if (fighter.rank_signal) return fighter.rank_signal
-  if (fighter.belt) return 'Champion'
+  if (fighter.belt) return isPt ? 'Campeão' : 'Champion'
   return null
 }
 

@@ -1,9 +1,12 @@
 import { Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { getFighterImageUrl, useFighterImages } from '../hooks/useFighterImages'
 import { useFighterLookup } from '../hooks/useFighterLookup'
 import type { FightResult, UpcomingPick } from '../types/api'
+import { getMatchupTitleFight } from '../data/titleFights'
+import { DIVISION_NAMES_PT } from '../data/divisions'
 import { FighterAvatar } from './FighterAvatar'
 import { TitleFightBadge } from './FighterBadges'
 import { PickChip } from './PickChip'
@@ -28,9 +31,26 @@ export function FightMatchupCard({
   onOpenFighter?: (name: string) => void
   details?: string[]
 }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const to = matchupPath(fight, eventName)
   const fighter1Won = fight.winner != null && fight.winner === fight.fighter_1
   const fighter2Won = fight.winner != null && fight.winner === fight.fighter_2
+  const fallback = getMatchupTitleFight(
+    { name: fight.fighter_1, division: fight.weight_class ?? undefined },
+    { name: fight.fighter_2, division: fight.weight_class ?? undefined },
+  )
+  const titleFightInfo = {
+    ...fight,
+    title_fight: fight.title_fight ?? pick?.title_fight ?? fallback?.title_fight,
+    interim_title: fight.interim_title ?? pick?.interim_title ?? fallback?.interim_title,
+    bmf_title: fight.bmf_title ?? pick?.bmf_title,
+    weight_class: fight.weight_class ?? fallback?.weight_class ?? null,
+  }
+
+  const weightClassDisplay = fight.weight_class
+    ? (isPt ? (DIVISION_NAMES_PT[fight.weight_class] ?? fight.weight_class) : fight.weight_class)
+    : null
 
   return (
     <article className="metric-tile relative rounded-2xl px-3 py-3 sm:px-4 sm:py-3.5">
@@ -44,11 +64,11 @@ export function FightMatchupCard({
       </div>
 
       <div className="relative z-10 mt-2.5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5 pointer-events-none">
-        <TitleFightBadge fight={fight} />
+        <TitleFightBadge fight={titleFightInfo} />
         <span className="pointer-events-auto">
           <PickChip pick={pick} />
         </span>
-        {fight.weight_class ? <span className="selector-chip text-[11px] text-[var(--text-main)]">{fight.weight_class}</span> : null}
+        {weightClassDisplay ? <span className="selector-chip text-[11px] text-[var(--text-main)]">{weightClassDisplay}</span> : null}
       </div>
 
       {details?.length ? (

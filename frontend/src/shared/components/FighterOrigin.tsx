@@ -1,4 +1,5 @@
 import { Flag, MapPin } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import type { FighterProfile } from '../types/api'
 import { nationalityText } from '../data/badges'
@@ -10,6 +11,9 @@ type FighterOriginProps = {
 
 /** Where the fighter comes from. Renders nothing when the data is not available for this fighter. */
 export function FighterOrigin({ fighter, className = '' }: FighterOriginProps) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   const place = fighter.hometown ?? fighter.country
   const nationalities = nationalityText(fighter)
   if (!place && !nationalities) return null
@@ -20,7 +24,7 @@ export function FighterOrigin({ fighter, className = '' }: FighterOriginProps) {
         <li className="flex items-start gap-1.5">
           <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#999999]" aria-hidden="true" />
           <span className="min-w-0">
-            <span className="sr-only">From: </span>
+            <span className="sr-only">{isPt ? 'Origem: ' : 'From: '}</span>
             {place}
           </span>
         </li>
@@ -29,7 +33,7 @@ export function FighterOrigin({ fighter, className = '' }: FighterOriginProps) {
         <li className="flex items-start gap-1.5">
           <Flag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#999999]" aria-hidden="true" />
           <span className="min-w-0">
-            <span className="sr-only">Nationalities: </span>
+            <span className="sr-only">{isPt ? 'Nacionalidades: ' : 'Nationalities: '}</span>
             {nationalities}
           </span>
         </li>

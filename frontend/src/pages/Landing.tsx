@@ -1,5 +1,6 @@
 import { ArrowRight, Archive, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { ORG_LIST, orgPath, type OrgConfig, type OrgId } from '../shared/data/orgs'
@@ -16,18 +17,23 @@ const ACCENT: Record<OrgId, string> = { ufc: '#C8102E', pfl: '#1F4E9C', bellator
 
 /** The first page of the site: which organization do you want? Each one has its own pages under its own address. */
 export function Landing() {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-5 sm:space-y-6">
       <section className="page-hero rounded-[20px] px-3 py-4 sm:px-5 sm:py-6">
         <SectionHeading
           level={1}
-          eyebrow="Fight Intelligence"
-          title="Pick an organization"
-          description="Stats, rankings and results for the UFC, the PFL and the Bellator archive. Only the UFC has win predictions, because the model learned from UFC fights."
+          eyebrow={t('landing.eyebrow', 'Fight Intelligence')}
+          title={t('landing.title', 'Pick an organization')}
+          description={t(
+            'landing.description',
+            'Stats, rankings and results for the UFC, the PFL and the Bellator archive. Only the UFC has win predictions, because the model learned from UFC fights.'
+          )}
         />
       </section>
 
-      <ul aria-label="Organizations" className="grid gap-3 md:grid-cols-3">
+      <ul aria-label={t('landing.orgsAria', 'Organizations')} className="grid gap-3 md:grid-cols-3">
         {ORG_LIST.map((org) => (
           <li key={org.id}>
             <OrgCard org={org} />
@@ -36,17 +42,26 @@ export function Landing() {
       </ul>
 
       <p className="theme-muted text-xs leading-5">
-        You can switch organization at any time from the strip at the top of every page. Independent fan project, not affiliated with any of these organizations.
+        {t(
+          'landing.footerNotice',
+          'You can switch organization at any time from the strip at the top of every page. Independent personal project, not affiliated with any of these organizations.'
+        )}
       </p>
     </div>
   )
 }
 
 function OrgCard({ org }: { org: OrgConfig }) {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
+  const tagline = t(`landing.taglines.${org.id}`, { defaultValue: org.tagline })
+  const source = org.sourceName === 'ESPN and Wikipedia' && isPt ? 'ESPN e Wikipedia' : org.sourceName
+
   return (
     <Link
       to={orgPath(org)}
-      aria-label={`Open ${org.name}`}
+      aria-label={t('landing.open', { name: org.name, defaultValue: `Open ${org.name}` })}
       style={{ borderTopColor: ACCENT[org.id] }}
       className="surface-card group flex h-full flex-col gap-3 border-t-[10px] p-4 transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--rule)]"
     >
@@ -55,30 +70,32 @@ function OrgCard({ org }: { org: OrgConfig }) {
         <p className="poster-display mt-1 text-5xl leading-none text-[var(--text-main)]">{org.shortName}</p>
       </div>
 
-      <p className="text-sm leading-6 text-[var(--text-main)]">{org.tagline}</p>
+      <p className="text-sm leading-6 text-[var(--text-main)]">{tagline}</p>
 
       <div className="flex flex-wrap gap-1.5">
         {org.hasPredictions ? (
           <span className="inline-flex items-center gap-1 border-2 border-[var(--rule)] bg-[#F2C230] px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-[#0E0E0E]">
-            <Sparkles aria-hidden className="h-3.5 w-3.5" /> Win predictions
+            <Sparkles aria-hidden className="h-3.5 w-3.5" /> {t('landing.winPredictions', 'Win predictions')}
           </span>
         ) : null}
         {org.archived ? (
           <span className="inline-flex items-center gap-1 border-2 border-[var(--rule)] px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-[var(--text-main)]">
-            <Archive aria-hidden className="h-3.5 w-3.5" /> Archive
+            <Archive aria-hidden className="h-3.5 w-3.5" /> {t('landing.archive', 'Archive')}
           </span>
         ) : null}
         {SECTIONS_OF[org.id].map((section) => (
           <span key={section} className="border border-[var(--rule)]/50 px-2 py-0.5 text-xs text-[var(--text-muted)]">
-            {section}
+            {t(`landing.sections.${section}`, section)}
           </span>
         ))}
       </div>
 
-      <p className="theme-muted text-xs">Data from {org.sourceName}</p>
+      <p className="theme-muted text-xs">
+        {t('landing.dataFrom', { source, defaultValue: `Data from ${source}` })}
+      </p>
 
       <span className="primary-action mt-auto inline-flex w-fit items-center gap-1.5 px-4 py-2.5 text-xs uppercase" style={{ background: ACCENT[org.id] }}>
-        Enter {org.shortName}
+        {t('landing.enter', { name: org.shortName, defaultValue: `Enter ${org.shortName}` })}
         <ArrowRight aria-hidden className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
       </span>
     </Link>

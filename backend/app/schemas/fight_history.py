@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from backend.app.schemas.fighters import UpcomingBout
+
 
 class FightRecord(BaseModel):
     event_name: str
@@ -87,3 +89,5 @@ class FighterPerformance(BaseModel):
     last_performances: list[FightRecord]
     career_timeline: list[FightRecord]
     yearly_trends: list[YearlyTrend]
+    next_fight: UpcomingBout | None = None
+    upcoming_fights: list[UpcomingBout] = []

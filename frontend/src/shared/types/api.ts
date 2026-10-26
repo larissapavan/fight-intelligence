@@ -39,6 +39,24 @@ export interface FighterProfile {
   /** Divisions where the fighter has ever held the interim title. */
   interim_titles?: string[]
   nationalities?: { name: string; code: string | null }[]
+  elo?: number | null
+  peak_elo?: number | null
+  elo_rank?: number | null
+  next_fight?: UpcomingBout | null
+  upcoming_fights?: UpcomingBout[]
+}
+
+export interface UpcomingBout {
+  event_name: string
+  event_date: string
+  location?: string | null
+  opponent: string
+  weight_class?: string | null
+  title_fight?: boolean
+  interim_title?: boolean
+  bmf_title?: boolean
+  is_main_event?: boolean
+  event_url?: string | null
 }
 
 export interface DataInfo {
@@ -148,6 +166,7 @@ export interface FightResult {
   result?: string | null
   result_details?: string | null
   bmf_title?: boolean
+  interim_title?: boolean
 }
 
 export interface EventSummary {
@@ -341,6 +360,8 @@ export interface FighterPerformance {
   last_performances: FightRecord[]
   career_timeline: FightRecord[]
   yearly_trends: YearlyTrend[]
+  next_fight?: UpcomingBout | null
+  upcoming_fights?: UpcomingBout[]
 }
 
 export interface RecordBookLeader {
@@ -440,6 +461,9 @@ export interface UpcomingPick {
   predicted_winner: string
   probability: number
   fighter_1_probability: number
+  title_fight?: boolean | null
+  bmf_title?: boolean
+  interim_title?: boolean
 }
 
 /** Organizations served by the generic /orgs/{id} endpoints (everything except the UFC). */
@@ -553,4 +577,31 @@ export interface DivisionMatrix {
   matrix: (number | null)[][]
   round_robin: RoundRobinRow[]
   skipped: string[]
+}
+
+
+export interface EloRankingEntry {
+  name: string
+  division: string
+  elo: number
+  peak_elo: number
+  fights: number
+  wins: number
+  losses: number
+  draws: number
+  image_url: string | null
+  belt: boolean
+  active: boolean
+  rank: number
+}
+
+export interface SyncTrackRecordResponse {
+  status: string
+  settled_count: number
+  new_logged_count: number
+  total_resolved: number
+  total_correct: number
+  accuracy: number | null
+  pending: number
+  message: string
 }

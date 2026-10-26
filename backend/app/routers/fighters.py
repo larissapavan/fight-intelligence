@@ -4,6 +4,7 @@ from backend.app.rate_limit import limiter
 from backend.app.schemas.fighters import FighterSummary
 from backend.app.schemas.similarity import SimilarFighter
 from backend.app.services.catalog_service import get_fighter_profile, list_fighters
+from backend.app.services.elo_service import get_fighter_elo
 from backend.app.services.similarity_service import get_similar_fighters
 
 router = APIRouter(tags=["fighters"])
@@ -40,3 +41,19 @@ def similar_fighters(
 
     response.headers["Cache-Control"] = "public, max-age=300"
     return [SimilarFighter(**fighter) for fighter in get_similar_fighters(name, limit=limit)]
+
+
+@router.get("/fighters/{name}/elo")
+@limiter.limit("60/minute")
+def fighter_elo(
+    request: Request,
+    response: Response,
+    name: str,
+) -> dict:
+    try:
+        get_fighter_profile(name)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    response.headers["Cache-Control"] = "public, max-age=300"
+    return get_fighter_elo(name)

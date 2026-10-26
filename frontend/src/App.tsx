@@ -36,21 +36,21 @@ const OrgEvents = lazy(() => import('./pages/org/OrgEvents').then((module) => ({
 const OrgRankings = lazy(() => import('./pages/org/OrgRankings').then((module) => ({ default: module.OrgRankings })))
 
 const matchupTabs: SectionTab[] = [
-  { to: '/predictor', label: 'Predict' },
-  { to: '/head-to-head', label: 'Head-to-Head' },
-  { to: '/matchup-intelligence', label: 'Matchup' },
+  { to: '/predictor', label: 'Predict', labelKey: 'nav.predict' },
+  { to: '/head-to-head', label: 'Head-to-Head', labelKey: 'nav.headToHead' },
+  { to: '/matchup-intelligence', label: 'Matchup', labelKey: 'nav.matchup' },
 ]
 
 const championsTabs: SectionTab[] = [
-  { to: '/champions', label: 'Champions' },
-  { to: '/record-book', label: 'Record book' },
+  { to: '/champions', label: 'Champions', labelKey: 'nav.champions' },
+  { to: '/record-book', label: 'Record book', labelKey: 'nav.recordBook' },
 ]
 
 const aboutTabs: SectionTab[] = [
-  { to: '/about', label: 'About' },
-  { to: '/data', label: 'Data' },
-  { to: '/model', label: 'System' },
-  { to: '/track-record', label: 'Track record' },
+  { to: '/about', label: 'About', labelKey: 'nav.about' },
+  { to: '/data', label: 'Data', labelKey: 'nav.data' },
+  { to: '/model', label: 'System', labelKey: 'nav.system' },
+  { to: '/track-record', label: 'Track record', labelKey: 'nav.trackRecord' },
 ]
 
 function App() {

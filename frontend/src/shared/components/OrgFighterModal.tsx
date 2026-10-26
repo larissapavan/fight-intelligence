@@ -3,6 +3,7 @@ import { ExternalLink, MapPin, X } from 'lucide-react'
 import { useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 import { formatDate, formatHeight, formatRecord, formatReach, formatWeight, originLine } from '../data/orgFormat'
 import type { OrgConfig } from '../data/orgs'
@@ -27,6 +28,9 @@ export function OrgFighterModal({
   onClose: () => void
   onSelectFighter: (name: string) => void
 }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   const { fighters } = useOrgFighters(org.id)
   const { fights, loading, error } = useOrgFighterFights(org.id, name)
   const profile = useMemo(
@@ -56,36 +60,40 @@ export function OrgFighterModal({
           <div className="flex min-w-0 items-center gap-3">
             <FighterAvatar name={name} imageUrl={profile?.image_url ?? null} highlight={Boolean(profile?.belt)} className="h-16 w-16 sm:h-20 sm:w-20" />
             <div className="min-w-0">
-              <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{org.shortName} fighter profile</p>
+              <p className="broadcast-label text-[11px] text-[var(--text-muted)]">
+                {isPt ? `Perfil no ${org.shortName}` : `${org.shortName} fighter profile`}
+              </p>
               <h2 className="flex items-center gap-2 text-xl font-bold uppercase tracking-[0.02em] text-[var(--text-main)]">
                 {profile?.country_code ? <FlagIcon code={profile.country_code} country={profile.country} className="h-4 w-6" /> : null}
                 <span className="min-w-0 truncate">{name}</span>
               </h2>
               {profile?.nickname ? <p className="text-sm italic text-[var(--text-muted)]">“{profile.nickname}”</p> : null}
-              {profile ? <TitleLine fighter={profile} /> : null}
+              {profile ? <TitleLine fighter={profile} isPt={isPt} /> : null}
             </div>
           </div>
-          <button type="button" onClick={onClose} className="ghost-action grid h-9 w-9 shrink-0 place-items-center rounded-full" aria-label="Close fighter profile">
+          <button type="button" onClick={onClose} className="ghost-action grid h-9 w-9 shrink-0 place-items-center rounded-full" aria-label={isPt ? 'Fechar perfil do lutador' : 'Close fighter profile'}>
             <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
           <div className="space-y-3">
-            {profile ? <Details org={org} fighter={profile} /> : null}
+            {profile ? <Details org={org} fighter={profile} isPt={isPt} /> : null}
 
             {profile?.next_fight ? (
               <div className="metric-tile rounded-2xl p-3">
-                <p className="broadcast-label text-[11px] text-[var(--text-muted)]">Next fight</p>
+                <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{isPt ? 'Próxima luta' : 'Next fight'}</p>
                 <p className="mt-1 text-sm font-semibold text-[var(--text-main)]">
-                  vs {profile.next_fight.opponent} · {formatDate(profile.next_fight.date)}
+                  vs {profile.next_fight.opponent} · {formatDate(profile.next_fight.date, true, isPt)}
                 </p>
                 <p className="text-xs text-[var(--text-muted)]">{profile.next_fight.event}</p>
               </div>
             ) : null}
 
             <section aria-label={`${org.shortName} fights`}>
-              <p className="broadcast-label mb-1.5 text-[11px] text-[var(--text-muted)]">{org.shortName} fights</p>
+              <p className="broadcast-label mb-1.5 text-[11px] text-[var(--text-muted)]">
+                {isPt ? `Histórico no ${org.shortName}` : `${org.shortName} fights`}
+              </p>
               {loading ? (
                 <div className="space-y-2">
                   <LoadingSkeleton className="h-[54px]" />
@@ -94,7 +102,9 @@ export function OrgFighterModal({
               ) : error ? (
                 <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[var(--text-main)]">{error}</p>
               ) : fights.length === 0 ? (
-                <p className="text-sm text-[var(--text-muted)]">No {org.shortName} fights recorded yet.</p>
+                <p className="text-sm text-[var(--text-muted)]">
+                  {isPt ? `Nenhuma luta no ${org.shortName} registrada ainda.` : `No ${org.shortName} fights recorded yet.`}
+                </p>
               ) : (
                 <ul className="space-y-2">
                   {fights.map((fight) => (
@@ -110,7 +120,7 @@ export function OrgFighterModal({
                 onClick={onClose}
                 className="ghost-action mr-2 inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--text-main)]"
               >
-                Also in the UFC: open the UFC profile
+                {isPt ? 'Ver perfil completo no UFC →' : 'Also in the UFC: open the UFC profile'}
               </Link>
             ) : null}
 
@@ -121,7 +131,7 @@ export function OrgFighterModal({
                 rel="noreferrer"
                 className="ghost-action inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--text-main)]"
               >
-                Profile on {org.sourceName}
+                {isPt ? `Perfil oficial no ${org.sourceName}` : `Profile on ${org.sourceName}`}
                 <ExternalLink className="h-3 w-3" />
               </a>
             ) : null}
@@ -133,14 +143,14 @@ export function OrgFighterModal({
   )
 }
 
-function TitleLine({ fighter }: { fighter: OrgFighter }) {
+function TitleLine({ fighter, isPt }: { fighter: OrgFighter; isPt: boolean }) {
   if (!fighter.ranking && !fighter.belt) return null
   const interim = fighter.title_status === 'interim'
   return (
     <p className="mt-1.5 flex flex-wrap items-center gap-1">
       {fighter.belt ? (
         <span className={`border-2 border-[var(--rule)] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] ${interim ? 'bg-[#1F4E9C] text-white' : 'bg-[#F2C230] text-[#0E0E0E]'}`}>
-          {interim ? 'Interim champion' : 'Champion'}
+          {interim ? (isPt ? 'Campeão Interino' : 'Interim champion') : (isPt ? 'Campeão' : 'Champion')}
         </span>
       ) : null}
       {fighter.ranking ? (
@@ -152,17 +162,17 @@ function TitleLine({ fighter }: { fighter: OrgFighter }) {
   )
 }
 
-function Details({ org, fighter }: { org: OrgConfig; fighter: OrgFighter }) {
+function Details({ org, fighter, isPt }: { org: OrgConfig; fighter: OrgFighter; isPt: boolean }) {
   const origin = originLine(fighter)
   const stats: [string, string | null][] = [
-    ['Record', formatRecord(fighter)],
-    [`${org.shortName} record`, fighter.org_record],
-    ['Division', fighter.division],
-    ['Age', fighter.age ? `${Math.round(fighter.age)}` : null],
-    ['Height', formatHeight(fighter.height_cm)],
-    ['Reach', formatReach(fighter.reach_cm)],
-    ['Weight', formatWeight(fighter.weight_lbs)],
-    ['Status', fighter.is_active ? 'Active' : 'Not fighting'],
+    [isPt ? 'Cartel Pro' : 'Record', formatRecord(fighter)],
+    [`${isPt ? 'No' : ''} ${org.shortName}`, fighter.org_record],
+    [isPt ? 'Categoria' : 'Division', fighter.division],
+    [isPt ? 'Idade' : 'Age', fighter.age ? `${Math.round(fighter.age)} anos` : null],
+    [isPt ? 'Altura' : 'Height', formatHeight(fighter.height_cm, isPt)],
+    [isPt ? 'Envergadura' : 'Reach', formatReach(fighter.reach_cm, isPt)],
+    [isPt ? 'Peso' : 'Weight', formatWeight(fighter.weight_lbs, isPt)],
+    ['Status', fighter.is_active ? (isPt ? 'Ativo' : 'Active') : (isPt ? 'Inativo' : 'Not fighting')],
   ]
   return (
     <div className="space-y-2.5">
@@ -191,4 +201,3 @@ function Details({ org, fighter }: { org: OrgConfig; fighter: OrgFighter }) {
     </div>
   )
 }
-

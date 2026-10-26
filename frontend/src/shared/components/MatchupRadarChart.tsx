@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import type { FighterPerformance, FighterProfile } from '../types/api'
@@ -7,12 +8,12 @@ const RED = '#C8102E'
 const BLUE = '#2F5FA8'
 
 const AXES = [
-  { key: 'strikingOutput', label: 'Striking Output' },
-  { key: 'strikingDefense', label: 'Striking Defense' },
-  { key: 'tdOffense', label: 'Takedown Offense' },
-  { key: 'tdDefense', label: 'Takedown Defense' },
-  { key: 'finishRate', label: 'Finish Rate' },
-  { key: 'recentForm', label: 'Recent Form' },
+  { key: 'strikingOutput', label: 'Striking Output', labelPt: 'Volume de Golpes' },
+  { key: 'strikingDefense', label: 'Striking Defense', labelPt: 'Defesa de Golpes' },
+  { key: 'tdOffense', label: 'Takedown Offense', labelPt: 'Quedas Aplicadas' },
+  { key: 'tdDefense', label: 'Takedown Defense', labelPt: 'Defesa de Quedas' },
+  { key: 'finishRate', label: 'Finish Rate', labelPt: 'Poder de Nocaute/Sub' },
+  { key: 'recentForm', label: 'Recent Form', labelPt: 'Momento Recente' },
 ] as const
 
 type AxisKey = (typeof AXES)[number]['key']
@@ -86,20 +87,22 @@ export function MatchupRadarChart({
   performanceB: FighterPerformance | null
   loading?: boolean
 }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const scoreA = scoresFor(fighterA, performanceA)
   const scoreB = scoresFor(fighterB, performanceB)
   const data = AXES.map((axis) => ({
-    axis: axis.label,
+    axis: isPt ? axis.labelPt : axis.label,
     red: Math.round(scoreA[axis.key]),
     blue: Math.round(scoreB[axis.key]),
   }))
 
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <p className="broadcast-label text-[11px] text-[#999999]">Style comparison</p>
-      <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">Radar</h2>
+      <p className="broadcast-label text-[11px] text-[#999999]">{isPt ? 'Comparativo de Estilos' : 'Style comparison'}</p>
+      <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{isPt ? 'Radar de Habilidades' : 'Radar'}</h2>
       {loading ? (
-        <LoadingSkeleton className="mt-3 h-[280px] rounded-2xl sm:h-[320px]" label="Loading style comparison" />
+        <LoadingSkeleton className="mt-3 h-[280px] rounded-2xl sm:h-[320px]" label={isPt ? 'Carregando comparativo...' : 'Loading style comparison'} />
       ) : (
         <div className="mt-1 h-[300px] sm:h-[340px]">
           <ResponsiveContainer width="100%" height="100%" minWidth={0}>
@@ -119,7 +122,9 @@ export function MatchupRadarChart({
         </div>
       )}
       <p className="mt-1 text-center text-[11px] leading-4 text-[#999999]">
-        Output and takedown offense are scaled to typical UFC ranges so both corners sit on the same 0–100 axes.
+        {isPt
+          ? 'Volume de golpes e média de quedas calibrados nas escalas do UFC (0 a 100) para comparação direta entre os atletas.'
+          : 'Output and takedown offense are scaled to typical UFC ranges so both corners sit on the same 0–100 axes.'}
       </p>
     </article>
   )

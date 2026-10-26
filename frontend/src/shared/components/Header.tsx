@@ -3,14 +3,27 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { CircleDot, FolderGit2, Menu, Moon, Sun, X } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
+import { useTranslation } from 'react-i18next'
+
 import { isLandingPath, LANDING_PATH, orgPath, type OrgConfig } from '../data/orgs'
 import { useModelInfo } from '../hooks/useModelInfo'
 import { useOrg } from '../hooks/useOrg'
 import { BrandMark } from './BrandMark'
 import { FighterSearch } from './FighterSearch'
+import { LanguageSwitcher } from './LanguageSwitcher'
 import { OrgSwitcher } from './OrgSwitcher'
 
 type NavItem = { to: string; label: string; group?: string[]; /** Also active on the pages below it (a gym under Gyms). */ section?: boolean }
+
+const NAV_I18N_KEYS: Record<string, string> = {
+  Predict: 'nav.predict',
+  Fighters: 'nav.fighters',
+  Events: 'nav.events',
+  Rankings: 'nav.rankings',
+  Gyms: 'nav.gyms',
+  Champions: 'nav.champions',
+  About: 'nav.about',
+}
 
 const ufcNavItems: NavItem[] = [
   { to: '/predictor', label: 'Predict', group: ['/predictor', '/head-to-head', '/matchup-intelligence'] },
@@ -43,6 +56,8 @@ type ThemeMode = 'dark' | 'light'
 const THEME_STORAGE_KEY = 'ufc-predictor:theme'
 
 export function Header() {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const { health, loading } = useModelInfo()
   const { pathname } = useLocation()
   const org = useOrg()
@@ -52,12 +67,16 @@ export function Header() {
   const navItems = landing ? [] : navItemsFor(org)
   const [theme, setTheme] = useState<ThemeMode>(() => readThemePreference())
   const [menuOpen, setMenuOpen] = useState(false)
-  const apiLabel = loading ? 'Waking up' : health?.model_loaded ? 'Live' : 'Offline'
-  const apiTitle = loading
-    ? 'The API is starting. The first visit after a quiet spell can take up to a minute.'
+  const apiLabel = loading
+    ? t('header.apiWaking', 'Waking up')
     : health?.model_loaded
-      ? 'API is live and the model is loaded'
-      : 'API is unreachable'
+      ? t('header.apiLive', 'Live')
+      : t('header.apiOffline', 'Offline')
+  const apiTitle = loading
+    ? t('header.apiWakingTitle', 'The API is starting. The first visit after a quiet spell can take up to a minute.')
+    : health?.model_loaded
+      ? t('header.apiLiveTitle', 'API is live and the model is loaded')
+      : t('header.apiOfflineTitle', 'API is unreachable')
   const apiClasses = loading
     ? 'border-[#F2C230] bg-[#F2C230] text-[#0E0E0E]'
     : health?.model_loaded
@@ -95,13 +114,13 @@ export function Header() {
         <div className="flex items-center justify-between gap-2">
           <Link
             to={LANDING_PATH}
-            aria-label="Fight Intelligence home"
+            aria-label={isPt ? 'Fight Intelligence • Início' : 'Fight Intelligence home'}
             className="brand-badge flex min-w-0 items-center lg:shrink-0 gap-2.5 border-2 border-black bg-[#EFECE6] px-2.5 py-2 text-black xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5"
           >
             <BrandMark className="h-8 w-8 shrink-0 rounded-none xs:h-9 xs:w-9 sm:h-10 sm:w-10" />
             <span className="flex min-w-0 flex-col items-start justify-center gap-1">
               <span className="truncate font-mono text-[11px] font-bold uppercase leading-none tracking-widest text-[#A80D26] sm:text-[11px]">
-                Matchup analytics
+                {t('header.matchupAnalytics', 'Matchup analytics')}
               </span>
               <span className="truncate font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.2rem] font-normal xs:text-[1.4rem] uppercase leading-none tracking-[0.04em] text-black sm:text-[1.75rem] lg:text-[1.4rem] xl:text-[1.75rem]">
                 Fight Intelligence
@@ -138,20 +157,22 @@ export function Header() {
                     isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
                   ].join(' ')}
                 >
-                  {item.label}
+                  {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
                 </NavLink>
               ))}
             </nav>
+
+            <LanguageSwitcher className="hidden lg:inline-flex" />
 
             <button
               type="button"
               onClick={toggleTheme}
               className="ghost-action theme-text hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] lg:inline-flex"
-              aria-label={`Switch to ${isLight ? 'dark' : 'light'} mode`}
-              title={`Switch to ${isLight ? 'dark' : 'light'} mode`}
+              aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
+              title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
             >
               {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              <span className="hidden xl:inline">{isLight ? 'Dark' : 'Light'}</span>
+              <span className="hidden xl:inline">{isLight ? t('header.themeDark', 'Modo Escuro') : t('header.themeLight', 'Modo Claro')}</span>
             </button>
 
             <a
@@ -169,7 +190,7 @@ export function Header() {
               type="button"
               onClick={() => setMenuOpen((current) => !current)}
               className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full lg:hidden"
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-label={menuOpen ? t('header.closeMenu', 'Fechar menu') : t('header.openMenu', 'Abrir menu')}
               aria-expanded={menuOpen}
             >
               {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -206,10 +227,17 @@ export function Header() {
                         isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
                       ].join(' ')}
                     >
-                      {item.label}
+                      {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
                     </NavLink>
                   ))}
                 </nav>
+
+                <div className="flex items-center justify-between gap-2 border-t border-white/8 pt-2.5 px-1">
+                  <span className="type-tech text-xs uppercase tracking-wider text-[var(--text-muted)]">
+                    {t('language.switch', 'Idioma')}
+                  </span>
+                  <LanguageSwitcher />
+                </div>
 
                 <div className="flex items-center gap-1.5 border-t border-white/8 pt-2.5">
                   <button
@@ -218,7 +246,7 @@ export function Header() {
                     className="ghost-action theme-text inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em]"
                   >
                     {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                    {isLight ? 'Dark mode' : 'Light mode'}
+                    {isLight ? t('header.themeDark', 'Modo Escuro') : t('header.themeLight', 'Modo Claro')}
                   </button>
 
                   <a

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ArrowDown } from 'lucide-react'
 
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
@@ -5,10 +6,12 @@ import { SectionHeading } from '../shared/components/SectionHeading'
 import { useDataInfo } from '../shared/hooks/useDataInfo'
 
 export function DataIntelligence() {
+  const { t, i18n } = useTranslation()
   const { dataInfo, loading, error } = useDataInfo()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const formattedDate = dataInfo?.last_updated
-    ? new Date(`${dataInfo.last_updated}T00:00:00`).toLocaleDateString('en-US', {
+    ? new Date(`${dataInfo.last_updated}T00:00:00`).toLocaleDateString(isPt ? 'pt-BR' : 'en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -18,10 +21,11 @@ export function DataIntelligence() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading level={1}
-          eyebrow="The data"
-          title="From raw data to a prediction"
-          description="How public UFC data becomes the dataset the model learns from. Every record in it is real."
+        <SectionHeading
+          level={1}
+          eyebrow={t('dataIntelligence.eyebrow')}
+          title={t('dataIntelligence.title')}
+          description={t('dataIntelligence.description')}
         />
       </section>
 
@@ -36,19 +40,19 @@ export function DataIntelligence() {
       ) : (
         <>
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            <StatCard label="Last data update" value={formattedDate} />
-            <StatCard label="Fighters" value={dataInfo.fighters_count.toLocaleString('en-US')} />
-            <StatCard label="Events" value={dataInfo.events_count.toLocaleString('en-US')} />
-            <StatCard label="Fights" value={dataInfo.fights_count.toLocaleString('en-US')} />
+            <StatCard label={t('dataIntelligence.lastUpdate')} value={formattedDate} />
+            <StatCard label={t('dataIntelligence.fighters')} value={dataInfo.fighters_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <StatCard label={t('dataIntelligence.events')} value={dataInfo.events_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <StatCard label={t('dataIntelligence.fights')} value={dataInfo.fights_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
           </section>
 
           <section className="surface-card rounded-[20px] p-3 sm:p-4">
             <SectionHeading
-              eyebrow="Architecture"
-              title="Data pipeline"
-              description="Every prediction starts from real fight data that is collected, cleaned and turned into features before the model sees it."
+              eyebrow={isPt ? 'Arquitetura' : 'Architecture'}
+              title={t('dataIntelligence.pipelineTitle')}
+              description={t('dataIntelligence.pipelineDesc')}
             />
-            <DataPipelineDiagram sources={dataInfo.sources} />
+            <DataPipelineDiagram sources={dataInfo.sources} isPt={isPt} />
           </section>
         </>
       )}
@@ -56,7 +60,7 @@ export function DataIntelligence() {
   )
 }
 
-function DataPipelineDiagram({ sources }: { sources: string[] }) {
+function DataPipelineDiagram({ sources, isPt }: { sources: string[]; isPt: boolean }) {
   return (
     <div className="mt-4 flex flex-col items-center">
       <div className="grid w-full max-w-sm grid-cols-2 gap-2.5">
@@ -67,15 +71,25 @@ function DataPipelineDiagram({ sources }: { sources: string[] }) {
 
       <PipelineMergeConnector />
 
-      <PipelineNode label="Raw Data" tone="highlight" />
+      <PipelineNode label={isPt ? 'Dados Brutos' : 'Raw Data'} tone="highlight" />
       <PipelineArrow />
-      <PipelineNode label="Cleaning" description="Fixing formats and removing duplicates across sources" />
+      <PipelineNode
+        label={isPt ? 'Tratamento & Limpeza' : 'Cleaning'}
+        description={isPt ? 'Padronização de formatos e remoção de duplicatas entre fontes' : 'Fixing formats and removing duplicates across sources'}
+      />
       <PipelineArrow />
-      <PipelineNode label="Feature Engineering" description="The difference between the two fighters in reach, age, win rate, striking and takedown accuracy" />
+      <PipelineNode
+        label={isPt ? 'Engenharia de Atributos' : 'Feature Engineering'}
+        description={isPt ? 'Diferenças de envergadura, idade, taxa de vitória, precisão de golpes e quedas' : 'The difference between the two fighters in reach, age, win rate, striking and takedown accuracy'}
+      />
       <PipelineArrow />
-      <PipelineNode label="ML Dataset" tone="highlight" />
+      <PipelineNode label={isPt ? 'Conjunto de Treinamento (ML)' : 'ML Dataset'} tone="highlight" />
       <PipelineArrow />
-      <PipelineNode label="Prediction" tone="accent" description="A gradient boosting model, with SHAP to explain each pick" />
+      <PipelineNode
+        label={isPt ? 'Previsão & Explicabilidade' : 'Prediction'}
+        tone="accent"
+        description={isPt ? 'Modelo de Gradient Boosting com SHAP para explicar cada palpite' : 'A gradient boosting model, with SHAP to explain each pick'}
+      />
     </div>
   )
 }

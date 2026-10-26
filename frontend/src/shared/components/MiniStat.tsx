@@ -13,7 +13,7 @@ export function MiniStat({
         {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
         <span className="type-tech text-[11px] uppercase tracking-[0.14em]">{label}</span>
       </div>
-      <p className="type-num mt-1 truncate text-xs font-semibold text-[#FFFFFF]">{value}</p>
+      <p className="type-num mt-1 truncate text-xs font-semibold text-[var(--text-main)]">{value}</p>
     </div>
   )
 }

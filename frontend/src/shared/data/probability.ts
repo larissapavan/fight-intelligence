@@ -15,9 +15,31 @@ export function formatProbability(value: number): string {
 }
 
 /** How big the favorite's edge is, in words. `favorite` is the favorite's probability (0.5 to 1). */
-export function edgeLabel(favorite: number): string {
-  if (favorite < 0.55) return 'Toss-up'
-  if (favorite < 0.65) return 'Slight edge'
-  if (favorite < 0.8) return 'Clear edge'
-  return 'Strong edge'
+export function edgeLabel(favorite: number, isPt = false): string {
+  if (favorite < 0.55) return isPt ? 'Luta parelha' : 'Toss-up'
+  if (favorite < 0.65) return isPt ? 'Leve vantagem' : 'Slight edge'
+  if (favorite < 0.8) return isPt ? 'Vantagem clara' : 'Clear edge'
+  return isPt ? 'Amplo favoritismo' : 'Strong edge'
+}
+
+/** Localizes the backend prediction message ("The model gives X a [confidence] edge in this matchup."). */
+export function localizePredictionMessage(message: string | null | undefined, winner: string, isPt = false): string {
+  if (!message) return ''
+  if (!isPt) return message
+  if (message.includes('a strong edge')) {
+    return `O modelo aponta amplo favoritismo para ${winner} neste confronto.`
+  }
+  if (message.includes('a moderate edge')) {
+    return `O modelo aponta vantagem moderada para ${winner} neste confronto.`
+  }
+  if (message.includes('a competitive edge')) {
+    return `O modelo aponta leve vantagem para ${winner} em um combate equilibrado.`
+  }
+  if (message.includes('The model gives')) {
+    return message.replace(/The model gives (.+?) a (\w+) edge in this matchup\./, (_match, name, conf) => {
+      const edge = conf === 'strong' ? 'amplo favoritismo' : conf === 'moderate' ? 'vantagem moderada' : 'leve vantagem'
+      return `O modelo aponta ${edge} para ${name} neste confronto.`
+    })
+  }
+  return message
 }

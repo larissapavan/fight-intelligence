@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
-import { ArrowDown, ArrowUp, Crown, Sparkles, Trophy } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { ArrowDown, ArrowUp, Crown, Sparkles, Trophy, Zap } from 'lucide-react'
 
 import { DivisionMatrixCard } from '../shared/components/DivisionMatrixCard'
 import { FighterAvatar } from '../shared/components/FighterAvatar'
@@ -8,14 +9,17 @@ import { badgesForRankings } from '../shared/data/badges'
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { getDivisionName } from '../shared/data/divisions'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../shared/hooks/useFighterImages'
 import { useFighters } from '../shared/hooks/useFighters'
 import { useRankings } from '../shared/hooks/useRankings'
-import type { FighterProfile, RankingCategory, RankingEntry } from '../shared/types/api'
+import { getEloRankings } from '../shared/services/api'
+import type { EloRankingEntry, FighterProfile, RankingCategory, RankingEntry } from '../shared/types/api'
 
-type Tab = 'division' | 'p4p'
+type Tab = 'division' | 'p4p' | 'elo'
 
 export function Rankings() {
+  const { t } = useTranslation()
   const { rankings, loading, error } = useRankings()
   const [tab, setTab] = useState<Tab>('division')
 
@@ -31,24 +35,28 @@ export function Rankings() {
   return (
     <div className="space-y-4 sm:space-y-5">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
-        <SectionHeading level={1}
-          eyebrow="Official UFC rankings"
-          title="Divisional & pound-for-pound rankings"
-          description="The official ufc.com rankings, with each fighter's win rate and last fight added from our data."
+        <SectionHeading
+          level={1}
+          eyebrow={t('rankings.eyebrow')}
+          title={t('rankings.title')}
+          description={t('rankings.description')}
         />
 
         <div className="mt-4 inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">
           <TabButton active={tab === 'division'} onClick={() => setTab('division')}>
-            Category Ranking
+            {t('rankings.categoryRanking')}
           </TabButton>
           <TabButton active={tab === 'p4p'} onClick={() => setTab('p4p')}>
-            Pound-for-Pound
+            {t('rankings.p4p')}
+          </TabButton>
+          <TabButton active={tab === 'elo'} onClick={() => setTab('elo')}>
+            {t('rankings.eloRating')}
           </TabButton>
         </div>
       </section>
 
       {error ? (
-        <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm text-[#FFFFFF]">{error}</p>
+        <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm font-semibold text-[var(--text-red)]">{error}</p>
       ) : null}
 
       {loading ? (
@@ -59,8 +67,10 @@ export function Rankings() {
         </section>
       ) : tab === 'division' ? (
         <DivisionView divisions={divisions} active={activeDivision} onSelect={setSelectedDivision} />
-      ) : (
+      ) : tab === 'p4p' ? (
         <P4pView categories={p4pCategories} active={activeP4p} onSelect={setSelectedP4p} />
+      ) : (
+        <EloView divisions={divisions} />
       )}
     </div>
   )
@@ -89,10 +99,13 @@ function DivisionView({
   active: RankingCategory | null
   onSelect: (category: string) => void
 }) {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   if (!active) {
     return (
       <div className="surface-card rounded-[20px] px-4 py-7 text-center text-sm text-[#999999]">
-        Rankings are not available yet.
+        {t('rankings.rankingsUnavailable')}
       </div>
     )
   }
@@ -100,7 +113,9 @@ function DivisionView({
   return (
     <div className="space-y-4">
       <div className="surface-card rounded-[18px] border-white/14 p-3.5">
-        <label htmlFor="ranking-division" className="broadcast-label mb-2 block text-xs text-[#CCCCCC]">Division</label>
+        <label htmlFor="ranking-division" className="broadcast-label mb-2 block text-xs text-[#CCCCCC]">
+          {t('rankings.division')}
+        </label>
         <select
           id="ranking-division"
           value={active.category}
@@ -109,7 +124,7 @@ function DivisionView({
         >
           {divisions.map((division) => (
             <option key={division.category} value={division.category}>
-              {division.category}
+              {getDivisionName(division.category, isPt)}
             </option>
           ))}
         </select>
@@ -131,10 +146,13 @@ function P4pView({
   active: RankingCategory | null
   onSelect: (category: string) => void
 }) {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   if (!active) {
     return (
       <div className="surface-card rounded-[20px] px-4 py-7 text-center text-sm text-[#999999]">
-        Rankings are not available yet.
+        {t('rankings.rankingsUnavailable')}
       </div>
     )
   }
@@ -142,19 +160,27 @@ function P4pView({
   return (
     <div className="space-y-4">
       <div className="surface-card flex flex-wrap gap-2 rounded-[18px] border-white/14 p-3">
-        {categories.map((category) => (
-          <button
-            key={category.category}
-            type="button"
-            onClick={() => onSelect(category.category)}
-            className={`ghost-action inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] ${
-              category.category === active.category ? 'ring-1 ring-[#C8102E]/45' : ''
-            }`}
-          >
-            <Sparkles className="h-3.5 w-3.5 text-[#C8102E]" />
-            {category.category.replace('Pound-for-Pound ', '')}
-          </button>
-        ))}
+        {categories.map((category) => {
+          const label = isPt
+            ? category.category
+                .replace("Men's Pound-for-Pound", 'Peso por Peso Masculino')
+                .replace("Women's Pound-for-Pound", 'Peso por Peso Feminino')
+                .replace('Pound-for-Pound', 'Peso por Peso')
+            : category.category.replace('Pound-for-Pound ', '')
+          return (
+            <button
+              key={category.category}
+              type="button"
+              onClick={() => onSelect(category.category)}
+              className={`ghost-action inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] ${
+                category.category === active.category ? 'ring-1 ring-[#C8102E]/45' : ''
+              }`}
+            >
+              <Sparkles className="h-3.5 w-3.5 text-[#C8102E]" />
+              {label}
+            </button>
+          )
+        })}
       </div>
 
       <RankingList entries={active.entries} />
@@ -162,7 +188,198 @@ function P4pView({
   )
 }
 
+function EloView({ divisions }: { divisions: RankingCategory[] }) {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+  const [selectedDivision, setSelectedDivision] = useState<string>('all')
+  const [activeOnly, setActiveOnly] = useState<boolean>(true)
+  const [eloEntries, setEloEntries] = useState<EloRankingEntry[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const [profileName, setProfileName] = useState<string | null>(null)
+  const { fighters } = useFighters()
+  const { imageByName } = useFighterImages()
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    getEloRankings(selectedDivision === 'all' ? undefined : selectedDivision, activeOnly, 50)
+      .then((data) => {
+        if (!cancelled) setEloEntries(data)
+      })
+      .catch((err) => {
+        console.error(err)
+        if (!cancelled) setError(isPt ? 'Falha ao carregar ranking Elo.' : 'Failed to load Elo rankings.')
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [selectedDivision, activeOnly, isPt])
+
+  const profileFor = useMemo(() => {
+    const index = new Map(fighters.map((fighter) => [normalizeFighterName(fighter.name), fighter]))
+    return (name: string) => index.get(normalizeFighterName(name))
+  }, [fighters])
+
+  const imageUrlFor = useMemo(() => {
+    const profileByName = new Map(fighters.map((fighter) => [normalizeFighterName(fighter.name), fighter]))
+    return (name: string, fallbackUrl: string | null) =>
+      getFighterImageUrl(name, imageByName, profileByName.get(normalizeFighterName(name))?.image_url || fallbackUrl)
+  }, [fighters, imageByName])
+
+  return (
+    <div className="space-y-4">
+      <div className="surface-card flex flex-col sm:flex-row gap-3 rounded-[18px] border-white/14 p-3.5 justify-between items-start sm:items-center">
+        <div className="w-full sm:w-72">
+          <label htmlFor="elo-division-select" className="broadcast-label mb-1.5 block text-xs text-[#CCCCCC]">
+            {t('rankings.division')}
+          </label>
+          <select
+            id="elo-division-select"
+            value={selectedDivision}
+            onChange={(e) => setSelectedDivision(e.target.value)}
+            className="soft-input theme-text w-full rounded-xl px-3 py-2 text-sm outline-none"
+          >
+            <option value="all">{t('rankings.allDivisions')}</option>
+            {divisions.map((d) => (
+              <option key={d.category} value={d.category}>
+                {getDivisionName(d.category, isPt)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2 self-end sm:self-center">
+          <div className="inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">
+            <button
+              type="button"
+              onClick={() => setActiveOnly(true)}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] transition ${
+                activeOnly ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#CCCCCC] hover:text-white'
+              }`}
+            >
+              {t('rankings.activeOnly')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveOnly(false)}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] transition ${
+                !activeOnly ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#CCCCCC] hover:text-white'
+              }`}
+            >
+              {t('rankings.allTime')}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="surface-card rounded-[16px] border-white/10 bg-white/[0.02] p-3 text-xs leading-relaxed text-[#AAAAAA] flex items-center gap-2.5">
+        <Zap className="h-5 w-5 text-[#F2C230] shrink-0" />
+        <span>{t('rankings.eloSubtitle')}</span>
+      </div>
+
+      {error ? (
+        <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm font-semibold text-[var(--text-red)]">{error}</p>
+      ) : null}
+
+      {loading ? (
+        <section className="grid gap-2.5">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <LoadingSkeleton key={index} className="h-[64px]" />
+          ))}
+        </section>
+      ) : (
+        <section aria-label={isPt ? 'Rankings Elo' : 'Elo Rankings'} className="space-y-2.5">
+          <div className="flex items-center justify-between border-b border-white/10 px-1 pb-2">
+            <h2 className="broadcast-label text-xs text-[var(--text-main)]">
+              {isPt ? 'Top Lutadores por Elo' : 'Top Fighters by Elo'}
+            </h2>
+            <span className="text-xs text-[#CCCCCC]">
+              {eloEntries.length} {isPt ? 'atletas' : 'listed'}
+            </span>
+          </div>
+
+          <div className="grid gap-2.5">
+            {eloEntries.map((entry) => {
+              const prof = profileFor(entry.name)
+              const imgUrl = imageUrlFor(entry.name, entry.image_url)
+              const isTop = entry.rank === 1
+              return (
+                <button
+                  key={`${entry.name}-${entry.rank}`}
+                  type="button"
+                  onClick={() => setProfileName(entry.name)}
+                  aria-label={isPt ? `${entry.name}, Elo ${entry.elo}. Ver perfil` : `${entry.name}, Elo ${entry.elo}`}
+                  className="metric-tile flex w-full items-center gap-3.5 rounded-2xl px-3.5 py-3 cursor-pointer text-left transition hover:!bg-[#F2C230]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F2C230]"
+                >
+                  <span
+                    className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl text-base font-bold ${
+                      isTop ? 'bg-[#F2C230] text-[#050505]' : 'bg-[var(--surface-3)] text-[var(--text-main)]'
+                    }`}
+                  >
+                    {isTop ? <Crown className="h-4 w-4" /> : entry.rank}
+                  </span>
+
+                  <FighterAvatar name={entry.name} imageUrl={imgUrl} highlight={isTop || entry.belt} className="h-12 w-12" />
+
+                  <div className="min-w-0 flex-1">
+                    <p className="flex min-w-0 items-center gap-2 text-base font-semibold text-[var(--text-main)]">
+                      {prof ? <FlagList fighter={prof} /> : null}
+                      <span className="min-w-0 truncate">{entry.name}</span>
+                      {entry.belt ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[var(--rule)] bg-[#F2C230] px-1.5 py-0.5 text-[10px] font-bold text-[#0E0E0E]">
+                          <Trophy className="h-3 w-3" />
+                        </span>
+                      ) : null}
+                    </p>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[#CCCCCC]">
+                      <span className="text-[var(--text-muted)]">{entry.division ? getDivisionName(entry.division, isPt) : 'UFC'}</span>
+                      <span>{entry.wins}-{entry.losses}-{entry.draws} ({entry.fights} {isPt ? 'lutas no UFC' : 'UFC fights'})</span>
+                    </div>
+                  </div>
+
+                  <div className="text-right shrink-0">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Zap className="h-4 w-4 text-[#F2C230]" />
+                      <span className="text-lg font-bold text-[var(--text-main)] tabular-nums tracking-wide">
+                        {entry.elo}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[#999999] tabular-nums">
+                      {isPt ? 'Pico:' : 'Peak:'} <span className="text-[#CCCCCC]">{entry.peak_elo}</span>
+                    </p>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {eloEntries.length === 0 ? (
+            <div className="surface-card rounded-[18px] px-4 py-6 text-center text-sm text-[#999999]">
+              {isPt ? 'Nenhum atleta encontrado para esta seleção de Elo.' : 'No fighters found for this Elo selection.'}
+            </div>
+          ) : null}
+        </section>
+      )}
+
+      {profileName ? (
+        <FighterProfileModal
+          key={profileName}
+          name={profileName}
+          onClose={() => setProfileName(null)}
+          onSelectFighter={setProfileName}
+        />
+      ) : null}
+    </div>
+  )
+}
+
 function RankingList({ entries }: { entries: RankingEntry[] }) {
+  const { i18n } = useTranslation()
   const { fighters } = useFighters()
   const [profileName, setProfileName] = useState<string | null>(null)
   const { imageByName } = useFighterImages()
@@ -177,12 +394,17 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
 
   const champion = entries.find((entry) => entry.rank === 0)
   const contenders = entries.filter((entry) => entry.rank > 0)
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   return (
-    <section aria-label="Ranked athletes" className="space-y-2.5">
+    <section aria-label={isPt ? 'Atletas ranqueados' : 'Ranked athletes'} className="space-y-2.5">
       <div className="flex items-center justify-between border-b border-white/10 px-1 pb-2">
-        <h2 className="broadcast-label text-xs text-[#FFFFFF]">Ranked athletes</h2>
-        <span className="text-xs text-[#CCCCCC]">{contenders.length + (champion ? 1 : 0)} listed</span>
+        <h2 className="broadcast-label text-xs text-[var(--text-main)]">
+          {isPt ? 'Lutadores Ranqueados' : 'Ranked athletes'}
+        </h2>
+        <span className="text-xs text-[#CCCCCC]">
+          {contenders.length + (champion ? 1 : 0)} {isPt ? 'atletas' : 'listed'}
+        </span>
       </div>
       <div className="grid gap-2.5">
       {champion ? (
@@ -205,7 +427,7 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
       ))}
       {!champion && contenders.length === 0 ? (
         <div className="surface-card rounded-[18px] px-4 py-6 text-center text-sm text-[#999999]">
-          No ranked athletes in this category.
+          {isPt ? 'Nenhum atleta ranqueado nesta categoria.' : 'No ranked athletes in this category.'}
         </div>
       ) : null}
       </div>
@@ -235,6 +457,9 @@ function RankingRow({
   onOpenProfile: (name: string) => void
   isChampion?: boolean
 }) {
+  const { t, i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   const content = (
     <>
       <span
@@ -248,7 +473,7 @@ function RankingRow({
       <FighterAvatar name={entry.fighter} imageUrl={imageUrl} highlight={isChampion} className="h-12 w-12" />
 
       <div className="min-w-0 flex-1">
-        <p className="flex min-w-0 items-center gap-2 text-base font-semibold text-[#FFFFFF]">
+        <p className="flex min-w-0 items-center gap-2 text-base font-semibold text-[var(--text-main)]">
           {profile ? <FlagList fighter={profile} /> : null}
           <span className="min-w-0 truncate">{entry.fighter}</span>
         </p>
@@ -256,11 +481,11 @@ function RankingRow({
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[#CCCCCC]">
           {isChampion ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-[var(--rule)] bg-[#F2C230] px-2 py-0.5 text-xs font-bold uppercase tracking-[0.06em] text-[#0E0E0E]">
-              <Trophy className="h-3.5 w-3.5" /> Champion
+              <Trophy className="h-3.5 w-3.5" /> {t('rankings.champion')}
             </span>
           ) : null}
-          {entry.win_rate !== null ? <span>Win rate: {(entry.win_rate * 100).toFixed(1)}%</span> : null}
-          {entry.last_fight ? <span>Last fight: {formatDate(entry.last_fight)}</span> : null}
+          {entry.win_rate !== null ? <span>{isPt ? 'Taxa de vitória' : 'Win rate'}: {(entry.win_rate * 100).toFixed(1)}%</span> : null}
+          {entry.last_fight ? <span>{isPt ? 'Última luta' : 'Last fight'}: {formatDate(entry.last_fight, i18n.language)}</span> : null}
         </div>
       </div>
 
@@ -270,12 +495,15 @@ function RankingRow({
 
   const base = 'metric-tile flex w-full items-center gap-3.5 rounded-2xl px-3.5 py-3'
 
-  // Ranked fighters we have a profile for open it on this page; anyone else stays a plain row.
   return profile ? (
     <button
       type="button"
       onClick={() => onOpenProfile(profile.name)}
-      aria-label={`${entry.fighter}, rank ${entry.rank || 'champion'}. View profile`}
+      aria-label={
+        isPt
+          ? `${entry.fighter}, ${entry.rank === 0 ? 'campeão' : `${entry.rank}º lugar`}. Ver perfil`
+          : `${entry.fighter}, rank ${entry.rank || 'champion'}. View profile`
+      }
       className={`${base} cursor-pointer text-left transition hover:!bg-[#F2C230]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]`}
     >
       {content}
@@ -311,8 +539,8 @@ function RankChangeBadge({ change }: { change: string | null }) {
   )
 }
 
-function formatDate(date: string): string {
+function formatDate(date: string, lang: string = 'en-US'): string {
   const parsed = new Date(`${date}T00:00:00`)
   if (Number.isNaN(parsed.getTime())) return date
-  return parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return parsed.toLocaleDateString(lang === 'pt-BR' ? 'pt-BR' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }

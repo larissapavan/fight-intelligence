@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ChevronRight, Crown, Search } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -15,14 +16,15 @@ const PAGE_SIZE = 40
 type Scope = 'org' | 'all'
 type Sort = 'org' | 'size' | 'champions' | 'name'
 
-/** The gyms of the organization on screen: where its fighters train, with the biggest rooms first. */
 export function Gyms() {
+  const { t, i18n } = useTranslation()
   const org = useOrg()
   const { gyms, loading, error } = useGyms()
   const [query, setQuery] = useState('')
   const [scope, setScope] = useState<Scope>('org')
   const [sort, setSort] = useState<Sort>('org')
   const [shown, setShown] = useState(PAGE_SIZE)
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const inOrg = (gym: GymSummary) => gym.orgs[org.id] ?? 0
   const orgGyms = useMemo(() => gyms.filter((gym) => (gym.orgs[org.id] ?? 0) > 0), [gyms, org.id])
@@ -50,14 +52,14 @@ export function Gyms() {
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
           <SectionHeading
             level={1}
-            eyebrow="Where fighters train"
-            title={`${org.shortName} gyms and teams`}
-            description={`Open a gym to see who trains there. Fighters are matched with the ${org.shortName} profiles on this site; the rest of each roster comes from FightHub.`}
+            eyebrow={t('gyms.eyebrow')}
+            title={`${org.shortName} ${t('gyms.title')}`}
+            description={t('gyms.description')}
           />
           <div className="grid gap-2 sm:grid-cols-3">
-            <Tile label="Gyms" value={gyms.length.toLocaleString('en-US')} />
-            <Tile label={`With ${org.shortName} fighters`} value={orgGyms.length.toLocaleString('en-US')} />
-            <Tile label={`${org.shortName} fighters placed`} value={orgFighters.toLocaleString('en-US')} />
+            <Tile label={t('gyms.totalGyms')} value={gyms.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={t('gyms.withOrgFighters')} value={orgGyms.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={t('gyms.fightersPlaced')} value={orgFighters.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
           </div>
         </div>
 
@@ -70,23 +72,23 @@ export function Gyms() {
                 setQuery(event.target.value)
                 reset()
               }}
-              placeholder="Search a gym or team"
-              aria-label="Search gyms"
+              placeholder={t('gyms.searchPlaceholder')}
+              aria-label={isPt ? 'Buscar academias' : 'Search gyms'}
               className="theme-text w-full bg-transparent outline-none placeholder:text-[var(--text-muted)]"
             />
           </div>
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as Sort)}
-            aria-label="Sort gyms"
+            aria-label={isPt ? 'Ordenar academias' : 'Sort gyms'}
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
-            <option value="org">Most {org.shortName} fighters</option>
-            <option value="size">Biggest roster</option>
-            <option value="champions">Most champions</option>
-            <option value="name">Name</option>
+            <option value="org">{t('gyms.mostFighters')}</option>
+            <option value="size">{t('gyms.biggestRoster')}</option>
+            <option value="champions">{t('gyms.mostChampions')}</option>
+            <option value="name">{t('gyms.name')}</option>
           </select>
-          <div role="group" aria-label="Which gyms" className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
+          <div role="group" aria-label={isPt ? 'Filtrar academias' : 'Which gyms'} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
             {(['org', 'all'] as const).map((value) => (
               <button
                 key={value}
@@ -100,7 +102,7 @@ export function Gyms() {
                   scope === value ? 'bg-[var(--rule)] text-[var(--card-bg)]' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]'
                 }`}
               >
-                {value === 'org' ? org.shortName : 'All gyms'}
+                {value === 'org' ? org.shortName : t('gyms.allGyms')}
               </button>
             ))}
           </div>
@@ -118,9 +120,11 @@ export function Gyms() {
       ) : matches.length ? (
         <section className="space-y-3">
           <p className="text-xs text-[var(--text-muted)]">
-            Showing {Math.min(shown, matches.length).toLocaleString('en-US')} of {matches.length.toLocaleString('en-US')}
+            {isPt
+              ? `Exibindo ${Math.min(shown, matches.length).toLocaleString('pt-BR')} de ${matches.length.toLocaleString('pt-BR')}`
+              : `Showing ${Math.min(shown, matches.length).toLocaleString('en-US')} of ${matches.length.toLocaleString('en-US')}`}
           </p>
-          <ul aria-label="Gyms" className="grid gap-2.5 md:grid-cols-2">
+          <ul aria-label={isPt ? 'Academias' : 'Gyms'} className="grid gap-2.5 md:grid-cols-2">
             {matches.slice(0, shown).map((gym) => (
               <li key={gym.slug}>
                 <GymRow gym={gym} orgName={org.shortName} to={`${orgPath(org, 'gyms')}/${gym.slug}`} inOrg={inOrg(gym)} />
@@ -133,14 +137,13 @@ export function Gyms() {
               onClick={() => setShown((count) => count + PAGE_SIZE)}
               className="ghost-action mx-auto block px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-main)]"
             >
-              Show more gyms
+              {isPt ? 'Mostrar mais academias' : 'Show more gyms'}
             </button>
           ) : null}
         </section>
       ) : (
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">No gyms found</p>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">Adjust the search, or look at all gyms.</p>
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{t('gyms.noGymsFound')}</p>
         </div>
       )}
     </div>
@@ -157,6 +160,9 @@ function Tile({ label, value }: { label: string; value: string }) {
 }
 
 function GymRow({ gym, orgName, to, inOrg }: { gym: GymSummary; orgName: string; to: string; inOrg: number }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   return (
     <Link
       to={to}
@@ -166,13 +172,13 @@ function GymRow({ gym, orgName, to, inOrg }: { gym: GymSummary; orgName: string;
         <span className="block truncate text-base font-bold text-[var(--text-main)]">{gym.name}</span>
         <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-muted)]">
           <span>
-            <span className="font-semibold text-[var(--text-main)]">{inOrg}</span> {orgName} {inOrg === 1 ? 'fighter' : 'fighters'}
+            <span className="font-semibold text-[var(--text-main)]">{inOrg}</span> {orgName} {isPt ? (inOrg === 1 ? 'lutador' : 'lutadores') : (inOrg === 1 ? 'fighter' : 'fighters')}
           </span>
-          <span>{gym.fighters_count} listed</span>
+          <span>{gym.fighters_count} {isPt ? 'atletas' : 'listed'}</span>
           {gym.champions > 0 ? (
             <span className="inline-flex items-center gap-1 border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]">
               <Crown className="h-3 w-3" aria-hidden="true" />
-              {gym.champions} {gym.champions === 1 ? 'champion' : 'champions'}
+              {gym.champions} {isPt ? (gym.champions === 1 ? 'campeão' : 'campeões') : (gym.champions === 1 ? 'champion' : 'champions')}
             </span>
           ) : null}
         </span>

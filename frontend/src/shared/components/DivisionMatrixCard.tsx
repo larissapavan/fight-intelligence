@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Swords } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { getDivisionMatrix } from '../services/api'
 import type { DivisionMatrix } from '../types/api'
@@ -11,6 +12,9 @@ const percent = (value: number) => `${Math.round(value * 100)}%`
  * pair), and shown as round-robin standings with the full grid underneath.
  */
 export function DivisionMatrixCard({ category }: { category: string }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   const [matrix, setMatrix] = useState<DivisionMatrix | null>(null)
   const [state, setState] = useState<'idle' | 'loading' | 'error'>('idle')
 
@@ -26,14 +30,17 @@ export function DivisionMatrixCard({ category }: { category: string }) {
   }
 
   return (
-    <section aria-label="Division round robin" className="surface-card rounded-[20px] p-3 sm:p-4">
+    <section aria-label={isPt ? 'Todos contra todos na categoria' : 'Division round robin'} className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center gap-2">
         <Swords className="h-4 w-4 text-[#C8102E]" />
-        <h2 className="broadcast-label text-xs text-[#FFFFFF]">Who does the model like in this division?</h2>
+        <h2 className="broadcast-label text-xs text-[var(--text-main)]">
+          {isPt ? 'Quem o modelo favorece nesta categoria?' : 'Who does the model like in this division?'}
+        </h2>
       </div>
       <p className="theme-muted mt-0.5 text-xs leading-5">
-        Every fighter in the top 8 against every other, by the model. The average chance of beating the rest is a way to read the whole division at once.
-        It is not a tournament forecast: no bracket is simulated.
+        {isPt
+          ? 'Cada lutador do top 8 contra todos os outros, segundo o modelo. A probabilidade média de vitória sobre os demais permite avaliar toda a categoria de uma vez. Não é uma previsão de torneio: nenhuma chave é simulada.'
+          : 'Every fighter in the top 8 against every other, by the model. The average chance of beating the rest is a way to read the whole division at once. It is not a tournament forecast: no bracket is simulated.'}
       </p>
 
       {!matrix ? (
@@ -43,23 +50,29 @@ export function DivisionMatrixCard({ category }: { category: string }) {
           disabled={state === 'loading'}
           className="ghost-action mt-3 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] disabled:opacity-60"
         >
-          {state === 'loading' ? 'Running the model…' : 'Run the round robin'}
+          {state === 'loading'
+            ? (isPt ? 'Executando simulação…' : 'Running the model…')
+            : (isPt ? 'Simular confrontos da categoria' : 'Run the round robin')}
         </button>
       ) : (
-        <Standings matrix={matrix} />
+        <Standings matrix={matrix} isPt={isPt} />
       )}
-      {state === 'error' ? <p className="mt-2 text-sm text-[#FFFFFF]">Could not run the round robin. Try again in a moment.</p> : null}
+      {state === 'error' ? (
+        <p className="mt-2 text-sm text-[var(--text-main)]">
+          {isPt ? 'Não foi possível simular os confrontos. Tente novamente em instantes.' : 'Could not run the round robin. Try again in a moment.'}
+        </p>
+      ) : null}
     </section>
   )
 }
 
-function Standings({ matrix }: { matrix: DivisionMatrix }) {
+function Standings({ matrix, isPt }: { matrix: DivisionMatrix; isPt: boolean }) {
   return (
     <div className="mt-3 space-y-4">
       <ol className="grid gap-2">
         {matrix.round_robin.map((row, index) => (
           <li key={row.fighter}>
-            <div className="flex items-baseline justify-between gap-2 text-sm text-[#FFFFFF]">
+            <div className="flex items-baseline justify-between gap-2 text-sm text-[var(--text-main)]">
               <span className="font-bold">
                 {index + 1}. {row.fighter}
               </span>
@@ -73,11 +86,15 @@ function Standings({ matrix }: { matrix: DivisionMatrix }) {
       </ol>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[480px] border-collapse text-xs text-[#FFFFFF]">
-          <caption className="theme-muted pb-1 text-left">Chance that the fighter in the row beats the fighter in the column.</caption>
+        <table className="w-full min-w-[480px] border-collapse text-xs text-[var(--text-main)]">
+          <caption className="theme-muted pb-1 text-left">
+            {isPt
+              ? 'Probabilidade de o atleta na linha vencer o atleta na coluna.'
+              : 'Chance that the fighter in the row beats the fighter in the column.'}
+          </caption>
           <thead>
             <tr>
-              <th scope="col" className="p-1.5 text-left font-semibold">Fighter</th>
+              <th scope="col" className="p-1.5 text-left font-semibold">{isPt ? 'Lutador' : 'Fighter'}</th>
               {matrix.fighters.map((name) => (
                 <th key={name} scope="col" className="p-1.5 text-center font-semibold">{name.split(' ').slice(-1)[0]}</th>
               ))}

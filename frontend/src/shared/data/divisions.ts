@@ -1,3 +1,30 @@
+export const DIVISION_NAMES_PT: Record<string, string> = {
+  Flyweight: 'Peso Mosca',
+  Bantamweight: 'Peso Galo',
+  Featherweight: 'Peso Pena',
+  Lightweight: 'Peso Leve',
+  Welterweight: 'Peso Meio-Médio',
+  Middleweight: 'Peso Médio',
+  'Light Heavyweight': 'Peso Meio-Pesado',
+  Heavyweight: 'Peso Pesado',
+  "Women's Strawweight": 'Peso Palha Feminino',
+  "Women's Flyweight": 'Peso Mosca Feminino',
+  "Women's Bantamweight": 'Peso Galo Feminino',
+  "Women's Featherweight": 'Peso Pena Feminino',
+  "Women's Lightweight": 'Peso Leve Feminino',
+  "Women's Atomweight": 'Peso Átomo Feminino',
+  'Catch Weight': 'Peso Combinado',
+  Catchweight: 'Peso Combinado',
+  'Open Class': 'Peso Aberto',
+  'Open Class / Unclassified': 'Peso Aberto / Outros',
+}
+
+export function getDivisionName(division: string | null | undefined, isPt = false): string {
+  if (!division) return ''
+  if (!isPt) return division
+  return DIVISION_NAMES_PT[division] ?? division
+}
+
 /** Official weight limits (lb) and the order the UFC lists its divisions in, lightest first, men then women. */
 const LIMITS_LB: Record<string, number> = {
   Flyweight: 125,

@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { CalendarClock, CalendarDays, ChevronDown, MapPin, Search, Swords } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { LoadingSkeleton } from '../../shared/components/LoadingSkeleton'
 import { OrgFightRow } from '../../shared/components/OrgFightRow'
@@ -10,8 +11,6 @@ import { formatDate } from '../../shared/data/orgFormat'
 import { useOrg } from '../../shared/hooks/useOrg'
 import { useOrgEvents, useOrgUpcomingEvents } from '../../shared/hooks/useOrgData'
 import type { OrgEvent } from '../../shared/types/api'
-
-const ALL_YEARS = 'All years'
 
 /** Today's card still counts as to come until its results are in. */
 function isUpcoming(date: string | null) {
@@ -23,12 +22,16 @@ function eventKey(event: OrgEvent) {
 }
 
 export function OrgEvents() {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+  const allYearsLabel = isPt ? 'Todos os anos' : 'All years'
+
   const org = useOrg()
   const { events, loading, error } = useOrgEvents(org.id)
   const upcoming = useOrgUpcomingEvents(org.id)
   const [searchParams] = useSearchParams()
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '')
-  const [yearFilter, setYearFilter] = useState(ALL_YEARS)
+  const [yearFilter, setYearFilter] = useState(allYearsLabel)
   const [openEvents, setOpenEvents] = useState<Set<string>>(new Set())
   const [openYears, setOpenYears] = useState<Set<string>>(new Set())
   const [profileName, setProfileName] = useState<string | null>(null)
@@ -39,7 +42,7 @@ export function OrgEvents() {
     return Array.from(found).sort((a, b) => Number(b) - Number(a))
   }, [events])
 
-  const isSearching = query.trim() !== '' || yearFilter !== ALL_YEARS
+  const isSearching = query.trim() !== '' || yearFilter !== allYearsLabel
 
   const matchesFilters = useCallback(
     (event: OrgEvent) => {
@@ -48,13 +51,13 @@ export function OrgEvents() {
         !term ||
         event.name.toLowerCase().includes(term) ||
         (event.circuit ?? '').toLowerCase().includes(term) ||
-        formatDate(event.date).toLowerCase().includes(term) ||
+        formatDate(event.date, true, isPt).toLowerCase().includes(term) ||
         (event.date ?? '').includes(term) ||
         (event.location ?? '').toLowerCase().includes(term) ||
         event.fights.some((fight) => fight.fighter_1.toLowerCase().includes(term) || fight.fighter_2.toLowerCase().includes(term))
-      return matchesQuery && (yearFilter === ALL_YEARS || event.date?.slice(0, 4) === yearFilter)
+      return matchesQuery && (yearFilter === allYearsLabel || event.date?.slice(0, 4) === yearFilter)
     },
-    [query, yearFilter],
+    [query, yearFilter, allYearsLabel, isPt],
   )
 
   const visibleEvents = useMemo(() => events.filter(matchesFilters), [events, matchesFilters])
@@ -64,11 +67,11 @@ export function OrgEvents() {
   const byYear = useMemo(() => {
     const groups = new Map<string, OrgEvent[]>()
     for (const event of visibleEvents) {
-      const year = event.date?.slice(0, 4) ?? 'Unknown'
+      const year = event.date?.slice(0, 4) ?? (isPt ? 'Sem data' : 'Unknown')
       groups.set(year, [...(groups.get(year) ?? []), event])
     }
     return Array.from(groups.entries()).sort(([a], [b]) => Number(b) - Number(a))
-  }, [visibleEvents])
+  }, [visibleEvents, isPt])
 
   const toggle = (set: Set<string>, key: string) => {
     const next = new Set(set)
@@ -85,13 +88,17 @@ export function OrgEvents() {
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
           <SectionHeading
             level={1}
-            eyebrow="Event archive"
-            title={`${org.shortName} fight cards`}
-            description="Search the full event history and open a card to see every fight, the winner, method and round."
+            eyebrow={isPt ? 'Histórico de Eventos' : 'Event archive'}
+            title={isPt ? `Cards e Lutas do ${org.shortName}` : `${org.shortName} fight cards`}
+            description={
+              isPt
+                ? 'Histórico completo de eventos. Abra o card para ver todos os confrontos, vencedores, método e round.'
+                : 'Search the full event history and open a card to see every fight, the winner, method and round.'
+            }
           />
           <div className="grid gap-2 sm:grid-cols-2">
-            <SummaryTile label="Events" value={`${visibleEvents.length}`} />
-            <SummaryTile label="Fights tracked" value={totalFights.toLocaleString('en-US')} />
+            <SummaryTile label={isPt ? 'Eventos' : 'Events'} value={`${visibleEvents.length}`} />
+            <SummaryTile label={isPt ? 'Lutas Catalogadas' : 'Fights tracked'} value={totalFights.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
           </div>
         </div>
 
@@ -101,18 +108,18 @@ export function OrgEvents() {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search event, fighter, date or location"
-              aria-label="Search events"
+              placeholder={isPt ? 'Buscar por evento, lutador, data ou local...' : 'Search event, fighter, date or location'}
+              aria-label={isPt ? 'Buscar eventos' : 'Search events'}
               className="theme-text w-full bg-transparent outline-none placeholder:text-[var(--text-muted)]"
             />
           </div>
           <select
             value={yearFilter}
             onChange={(event) => setYearFilter(event.target.value)}
-            aria-label="Filter by year"
+            aria-label={isPt ? 'Filtrar por ano' : 'Filter by year'}
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
-            {[ALL_YEARS, ...years].map((year) => (
+            {[allYearsLabel, ...years].map((year) => (
               <option key={year} value={year}>
                 {year}
               </option>
@@ -127,7 +134,9 @@ export function OrgEvents() {
         <section className="surface-card rounded-[20px] p-3 sm:p-4" aria-label="Upcoming events">
           <div className="mb-2 flex items-center gap-2">
             <CalendarClock className="h-4 w-4 text-[var(--accent-red)]" />
-            <h2 className="broadcast-label text-xs text-[var(--text-main)]">Upcoming events</h2>
+            <h2 className="broadcast-label text-xs text-[var(--text-main)]">
+              {isPt ? 'Próximos Cards & Eventos' : 'Upcoming events'}
+            </h2>
             <span className="text-xs text-[var(--text-muted)]">({visibleUpcoming.length})</span>
           </div>
           <div className="grid gap-3">
@@ -138,10 +147,10 @@ export function OrgEvents() {
                   key={key}
                   org={org.id}
                   event={event}
-                  // The next card starts open; a click on it flips that, like on every other card.
                   isOpen={openEvents.has(key) !== (index === 0 && !isSearching)}
                   onToggle={() => setOpenEvents((current) => toggle(current, key))}
                   onOpenFighter={setProfileName}
+                  isPt={isPt}
                 />
               )
             })}
@@ -160,7 +169,6 @@ export function OrgEvents() {
       ) : byYear.length ? (
         <div className="space-y-3 sm:space-y-4">
           {byYear.map(([year, yearEvents]) => {
-            // The latest year (and every year while searching) starts open; a click flips it.
             const isOpen = openYears.has(year) !== (isSearching || year === latestYear)
             return (
               <section key={year} className="surface-card overflow-hidden rounded-[20px]">
@@ -187,6 +195,7 @@ export function OrgEvents() {
                           isOpen={openEvents.has(key)}
                           onToggle={() => setOpenEvents((current) => toggle(current, key))}
                           onOpenFighter={setProfileName}
+                          isPt={isPt}
                         />
                       )
                     })}
@@ -198,8 +207,12 @@ export function OrgEvents() {
         </div>
       ) : (
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">No events found</p>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">Adjust the search to find another card.</p>
+          <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
+            {isPt ? 'Nenhum evento encontrado' : 'No events found'}
+          </p>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
+            {isPt ? 'Ajuste os filtros para encontrar outro card.' : 'Adjust the search to find another card.'}
+          </p>
         </div>
       )}
 
@@ -214,12 +227,14 @@ function EventCard({
   isOpen,
   onToggle,
   onOpenFighter,
+  isPt,
 }: {
   org: string
   event: OrgEvent
   isOpen: boolean
   onToggle: () => void
   onOpenFighter: (name: string) => void
+  isPt: boolean
 }) {
   return (
     <article className="surface-card overflow-hidden rounded-xl">
@@ -234,11 +249,11 @@ function EventCard({
           <div className="mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[11px] text-[var(--text-muted)]">
             <span className="inline-flex items-center gap-1">
               <CalendarDays className="h-3 w-3" />
-              {formatDate(event.date)}
+              {formatDate(event.date, true, isPt)}
             </span>
             <span className="inline-flex items-center gap-1">
               <Swords className="h-3 w-3" />
-              {event.fight_count} {event.fight_count === 1 ? 'fight' : 'fights'}
+              {event.fight_count} {event.fight_count === 1 ? (isPt ? 'luta' : 'fight') : (isPt ? 'lutas' : 'fights')}
             </span>
             {event.circuit && event.circuit !== 'PFL' ? <span className="selector-chip !px-1.5 !py-0 text-[11px] text-[var(--text-main)]">{event.circuit}</span> : null}
           </div>
@@ -261,7 +276,9 @@ function EventCard({
               ))}
             </div>
           ) : (
-            <p className="text-sm text-[var(--text-muted)]">No fight data available for this card yet.</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              {isPt ? 'Nenhuma luta detalhada disponível para este card ainda.' : 'No fight data available for this card yet.'}
+            </p>
           )}
         </div>
       ) : null}

@@ -98,6 +98,9 @@ def _predict_all(service: PredictionService) -> list[UpcomingPick]:
                     predicted_winner=result["predicted_winner"],
                     probability=result["probability"],
                     fighter_1_probability=result["fighter_a_probability"],
+                    title_fight=fight.get("title_fight"),
+                    bmf_title=bool(fight.get("bmf_title")),
+                    interim_title=bool(fight.get("interim_title")),
                 )
             )
     return picks

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { getTrackRecord } from '../services/api'
 import type { TrackRecord } from '../types/api'
@@ -8,15 +8,23 @@ export function useTrackRecord() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    getTrackRecord()
-      .then(setData)
-      .catch((requestError) => {
-        console.error(requestError)
-        setError('Unable to load the track record from the API.')
-      })
-      .finally(() => setLoading(false))
+  const reload = useCallback(async () => {
+    setLoading(true)
+    try {
+      const result = await getTrackRecord()
+      setData(result)
+      setError(null)
+    } catch (requestError) {
+      console.error(requestError)
+      setError('Unable to load the track record from the API.')
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
-  return { data, loading, error }
+  useEffect(() => {
+    reload()
+  }, [reload])
+
+  return { data, loading, error, reload }
 }

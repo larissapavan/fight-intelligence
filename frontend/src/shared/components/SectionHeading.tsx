@@ -11,8 +11,8 @@ export function SectionHeading({ eyebrow, title, description, level = 2 }: Secti
   return (
     <div>
       <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{eyebrow}</p>
-      <Heading className="title-chamfer mt-1.5 text-2xl font-black uppercase tracking-wide text-[#FFFFFF] md:text-3xl">{title}</Heading>
-      {description ? <p className="mt-2 max-w-3xl text-sm leading-6 text-[#999999]">{description}</p> : null}
+      <Heading className="title-chamfer mt-1.5 text-2xl font-black uppercase tracking-wide text-[var(--text-main)] md:text-3xl">{title}</Heading>
+      {description ? <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">{description}</p> : null}
     </div>
   )
 }

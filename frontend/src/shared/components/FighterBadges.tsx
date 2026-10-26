@@ -1,6 +1,11 @@
-import { BADGES, CHAMPION_SEALS } from '../data/badges'
+import { useTranslation } from 'react-i18next'
+
+import { BADGES, CHAMPION_SEALS, getBadgeLabel } from '../data/badges'
+import { DIVISION_NAMES_PT } from '../data/divisions'
 import type { FighterProfile } from '../types/api'
 import { FlagIcon } from './FlagIcon'
+
+export { DIVISION_NAMES_PT }
 
 type FighterBadgesProps = {
   badges: string[] | undefined
@@ -10,17 +15,21 @@ type FighterBadgesProps = {
 }
 
 export function FighterBadges({ badges, variant = 'short', className = '' }: FighterBadgesProps) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   const known = (badges ?? []).filter((key) => BADGES[key])
   if (known.length === 0) return null
 
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label="Fighter badges">
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Selos do lutador' : 'Fighter badges'}>
       {known.map((key) => {
         const info = BADGES[key]
+        const label = getBadgeLabel(key, isPt)
         return (
           <li
             key={key}
-            title={info.label}
+            title={label}
             className={`border-2 border-[var(--rule)] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] ${
               CHAMPION_SEALS.has(key)
                 ? 'bg-[#C9CDD3] text-[#0E0E0E]'
@@ -29,8 +38,8 @@ export function FighterBadges({ badges, variant = 'short', className = '' }: Fig
                   : 'bg-[var(--surface-3)] text-[var(--text-main)]'
             }`}
           >
-            <span aria-hidden={variant === 'short'}>{variant === 'full' ? info.label : info.short}</span>
-            {variant === 'short' ? <span className="sr-only">{info.label}</span> : null}
+            <span aria-hidden={variant === 'short'}>{variant === 'full' ? label : info.short}</span>
+            {variant === 'short' ? <span className="sr-only">{label}</span> : null}
           </li>
         )
       })}
@@ -40,15 +49,18 @@ export function FighterBadges({ badges, variant = 'short', className = '' }: Fig
 
 /** "Current Lightweight Champion" seals. Profile only; gold. */
 export function CurrentChampionSeals({ titles, className = '' }: { titles: string[] | undefined; className?: string }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   if (!titles?.length) return null
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label="Current championships">
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Cinturões atuais' : 'Current championships'}>
       {titles.map((title) => (
         <li
           key={title}
           className="border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]"
         >
-          Current {title} Champion
+          {isPt ? `Campeão Atual (${DIVISION_NAMES_PT[title] ?? title})` : `Current ${title} Champion`}
         </li>
       ))}
     </ul>
@@ -57,15 +69,18 @@ export function CurrentChampionSeals({ titles, className = '' }: { titles: strin
 
 /** "Former Lightweight Champion" seals. Profile only; red. */
 export function FormerChampionSeals({ titles, className = '' }: { titles: string[] | undefined; className?: string }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   if (!titles?.length) return null
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label="Former championships">
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Cinturões anteriores' : 'Former championships'}>
       {titles.map((title) => (
         <li
           key={title}
           className="border-2 border-[var(--rule)] bg-[#C8102E] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
         >
-          Former {title} Champion
+          {isPt ? `Ex-Campeão (${DIVISION_NAMES_PT[title] ?? title})` : `Former ${title} Champion`}
         </li>
       ))}
     </ul>
@@ -74,15 +89,18 @@ export function FormerChampionSeals({ titles, className = '' }: { titles: string
 
 /** "Interim Lightweight Champion" seals for anyone who has held an interim belt. Profile only; blue, like title defenses. */
 export function InterimChampionSeals({ titles, className = '' }: { titles: string[] | undefined; className?: string }) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   if (!titles?.length) return null
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label="Interim championships">
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Cinturões interinos' : 'Interim championships'}>
       {titles.map((title) => (
         <li
           key={title}
           className="border-2 border-[var(--rule)] bg-[#1F4E9C] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
         >
-          Interim {title} Champion
+          {isPt ? `Campeão Interino (${DIVISION_NAMES_PT[title] ?? title})` : `Interim ${title} Champion`}
         </li>
       ))}
     </ul>
@@ -128,19 +146,38 @@ type TitleFightBadgeProps = {
  * ("... title win" when the fighter won it, in a fighter's history) or "BMF title fight". Nothing otherwise.
  */
 export function TitleFightBadge({ fight, className = '' }: TitleFightBadgeProps) {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
+
   const division = fight.weight_class && !/catch/i.test(fight.weight_class) ? fight.weight_class : null
+  const divPt = division ? (DIVISION_NAMES_PT[division] ?? division) : ''
   const base = `border-2 border-[var(--rule)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] ${className}`
 
   if (fight.interim_title) {
+    const label = isPt
+      ? divPt
+        ? (fight.interim_title_win ? `Cinturão Interino • ${divPt}` : `Disputa de Cinturão Interino • ${divPt}`)
+        : (fight.interim_title_win ? 'Conquista de Cinturão Interino' : 'Disputa de Cinturão Interino')
+      : `Interim ${division ? `${division} ` : ''}title ${fight.interim_title_win ? 'win' : 'fight'}`
+
     return (
       <span className={`${base} bg-[#1F4E9C] text-white`}>
-        Interim {division ? `${division} ` : ''}title {fight.interim_title_win ? 'win' : 'fight'}
+        {label}
       </span>
     )
   }
   if (fight.bmf_title) {
-    return <span className={`${base} bg-[#C9CDD3] text-[#0E0E0E]`}>BMF title fight</span>
+    return (
+      <span className={`${base} bg-[#C9CDD3] text-[#0E0E0E]`}>
+        {isPt ? 'Disputa de Cinturão BMF' : 'BMF title fight'}
+      </span>
+    )
   }
   if (!fight.title_fight) return null
-  return <span className={`${base} bg-[#F2C230] text-[#0E0E0E]`}>{division ? `${division} title fight` : 'Title fight'}</span>
+
+  const label = isPt
+    ? divPt ? `Disputa de Cinturão • ${divPt}` : 'Disputa de Cinturão'
+    : division ? `${division} title fight` : 'Title fight'
+
+  return <span className={`${base} bg-[#F2C230] text-[#0E0E0E]`}>{label}</span>
 }

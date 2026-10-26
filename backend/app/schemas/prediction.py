@@ -44,6 +44,9 @@ class UpcomingPick(BaseModel):
     predicted_winner: str
     probability: float
     fighter_1_probability: float
+    title_fight: bool | None = None
+    bmf_title: bool = False
+    interim_title: bool = False
 
 
 class RoundRobinRow(BaseModel):

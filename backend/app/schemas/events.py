@@ -15,6 +15,7 @@ class FightResult(BaseModel):
     num_rounds: int | None = None
     title_fight: bool | None = None
     bmf_title: bool = False
+    interim_title: bool = False
     result: str | None = None
     result_details: str | None = None
 

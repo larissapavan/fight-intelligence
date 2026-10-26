@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ArrowLeft, Crown } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 
@@ -15,8 +16,9 @@ import type { GymFighter } from '../shared/types/api'
 
 type Scope = 'org' | 'all'
 
-/** One gym: who trains there. Fighters we have a profile for open it; the others are listed as FightHub has them. */
 export function GymDetail() {
+  const { i18n } = useTranslation()
+  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const org = useOrg()
   const { slug = '' } = useParams()
   const { gym, loading, error } = useGym(slug)
@@ -24,7 +26,6 @@ export function GymDetail() {
   const [open, setOpen] = useState<{ org: OrgId; name: string } | null>(null)
 
   const inOrg = useMemo(() => (gym ? gym.fighters.filter((fighter) => fighter.orgs.includes(org.id)) : []), [gym, org.id])
-  // A gym with fighters of this organization shows them first; one without any shows everybody.
   const activeScope: Scope = scope ?? (inOrg.length > 0 ? 'org' : 'all')
   const fighters = gym ? (activeScope === 'org' ? inOrg : gym.fighters) : []
 
@@ -39,7 +40,7 @@ export function GymDetail() {
       className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-main)] underline decoration-2 underline-offset-4 hover:bg-[#F2C230] hover:text-[#0E0E0E]"
     >
       <ArrowLeft className="h-3.5 w-3.5" />
-      All {org.shortName} gyms
+      {isPt ? `Todas as academias ${org.shortName}` : `All ${org.shortName} gyms`}
     </Link>
   )
 
@@ -58,8 +59,12 @@ export function GymDetail() {
       <div className="space-y-4">
         {back}
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
-          <h1 className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">Gym not found</h1>
-          <p className="mt-2 text-sm text-[var(--text-muted)]">We have no gym with that address.</p>
+          <h1 className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
+            {isPt ? 'Academia não encontrada' : 'Gym not found'}
+          </h1>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
+            {isPt ? 'Não encontramos nenhuma academia com esse endereço.' : 'We have no gym with that address.'}
+          </p>
         </div>
       </div>
     )
@@ -71,16 +76,21 @@ export function GymDetail() {
 
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
-          <SectionHeading level={1} eyebrow="Gym" title={gym.name} description="Fighters whose last fight came out of this gym, as listed by FightHub." />
+          <SectionHeading
+            level={1}
+            eyebrow={isPt ? 'Academia' : 'Gym'}
+            title={gym.name}
+            description={isPt ? 'Lutadores cuja última luta teve origem nesta academia, segundo o FightHub.' : 'Fighters whose last fight came out of this gym, as listed by FightHub.'}
+          />
           <div className="grid gap-2 sm:grid-cols-3">
-            <Tile label="Fighters listed" value={gym.fighters_count.toLocaleString('en-US')} />
-            <Tile label={`${org.shortName} fighters`} value={(gym.orgs[org.id] ?? 0).toLocaleString('en-US')} />
-            <Tile label="Champions" value={gym.champions.toLocaleString('en-US')} />
+            <Tile label={isPt ? 'Total de atletas' : 'Fighters listed'} value={gym.fighters_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={`${org.shortName} (${isPt ? 'atletas' : 'fighters'})`} value={(gym.orgs[org.id] ?? 0).toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={isPt ? 'Cinturões / Campeões' : 'Champions'} value={gym.champions.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
           </div>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <div role="group" aria-label="Which fighters" className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
+          <div role="group" aria-label={isPt ? 'Filtrar atletas' : 'Which fighters'} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
             {(['org', 'all'] as const).map((value) => (
               <button
                 key={value}
@@ -91,28 +101,30 @@ export function GymDetail() {
                   activeScope === value ? 'bg-[var(--rule)] text-[var(--card-bg)]' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]'
                 }`}
               >
-                {value === 'org' ? `${org.shortName} (${inOrg.length})` : `Everyone (${gym.fighters.length})`}
+                {value === 'org' ? `${org.shortName} (${inOrg.length})` : `${isPt ? 'Todos' : 'Everyone'} (${gym.fighters.length})`}
               </button>
             ))}
           </div>
           {gym.url ? (
             <a href={gym.url} target="_blank" rel="noreferrer" className="text-xs text-[var(--text-muted)] underline decoration-2 underline-offset-2">
-              Roster source: FightHub
+              {isPt ? 'Fonte dos dados: FightHub' : 'Roster source: FightHub'}
             </a>
           ) : null}
         </div>
       </section>
 
       {fighters.length ? (
-        <ul aria-label="Fighters" className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+        <ul aria-label={isPt ? 'Lutadores' : 'Fighters'} className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
           {fighters.map((fighter) => (
             <li key={`${fighter.name}-${fighter.record}`}>
-              <FighterCard fighter={fighter} onOpen={openProfile} />
+              <FighterCard fighter={fighter} onOpen={openProfile} isPt={isPt} />
             </li>
           ))}
         </ul>
       ) : (
-        <div className="surface-card rounded-[20px] px-4 py-7 text-center text-sm text-[var(--text-muted)]">No fighters listed for this gym.</div>
+        <div className="surface-card rounded-[20px] px-4 py-7 text-center text-sm text-[var(--text-muted)]">
+          {isPt ? 'Nenhum atleta encontrado para esta academia.' : 'No fighters listed for this gym.'}
+        </div>
       )}
 
       {open && open.org === 'ufc' ? (
@@ -140,7 +152,7 @@ function Tile({ label, value }: { label: string; value: string }) {
   )
 }
 
-function FighterCard({ fighter, onOpen }: { fighter: GymFighter; onOpen: (fighter: GymFighter) => void }) {
+function FighterCard({ fighter, onOpen, isPt }: { fighter: GymFighter; onOpen: (fighter: GymFighter) => void; isPt: boolean }) {
   const body = (
     <>
       <FighterAvatar name={fighter.name} imageUrl={fighter.image_url} highlight={fighter.belt} className="h-16 w-14" />
@@ -158,7 +170,7 @@ function FighterCard({ fighter, onOpen }: { fighter: GymFighter; onOpen: (fighte
           {fighter.belt ? (
             <span className="inline-flex items-center gap-1 border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]">
               <Crown className="h-3 w-3" aria-hidden="true" />
-              Champion
+              {isPt ? 'Campeão' : 'Champion'}
             </span>
           ) : null}
           {fighter.orgs.map((orgId) => (
