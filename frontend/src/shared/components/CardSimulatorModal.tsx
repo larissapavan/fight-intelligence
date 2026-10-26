@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Swords, Bot, User, Share2, Check, RotateCcw, X } from 'lucide-react'
@@ -101,7 +102,7 @@ export function CardSimulatorModal({ event, pickFor, onClose }: CardSimulatorMod
         ? `📊 Concordância com o Modelo de IA: ${stats.agreementPct}% (${stats.agreedWithAi}/${stats.totalWithAi} lutas)\n`
         : `📊 Agreement with AI Model: ${stats.agreementPct}% (${stats.agreedWithAi}/${stats.totalWithAi} fights)\n`
     }
-    text += isPt ? `Faça seus palpites no site: https://ufcpredictor.local/` : `Make your picks at: https://ufcpredictor.local/`
+    text += isPt ? `Faça seus palpites no site: https://fight-intelligence.vercel.app/` : `Make your picks at: https://fight-intelligence.vercel.app/`
 
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true)
@@ -109,13 +110,13 @@ export function CardSimulatorModal({ event, pickFor, onClose }: CardSimulatorMod
     })
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-5">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-2.5 backdrop-blur-sm sm:p-5">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="surface-card flex h-[min(90vh,760px)] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-[var(--line-soft)] shadow-2xl"
+        className="surface-card flex max-h-[92vh] h-[min(90vh,760px)] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-[var(--line-soft)] shadow-2xl"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--line-soft)] px-5 py-4">
@@ -280,6 +281,7 @@ export function CardSimulatorModal({ event, pickFor, onClose }: CardSimulatorMod
           })}
         </div>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   )
 }

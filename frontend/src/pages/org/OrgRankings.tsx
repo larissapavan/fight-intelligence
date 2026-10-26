@@ -45,7 +45,7 @@ export function OrgRankings() {
           }
         />
         {p4p.length ? (
-          <div className="mt-4 inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">
+          <div className="mt-4 inline-flex max-w-full overflow-x-auto chip-scroll rounded-full border border-white/14 bg-white/[0.04] p-1">
             <TabButton active={tab === 'division'} onClick={() => setTab('division')}>
               {isPt ? 'Por Categoria' : 'Category Ranking'}
             </TabButton>

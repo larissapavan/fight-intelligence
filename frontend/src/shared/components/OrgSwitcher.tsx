@@ -25,7 +25,7 @@ export function OrgSwitcher({ className = '', onNavigate }: { className?: string
               onClick={onNavigate}
               aria-current={active ? 'true' : undefined}
               title={org.name}
-              className={`type-tech px-3 py-2 text-xs font-bold uppercase tracking-[0.14em] transition ${index > 0 ? 'border-l-2 border-[var(--rule)]' : ''} ${
+              className={`type-tech px-2.5 py-1.5 xs:px-3 xs:py-2 text-[11px] xs:text-xs font-bold uppercase tracking-[0.12em] xs:tracking-[0.14em] transition ${index > 0 ? 'border-l-2 border-[var(--rule)]' : ''} ${
                 active ? 'bg-[var(--rule)] text-[var(--card-bg)]' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]'
               }`}
             >

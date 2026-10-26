@@ -55,7 +55,7 @@ export function FightMatchupCard({
   return (
     <article className="metric-tile relative rounded-2xl px-3 py-3 sm:px-4 sm:py-3.5">
       <Link to={to} aria-label={`${fight.fighter_1} vs ${fight.fighter_2}`} className="absolute inset-0 z-0 rounded-2xl" />
-      <div className="relative z-10 grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 pointer-events-none">
+      <div className="relative z-10 grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-x-1.5 xs:gap-x-2 gap-y-1 pointer-events-none">
         <CornerPhoto name={fight.fighter_1} />
         <CornerName name={fight.fighter_1} align="right" won={fighter1Won} onOpenFighter={onOpenFighter} />
         <span className="broadcast-label px-0.5 text-[11px] text-[var(--text-muted)]">vs</span>
@@ -112,7 +112,7 @@ function CornerName({
   const label = (
     <>
       {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" /> : null}
-      <span className={`text-sm font-bold leading-tight text-[var(--text-main)] sm:text-base ${won ? '' : 'font-semibold'}`}>{name}</span>
+      <span className={`min-w-0 truncate text-xs xs:text-sm font-bold leading-tight text-[var(--text-main)] sm:text-base ${won ? '' : 'font-semibold'}`}>{name}</span>
       {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" /> : null}
     </>
   )

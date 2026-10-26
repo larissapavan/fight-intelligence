@@ -61,7 +61,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
   const footerDate = landing ? null : org.id === 'ufc' ? dataDate : orgDataDate?.org === org.id ? orgDataDate.date : null
 
   return (
-    <div className="dashboard-shell min-h-screen text-[var(--text-main)]">
+    <div className="dashboard-shell min-h-screen text-[var(--text-main)] w-full max-w-full overflow-x-hidden">
       <a
         href="#main-content"
         className="type-tech sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-[#C8102E] focus:px-4 focus:py-2 focus:text-xs focus:font-semibold focus:uppercase focus:tracking-[0.14em] focus:text-white"
@@ -78,7 +78,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         ) : null}
         <motion.main
           id="main-content"
-          className="flex-1 border-t border-[var(--line-soft)] mt-4 pt-5 sm:mt-5 sm:pt-6"
+          className="flex-1 border-t border-[var(--line-soft)] mt-4 pt-5 sm:mt-5 sm:pt-6 w-full max-w-full min-w-0"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}

@@ -42,7 +42,7 @@ export function Rankings() {
           description={t('rankings.description')}
         />
 
-        <div className="mt-4 inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">
+        <div className="mt-4 inline-flex max-w-full overflow-x-auto chip-scroll rounded-full border border-white/14 bg-white/[0.04] p-1">
           <TabButton active={tab === 'division'} onClick={() => setTab('division')}>
             {t('rankings.categoryRanking')}
           </TabButton>
@@ -255,7 +255,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
-          <div className="inline-flex rounded-full border border-white/14 bg-white/[0.04] p-1">
+          <div className="inline-flex max-w-full overflow-x-auto chip-scroll rounded-full border border-white/14 bg-white/[0.04] p-1">
             <button
               type="button"
               onClick={() => { setActiveOnly(true); setLoading(true) }}

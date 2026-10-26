@@ -28,7 +28,7 @@ export function OrgFightRow({
 
   return (
     <article className="metric-tile rounded-2xl px-3 py-3 sm:px-4 sm:py-3.5">
-      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1">
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-x-1.5 xs:gap-x-2 gap-y-1">
         <FighterAvatar name={fight.fighter_1} imageUrl={lookup(fight.fighter_1)?.image_url ?? null} className="h-10 w-9 sm:h-12 sm:w-10" />
         <Corner name={fight.fighter_1} align="right" won={fight.winner === fight.fighter_1} onOpen={onOpenFighter} known={lookup(fight.fighter_1) !== undefined} isPt={isPt} />
         <span className="broadcast-label px-0.5 text-[11px] text-[var(--text-muted)]">vs</span>
@@ -77,7 +77,7 @@ function Corner({
   const label = (
     <>
       {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" aria-label={winnerLabel} /> : null}
-      <span className={`text-sm leading-tight text-[var(--text-main)] sm:text-base ${won ? 'font-bold' : 'font-semibold'}`}>{name}</span>
+      <span className={`min-w-0 truncate text-xs xs:text-sm leading-tight text-[var(--text-main)] sm:text-base ${won ? 'font-bold' : 'font-semibold'}`}>{name}</span>
       {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" aria-label={winnerLabel} /> : null}
     </>
   )

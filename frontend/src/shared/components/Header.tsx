@@ -115,14 +115,14 @@ export function Header() {
           <Link
             to={LANDING_PATH}
             aria-label={isPt ? 'Fight Intelligence • Início' : 'Fight Intelligence home'}
-            className="brand-badge flex min-w-0 items-center lg:shrink-0 gap-2.5 border-2 border-black bg-[#EFECE6] px-2.5 py-2 text-black xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5"
+            className="brand-badge flex min-w-0 flex-1 max-w-[calc(100%-84px)] xs:max-w-none items-center lg:shrink-0 gap-2 border-2 border-black bg-[#EFECE6] px-2 py-1.5 xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5 text-black"
           >
-            <BrandMark className="h-8 w-8 shrink-0 rounded-none xs:h-9 xs:w-9 sm:h-10 sm:w-10" />
+            <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-9 xs:w-9 sm:h-10 sm:w-10" />
             <span className="flex min-w-0 flex-col items-start justify-center gap-1">
-              <span className="truncate font-mono text-[11px] font-bold uppercase leading-none tracking-widest text-[#A80D26] sm:text-[11px]">
+              <span className="truncate font-mono text-[10px] xs:text-[11px] font-bold uppercase leading-none tracking-wider text-[#A80D26] sm:text-[11px]">
                 {t('header.matchupAnalytics', 'Matchup analytics')}
               </span>
-              <span className="truncate font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.2rem] font-normal xs:text-[1.4rem] uppercase leading-none tracking-[0.04em] text-black sm:text-[1.75rem] lg:text-[1.4rem] xl:text-[1.75rem]">
+              <span className="truncate font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.05rem] xs:text-[1.4rem] uppercase leading-none tracking-[0.03em] text-black sm:text-[1.75rem] lg:text-[1.4rem] xl:text-[1.75rem]">
                 Fight Intelligence
               </span>
             </span>
