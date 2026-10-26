@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { CircleDot, FolderGit2, Menu, Moon, Sun, X } from 'lucide-react'
+import { CircleDot, FolderGit2, Moon, Sun } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-
 import { useTranslation } from 'react-i18next'
 
 import { isLandingPath, LANDING_PATH, orgPath, type OrgConfig } from '../data/orgs'
@@ -61,12 +59,9 @@ export function Header() {
   const { health, loading } = useModelInfo()
   const { pathname } = useLocation()
   const org = useOrg()
-  // On the page that chooses an organization there is no organization yet: no switcher, no section links, no fighter search
-  // (the menu button stays: on a phone it holds the light/dark switch).
   const landing = isLandingPath(pathname)
   const navItems = landing ? [] : navItemsFor(org)
   const [theme, setTheme] = useState<ThemeMode>(() => readThemePreference())
-  const [menuOpen, setMenuOpen] = useState(false)
   const apiLabel = loading
     ? t('header.apiWaking', 'Waking up')
     : health?.model_loaded
@@ -90,15 +85,6 @@ export function Header() {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme)
   }, [theme])
 
-  useEffect(() => {
-    if (!menuOpen) return
-    const handleResize = () => {
-      if (window.innerWidth >= 1280) setMenuOpen(false)
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [menuOpen])
-
   const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))
 
   return (
@@ -107,10 +93,13 @@ export function Header() {
       {landing ? null : (
         <div className="mb-2 flex items-center justify-between gap-3">
           <OrgSwitcher />
-          <p className="type-tech hidden truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)] xs:block">{org.name}</p>
+          <p className="type-tech hidden truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)] xs:block">
+            {org.name}
+          </p>
         </div>
       )}
-      <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2.5 sm:px-3.5 sm:py-3">
+      <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2 sm:px-4 sm:py-2.5">
+        {/* Tier 1: Logo and Quick Actions */}
         <div className="flex items-center justify-between gap-2">
           <Link
             to={LANDING_PATH}
@@ -129,42 +118,35 @@ export function Header() {
           </Link>
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            {/* API status: badge on sm+, compact status circle on mobile */}
             <div
               title={apiTitle}
-              className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xl:inline-flex ${apiClasses}`}
+              className={`type-tech hidden sm:inline-flex items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${apiClasses}`}
             >
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
               {apiLabel}
             </div>
+            <div
+              title={apiTitle}
+              role="status"
+              aria-label={`API ${apiLabel}`}
+              className={`inline-flex sm:hidden h-8 w-8 items-center justify-center rounded-full border ${apiClasses}`}
+            >
+              <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
+            </div>
 
             {landing ? null : <FighterSearch />}
 
-            <nav className="hidden items-center gap-1 rounded-full border border-white/14 bg-white/[0.04] p-1 xl:flex">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={[
-                    'rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] transition 2xl:px-3.5 2xl:py-2 2xl:text-[13px] 2xl:tracking-[0.08em]',
-                    isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
-                  ].join(' ')}
-                >
-                  {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
-                </NavLink>
-              ))}
-            </nav>
-
-            <LanguageSwitcher className="hidden xl:inline-flex" />
+            <LanguageSwitcher />
 
             <button
               type="button"
               onClick={toggleTheme}
-              className="ghost-action theme-text hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] xl:inline-flex"
+              className="ghost-action theme-text inline-flex h-9 w-9 items-center justify-center rounded-full transition"
               aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
               title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
             >
               {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              <span className="hidden 2xl:inline">{isLight ? t('header.themeDark', 'Modo Escuro') : t('header.themeLight', 'Modo Claro')}</span>
             </button>
 
             <a
@@ -172,89 +154,38 @@ export function Header() {
               target="_blank"
               rel="noreferrer"
               title="GitHub"
-              className="ghost-action hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] 2xl:inline-flex"
+              aria-label="GitHub"
+              className="ghost-action inline-flex h-9 w-9 items-center justify-center rounded-full text-[#C8102E] transition"
             >
               <FolderGit2 className="h-4 w-4" />
-              <span className="hidden 2xl:inline">GitHub</span>
             </a>
-
-            <button
-              type="button"
-              onClick={() => setMenuOpen((current) => !current)}
-              className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full xl:hidden"
-              aria-label={menuOpen ? t('header.closeMenu', 'Fechar menu') : t('header.openMenu', 'Abrir menu')}
-              aria-expanded={menuOpen}
-            >
-              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
           </div>
         </div>
 
-        <AnimatePresence initial={false}>
-          {menuOpen ? (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="overflow-hidden xl:hidden"
+        {/* Tier 2: Dedicated Navigation Row - always visible, smoothly scrollable on mobile */}
+        {landing ? null : (
+          <div className="mt-2 border-t border-white/10 pt-2 sm:mt-2.5 sm:pt-2">
+            <nav
+              aria-label={isPt ? 'Navegação principal' : 'Main navigation'}
+              className="chip-scroll flex w-fit max-w-full items-center gap-1 sm:gap-1.5 overflow-x-auto rounded-xl sm:rounded-full border border-white/10 bg-white/[0.03] p-1 scroll-smooth"
             >
-              <div className="mt-2.5 flex flex-col gap-2 border-t border-white/8 pt-2.5">
-                <div
-                  title={apiTitle}
-                  className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xl:hidden ${apiClasses}`}
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={[
+                    'rounded-lg sm:rounded-full px-2.5 py-1.5 sm:px-3 text-xs sm:text-[13px] font-semibold uppercase tracking-[0.05em] sm:tracking-[0.08em] transition whitespace-nowrap shrink-0',
+                    isItemActive(item, pathname)
+                      ? 'nav-link-active'
+                      : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
+                  ].join(' ')}
                 >
-                  <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
-                  {apiLabel}
-                </div>
-
-                <nav className="flex flex-col gap-1">
-                  {navItems.map((item) => (
-                    <NavLink
-                      key={item.to}
-                      to={item.to}
-                      onClick={() => setMenuOpen(false)}
-                      className={[
-                        'rounded-xl px-3 py-3 text-sm font-semibold uppercase tracking-[0.1em] transition',
-                        isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
-                      ].join(' ')}
-                    >
-                      {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
-                    </NavLink>
-                  ))}
-                </nav>
-
-                <div className="flex items-center justify-between gap-2 border-t border-white/8 pt-2.5 px-1">
-                  <span className="type-tech text-xs uppercase tracking-wider text-[var(--text-muted)]">
-                    {t('language.switch', 'Idioma')}
-                  </span>
-                  <LanguageSwitcher />
-                </div>
-
-                <div className="flex items-center gap-1.5 border-t border-white/8 pt-2.5">
-                  <button
-                    type="button"
-                    onClick={toggleTheme}
-                    className="ghost-action theme-text inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em]"
-                  >
-                    {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                    {isLight ? t('header.themeDark', 'Modo Escuro') : t('header.themeLight', 'Modo Claro')}
-                  </button>
-
-                  <a
-                    href="https://github.com/larissapavan"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="ghost-action inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E]"
-                  >
-                    <FolderGit2 className="h-4 w-4" />
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
+                  {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   )
