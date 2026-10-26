@@ -179,6 +179,15 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Predictor fight poster maintains high-contrast ink-on-paper typography across all themes */
+.fight-poster-card,
+.fight-poster-card h1,
+.fight-poster-card h2,
+.fight-poster-card h3,
+.fight-poster-card h4 {
+  color: #0e0e0e !important;
+}
+
 .dashboard-shell {
   position: relative;
   width: 100%;

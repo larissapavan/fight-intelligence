@@ -87,7 +87,7 @@ export function Home() {
         <h1 className="text-3xl font-bold uppercase leading-[0.92] tracking-[0.02em] text-[var(--text-main)] sm:text-4xl">
           Fight Intelligence
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-[#E5E5E5]">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">
           {isPt
             ? 'O que vem a seguir no UFC: a próxima luta principal, o palpite da IA, o momento dos lutadores e os líderes do ranking peso por peso.'
             : "What's next in the UFC: the upcoming main event, the model's pick for it, how the fighters are trending and the top of the pound-for-pound ranking, all from the same data the model uses."}

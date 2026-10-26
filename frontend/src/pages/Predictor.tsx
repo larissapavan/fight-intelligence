@@ -51,15 +51,15 @@ export function Predictor() {
   const problem = error ?? predictionError ?? fightersError
 
   return (
-    <div className={`border-[3px] ${INK} bg-[#EDE6D6] text-[#0E0E0E] shadow-[8px_8px_0_#C8102E]`}>
+    <div className={`fight-poster-card border-[3px] ${INK} bg-[#EDE6D6] text-[#0E0E0E] shadow-[8px_8px_0_#C8102E]`}>
       <Masthead dataThrough={health?.latest_fight_date ?? null} />
 
       <header className={`poster-halftone border-b-[3px] ${INK} px-4 py-5 sm:px-8 sm:py-7`}>
         <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#C8102E]">{t('predictor.question', "Tonight's question")}</p>
-        <h1 className="poster-display mt-2 text-5xl sm:text-6xl md:text-7xl">
+        <h1 className="poster-display mt-2 text-5xl sm:text-6xl md:text-7xl text-[#0E0E0E]">
           {t('predictor.whoTakesIt', 'Who takes it?')}
         </h1>
-        <p className="mt-3 max-w-xl text-sm font-medium leading-6 sm:text-base">
+        <p className="mt-3 max-w-xl text-sm font-medium leading-6 sm:text-base text-[#0E0E0E]">
           {t('predictor.heroSubtitle', 'Pick any two fighters. The model gives you the odds and shows which numbers moved them.')}
         </p>
       </header>
@@ -132,7 +132,7 @@ export function Predictor() {
           className={`poster-display flex w-full items-center justify-center gap-3 border-[3px] px-4 py-4 text-3xl transition sm:text-4xl ${
             canScore && !predicting && !loading
               ? `${INK} bg-[#F2C230] shadow-[6px_6px_0_#0E0E0E] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_#0E0E0E] active:translate-x-[6px] active:translate-y-[6px] active:shadow-none`
-              : 'cursor-not-allowed border-dashed border-[#0E0E0E]/40 text-[var(--text-muted)]'
+              : 'cursor-not-allowed border-dashed border-[#0E0E0E]/40 text-[#0E0E0E]/40'
           }`}
         >
           {predicting ? <LoaderCircle className="h-7 w-7 animate-spin" /> : null}
@@ -177,14 +177,14 @@ function Scoreboard({ cells }: { cells: { label: string; value: string; note?: s
     <div className={`grid grid-cols-2 border-l-0 lg:grid-cols-4`}>
       {cells.map((cell) => (
         <div key={cell.label} className={`min-w-0 border-b-[3px] border-r-[3px] ${INK} px-4 py-3 last:border-r-0 sm:px-6 lg:border-r-[3px] lg:last:border-r-0 [&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r-[3px]`}>
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em]">{cell.label}</p>
-          <p className={`poster-display mt-1 flex items-center gap-2 text-3xl sm:text-4xl ${cell.alert ? 'text-[#C8102E]' : ''}`}>
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0E0E0E]">{cell.label}</p>
+          <p className={`poster-display mt-1 flex items-center gap-2 text-3xl sm:text-4xl ${cell.alert ? 'text-[#C8102E]' : 'text-[#0E0E0E]'}`}>
             {cell.label === 'Backend' && !cell.alert ? (
               <span className={`h-3 w-3 shrink-0 border-2 ${INK} bg-[#2E9E5B]`} aria-hidden="true" />
             ) : null}
-            <span className="min-w-0 truncate">{cell.value}</span>
+            <span className="min-w-0 truncate text-[#0E0E0E]">{cell.value}</span>
           </p>
-          {cell.note ? <p className="mt-1 truncate text-xs font-semibold opacity-70">{cell.note}</p> : null}
+          {cell.note ? <p className="mt-1 truncate text-xs font-semibold text-[#0E0E0E]/70">{cell.note}</p> : null}
         </div>
       ))}
     </div>
@@ -223,7 +223,7 @@ function Corner({
           <FighterSheet fighter={fighter} imageUrl={getFighterImageUrl(fighter.name, imageByName, fighter.image_url)} />
         ) : (
           <div className={`poster-hatch flex flex-1 flex-col items-center justify-center border-2 border-dashed ${INK}/50 px-4 py-10 text-center`}>
-            <p className="poster-display text-5xl text-[var(--text-muted)] sm:text-6xl">{loading ? '...' : (isPt ? 'A definir' : 'TBA')}</p>
+            <p className="poster-display text-5xl text-[#0E0E0E]/40 sm:text-6xl">{loading ? '...' : (isPt ? 'A definir' : 'TBA')}</p>
             <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-[#0E0E0E]/60">{isPt ? 'Aguardando lutador' : 'To be announced'}</p>
           </div>
         )}
@@ -251,26 +251,26 @@ function FighterSheet({ fighter, imageUrl }: { fighter: FighterProfile; imageUrl
       <div className="flex gap-3">
         <FighterAvatar name={fighter.name} imageUrl={imageUrl} className="h-24 w-24 sm:h-28 sm:w-28" />
         <div className="min-w-0">
-          <h3 className="poster-display flex flex-wrap items-center gap-2 text-4xl leading-none sm:text-5xl">
+          <h3 className="poster-display flex flex-wrap items-center gap-2 text-4xl leading-none sm:text-5xl text-[#0E0E0E]">
             <span className="min-w-0 break-words">{fighter.name}</span>
             {fighter.belt ? <ChampionBelt /> : null}
           </h3>
-          {fighter.nickname ? <p className="mt-1 text-sm font-semibold italic">"{fighter.nickname}"</p> : null}
+          {fighter.nickname ? <p className="mt-1 text-sm font-semibold italic text-[#0E0E0E]">"{fighter.nickname}"</p> : null}
           <FighterBadges badges={fighter.badges} className="mt-2" />
-          <p className="mt-2 flex items-center gap-2 text-sm font-semibold">
+          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-[#0E0E0E]">
             <FlagList fighter={fighter} />
             <span className="min-w-0 truncate">{place ?? (isPt ? 'Origem não informada' : 'Origin unknown')}</span>
           </p>
-          {nationalityText(fighter) ? <p className="truncate text-xs font-medium opacity-70">{isPt ? 'Nacionalidades:' : 'Nationalities:'} {nationalityText(fighter)}</p> : null}
+          {nationalityText(fighter) ? <p className="truncate text-xs font-medium text-[#0E0E0E]/70">{isPt ? 'Nacionalidades:' : 'Nationalities:'} {nationalityText(fighter)}</p> : null}
         </div>
       </div>
 
       <div className={`flex items-end justify-between border-y-[3px] ${INK} py-2`}>
         <span className="text-xs font-bold uppercase tracking-[0.2em]">{isPt ? 'Cartel' : 'Record'}</span>
-        <span className="poster-display text-5xl">{record}</span>
+        <span className="poster-display text-5xl text-[#0E0E0E]">{record}</span>
       </div>
 
-      <dl className="space-y-1.5 text-sm">
+      <dl className="space-y-1.5 text-sm text-[#0E0E0E]">
         {rows.map(([label, value]) => (
           <div key={label} className="flex items-end">
             <dt className="font-bold uppercase tracking-wide">{label}</dt>
@@ -324,7 +324,7 @@ function Scorecard({
           <div className="flex flex-wrap items-end justify-between gap-3 border-b-[3px] border-[#0E0E0E] pb-4">
             <div className="min-w-0">
               <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#C8102E]">{isPt ? 'Favorito Previsto' : 'Projected winner'}</p>
-              <p className="poster-display mt-1 break-words text-3xl leading-none sm:text-4xl">{prediction.predicted_winner}</p>
+              <p className="poster-display mt-1 break-words text-3xl leading-none sm:text-4xl text-[#0E0E0E]">{prediction.predicted_winner}</p>
             </div>
             <p className="poster-display text-5xl leading-none text-[#C8102E] sm:text-6xl">{formatProbability(prediction.probability)}</p>
           </div>
@@ -334,9 +334,9 @@ function Scorecard({
           {rows.map((row) => (
             <div key={row.name}>
               <div className="flex items-end">
-                <span className="min-w-0 truncate text-sm font-bold uppercase tracking-wide">{row.name}</span>
+                <span className="min-w-0 truncate text-sm font-bold uppercase tracking-wide text-[#0E0E0E]">{row.name}</span>
                 <span className="poster-leader" aria-hidden="true" />
-                <span className="poster-display text-xl">{row.value != null ? formatProbability(row.value) : '--'}</span>
+                <span className="poster-display text-xl text-[#0E0E0E]">{row.value != null ? formatProbability(row.value) : '--'}</span>
               </div>
               <div className={`mt-1 h-4 border-2 ${INK} bg-[#EDE6D6]`}>
                 {row.value != null ? <div className={`h-full ${row.color}`} style={{ width: `${row.value * 100}%` }} /> : null}
@@ -347,7 +347,7 @@ function Scorecard({
 
         {prediction ? (
           <>
-            <p className="text-sm font-medium leading-6">{localizePredictionMessage(prediction.message, prediction.predicted_winner, isPt)}</p>
+            <p className="text-sm font-medium leading-6 text-[#0E0E0E]">{localizePredictionMessage(prediction.message, prediction.predicted_winner, isPt)}</p>
             <DataConfidenceNote confidence={prediction.data_confidence} />
           </>
         ) : (
@@ -379,10 +379,10 @@ function Drivers({ factors }: { factors: MainFactor[] }) {
             <div key={factor.feature}>
               <div className="flex items-end gap-2">
                 <span className="poster-display w-5 shrink-0 text-xl text-[#C8102E]">{index + 1}</span>
-                <span className="min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-wide sm:text-sm">
+                <span className="min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-wide sm:text-sm text-[#0E0E0E]">
                   {localizeFeature(factor.feature, isPt)}
                 </span>
-                <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest">{isPt ? 'favorece' : 'favors'} {factor.impact}</span>
+                <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest text-[#0E0E0E]">{isPt ? 'favorece' : 'favors'} {factor.impact}</span>
               </div>
               <div className={`mt-1 h-2.5 border-2 ${INK} bg-[#EDE6D6]`}>
                 <div className="h-full bg-[#0E0E0E]" style={{ width: `${Math.max((factor.magnitude / max) * 100, 6)}%` }} />
@@ -395,10 +395,10 @@ function Drivers({ factors }: { factors: MainFactor[] }) {
         ) : (
           <>
             {[1, 2, 3].map((n) => (
-              <div key={n} className="flex items-end gap-2">
-                <span className="poster-display w-6 shrink-0 text-2xl text-[var(--text-muted)]">{n}</span>
+              <div key={n} className="flex items-end gap-2 text-[#0E0E0E]">
+                <span className="poster-display w-6 shrink-0 text-2xl text-[#0E0E0E]/30">{n}</span>
                 <span className="poster-leader" aria-hidden="true" />
-                <span className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">--</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-[#0E0E0E]/40">--</span>
               </div>
             ))}
             <p className="text-sm font-medium leading-6 text-[#0E0E0E]/70">
@@ -462,7 +462,7 @@ function Cell({ value, row, winning, ready }: { value: number | null; row: TapeR
   const text = !ready || value == null ? '--' : row.pct ? `${(value * 100).toFixed(1)}%` : Number.isInteger(value) ? `${value}` : value.toFixed(1)
   return (
     <span className="px-2 py-1.5 text-center">
-      <span className={`poster-display inline-block px-2 text-xl sm:text-2xl ${winning ? 'bg-[#F2C230]' : ready ? '' : 'text-[var(--text-muted)]'}`}>{text}</span>
+      <span className={`poster-display inline-block px-2 text-xl sm:text-2xl ${winning ? 'bg-[#F2C230] text-[#0E0E0E]' : ready ? 'text-[#0E0E0E]' : 'text-[#0E0E0E]/40'}`}>{text}</span>
     </span>
   )
 }
