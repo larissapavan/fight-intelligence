@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 import { Header } from '../shared/components/Header'
+import { ScrollToTop } from '../shared/components/ScrollToTop'
 import { LanguageSwitcher } from '../shared/components/LanguageSwitcher'
 import { PageMeta } from '../shared/components/PageMeta'
 import { isLandingPath } from '../shared/data/orgs'
@@ -70,6 +71,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         {t('common.skipToContent', 'Skip to content')}
       </a>
       <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col px-3 pb-4 pt-2 sm:px-4 sm:pb-5 md:px-5 lg:px-6 xl:px-8">
+        <ScrollToTop />
         <PageMeta />
         <Header />
         {apiState === 'down' ? (
