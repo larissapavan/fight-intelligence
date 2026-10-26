@@ -89,15 +89,7 @@ export function Header() {
 
   return (
     <header>
-      {/* Which organization is on screen: its own strip, so the bar below keeps room for the menu. */}
-      {landing ? null : (
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <OrgSwitcher />
-          <p className="type-tech hidden truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)] xs:block">
-            {org.name}
-          </p>
-        </div>
-      )}
+
       <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2 sm:px-4 sm:py-2.5">
         {/* Tier 1: Logo and Quick Actions */}
         <div className="flex items-center justify-between gap-2">
@@ -117,8 +109,10 @@ export function Header() {
             </span>
           </Link>
 
-          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
-            {/* API status: badge on sm+, compact status circle on mobile */}
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            {landing ? null : <OrgSwitcher className="shrink-0" />}
+
+            {/* API status: badge on sm+ */}
             <div
               title={apiTitle}
               className={`type-tech hidden sm:inline-flex items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${apiClasses}`}
@@ -130,7 +124,7 @@ export function Header() {
 
             {landing ? null : <FighterSearch />}
 
-            <LanguageSwitcher />
+            <LanguageSwitcher className="hidden sm:inline-flex" />
 
             <button
               type="button"
