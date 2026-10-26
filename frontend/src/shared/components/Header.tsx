@@ -93,7 +93,7 @@ export function Header() {
   useEffect(() => {
     if (!menuOpen) return
     const handleResize = () => {
-      if (window.innerWidth >= 1024) setMenuOpen(false)
+      if (window.innerWidth >= 1280) setMenuOpen(false)
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -115,45 +115,37 @@ export function Header() {
           <Link
             to={LANDING_PATH}
             aria-label={isPt ? 'Fight Intelligence • Início' : 'Fight Intelligence home'}
-            className="brand-badge flex min-w-0 flex-1 max-w-[calc(100%-84px)] xs:max-w-none items-center lg:shrink-0 gap-2 border-2 border-black bg-[#EFECE6] px-2 py-1.5 xs:gap-3.5 xs:px-4 xs:py-2.5 sm:px-5 lg:px-4 xl:px-5 text-black"
+            className="brand-badge flex shrink-0 items-center gap-2 border-2 border-black bg-[#EFECE6] px-2.5 py-1.5 xs:gap-3 xs:px-3.5 xs:py-2 sm:px-4 text-black"
           >
-            <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-9 xs:w-9 sm:h-10 sm:w-10" />
-            <span className="flex min-w-0 flex-col items-start justify-center gap-1">
-              <span className="truncate font-mono text-[10px] xs:text-[11px] font-bold uppercase leading-none tracking-wider text-[#A80D26] sm:text-[11px]">
+            <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-8 xs:w-8 sm:h-9 sm:w-9" />
+            <span className="flex flex-col items-start justify-center leading-none">
+              <span className="font-mono text-[9px] xs:text-[10px] font-bold uppercase tracking-wider text-[#A80D26]">
                 {t('header.matchupAnalytics', 'Matchup analytics')}
               </span>
-              <span className="truncate font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.05rem] xs:text-[1.4rem] uppercase leading-none tracking-[0.03em] text-black sm:text-[1.75rem] lg:text-[1.4rem] xl:text-[1.75rem]">
+              <span className="font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.1rem] xs:text-[1.3rem] sm:text-[1.5rem] uppercase leading-none tracking-[0.02em] text-black whitespace-nowrap">
                 Fight Intelligence
               </span>
             </span>
           </Link>
 
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
             <div
               title={apiTitle}
-              className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xs:inline-flex lg:hidden xl:inline-flex ${apiClasses}`}
+              className={`type-tech hidden items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xl:inline-flex ${apiClasses}`}
             >
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
               {apiLabel}
             </div>
-            <div
-              title={apiTitle}
-              role="status"
-              aria-label={`API ${apiLabel}`}
-              className={`hidden h-8 w-8 items-center justify-center border-2 lg:flex xl:hidden ${apiClasses}`}
-            >
-              <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
-            </div>
 
             {landing ? null : <FighterSearch />}
 
-            <nav className="hidden items-center gap-1.5 rounded-full border border-white/14 bg-white/[0.04] p-1 lg:flex">
+            <nav className="hidden items-center gap-1 rounded-full border border-white/14 bg-white/[0.04] p-1 xl:flex">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   className={[
-                    'rounded-full px-2 py-2 text-[13px] font-semibold uppercase tracking-[0.06em] transition xl:px-4 xl:py-2.5 xl:text-sm xl:tracking-[0.1em]',
+                    'rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.05em] transition 2xl:px-3.5 2xl:py-2 2xl:text-[13px] 2xl:tracking-[0.08em]',
                     isItemActive(item, pathname) ? 'nav-link-active' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
                   ].join(' ')}
                 >
@@ -162,17 +154,17 @@ export function Header() {
               ))}
             </nav>
 
-            <LanguageSwitcher className="hidden lg:inline-flex" />
+            <LanguageSwitcher className="hidden xl:inline-flex" />
 
             <button
               type="button"
               onClick={toggleTheme}
-              className="ghost-action theme-text hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] lg:inline-flex"
+              className="ghost-action theme-text hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] xl:inline-flex"
               aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
               title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
             >
               {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-              <span className="hidden xl:inline">{isLight ? t('header.themeDark', 'Modo Escuro') : t('header.themeLight', 'Modo Claro')}</span>
+              <span className="hidden 2xl:inline">{isLight ? t('header.themeDark', 'Modo Escuro') : t('header.themeLight', 'Modo Claro')}</span>
             </button>
 
             <a
@@ -180,16 +172,16 @@ export function Header() {
               target="_blank"
               rel="noreferrer"
               title="GitHub"
-              className="ghost-action hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] xl:inline-flex"
+              className="ghost-action hidden min-w-max items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E] 2xl:inline-flex"
             >
               <FolderGit2 className="h-4 w-4" />
-              <span className="hidden xl:inline">GitHub</span>
+              <span className="hidden 2xl:inline">GitHub</span>
             </a>
 
             <button
               type="button"
               onClick={() => setMenuOpen((current) => !current)}
-              className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full lg:hidden"
+              className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full xl:hidden"
               aria-label={menuOpen ? t('header.closeMenu', 'Fechar menu') : t('header.openMenu', 'Abrir menu')}
               aria-expanded={menuOpen}
             >
@@ -205,12 +197,12 @@ export function Header() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="overflow-hidden lg:hidden"
+              className="overflow-hidden xl:hidden"
             >
               <div className="mt-2.5 flex flex-col gap-2 border-t border-white/8 pt-2.5">
                 <div
                   title={apiTitle}
-                  className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xs:hidden ${apiClasses}`}
+                  className={`type-tech inline-flex w-fit items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] xl:hidden ${apiClasses}`}
                 >
                   <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
                   {apiLabel}
