@@ -20,10 +20,10 @@ export function LanguageSwitcher({ className = '', compact = false }: LanguageSw
     <div
       role="group"
       aria-label={t('language.switch', 'Mudar idioma')}
-      className={`inline-flex items-center rounded-full border border-white/14 bg-white/[0.04] p-0.5 text-xs font-semibold uppercase tracking-[0.1em] ${className}`}
+      className={`inline-flex shrink-0 items-center rounded-full border border-white/14 bg-white/[0.04] p-0.5 text-xs font-semibold uppercase tracking-[0.1em] ${className}`}
     >
       {!compact && (
-        <span className="pl-2 pr-1 text-[var(--text-muted)]" aria-hidden="true">
+        <span className="hidden xs:inline-flex pl-2 pr-1 text-[var(--text-muted)]" aria-hidden="true">
           <Languages className="h-3.5 w-3.5" />
         </span>
       )}

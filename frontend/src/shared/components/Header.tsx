@@ -104,7 +104,7 @@ export function Header() {
           <Link
             to={LANDING_PATH}
             aria-label={isPt ? 'Fight Intelligence • Início' : 'Fight Intelligence home'}
-            className="brand-badge flex shrink-0 items-center gap-2 border-2 border-black bg-[#EFECE6] px-2.5 py-1.5 xs:gap-3 xs:px-3.5 xs:py-2 sm:px-4 text-black"
+            className="brand-badge flex shrink-0 items-center gap-2 border-2 border-black bg-[#EFECE6] px-2 py-1 xs:gap-2.5 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 text-black"
           >
             <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-8 xs:w-8 sm:h-9 sm:w-9" />
             <span className="flex flex-col items-start justify-center leading-none">
@@ -126,14 +126,7 @@ export function Header() {
               <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
               {apiLabel}
             </div>
-            <div
-              title={apiTitle}
-              role="status"
-              aria-label={`API ${apiLabel}`}
-              className={`inline-flex sm:hidden h-8 w-8 items-center justify-center rounded-full border ${apiClasses}`}
-            >
-              <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
-            </div>
+
 
             {landing ? null : <FighterSearch />}
 
@@ -142,7 +135,7 @@ export function Header() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="ghost-action theme-text inline-flex h-9 w-9 items-center justify-center rounded-full transition"
+              className="ghost-action theme-text inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full transition"
               aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
               title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
             >
@@ -155,7 +148,7 @@ export function Header() {
               rel="noreferrer"
               title="GitHub"
               aria-label="GitHub"
-              className="ghost-action inline-flex h-9 w-9 items-center justify-center rounded-full text-[#C8102E] transition"
+              className="ghost-action hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full text-[#C8102E] transition"
             >
               <FolderGit2 className="h-4 w-4" />
             </a>

@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 import { Header } from '../shared/components/Header'
+import { LanguageSwitcher } from '../shared/components/LanguageSwitcher'
 import { PageMeta } from '../shared/components/PageMeta'
 import { isLandingPath } from '../shared/data/orgs'
 import { useOrg } from '../shared/hooks/useOrg'
@@ -91,23 +92,33 @@ export function MainLayout({ children }: { children: ReactNode }) {
           )}
         </motion.main>
         <footer className="mt-6 border-[3px] border-[var(--rule)] bg-[var(--card-bg)] px-4 py-3 text-sm font-medium text-[var(--text-main)] shadow-[5px_5px_0_var(--hard)]">
-          <p className="type-tech text-xs uppercase tracking-[0.14em]">
-            {t('footer.tagline', 'Fight Intelligence • AI sports analytics for matchup analysis')}
-          </p>
-          {footerDate ? (
-            <p className="mt-1.5">{t('footer.dataUpTo', { date: footerDate, defaultValue: `Data up to ${footerDate}` })}</p>
-          ) : null}
-          <p className="mt-1.5">
-            <Link
-              to="/about"
-              className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
-            >
-              {t('footer.disclaimer', {
-                org: landing ? 'any of these organizations' : `the ${org.shortName}`,
-                defaultValue: `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`,
-              })}
-            </Link>
-          </p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="type-tech text-xs uppercase tracking-[0.14em]">
+                {t('footer.tagline', 'Fight Intelligence • AI sports analytics for matchup analysis')}
+              </p>
+              {footerDate ? (
+                <p className="mt-1.5">{t('footer.dataUpTo', { date: footerDate, defaultValue: `Data up to ${footerDate}` })}</p>
+              ) : null}
+              <p className="mt-1.5">
+                <Link
+                  to="/about"
+                  className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
+                >
+                  {t('footer.disclaimer', {
+                    org: landing ? 'any of these organizations' : `the ${org.shortName}`,
+                    defaultValue: `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`,
+                  })}
+                </Link>
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-2 border-t border-[var(--rule)]/20 pt-2.5 sm:border-t-0 sm:pt-0">
+              <span className="type-tech text-xs uppercase tracking-wider text-[var(--text-muted)]">
+                {t('language.switch', 'Idioma')}:
+              </span>
+              <LanguageSwitcher />
+            </div>
+          </div>
         </footer>
       </div>
     </div>
