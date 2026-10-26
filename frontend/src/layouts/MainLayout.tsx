@@ -102,7 +102,10 @@ export function MainLayout({ children }: { children: ReactNode }) {
               to="/about"
               className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
             >
-              {t('footer.disclaimer', `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`)}
+              {t('footer.disclaimer', {
+                org: landing ? 'any of these organizations' : `the ${org.shortName}`,
+                defaultValue: `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`,
+              })}
             </Link>
           </p>
         </footer>

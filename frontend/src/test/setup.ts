@@ -1,10 +1,13 @@
 import '@testing-library/jest-dom/vitest'
-import '../i18n'
+import i18n from '../i18n'
 import { afterEach } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
+void i18n.changeLanguage('en-US')
+
 afterEach(async () => {
   cleanup()
+  void i18n.changeLanguage('en-US')
   // Imported here, not at the top: a static import would load the real axios before a test file can mock it.
   const { resetFightersCache } = await import('../shared/hooks/useFighters')
   resetFightersCache()

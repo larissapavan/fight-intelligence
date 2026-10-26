@@ -1,119 +1,189 @@
-# 🥊 Fight Intelligence
+# Fight Intelligence
 
-### A plataforma definitiva de inteligência de dados, previsões com IA explicável e acervo histórico do MMA.
+### Sports analytics, explainable AI fight predictions, and historical MMA archive.
 
-[![Acessar o Fight Intelligence](https://img.shields.io/badge/Acessar%20o%20Site-fight--intelligence.vercel.app-C8102E?style=for-the-badge&logo=vercel&logoColor=white)](https://fight-intelligence.vercel.app/)
-[![PT-BR / EN-US](https://img.shields.io/badge/Idioma-Portugu%C3%AAs%20%7C%20English-F2C230?style=for-the-badge)](https://fight-intelligence.vercel.app/)
-[![100% Gratuito](https://img.shields.io/badge/Acesso-100%25%20Gratuito%20%26%20Sem%20An%C3%BAncios-1F4E9C?style=for-the-badge)](https://fight-intelligence.vercel.app/)
+[![Live Web Application](https://img.shields.io/badge/Live%20App-fight--intelligence.vercel.app-C8102E?style=for-the-badge&logo=vercel&logoColor=white)](https://fight-intelligence.vercel.app/)
+[![Bilingual](https://img.shields.io/badge/Language-English%20%7C%20Portugu%C3%AAs-F2C230?style=for-the-badge)](https://fight-intelligence.vercel.app/)
+[![Free & Open Access](https://img.shields.io/badge/Access-100%25%20Free%20%26%20No%20Ads-1F4E9C?style=for-the-badge)](https://fight-intelligence.vercel.app/)
+[![CI](https://github.com/larissapavan/fight-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/larissapavan/fight-intelligence/actions/workflows/ci.yml)
+[![Daily data update](https://github.com/larissapavan/fight-intelligence/actions/workflows/update-data.yml/badge.svg)](https://github.com/larissapavan/fight-intelligence/actions/workflows/update-data.yml)
 
-> **Chega de palpites sem explicação.** Escolha quaisquer dois lutadores, descubra quem tem mais probabilidade estatística de vencer e entenda exatamente quais números sustentam essa vantagem.
+> **No more unexplained betting lines or baseless predictions.** Pick any two fighters, discover who has the statistical edge to win, and see exactly which metrics drive that probability.
 
-**[👉 Clique aqui para abrir o Fight Intelligence no seu navegador](https://fight-intelligence.vercel.app/)**  
-*(Funciona direto no celular ou computador, sem necessidade de cadastro, sem propagandas e com carregamento instantâneo).*
-
----
-
-## 🌟 Por que usar o Fight Intelligence?
-
-Se você já discutiu com amigos sobre quem venceria uma luta ou tentou entender por que um lutador é favorito, você sabe que a maioria dos sites entrega apenas uma porcentagem fria ou opiniões subjetivas.
-
-O **Fight Intelligence** foi construído para mudar isso:
-
-1. **Inteligência Artificial Explicável (XAI):**  
-   O modelo não entrega apenas um percentual vago. Ele abre a "caixa-preta" e mostra um gráfico com os fatores determinantes (SHAP): se foi a diferença de envergadura, a taxa de defesa de quedas, o volume de golpes por minuto ou a consistência recente.
-
-2. **Simetria Matemática Garantida:**  
-   Não importa se você digita *Lutador A vs Lutador B* ou *Lutador B vs Lutador A*. O sistema avalia os dois cantos com rigor idêntico e a probabilidade permanece sempre matematicamente coerente.
-
-3. **Placar 100% Público e Auditado (Track Record):**  
-   O site salva os palpites da IA **antes** das lutas acontecerem e atualiza os resultados automaticamente logo após o término dos eventos. Nada é alterado retroativamente: você pode conferir a precisão real de cada card publicamente.
-
-4. **Experiência Bilíngue com Linguagem do MMA Nacional (PT-BR / EN-US):**  
-   Você pode alternar de idioma com um clique no topo da página. O português utiliza o vocabulário autêntico das transmissões e comunidades brasileiras de artes marciais (*Disputa de Cinturão*, *Nocaute*, *Decisão Unânime*, *Canto Vermelho/Azul*).
-
-5. **Design Elegante, Rápido e Focado na Experiência do Fã:**  
-   Visual refinado inspirado nas coberturas esportivas internacionais, modo escuro nativo, visualização em tempo real e links compartilháveis para você enviar direto nas suas conversas e redes sociais.
+**[👉 Launch Fight Intelligence in your browser](https://fight-intelligence.vercel.app/)**  
+*(Works seamlessly on desktop and mobile. No account creation, no subscriptions, and instant loading).*
 
 ---
 
-## 🎯 O que você pode fazer no site?
+## 🌟 Why Fight Intelligence?
 
-### ⚡ 1. Previsão de Combates & Duelos dos Sonhos (Matchup Intelligence)
-Compare qualquer atleta do UFC contra outro da mesma divisão ou simule cruzamentos históricos:
-- **Radar de Habilidades:** Gráficos interativos comparando striking, grappling, envergadura, ritmo e absorção de golpes.
-- **Link Direto do Combate:** Cada luta possui uma URL única com botão de cópia rápida para enviar em grupos de discussão.
-- **Fatores Determinantes:** Veja os 6 pontos estatísticos mais fortes que inclinam a balança para um dos lados.
+Most sports prediction tools provide a single, opaque percentage with no explanation. When a model indicates a 65% favorite, fight fans and analysts want to know *why*: is it reach advantage, takedown defense, striking volume, or recent control time?
 
-### 🎲 2. Simulador de Cards Inteiros (Card Simulator)
-Abra qualquer evento oficial futuro (como o próximo card numerado ou Fight Night) e simule a noite inteira de lutas:
-- Teste seus palpites luta por luta.
-- Deixe a Inteligência Artificial preencher o card com base nas probabilidades calculadas.
-- Calcule a probabilidade acumulada daquela múltipla perfeita de vitórias.
+**Fight Intelligence** was engineered to bring complete transparency to MMA analytics:
 
-### 🏆 3. Central de Campeões e Linhagem de Cinturões
-- **Hierarquia Visual de Títulos:** Identificação imediata com badges especiais para **Disputa de Cinturão Indiscutível** (dourado), **Disputa de Cinturão Interino** (azul oficial, como em *Carlos Prates vs. Michael Morales*) e o emblemático **Cinturão BMF** (prateado).
-- **Linhagem Histórica Completa:** Linha do tempo de todas as categorias de peso, dias de reinado, número de defesas consecutivas e como cada reinado começou e terminou.
-- **Recordes de Título:** Ranking histórico de maiores campeões, mais defesas e campeões simultâneos de múltiplas divisões.
-
-### 👤 4. Mais de 2.800 Perfis de Lutadores
-- **Linha do Tempo de Carreira Interativa:** Navegue luta por luta no cartel do lutador, visualizando o método da vitória, o round, o árbitro e a pontuação dos juízes.
-- **Gráficos de Evolução:** Taxa de vitórias e frequência de nocautes/finalizações ao longo dos anos.
-- **Lutadores Similares:** Algoritmo que encontra outros atletas com estilo e métricas semelhantes.
-- **Origem e Bandeiras:** Múltiplas nacionalidades representadas com precisão para cada lutador.
-
-### 🌐 5. Universo Multi-Organizações (UFC, PFL e Bellator)
-Alterne no cabeçalho entre o **UFC**, a **PFL** e o acervo histórico completo do **Bellator MMA** (2009–2023):
-- Acompanhe atletas que migraram de uma liga para a outra mantendo seus históricos interligados.
-- Diretório de mais de **900 Academias e Equipes de Treinamento** ao redor do mundo, com lista de atletas e campeões formados.
+1. **Explainable AI (SHAP):**  
+   Every matchup prediction opens the black box. An interactive factor breakdown reveals the exact weight of each technical metric—striking accuracy, takedown defense, finish frequency, reach difference, age differential, and control rate.
+2. **Strict Mathematical Symmetry:**  
+   Whether evaluating *Fighter A vs. Fighter B* or *Fighter B vs. Fighter A*, the prediction engine evaluates both corners with equal rigor. Outcomes remain strictly consistent regardless of input order.
+3. **Publicly Audited Track Record:**  
+   Picks are frozen and saved before the event starts. As official results finalize, predictions are settled automatically without hindsight bias or retroactive changes. Accuracy, Brier score, and log loss can be audited directly on the live site.
+4. **Interactive Card Simulator:**  
+   Compare personal fight instincts directly against the machine learning model across full cards. Build your card, analyze calculated parlay probabilities, and export summaries.
+5. **Multi-Promotion Architecture (UFC, PFL, Bellator):**  
+   Seamlessly toggle between the **UFC**, **Professional Fighters League (PFL)**, and the complete historical **Bellator MMA archive (2009–2023)**. Profiles cross-reference fighters who have competed across multiple leagues.
+6. **Fully Bilingual (EN-US & PT-BR):**  
+   Switch dynamically between English and Brazilian Portuguese with full localization of MMA terms (*Disputa de Cinturão*, *Nocaute Técnico*, *Decisão Unânime*, *Canto Vermelho/Azul*).
 
 ---
 
-## 🚀 Experimente Agora em 10 Segundos
+## ⚡ Try It Live
 
-Clique em qualquer um dos links abaixo para ver a IA em ação:
+Test the AI model in action with one click:
 
-- 🥊 **[Simular: Islam Makhachev vs. Arman Tsarukyan](https://fight-intelligence.vercel.app/matchup-intelligence?a=Islam%20Makhachev&b=Arman%20Tsarukyan)**
-- 🥊 **[Simular: Jon Jones vs. Tom Aspinall](https://fight-intelligence.vercel.app/matchup-intelligence?a=Jon%20Jones&b=Tom%20Aspinall)**
-- 🥊 **[Simular: Alex Pereira vs. Magomed Ankalaev](https://fight-intelligence.vercel.app/matchup-intelligence?a=Alex%20Pereira&b=Magomed%20Ankalaev)**
-- 📅 **[Ver o Próximo Evento do UFC com Previsões da IA](https://fight-intelligence.vercel.app/home)**
-- 📈 **[Conferir o Placar e Taxa de Acerto da IA (Track Record)](https://fight-intelligence.vercel.app/track-record)**
-- 👑 **[Ver o Quadro Histórico de Campeões](https://fight-intelligence.vercel.app/champions)**
-
----
-
-## 👩‍💻 Sobre a Desenvolvedora
-
-O **Fight Intelligence** é um projeto independente concebido, arquitetado e desenvolvido integralmente por **[Larissa Pavan](https://github.com/larissapavan)** como desenvolvedora solo.
-
-Cada etapa do projeto — desde os scrapers automatizados de dados, engenharia de features, treino e validação do modelo de Machine Learning (HistGradientBoosting + SHAP), desenvolvimento da API em FastAPI, até a interface completa em React 19 / TypeScript e o sistema de internacionalização bilíngue — foi projetada e implementada individualmente por ela.
+- 🥊 **[Simulate: Islam Makhachev vs. Arman Tsarukyan](https://fight-intelligence.vercel.app/matchup-intelligence?a=Islam%20Makhachev&b=Arman%20Tsarukyan)**
+- 🥊 **[Simulate: Jon Jones vs. Tom Aspinall](https://fight-intelligence.vercel.app/matchup-intelligence?a=Jon%20Jones&b=Tom%20Aspinall)**
+- 🥊 **[Simulate: Alex Pereira vs. Magomed Ankalaev](https://fight-intelligence.vercel.app/matchup-intelligence?a=Alex%20Pereira&b=Magomed%20Ankalaev)**
+- 📅 **[Explore Upcoming UFC Cards with AI Predictions](https://fight-intelligence.vercel.app/home)**
+- 📈 **[Inspect the Public Track Record & Calibration](https://fight-intelligence.vercel.app/track-record)**
+- 👑 **[Browse Divisional Champions & Historical Title Reigns](https://fight-intelligence.vercel.app/champions)**
+- 📚 **[Explore the All-Time UFC Record Book](https://fight-intelligence.vercel.app/record-book)**
 
 ---
 
-## 📚 Fontes de Dados & Créditos
+## 🛠️ Technology Stack & Architecture
 
-Este projeto reúne e organiza dados públicos de artes marciais mistas para fins analíticos, educacionais e estatísticos. Nossos sinceros agradecimentos e créditos aos serviços e plataformas que tornam essas informações acessíveis:
+Fight Intelligence is built as a decoupled, high-performance web platform combining machine learning, automated data pipelines, and a modern reactive frontend.
 
-- **[ESPN MMA](https://www.espn.com/mma/):** Resultados oficiais, cronograma de cards futuros, estatísticas detalhadas combate a combate (golpes significativos, tentativas de queda, tempo de controle), fotos dos atletas e acervo histórico dos combates do Bellator.
-- **[UFC Stats](http://ufcstats.com/):** A principal referência histórica de combates oficiais do UFC, cartéis, durações de rounds, métodos de vitória e pontuações dos juízes.
-- **[UFC Oficial (ufc.com)](https://www.ufc.com/):** Rankings oficiais por categoria e peso-por-peso (P4P), cidades natais e fotos oficiais dos campeões.
-- **[UFC Stats Leaders](https://statleaders.ufc.com/):** Líderes históricos de carreira utilizados no Livro de Recordes (Record Book).
-- **[PFL MMA (pflmma.com)](https://pflmma.com/):** Informações de eventos, chaves de torneios, lutadores e rankings da Professional Fighters League.
-- **[Next-Fight (next-fight.com)](https://next-fight.com/):** Anúncios antecipados de lutas, confirmação de cards futuros e atualizações de disputas de cinturão (como o UFC 336: Prates vs. Morales).
-- **[FightHub](https://fighthub-app.com/):** Mapeamento do diretório global de academias de artes marciais e equipes de treinamento.
-- **[roster.watch](https://www.roster.watch/):** Monitoramento de atletas ativos no elenco do UFC, datas de estreia, nacionalidades e condecorações (Hall da Fama, Contender Series, TUF).
-- **[Wikipedia](https://en.wikipedia.org/):** Registros históricos e cronologia das linhagens de títulos do Bellator MMA.
-- **[Kaggle](https://www.kaggle.com/):** Comunidade de ciência de dados e hospedagem do dataset histórico próprio criado por Larissa Pavan ([UFC Historical Fight Dataset 1993–2026](https://www.kaggle.com/datasets/larissapavan/ufc-historical-fight-dataset-19942026)).
+```
+┌────────────────────────────────────────────────────────┐
+│                   Data Ingestion                       │
+│    ESPN MMA  •  UFCStats  •  UFC.com  •  FightHub      │
+└──────────────────────────┬─────────────────────────────┘
+                           │ Daily automated GitHub Actions
+┌──────────────────────────▼─────────────────────────────┐
+│                 Data Pipeline & ML                     │
+│  • Pandas / NumPy feature engineering                  │
+│  • HistGradientBoostingClassifier                      │
+│  • TreeSHAP / KernelSHAP explainability                │
+│  • Logistic calibration & symmetric corner-averaging   │
+└──────────────────────────┬─────────────────────────────┘
+                           │
+┌──────────────────────────▼─────────────────────────────┐
+│                   FastAPI Backend                      │
+│  • RESTful JSON endpoints (predictions, profiles, stats)│
+│  • Memory-efficient caching & automated settlement     │
+└──────────────────────────┬─────────────────────────────┘
+                           │
+┌──────────────────────────▼─────────────────────────────┐
+│               React 19 Frontend (Vite)                 │
+│  • TypeScript, Tailwind CSS, Recharts, Framer Motion   │
+│  • i18next runtime translation (EN-US / PT-BR)         │
+│  • Deployed on Vercel Edge Network                     │
+└────────────────────────────────────────────────────────┘
+```
 
-*Nota de isenção de responsabilidade: Este é um projeto de pesquisa e portfólio pessoal e independente, sem qualquer afiliação comercial ou institucional com o UFC, Zuffa LLC, TKO Group Holdings, PFL, Bellator ou ESPN. Todas as marcas, logotipos e nomes citados pertencem aos seus respectivos proprietários.*
+### Machine Learning Core
+- **Algorithm:** `HistGradientBoostingClassifier` trained on thousands of professional UFC bouts.
+- **Explainability:** SHAP values calculate the marginal contribution of each physical and statistical feature toward the predicted probability.
+- **Symmetric Corner Evaluation:** Predictions are calculated bidirectionally $(A \to B$ and $B \to A)$ and averaged to ensure zero corner bias.
+- **Calibration:** Sigmoid/logistic calibration aligns predicted output probabilities with true empirical win rates.
+
+### Backend & API
+- **Framework:** FastAPI with Python 3.12+ and Pydantic v2 schemas.
+- **Pipelines:** Daily automated scripts scrape, clean, validate, and compute rolling fighter metrics (significant strike differential, control duration, takedown defense rate, win streaks, finishing rate, and Elo ratings).
+- **Data Integrity:** Strict schema checks and regression test suites ensure historical records and belt statuses stay synchronized.
+
+### Frontend Client
+- **Framework:** React 19 with TypeScript and Vite.
+- **Styling:** Modern sports dashboard design with Tailwind CSS, custom responsive typography, and full dark/light theme support.
+- **Visualizations:** Interactive radar charts, career timelines, and factor contribution bars built with Recharts and Lucide Icons.
+- **Internationalization:** Instant client-side switching between English and Portuguese via `i18next`.
 
 ---
 
-## 💬 Gostou? Compartilhe e apoie!
+## 📊 Features & Modules
 
-- **Envie um duelo para os seus amigos:** Escolha um confronto no site, clique em *Copiar link* e mande no grupo do WhatsApp ou Discord!
-- **Deixe uma estrela ⭐ no repositório:** Se você curtiu o projeto, sua estrela no GitHub ajuda muito a valorizar o trabalho e dar visibilidade ao site.
-- **Tem uma ideia ou sugestão?** Fique à vontade para abrir uma [Issue](https://github.com/larissapavan/fight-intelligence/issues) com sugestões de recursos ou melhorias.
+### 1. Matchup Intelligence & Radar Comparisons
+- Select any two fighters to preview win odds, physical tale-of-the-tape, striking volume, grappling statistics, and top decision factors.
+- Generate direct shareable URLs for individual matchups with a one-click copy button.
+
+### 2. Full Card Simulator (You vs. AI)
+- Pick every bout on an upcoming card, test your intuition against the model, view agreement percentages, and compute multi-leg parlay odds.
+
+### 3. Champions & Title History
+- Visual badges distinguishing **Undisputed Championships** (gold), **Interim Belts** (blue), and the **BMF Title** (silver).
+- Chronological timelines tracking belt defenses, days held, multi-division champions, and title vacancy histories.
+
+### 4. Comprehensive Fighter Profiles (2,800+ Athletes)
+- Interactive bout-by-bout career logs with victory methods, referee records, rounds, and judge scorecards.
+- Annual win/finish trends, similar fighter clustering, nationality flags, and current Elo standings.
+
+### 5. Gyms & Training Centers Directory
+- Over 900 gyms cataloged worldwide, mapping fighters to their main training camps and highlighting gyms that have produced champions.
 
 ---
 
-### [👉 Comece a explorar agora: fight-intelligence.vercel.app](https://fight-intelligence.vercel.app/)
+## 🚀 Running Locally
+
+### Prerequisites
+- **Python 3.11+**
+- **Node.js 18+** and **npm**
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/larissapavan/fight-intelligence.git
+cd fight-intelligence
+```
+
+### 2. Setup the Backend
+```bash
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
+
+pip install -r backend/requirements.txt
+uvicorn backend.app.main:app --reload --port 8000
+```
+The API documentation is available at `http://localhost:8000/docs`.
+
+### 3. Setup the Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Open `http://localhost:5173` to view the application.
+
+### 4. Running the Test Suite
+```bash
+# Backend pytest suite (540+ tests):
+pytest tests/backend tests/ml tests/scripts
+
+# Frontend test & lint suite:
+npm --prefix frontend test
+npm --prefix frontend run lint
+npm --prefix frontend run build
+```
+
+---
+
+## ⚠️ Notes & Limitations
+
+- **Statistical Model:** Predictions represent empirical win probabilities derived from historical statistics. In mixed martial arts, unexpected outcomes, flash knockouts, and split decisions occur regularly.
+- **Intangible Factors:** The model evaluates recorded technical metrics (striking, grappling, physical attributes, recent form). It does not account for mid-camp injuries, weight-cutting complications, or late-notice replacements with limited data.
+- **Public Data Sources:** Data is aggregated from public fight records and news feeds. Official statistics are managed by respective promotional bodies.
+- **Educational & Analytical Purpose:** Fight Intelligence is an independent, non-commercial research project intended for sports analysis and data science exploration. It is not financial or betting advice.
+
+---
+
+## 📚 Data Sources & Acknowledgments
+
+We thank the platforms and communities providing accessible public MMA data:
+- **[ESPN MMA](https://www.espn.com/mma/)**: Fight schedules, per-round metrics, and fighter imagery.
+- **[UFC Stats](http://ufcstats.com/)**: Historical UFC fight statistics, scorecards, and bout details.
+- **[UFC Official (ufc.com)](https://www.ufc.com/)**: Official divisional and pound-for-pound rankings.
+- **[UFC Stats Leaders](https://statleaders.ufc.com/)**: Historical records for the UFC Record Book.
+- **[PFL MMA](https://pflmma.com/)**: Event rosters, tournament brackets, and standings.
+- **[FightHub](https://fighthub-app.com/)**: Gym rosters and fighter camp affiliations.

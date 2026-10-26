@@ -54,7 +54,7 @@ export function OrgHome() {
             <SectionHeading
               level={1}
               eyebrow={org.name}
-              title={`${org.shortName} • Estatísticas & Inteligência`}
+              title={isPt ? `${org.shortName} • Estatísticas & Inteligência` : `${org.shortName} fight intelligence`}
               description={org.tagline}
             />
             <div className="mt-4 flex flex-wrap gap-2">

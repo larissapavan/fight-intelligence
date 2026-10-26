@@ -65,7 +65,7 @@
   "footer": {
     "tagline": "Fight Intelligence • Inteligência artificial e estatísticas avançadas para o UFC",
     "dataUpTo": "Dados atualizados até {{date}}",
-    "disclaimer": "Projeto pessoal independente. Sem afiliação oficial com o UFC ou Zuffa LLC.",
+    "disclaimer": "Projeto pessoal independente, sem afiliação com {{org}}",
     "rssFeed": "Feed RSS: novos palpites e resultados"
   },
   "common": {
@@ -133,7 +133,7 @@
     "former": "Ex-lutadores / Históricos",
     "status": "Situação",
     "record": "Cartel",
-    "division": "Categoria de Peso",
+    "division": "Categorias de peso",
     "lastFight": "Última Luta",
     "noFightersFound": "Nenhum lutador encontrado com os filtros selecionados.",
     "viewProfile": "Ver Perfil do Atleta",

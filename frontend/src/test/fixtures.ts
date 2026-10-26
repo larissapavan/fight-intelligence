@@ -403,5 +403,6 @@ export function respond(rawUrl: string): unknown {
   if (url.endsWith('/performance')) return { ...performance, fighter: url.split('/')[2] }
   if (url.endsWith('/opponents')) return { fighter: '', opponents: [] }
   if (url.endsWith('/similar')) return []
+  if (url.endsWith('/other-organizations')) return []
   throw new Error(`The fake API has no answer for ${url}`)
 }

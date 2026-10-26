@@ -64,8 +64,8 @@
   },
   "footer": {
     "tagline": "Fight Intelligence • AI sports analytics for fight prediction",
-    "dataUpTo": "Data current through {{date}}",
-    "disclaimer": "Independent personal project with no official affiliation to any promotion.",
+    "dataUpTo": "Data up to {{date}}",
+    "disclaimer": "Independent personal project, not affiliated with {{org}}",
     "rssFeed": "RSS feed: new picks and results"
   },
   "common": {
@@ -125,15 +125,15 @@
     "predictionError": "Prediction failed. Check whether the backend is available and try again."
   },
   "fighters": {
-    "title": "Fighter Roster",
-    "subtitle": "Explore fight histories, metrics and divisions for over 2,800 UFC athletes.",
-    "search": "Search by name...",
+    "title": "Fighters",
+    "subtitle": "Browse fighters by weight class and open a profile for their record, career timeline and stats.",
+    "search": "Search fighter or nickname",
     "all": "All",
     "activeOnly": "Active only",
     "former": "Former",
     "status": "Status",
     "record": "Record",
-    "division": "Division",
+    "division": "Weight classes",
     "lastFight": "Last Fight",
     "noFightersFound": "No fighters found for the selected filters.",
     "viewProfile": "View Profile",
@@ -210,7 +210,7 @@
   },
   "gyms": {
     "eyebrow": "Where fighters train",
-    "title": "Gyms and teams",
+    "title": "gyms and teams",
     "description": "Open a gym to see who trains there. Fighters are matched with the profiles on this site; the rest of each roster comes from FightHub.",
     "totalGyms": "Gyms",
     "withOrgFighters": "With organization fighters",
@@ -295,9 +295,9 @@
     "featureImportance": "Feature Importance"
   },
   "matchup": {
-    "eyebrow": "Matchup analysis",
-    "title": "Matchup intelligence",
-    "description": "Compare advanced fight statistics, radar profiles and decision factors.",
+    "eyebrow": "Matchup",
+    "title": "Why this matchup is interesting",
+    "description": "Striking, grappling and physical numbers for both fighters, plus the factors the model weighed most.",
     "analyze": "Analyze Matchup",
     "analyzing": "Analyzing...",
     "radar": "Radar Profile",
@@ -313,7 +313,7 @@
     "yearlyTrends": "Yearly trends",
     "weightHistory": "Weight class history",
     "favoriteMethods": "Favorite finishing methods",
-    "close": "Close profile",
+    "close": "Close performance profile",
     "noUfcFights": "This fighter has no recorded UFC bouts yet.",
     "eloRating": "Elo Rating",
     "peakElo": "Peak Elo",
