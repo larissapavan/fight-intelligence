@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CircleDot, FolderGit2, Moon, Sun } from 'lucide-react'
+import { FolderGit2, Moon, Sun } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
@@ -72,12 +72,11 @@ export function Header() {
     : health?.model_loaded
       ? t('header.apiLiveTitle', 'API is live and the model is loaded')
       : t('header.apiOfflineTitle', 'API is unreachable')
-  const apiClasses = loading
-    ? 'border-[#F2C230] bg-[#F2C230] text-[#0E0E0E]'
+  const apiDotColor = loading
+    ? 'bg-[#F2C230] animate-pulse'
     : health?.model_loaded
-      ? 'border-[var(--rule)] bg-[#2E7D4F] text-white'
-      : 'border-[var(--rule)] bg-[#C8102E] text-white'
-  const apiDotClasses = loading ? 'animate-pulse' : health?.model_loaded ? 'animate-pulse' : ''
+      ? 'bg-[#3FB27F]'
+      : 'bg-[#C8102E]'
   const isLight = theme === 'light'
 
   useEffect(() => {
@@ -89,21 +88,20 @@ export function Header() {
 
   return (
     <header>
-
       <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2 sm:px-4 sm:py-2.5">
-        {/* Tier 1: Logo and Quick Actions */}
+        {/* Tier 1: Logo and Unified Toolbar */}
         <div className="flex items-center justify-between gap-2">
           <Link
             to={LANDING_PATH}
             aria-label={L(i18n.language, 'Fight Intelligence • Início', 'Fight Intelligence home', 'Fight Intelligence • Accueil')}
-            className="brand-badge flex shrink-0 items-center gap-2 border-2 border-black bg-[#EFECE6] px-2 py-1 xs:gap-2.5 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 text-black"
+            className="brand-badge flex shrink-0 items-center gap-2 border-2 border-black bg-[#EFECE6] px-2 py-1 xs:gap-2.5 xs:px-3 xs:py-1.5 sm:px-3.5 sm:py-1.5 text-black"
           >
-            <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-8 xs:w-8 sm:h-9 sm:w-9" />
+            <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-8 xs:w-8" />
             <span className="flex flex-col items-start justify-center leading-none">
               <span className="font-mono text-[9px] xs:text-[10px] font-bold uppercase tracking-wider text-[#A80D26]">
                 {t('header.matchupAnalytics', 'Matchup analytics')}
               </span>
-              <span className="font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.1rem] xs:text-[1.3rem] sm:text-[1.5rem] uppercase leading-none tracking-[0.02em] text-black whitespace-nowrap">
+              <span className="font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.1rem] xs:text-[1.25rem] sm:text-[1.4rem] uppercase leading-none tracking-[0.02em] text-black whitespace-nowrap">
                 Fight Intelligence
               </span>
             </span>
@@ -112,40 +110,42 @@ export function Header() {
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             {landing ? null : <OrgSwitcher className="shrink-0" />}
 
-            {/* API status: badge on sm+ */}
+            {/* Minimalist API status pill */}
             <div
               title={apiTitle}
-              className={`type-tech hidden sm:inline-flex items-center gap-1.5 border-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${apiClasses}`}
+              className="type-tech hidden md:inline-flex h-8 items-center gap-2 border border-[var(--line-soft)] bg-[var(--surface-3)] px-2.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-soft)]"
             >
-              <CircleDot className={`h-3.5 w-3.5 fill-current ${apiDotClasses}`} />
-              {apiLabel}
+              <span className={`keep-round h-2 w-2 shrink-0 ${apiDotColor}`} aria-hidden="true" />
+              <span>{apiLabel}</span>
             </div>
-
-
-            {landing ? null : <FighterSearch />}
 
             <LanguageSwitcher className="hidden sm:inline-flex" />
 
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="ghost-action theme-text inline-flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full transition"
-              aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
-              title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
-            >
-              {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            </button>
+            {/* Unified Action Dock: Search + Theme + GitHub */}
+            <div className="inline-flex h-8 items-center divide-x divide-[var(--line-soft)] border border-[var(--line-soft)] bg-[var(--surface-3)]">
+              {landing ? null : <FighterSearch />}
 
-            <a
-              href="https://github.com/larissapavan"
-              target="_blank"
-              rel="noreferrer"
-              title="GitHub"
-              aria-label="GitHub"
-              className="ghost-action hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full text-[#C8102E] transition"
-            >
-              <FolderGit2 className="h-4 w-4" />
-            </a>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="inline-flex h-full w-8 items-center justify-center text-[var(--text-muted)] transition cursor-pointer hover:bg-[var(--action-hover-bg)] hover:text-[var(--text-main)]"
+                aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
+                title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
+              >
+                {isLight ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+              </button>
+
+              <a
+                href="https://github.com/larissapavan"
+                target="_blank"
+                rel="noreferrer"
+                title="GitHub"
+                aria-label="GitHub"
+                className="hidden sm:inline-flex h-full w-8 items-center justify-center text-[var(--text-muted)] transition hover:bg-[var(--action-hover-bg)] hover:text-[var(--text-main)]"
+              >
+                <FolderGit2 className="h-3.5 w-3.5" />
+              </a>
+            </div>
           </div>
         </div>
 

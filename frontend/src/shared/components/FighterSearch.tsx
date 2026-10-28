@@ -102,12 +102,12 @@ export function FighterSearch() {
           if (!open) setText('')
           setOpen(!open)
         }}
-        className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+        className={`inline-flex h-full w-8 shrink-0 items-center justify-center transition cursor-pointer ${open ? 'bg-[var(--rule)] text-[var(--card-bg)]' : 'text-[var(--text-muted)] hover:bg-[var(--action-hover-bg)] hover:text-[var(--text-main)]'}`}
         aria-label={L(i18n.language, 'Buscar lutadores', 'Search fighters', 'Chercher des combattants')}
         aria-expanded={open}
         title={L(i18n.language, 'Buscar lutadores (pressione /)', 'Search fighters (press /)', 'Chercher des combattants (appuyez sur /)')}
       >
-        <Search className="h-4 w-4" />
+        <Search className="h-3.5 w-3.5" />
       </button>
 
       {open ? (

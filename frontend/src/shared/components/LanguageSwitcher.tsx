@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { Languages } from 'lucide-react'
 
 import { localeTag } from '../../i18n/lang'
 
@@ -11,10 +10,9 @@ const LANGUAGES = [
 
 type LanguageSwitcherProps = {
   className?: string
-  compact?: boolean
 }
 
-export function LanguageSwitcher({ className = '', compact = false }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ className = '' }: LanguageSwitcherProps) {
   const { i18n, t } = useTranslation()
   const currentLang = localeTag(i18n.resolvedLanguage ?? i18n.language)
 
@@ -28,29 +26,27 @@ export function LanguageSwitcher({ className = '', compact = false }: LanguageSw
     <div
       role="group"
       aria-label={t('language.switch', 'Mudar idioma')}
-      className={`inline-flex shrink-0 items-center rounded-full border border-white/14 bg-white/[0.04] p-0.5 text-xs font-semibold uppercase tracking-[0.1em] ${className}`}
+      className={`type-tech inline-flex h-8 shrink-0 items-center border border-[var(--line-soft)] bg-[var(--surface-3)] p-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${className}`}
     >
-      {!compact && (
-        <span className="hidden xs:inline-flex pl-2 pr-1 text-[var(--text-muted)]" aria-hidden="true">
-          <Languages className="h-3.5 w-3.5" />
-        </span>
-      )}
-      {LANGUAGES.map((language) => (
-        <button
-          key={language.id}
-          type="button"
-          onClick={() => changeLanguage(language.id)}
-          aria-pressed={currentLang === language.id}
-          title={t(language.titleKey)}
-          className={`rounded-full px-2 py-1 transition-all ${
-            currentLang === language.id
-              ? 'bg-[#C8102E] text-white shadow-sm'
-              : 'text-[var(--text-muted)] hover:text-white'
-          }`}
-        >
-          {language.label}
-        </button>
-      ))}
+      {LANGUAGES.map((language) => {
+        const active = currentLang === language.id
+        return (
+          <button
+            key={language.id}
+            type="button"
+            onClick={() => changeLanguage(language.id)}
+            aria-pressed={active}
+            title={t(language.titleKey)}
+            className={`inline-flex h-full items-center px-2 transition cursor-pointer ${
+              active
+                ? 'bg-[var(--rule)] text-[var(--card-bg)]'
+                : 'text-[var(--text-muted)] hover:bg-[var(--action-hover-bg)] hover:text-[var(--text-main)]'
+            }`}
+          >
+            {language.label}
+          </button>
+        )
+      })}
     </div>
   )
 }
