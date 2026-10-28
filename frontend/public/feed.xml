@@ -6,7 +6,53 @@
     <description>The model's pick for every announced UFC fight, saved before the card, and how it did once the results were in. For fun and learning, not betting advice.</description>
     <language>en</language>
     <atom:link href="https://fight-intelligence.vercel.app/feed.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Sun, 25 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Picks for UFC Fight Night: Bonfim vs. Brady (2026-11-07)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-11-07/UFC Fight Night: Bonfim vs. Brady</guid>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Jonny Parsons vs. Jose Souza: the model picks Jose Souza (79%)
+Austin Bashi vs. Lucas Brennan: the model picks Austin Bashi (96%)
+Keiichiro Nakamura vs. Ollie Schmid: the model picks Keiichiro Nakamura (94%)
+Karine Silva vs. Gabriella Fernandes: the model picks Karine Silva (52%)
+Gabriel Lorenco vs. Alvin Hines: the model picks Gabriel Lorenco (94%)
+Billy Elekana vs. Lucas Fernando: the model picks Billy Elekana (54%)
+Davey Grant vs. Elijah Smith: the model picks Elijah Smith (67%)
+Tatiana Suarez vs. Virna Jandiroba: the model picks Tatiana Suarez (60%)
+Gabriel Bonfim vs. Sean Brady: the model picks Gabriel Bonfim (84%)
+Priscila Cachoeira vs. Nina Milosevic: the model picks Nina Milosevic (77%)
+Jose Delano vs. Murtazali Magomedov: the model picks Murtazali Magomedov (94%)
+Mantas Kondratavicius vs. Wes Schultz: the model picks Mantas Kondratavicius (85%)
+Seokhyeon Ko vs. Wellington Turman: the model picks Seokhyeon Ko (54%)
+Jonny Parsons vs. Jose Henrique: the model picks Jose Henrique (85%)
+Marcos Degli vs. Mitch Raposo: the model picks Marcos Degli (74%)
+Mantas Kondratavicius vs. Andre Petroski: the model picks Mantas Kondratavicius (73%)
+Thomas Petersen vs. Gabriel Lorenco: the model picks Gabriel Lorenco (64%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC 335: Oliveira vs. Lopes (2026-12-12)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-12-12/UFC 335: Oliveira vs. Lopes</guid>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Joe Pyfer vs. Bo Nickal: the model picks Joe Pyfer (57%)
+Sergei Pavlovich vs. Alex Pereira: the model picks Sergei Pavlovich (82%)
+Charles Oliveira vs. Diego Lopes: the model picks Diego Lopes (66%)
+Brandon Moreno vs. Charles Johnson: the model picks Brandon Moreno (63%)
+Maycee Barber vs. Carli Judice: the model picks Maycee Barber (89%)
+Quentin Pasley vs. Junior Tafa: the model picks Quentin Pasley (61%)
+Roque Conceicao vs. Nilson Rojas: the model picks Nilson Rojas (67%)
+Ronald Humphrey vs. Nikolay Veretennikov: the model picks Ronald Humphrey (79%)
+Chase Hooper vs. Chris Padilla: the model picks Chase Hooper (56%)
+Angela Hill vs. Shanelle Dyer: the model picks Shanelle Dyer (78%)</description>
+    </item>
+    <item>
+      <title>Picks for UFC Fight Night: Salkilld vs. Saint Denis (2027-02-06)</title>
+      <link>https://fight-intelligence.vercel.app/events</link>
+      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2027-02-06/UFC Fight Night: Salkilld vs. Saint Denis</guid>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Quillan Salkilld vs. Benoit Saint Denis: the model picks Quillan Salkilld (53%)</description>
+    </item>
     <item>
       <title>Results: UFC 333: Volkanovski vs. Evloev (2026-10-24)</title>
       <link>https://fight-intelligence.vercel.app/track-record</link>
@@ -35,28 +81,6 @@ Ode Osbourne vs. Cody Durden: the model picks Cody Durden (62%)
 Francis Marshall vs. Dakota Hope: the model picks Francis Marshall (58%)
 Randy Brown vs. Jacobe Smith: the model picks Jacobe Smith (96%)
 Zach Reese vs. Mickey Gall: the model picks Zach Reese (82%)</description>
-    </item>
-    <item>
-      <title>Picks for UFC Fight Night: Bonfim vs. Brady (2026-11-07)</title>
-      <link>https://fight-intelligence.vercel.app/events</link>
-      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-11-07/UFC Fight Night: Bonfim vs. Brady</guid>
-      <pubDate>Sun, 25 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Jonny Parsons vs. Jose Souza: the model picks Jose Souza (79%)
-Austin Bashi vs. Lucas Brennan: the model picks Austin Bashi (96%)
-Keiichiro Nakamura vs. Ollie Schmid: the model picks Keiichiro Nakamura (94%)
-Karine Silva vs. Gabriella Fernandes: the model picks Karine Silva (52%)
-Gabriel Lorenco vs. Alvin Hines: the model picks Gabriel Lorenco (94%)
-Billy Elekana vs. Lucas Fernando: the model picks Billy Elekana (54%)
-Davey Grant vs. Elijah Smith: the model picks Elijah Smith (67%)
-Tatiana Suarez vs. Virna Jandiroba: the model picks Tatiana Suarez (60%)
-Gabriel Bonfim vs. Sean Brady: the model picks Gabriel Bonfim (84%)
-Priscila Cachoeira vs. Nina Milosevic: the model picks Nina Milosevic (77%)
-Jose Delano vs. Murtazali Magomedov: the model picks Murtazali Magomedov (94%)
-Mantas Kondratavicius vs. Wes Schultz: the model picks Mantas Kondratavicius (85%)
-Seokhyeon Ko vs. Wellington Turman: the model picks Seokhyeon Ko (54%)
-Jonny Parsons vs. Jose Henrique: the model picks Jose Henrique (85%)
-Marcos Degli vs. Mitch Raposo: the model picks Marcos Degli (74%)
-Mantas Kondratavicius vs. Andre Petroski: the model picks Mantas Kondratavicius (73%)</description>
     </item>
     <item>
       <title>Picks for UFC 334: Gane vs. Hokit (2026-11-14)</title>
@@ -96,21 +120,6 @@ Jiri Prochazka vs. Navajo Stirling: the model picks Navajo Stirling (91%)
 Nikolas Motta vs. Dom Mar Fan: the model picks Dom Mar Fan (59%)
 Jacqueline Cavalcanti vs. Michelle Montague: the model picks Michelle Montague (93%)
 Diyar Nurgozhay vs. Alik Lorenz: the model picks Diyar Nurgozhay (79%)</description>
-    </item>
-    <item>
-      <title>Picks for UFC 335: Oliveira vs. Lopes (2026-12-12)</title>
-      <link>https://fight-intelligence.vercel.app/events</link>
-      <guid isPermaLink="false">https://fight-intelligence.vercel.app/feed/picks/2026-12-12/UFC 335: Oliveira vs. Lopes</guid>
-      <pubDate>Sun, 25 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Joe Pyfer vs. Bo Nickal: the model picks Joe Pyfer (57%)
-Sergei Pavlovich vs. Alex Pereira: the model picks Sergei Pavlovich (82%)
-Charles Oliveira vs. Diego Lopes: the model picks Diego Lopes (66%)
-Brandon Moreno vs. Charles Johnson: the model picks Brandon Moreno (63%)
-Maycee Barber vs. Carli Judice: the model picks Maycee Barber (89%)
-Quentin Pasley vs. Junior Tafa: the model picks Quentin Pasley (61%)
-Roque Conceicao vs. Nilson Rojas: the model picks Nilson Rojas (67%)
-Ronald Humphrey vs. Nikolay Veretennikov: the model picks Ronald Humphrey (79%)
-Chase Hooper vs. Chris Padilla: the model picks Chase Hooper (56%)</description>
     </item>
     <item>
       <title>Picks for UFC Fight Night: Adesanya vs. Magomedov (2026-12-05)</title>

@@ -101,3 +101,6 @@ fight_key,event_name,event_date,fighter_1,fighter_2,prob_fighter_1,predicted_win
 2026-12-12|chase hooper|chris padilla,UFC 335: Oliveira vs. Lopes,2026-12-12,Chase Hooper,Chris Padilla,0.5569,Chase Hooper,0.5569,2026-10-25,,,
 2027-01-30|joshua van|manel kape,UFC 336: Van vs. Kape,2027-01-30,Joshua Van,Manel Kape,0.7561,Joshua Van,0.7561,2026-10-25,,,
 2027-01-30|carlos prates|michael morales,UFC 336: Van vs. Kape,2027-01-30,Carlos Prates,Michael Morales,0.0273,Michael Morales,0.9727,2026-10-25,,,
+2026-11-07|gabriel lorenco|thomas petersen,UFC Fight Night: Bonfim vs. Brady,2026-11-07,Thomas Petersen,Gabriel Lorenco,0.3565,Gabriel Lorenco,0.6435,2026-10-28,,,
+2026-12-12|angela hill|shanelle dyer,UFC 335: Oliveira vs. Lopes,2026-12-12,Angela Hill,Shanelle Dyer,0.2213,Shanelle Dyer,0.7787,2026-10-28,,,
+2027-02-06|benoit saint denis|quillan salkilld,UFC Fight Night: Salkilld vs. Saint Denis,2027-02-06,Quillan Salkilld,Benoit Saint Denis,0.5288,Quillan Salkilld,0.5288,2026-10-28,,,
