@@ -345,6 +345,18 @@ def test_a_broken_rankings_page_is_not_allowed_to_replace_the_stored_one():
     assert "dropped" in pfl.rankings_problem(full, previous_rows=100)
 
 
+def test_an_announced_bout_stays_until_the_event_page_lists_that_pairing():
+    scraped = [{"fighter_1": "Taylor Lapilus", "fighter_2": "Mitch McKee"}]
+    announced = [
+        {"fighter_1": "Mitch McKee", "fighter_2": "Taylor Lapilus"},
+        {"fighter_1": "Jan Cieplowski", "fighter_2": "Mauricio Partida", "weight_class": "Bantamweight"},
+    ]
+    kept = pfl.include_announced(scraped, announced)
+    assert [row["fighter_1"] for row in kept] == ["Jan Cieplowski", "Taylor Lapilus"]
+    assert kept[0]["weight_class"] == "Bantamweight"
+    assert kept[0]["winner"] == ""
+
+
 def test_a_settled_event_has_a_result_for_every_bout():
     assert pfl.is_settled([{"outcome": "win"}, {"outcome": "draw"}])
     assert not pfl.is_settled([{"outcome": "win"}, {"outcome": ""}])

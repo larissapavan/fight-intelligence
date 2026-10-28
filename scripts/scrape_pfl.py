@@ -59,6 +59,8 @@ OUTPUT_DIR = RAW_DATA_DIR / "pfl"
 FIGHTS_PATH = OUTPUT_DIR / "fights.csv"
 FIGHTERS_PATH = OUTPUT_DIR / "fighters.csv"
 RANKINGS_PATH = OUTPUT_DIR / "rankings.csv"
+# Bouts announced before pflmma.com lists them. The next scrape puts them back if the site still does not have the pairing.
+ANNOUNCED_PATH = OUTPUT_DIR / "announced_fights.csv"
 PHOTOS_DIR = BASE_DIR / "frontend" / "public" / "fighter-photos" / "pfl"
 PHOTOS_WEB_PREFIX = "/fighter-photos/pfl/"
 
@@ -753,6 +755,25 @@ def load_rows(path: Path) -> list[dict]:
     return load_csv(path)[1] if path.exists() else []
 
 
+def include_announced(fights: list[dict], announced: list[dict]) -> list[dict]:
+    """Keep pairings that were announced before the event page listed them.
+
+    A pairing already on the scraped card is left to the site. Anything else is appended, so a refresh does not
+    drop a bout that pflmma.com has not published yet.
+    """
+    known = {tuple(sorted((name_key(row["fighter_1"]), name_key(row["fighter_2"])))) for row in fights}
+    extra = []
+    for row in announced:
+        if not row.get("fighter_1") or not row.get("fighter_2"):
+            continue
+        key = tuple(sorted((name_key(row["fighter_1"]), name_key(row["fighter_2"]))))
+        if key in known:
+            continue
+        known.add(key)
+        extra.append({field: row.get(field, "") for field in FIGHT_FIELDS})
+    return extra + fights
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--dry-run", action="store_true", help="parse and report, write nothing")
@@ -859,7 +880,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[warn] {failure}")
 
     # 3. combine with what was stored before
-    all_fights = fights + reused
+    all_fights = include_announced(fights + reused, load_rows(ANNOUNCED_PATH))
     # Newest event first; inside an event the order of the card (main event first) is kept.
     all_fights.sort(key=lambda row: int(row["card_order"] or 0))
     all_fights.sort(key=lambda row: (row["event_date"], row["event_slug"]), reverse=True)
