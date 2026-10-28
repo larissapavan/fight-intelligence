@@ -15,17 +15,33 @@ export function formatProbability(value: number): string {
 }
 
 /** How big the favorite's edge is, in words. `favorite` is the favorite's probability (0.5 to 1). */
-export function edgeLabel(favorite: number, isPt = false): string {
-  if (favorite < 0.55) return isPt ? 'Luta parelha' : 'Toss-up'
-  if (favorite < 0.65) return isPt ? 'Leve vantagem' : 'Slight edge'
-  if (favorite < 0.8) return isPt ? 'Vantagem clara' : 'Clear edge'
-  return isPt ? 'Amplo favoritismo' : 'Strong edge'
+export function edgeLabel(favorite: number, language: string | boolean = false): string {
+  const portuguese = language === true || (typeof language === 'string' && language.startsWith('pt'))
+  const french = typeof language === 'string' && language.startsWith('fr')
+  if (favorite < 0.55) return portuguese ? 'Luta parelha' : french ? 'Combat équilibré' : 'Toss-up'
+  if (favorite < 0.65) return portuguese ? 'Leve vantagem' : french ? 'Léger avantage' : 'Slight edge'
+  if (favorite < 0.8) return portuguese ? 'Vantagem clara' : french ? 'Avantage net' : 'Clear edge'
+  return portuguese ? 'Amplo favoritismo' : french ? 'Large favori' : 'Strong edge'
 }
 
 /** Localizes the backend prediction message ("The model gives X a [confidence] edge in this matchup."). */
-export function localizePredictionMessage(message: string | null | undefined, winner: string, isPt = false): string {
+export function localizePredictionMessage(message: string | null | undefined, winner: string, language: string | boolean = false): string {
   if (!message) return ''
-  if (!isPt) return message
+  const portuguese = language === true || (typeof language === 'string' && language.startsWith('pt'))
+  const french = typeof language === 'string' && language.startsWith('fr')
+  if (french) {
+    if (message.includes('a strong edge')) return `Le modèle donne un large avantage à ${winner} pour ce combat.`
+    if (message.includes('a moderate edge')) return `Le modèle donne un avantage modéré à ${winner} pour ce combat.`
+    if (message.includes('a competitive edge')) return `Le modèle donne un léger avantage à ${winner} dans un combat serré.`
+    if (message.includes('The model gives')) {
+      return message.replace(/The model gives (.+?) a (\w+) edge in this matchup\./, (_match, name, conf) => {
+        const edge = conf === 'strong' ? 'un large avantage' : conf === 'moderate' ? 'un avantage modéré' : 'un léger avantage'
+        return `Le modèle donne ${edge} à ${name} pour ce combat.`
+      })
+    }
+    return message
+  }
+  if (!portuguese) return message
   if (message.includes('a strong edge')) {
     return `O modelo aponta amplo favoritismo para ${winner} neste confronto.`
   }

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { LoaderCircle, Ruler, ShieldAlert, Swords, Target } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 
+import { L, uiLang } from '../i18n/lang'
 import { CopyLinkButton } from '../shared/components/CopyLinkButton'
 import { FighterSelect } from '../shared/components/FighterSelect'
 import { TitleFightBadge } from '../shared/components/FighterBadges'
@@ -22,7 +23,6 @@ import type { FighterPerformance, FighterProfile } from '../shared/types/api'
 
 export function MatchupIntelligence() {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const [searchParams, setSearchParams] = useSearchParams()
   const presetFighterA = searchParams.get('a') || searchParams.get('fighter_a')
@@ -116,7 +116,7 @@ export function MatchupIntelligence() {
   return (
     <div className="space-y-6 sm:space-y-8">
       {eventName && fighterAName && fighterBName ? (
-        <nav aria-label={isPt ? 'Navegação estrutural' : 'Breadcrumb'}>
+        <nav aria-label={L(i18n.language, 'Navegação estrutural', 'Breadcrumb', 'Fil d’Ariane')}>
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold">
             <li>
               <Link to={`/events?q=${encodeURIComponent(eventName)}`} className="text-[var(--accent-red)] underline decoration-[var(--accent-red)] underline-offset-4">
@@ -184,14 +184,14 @@ export function MatchupIntelligence() {
             <div className="flex items-end justify-between gap-3">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{isPt ? 'Probabilidade do Modelo' : 'Model odds'}</p>
+                  <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Probabilidade do Modelo', 'Model odds', 'Cotes du modèle')}</p>
                   {titleFightInfo?.title_fight ? <TitleFightBadge fight={titleFightInfo} /> : null}
                 </div>
                 <h2 className="mt-0.5 text-xl font-black uppercase tracking-[0.03em] text-[var(--text-main)] sm:text-2xl">{t('predictor.winningChance')}</h2>
               </div>
               <CopyLinkButton
                 href={`/matchup-intelligence?a=${encodeURIComponent(fighterAName)}&b=${encodeURIComponent(fighterBName)}`}
-                label={isPt ? 'Copiar link do combate' : 'Copy matchup link'}
+                label={L(i18n.language, 'Copiar link do combate', 'Copy matchup link', 'Copier le lien du combat')}
               />
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end">
@@ -217,7 +217,7 @@ export function MatchupIntelligence() {
             </div>
             <div className="mt-4">
               {analyzing || !showResults || !fighterA || !fighterB || !prediction ? (
-                <LoadingSkeleton className="h-[120px]" label="Loading win probability" />
+                <LoadingSkeleton className="h-[120px]" label={L(i18n.language, 'Carregando probabilidade de vitória', 'Loading win probability', 'Chargement de la probabilité de victoire')} />
               ) : (
                 <WinProbabilityBar
                   showNames={false}
@@ -231,7 +231,7 @@ export function MatchupIntelligence() {
             </div>
             {!analyzing && prediction?.message ? (
               <p className="mt-3 text-sm leading-6 text-[#999999]">
-                {localizePredictionMessage(prediction.message, prediction.predicted_winner, isPt)}
+                {localizePredictionMessage(prediction.message, prediction.predicted_winner, i18n.language)}
               </p>
             ) : null}
             {!analyzing && prediction ? (
@@ -253,36 +253,36 @@ export function MatchupIntelligence() {
 
               <section className="grid gap-3 lg:grid-cols-3">
                 <StatComparisonCard
-                  title={isPt ? 'Trocação' : 'Striking'}
+                  title={L(i18n.language, 'Trocação', 'Striking', 'Frappe')}
                   icon={Swords}
                   fighterA={fighterA}
                   fighterB={fighterB}
                   rows={[
-                    { label: isPt ? 'Precisão' : 'Accuracy', key: 'sig_str_acc', format: formatPercent },
-                    { label: isPt ? 'Golpes Conectados' : 'Sig. Strikes', key: 'sig_strikes_landed_per_min', format: formatPerMin },
-                    { label: isPt ? 'Defesa' : 'Defense', key: 'striking_defense', format: formatPercent },
+                    { label: L(i18n.language, 'Precisão', 'Accuracy', 'Précision'), key: 'sig_str_acc', format: formatPercent },
+                    { label: L(i18n.language, 'Golpes Conectados', 'Sig. Strikes', 'Coups sign.'), key: 'sig_strikes_landed_per_min', format: formatPerMin },
+                    { label: L(i18n.language, 'Defesa', 'Defense', 'Défense'), key: 'striking_defense', format: formatPercent },
                   ]}
                 />
                 <StatComparisonCard
-                  title={isPt ? 'Luta Agarrada' : 'Grappling'}
+                  title={L(i18n.language, 'Luta Agarrada', 'Grappling', 'Lutte')}
                   icon={Target}
                   fighterA={fighterA}
                   fighterB={fighterB}
                   rows={[
-                    { label: isPt ? 'Precisão de Quedas' : 'TD Accuracy', key: 'takedown_acc', format: formatPercent },
-                    { label: isPt ? 'Defesa de Quedas' : 'TD Defense', key: 'takedown_defense', format: formatPercent },
-                    { label: isPt ? 'Tentativas de Finalização' : 'Sub Attempts', key: 'submission_avg_per_15min', format: formatPlainNumber },
+                    { label: L(i18n.language, 'Precisão de Quedas', 'TD Accuracy', 'Précision des amenées'), key: 'takedown_acc', format: formatPercent },
+                    { label: L(i18n.language, 'Defesa de Quedas', 'TD Defense', 'Défense des amenées'), key: 'takedown_defense', format: formatPercent },
+                    { label: L(i18n.language, 'Tentativas de Finalização', 'Sub Attempts', 'Tentatives de soumission'), key: 'submission_avg_per_15min', format: formatPlainNumber },
                   ]}
                 />
                 <StatComparisonCard
-                  title={isPt ? 'Atributos Físicos' : 'Physical'}
+                  title={L(i18n.language, 'Atributos Físicos', 'Physical', 'Physique')}
                   icon={Ruler}
                   fighterA={fighterA}
                   fighterB={fighterB}
                   rows={[
-                    { label: isPt ? 'Altura' : 'Height', key: 'height_cm', format: (v) => formatHeight(v, isPt) },
-                    { label: isPt ? 'Envergadura' : 'Reach', key: 'reach_cm', format: (v) => formatReach(v, isPt) },
-                    { label: isPt ? 'Idade' : 'Age', key: 'age', format: formatAge, higherIsBetter: false },
+                    { label: L(i18n.language, 'Altura', 'Height', 'Taille'), key: 'height_cm', format: (v) => formatHeight(v, i18n.language) },
+                    { label: L(i18n.language, 'Envergadura', 'Reach', 'Allonge'), key: 'reach_cm', format: (v) => formatReach(v, i18n.language) },
+                    { label: L(i18n.language, 'Idade', 'Age', 'Âge'), key: 'age', format: formatAge, higherIsBetter: false },
                   ]}
                 />
               </section>
@@ -302,7 +302,7 @@ export function MatchupIntelligence() {
               />
             </>
           ) : (
-            <MatchupAnalysisSkeleton includeOdds={false} isPt={isPt} />
+            <MatchupAnalysisSkeleton includeOdds={false} />
           )}
         </>
       ) : null}
@@ -310,9 +310,12 @@ export function MatchupIntelligence() {
       {!canAnalyze ? (
         <section className="surface-card rounded-[20px] px-4 py-8 text-center">
           <p className="text-sm leading-6 text-[#999999]">
-            {isPt
-              ? 'Selecione dois lutadores e execute a análise para ver a comparação de trocação, luta agarrada, dados físicos e os fatores SHAP que explicam a previsão do modelo.'
-              : "Select two fighters and run the analysis to see the striking, grappling and physical breakdown, plus the key factors behind the model's read on this matchup."}
+            {L(
+              i18n.language,
+              'Selecione dois lutadores e execute a análise para ver a comparação de trocação, luta agarrada, dados físicos e os fatores SHAP que explicam a previsão do modelo.',
+              "Select two fighters and run the analysis to see the striking, grappling and physical breakdown, plus the key factors behind the model's read on this matchup.",
+              'Choisissez deux lutteurs et lancez l’analyse pour voir la frappe, la lutte, le physique et les facteurs SHAP qui expliquent la lecture du modèle.',
+            )}
           </p>
         </section>
       ) : null}
@@ -320,18 +323,19 @@ export function MatchupIntelligence() {
   )
 }
 
-function MatchupAnalysisSkeleton({ includeOdds = true, isPt = false }: { includeOdds?: boolean; isPt?: boolean }) {
+function MatchupAnalysisSkeleton({ includeOdds = true }: { includeOdds?: boolean }) {
+  const { i18n } = useTranslation()
   return (
-    <div className="space-y-3" role="status" aria-label={isPt ? 'Analisando confronto' : 'Analyzing matchup'}>
-      {includeOdds ? <LoadingSkeleton className="h-[180px] rounded-[20px]" label={isPt ? 'Carregando probabilidade de vitória' : 'Loading win probability'} /> : null}
-      <LoadingSkeleton className="h-[340px] rounded-[20px]" label={isPt ? 'Carregando gráfico de radar' : 'Loading radar chart'} />
+    <div className="space-y-3" role="status" aria-label={L(i18n.language, 'Analisando confronto', 'Analyzing matchup', 'Analyse du combat')}>
+      {includeOdds ? <LoadingSkeleton className="h-[180px] rounded-[20px]" label={L(i18n.language, 'Carregando probabilidade de vitória', 'Loading win probability', 'Chargement de la probabilité de victoire')} /> : null}
+      <LoadingSkeleton className="h-[340px] rounded-[20px]" label={L(i18n.language, 'Carregando gráfico de radar', 'Loading radar chart', 'Chargement du graphique radar')} />
       <div className="grid gap-3 lg:grid-cols-3">
         <LoadingSkeleton className="h-[180px] rounded-[20px]" />
         <LoadingSkeleton className="h-[180px] rounded-[20px]" />
         <LoadingSkeleton className="h-[180px] rounded-[20px]" />
       </div>
-      <LoadingSkeleton className="h-[220px] rounded-[20px]" label={isPt ? 'Carregando fatores do confronto' : 'Loading matchup factors'} />
-      <LoadingSkeleton className="h-[260px] rounded-[20px]" label={isPt ? 'Carregando lutas recentes' : 'Loading recent fights'} />
+      <LoadingSkeleton className="h-[220px] rounded-[20px]" label={L(i18n.language, 'Carregando fatores do confronto', 'Loading matchup factors', 'Chargement des facteurs du combat')} />
+      <LoadingSkeleton className="h-[260px] rounded-[20px]" label={L(i18n.language, 'Carregando lutas recentes', 'Loading recent fights', 'Chargement des combats récents')} />
     </div>
   )
 }
@@ -417,18 +421,18 @@ function formatPlainNumber(value: number | null) {
   return value.toFixed(1)
 }
 
-function formatHeight(cm: number | null, isPt = false) {
+function formatHeight(cm: number | null, language: string | boolean = false) {
   if (cm == null) return '—'
-  if (isPt) return `${Math.round(cm)} cm`
+  if (uiLang(language) !== 'en') return `${Math.round(cm)} cm`
   const totalInches = cm / 2.54
   const feet = Math.floor(totalInches / 12)
   const inches = Math.round(totalInches % 12)
   return `${feet}'${inches}"`
 }
 
-function formatReach(cm: number | null, isPt = false) {
+function formatReach(cm: number | null, language: string | boolean = false) {
   if (cm == null) return '—'
-  if (isPt) return `${Math.round(cm)} cm`
+  if (uiLang(language) !== 'en') return `${Math.round(cm)} cm`
   return `${Math.round(cm / 2.54)}"`
 }
 

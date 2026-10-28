@@ -35,8 +35,10 @@
     "switch": "Switch language",
     "pt": "PT",
     "en": "EN",
+    "fr": "FR",
     "ptLong": "Portuguese",
-    "enLong": "English"
+    "enLong": "English",
+    "frLong": "French"
   },
   "landing": {
     "eyebrow": "Fight Intelligence",
@@ -70,6 +72,12 @@
   },
   "common": {
     "loading": "Loading...",
+    "pageLoading": "The page is loading. The data is on its way.",
+    "pageLoadingLabel": "The page is loading",
+    "serverWaking": "The first visit after a quiet spell can take up to a minute while the server starts.",
+    "boutPunch": "Punch",
+    "boutKick": "Kick",
+    "boutHint": "He calls the strike. Match it to score a point. Space punches and the down arrow kicks. Tap the left side to punch and the right side to kick.",
     "error": "An error occurred",
     "retry": "Try again",
     "serverDown": "The backend server is not answering right now. Please wait a minute and reload.",

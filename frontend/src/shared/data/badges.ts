@@ -29,8 +29,24 @@ export const BADGE_LABELS_PT: Record<string, string> = {
   pride: 'Pride FC',
 }
 
-export function getBadgeLabel(key: string, isPt = false): string {
-  if (isPt && BADGE_LABELS_PT[key]) return BADGE_LABELS_PT[key]
+export const BADGE_LABELS_FR: Record<string, string> = {
+  bmf_current: 'Champion BMF actuel',
+  goat: 'Plus grand de tous les temps (GOAT)',
+  bmf: 'Ancien champion BMF',
+  hof: "Hall of Fame de l'UFC",
+  dwcs: "Dana White's Contender Series",
+  tuf: 'The Ultimate Fighter',
+  r2u: 'Road to UFC',
+  sf: 'Strikeforce',
+  wec: 'World Extreme Cagefighting',
+  pride: 'Pride FC',
+}
+
+export function getBadgeLabel(key: string, language: string | boolean = false): string {
+  const portuguese = language === true || (typeof language === 'string' && language.startsWith('pt'))
+  const french = typeof language === 'string' && language.startsWith('fr')
+  if (portuguese && BADGE_LABELS_PT[key]) return BADGE_LABELS_PT[key]
+  if (french && BADGE_LABELS_FR[key]) return BADGE_LABELS_FR[key]
   return BADGES[key]?.label ?? key
 }
 

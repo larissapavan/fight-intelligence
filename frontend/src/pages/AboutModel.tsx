@@ -3,6 +3,7 @@ import { AlertTriangle, Binary, ChartNoAxesCombined, FolderGit2, Globe2, ShieldA
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../i18n/lang'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { shownMetrics } from '../shared/data/modelAccuracy'
@@ -12,18 +13,21 @@ const contactLinks = [
   {
     label: 'GitHub Repository',
     labelPt: 'Repositório GitHub',
+    labelFr: 'Dépôt GitHub',
     href: 'https://github.com/larissapavan/fight-intelligence',
     icon: FolderGit2,
   },
   {
     label: 'GitHub Profile',
     labelPt: 'Perfil no GitHub',
+    labelFr: 'Profil GitHub',
     href: 'https://github.com/larissapavan',
     icon: Globe2,
   },
   {
     label: 'LinkedIn Profile',
     labelPt: 'Perfil no LinkedIn',
+    labelFr: 'Profil LinkedIn',
     href: 'https://www.linkedin.com/in/larissacpavan/',
     icon: Globe2,
   },
@@ -31,7 +35,6 @@ const contactLinks = [
 
 export function AboutModel() {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const { modelInfo, error, loading } = useModelInfo()
   const [copiedLink, setCopiedLink] = useState<string | null>(null)
 
@@ -54,13 +57,14 @@ export function AboutModel() {
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
           level={1}
-          eyebrow={isPt ? 'Sobre o Projeto' : 'About'}
-          title={isPt ? 'Ciência de Dados aplicada ao MMA' : 'A UFC analytics project built to learn'}
-          description={
-            isPt
-              ? 'Desenvolvido para aplicar machine learning do dado bruto ao produto interativo na web.'
-              : 'I built this to learn how to take a model from raw data to a working website.'
-          }
+          eyebrow={L(i18n.language, 'Sobre o Projeto', 'About', 'À propos')}
+          title={L(i18n.language, 'Ciência de Dados aplicada ao MMA', 'A UFC analytics project built to learn', 'Un projet d’analyse UFC conçu pour apprendre')}
+          description={L(
+            i18n.language,
+            'Desenvolvido para aplicar machine learning do dado bruto ao produto interativo na web.',
+            'I built this to learn how to take a model from raw data to a working website.',
+            'Je l’ai construit pour apprendre à faire passer un modèle des données brutes à un site qui fonctionne.',
+          )}
         />
       </section>
 
@@ -69,58 +73,62 @@ export function AboutModel() {
       <section className="grid gap-3 lg:grid-cols-4">
         <InfoCard
           icon={Trophy}
-          title={isPt ? 'Projeto Completo' : 'Built to learn'}
-          description={
-            isPt
-              ? 'Muito além de um notebook: pipeline de dados, treinamento de modelo, API REST e interface reativa.'
-              : 'A whole project instead of a notebook: data collection, a model, an API and a website.'
-          }
+          title={L(i18n.language, 'Projeto Completo', 'Built to learn', 'Construit pour apprendre')}
+          description={L(
+            i18n.language,
+            'Muito além de um notebook: pipeline de dados, treinamento de modelo, API REST e interface reativa.',
+            'A whole project instead of a notebook: data collection, a model, an API and a website.',
+            'Un projet entier plutôt qu’un notebook : collecte des données, un modèle, une API et un site.',
+          )}
         />
         <InfoCard
           icon={Binary}
-          title={isPt ? 'Como a Previsão Funciona' : 'How a pick is made'}
-          description={
-            isPt
-              ? 'O modelo calcula o diferencial estatístico entre os lutadores e a API retorna as probabilidades com SHAP.'
-              : "The model compares the two fighters' stats before the fight, and the API returns the pick with the factors behind it."
-          }
+          title={L(i18n.language, 'Como a Previsão Funciona', 'How a pick is made', 'Comment un choix est fait')}
+          description={L(
+            i18n.language,
+            'O modelo calcula o diferencial estatístico entre os lutadores e a API retorna as probabilidades com SHAP.',
+            "The model compares the two fighters' stats before the fight, and the API returns the pick with the factors behind it.",
+            'Le modèle compare les statistiques des deux lutteurs avant le combat, et l’API renvoie le choix avec les facteurs qui l’expliquent.',
+          )}
         />
         <InfoCard
           icon={ChartNoAxesCombined}
-          title={isPt ? 'Base Histórica' : 'The data'}
-          description={
-            isPt
-              ? 'Milhares de lutas oficiais do UFC, cartéis completos e métricas detalhadas de trocação e chão.'
-              : 'Real UFC records and fighter stats, collected from public sources.'
-          }
+          title={L(i18n.language, 'Base Histórica', 'The data', 'Les données')}
+          description={L(
+            i18n.language,
+            'Milhares de lutas oficiais do UFC, cartéis completos e métricas detalhadas de trocação e chão.',
+            'Real UFC records and fighter stats, collected from public sources.',
+            'De vrais palmarès de l’UFC et des statistiques de lutteurs, collectés auprès de sources publiques.',
+          )}
         />
         <InfoCard
           icon={ShieldAlert}
-          title={isPt ? 'Uso Responsável' : 'Responsible use'}
-          description={
-            isPt
-              ? 'Probabilidades estatísticas não são conselho financeiro ou de apostas. MMA é dinâmico e imprevisível.'
-              : 'Predictions are estimates from past data. They are not betting advice.'
-          }
+          title={L(i18n.language, 'Uso Responsável', 'Responsible use', 'Usage responsable')}
+          description={L(
+            i18n.language,
+            'Probabilidades estatísticas não são conselho financeiro ou de apostas. MMA é dinâmico e imprevisível.',
+            'Predictions are estimates from past data. They are not betting advice.',
+            'Les pronostics sont des estimations tirées du passé. Ce ne sont pas des conseils de pari.',
+          )}
         />
       </section>
 
       <section className="grid gap-3 xl:grid-cols-[1fr_1fr]">
         <article className="surface-card rounded-[20px] p-3 sm:p-4">
-          <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{isPt ? 'Stack Tecnológica' : 'Core stack'}</p>
+          <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Stack Tecnológica', 'Core stack', 'Socle technique')}</p>
           <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
-            {isPt ? 'Tecnologias Utilizadas' : 'What it is built with'}
+            {L(i18n.language, 'Tecnologias Utilizadas', 'What it is built with', 'Avec quoi c’est construit')}
           </h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {[
               'FastAPI (Python)',
               'React + Vite + TypeScript',
               'Gradient Boosting (LightGBM/XGBoost)',
-              'Engenharia de Features',
-              'Explicabilidade com SHAP',
+              L(i18n.language, 'Engenharia de Features', 'Feature Engineering', 'Ingénierie des variables'),
+              L(i18n.language, 'Explicabilidade com SHAP', 'SHAP Explainability', 'Explicabilité SHAP'),
               'Tailwind CSS & Framer Motion',
               'Recharts (Data Viz)',
-              'Testes Automatizados (Pytest & Vitest)',
+              L(i18n.language, 'Testes Automatizados (Pytest & Vitest)', 'Automated Tests (Pytest & Vitest)', 'Tests automatisés (Pytest & Vitest)'),
             ].map((item) => (
               <div key={item} className="metric-tile rounded-xl px-3 py-2.5 text-xs font-medium text-[var(--text-main)]">
                 {item}
@@ -130,12 +138,12 @@ export function AboutModel() {
         </article>
 
         <article className="surface-card rounded-[20px] p-3 sm:p-4">
-          <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{isPt ? 'Links & Contato' : 'Links & contact'}</p>
+          <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Links & Contato', 'Links & contact', 'Liens et contact')}</p>
           <h2 className="mt-1 text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
-            {isPt ? 'Código & Redes' : 'Find the project'}
+            {L(i18n.language, 'Código & Redes', 'Find the project', 'Retrouver le projet')}
           </h2>
           <div className="mt-3 grid gap-2">
-            {contactLinks.map(({ label, labelPt, href, icon: Icon }) => {
+            {contactLinks.map(({ label, labelPt, labelFr, href, icon: Icon }) => {
               const isLinkedIn = label === 'LinkedIn Profile'
 
               return (
@@ -148,7 +156,7 @@ export function AboutModel() {
                       <span className="rounded-xl bg-[#C8102E]/10 p-1.5 text-[var(--accent-red)]">
                         <Icon className="h-4 w-4" />
                       </span>
-                      {isPt ? labelPt : label}
+                      {L(i18n.language, labelPt, label, labelFr)}
                     </span>
                     {!isLinkedIn ? (
                       <a
@@ -157,7 +165,7 @@ export function AboutModel() {
                         rel="noreferrer"
                         className="type-tech text-xs uppercase tracking-[0.14em] text-[var(--text-muted)] transition hover:text-[var(--text-main)]"
                       >
-                        {isPt ? 'Abrir no navegador' : 'Open in browser'}
+                        {L(i18n.language, 'Abrir no navegador', 'Open in browser', 'Ouvrir dans le navigateur')}
                       </a>
                     ) : (
                       <button
@@ -165,7 +173,7 @@ export function AboutModel() {
                         onClick={() => handleOpenExternal(href)}
                         className="type-tech text-xs uppercase tracking-[0.14em] text-[var(--text-muted)] transition hover:text-[var(--text-main)]"
                       >
-                        {isPt ? 'Acessar LinkedIn' : 'Open LinkedIn'}
+                        {L(i18n.language, 'Acessar LinkedIn', 'Open LinkedIn', 'Ouvrir LinkedIn')}
                       </button>
                     )}
                   </div>
@@ -178,7 +186,7 @@ export function AboutModel() {
                         onClick={() => void handleCopyLink(href)}
                         className="ghost-action inline-flex items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#C8102E]"
                       >
-                        {copiedLink === href ? (isPt ? 'Copiado!' : 'Copied') : (isPt ? 'Copiar URL' : 'Copy URL')}
+                        {copiedLink === href ? L(i18n.language, 'Copiado!', 'Copied', 'Copié') : L(i18n.language, 'Copiar URL', 'Copy URL', 'Copier l’URL')}
                       </button>
                     </div>
                   ) : null}
@@ -197,30 +205,33 @@ export function AboutModel() {
       ) : modelInfo ? (
         <section className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
-            <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{isPt ? 'Ficha Técnica do Modelo' : 'Technical snapshot'}</p>
+            <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Ficha Técnica do Modelo', 'Technical snapshot', 'Fiche technique')}</p>
             <h2 className="mt-1 break-words text-xl sm:text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{modelInfo.model_name}</h2>
             <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-              <Metric label={isPt ? 'Atributos (Features)' : 'Features'} value={`${modelInfo.feature_count}`} />
-              <Metric label={`${isPt ? 'Acurácia' : 'Accuracy'} (${shownMetrics(modelInfo).caption})`} value={`${((shownMetrics(modelInfo).accuracy ?? 0) * 100).toFixed(1)}%`} />
-              <Metric label="ROC AUC" value={(shownMetrics(modelInfo).rocAuc ?? 0).toFixed(3)} />
-              <Metric label="Log loss" value={(shownMetrics(modelInfo).logLoss ?? 0).toFixed(3)} />
+              <Metric label={L(i18n.language, 'Atributos (Features)', 'Features', 'Variables')} value={`${modelInfo.feature_count}`} />
+              <Metric label={`${L(i18n.language, 'Acurácia', 'Accuracy', 'Précision')} (${shownMetrics(modelInfo, i18n.language).caption})`} value={`${((shownMetrics(modelInfo, i18n.language).accuracy ?? 0) * 100).toFixed(1)}%`} />
+              <Metric label="ROC AUC" value={(shownMetrics(modelInfo, i18n.language).rocAuc ?? 0).toFixed(3)} />
+              <Metric label="Log loss" value={(shownMetrics(modelInfo, i18n.language).logLoss ?? 0).toFixed(3)} />
             </div>
             {modelInfo.metrics_note ? <p className="mt-3 text-xs leading-5 text-[#CCCCCC]">{modelInfo.metrics_note}</p> : null}
           </article>
 
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
-            <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{isPt ? 'Aviso Importante' : 'Important note'}</p>
+            <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Aviso Importante', 'Important note', 'Note importante')}</p>
             <div className="mt-3 rounded-2xl border border-[#C8102E]/20 bg-[#C8102E]/8 p-3">
               <div className="mb-2 flex items-center gap-2 text-[#C8102E]">
                 <AlertTriangle className="h-4 w-4" />
                 <span className="type-tech text-xs font-semibold uppercase tracking-[0.18em]">
-                  {isPt ? 'Aviso Legal' : 'Use disclaimer'}
+                  {L(i18n.language, 'Aviso Legal', 'Use disclaimer', 'Avertissement')}
                 </span>
               </div>
               <p className="text-xs leading-5 text-[var(--text-main)]">
-                {isPt
-                  ? 'Os palpites são estimativas estatísticas baseadas em dados históricos. O modelo não monitora lesões de camp ou cortes de peso de última hora. Não utilize para apostas reais.'
-                  : 'The picks are estimates from past data. The model knows nothing about injuries or weight cuts, so do not use it to bet.'}
+                {L(
+                  i18n.language,
+                  'Os palpites são estimativas estatísticas baseadas em dados históricos. O modelo não monitora lesões de camp ou cortes de peso de última hora. Não utilize para apostas reais.',
+                  'The picks are estimates from past data. The model knows nothing about injuries or weight cuts, so do not use it to bet.',
+                  'Les choix sont des estimations tirées des données passées. Le modèle ignore les blessures et les coupes de poids, donc ne pariez pas avec.',
+                )}
               </p>
             </div>
             <div className="mt-3 space-y-2">

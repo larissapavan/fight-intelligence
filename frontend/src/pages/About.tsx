@@ -2,6 +2,8 @@ import type { ComponentType, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertTriangle, Database, ExternalLink, Mail, Users } from 'lucide-react'
 
+import { L } from '../i18n/lang'
+
 const GITHUB_PROFILE = 'https://github.com/larissapavan'
 const LINKEDIN_PROFILE = 'https://www.linkedin.com/in/larissacpavan/'
 
@@ -97,9 +99,26 @@ const sources: { name: string; href?: string; use: string; usePt: string }[] = [
   },
 ]
 
+const SOURCE_USE_FR: Record<string, string> = {
+  'UFCStats.com': 'Profils de lutteurs, événements, résultats et statistiques de carrière.',
+  ESPN: "Événements, résultats, cartes à venir, palmarès, profils des nouveaux lutteurs, photos et les titres d'actualité des pages d'accueil et d'événements (chacun renvoie vers l'article d'origine). Aussi l'ensemble des archives du Bellator : événements, résultats, profils et portraits.",
+  'UFC.com': "Classements officiels, photos des champions en titre et villes d'origine.",
+  'UFC Stats Leaders': "Le livre des records officiel de l'UFC : leaders historiques en victoires, finishes, frappe, lutte et plus encore.",
+  'roster.watch': "L'effectif de l'UFC, actuel et ancien : qui en fait partie, nationalités, dates de début et de dernier combat, et les badges d'origine et d'honneur (Contender Series, TUF, Road to UFC, BMF, Hall of Fame).",
+  'pflmma.com': "Le site de la Professional Fighters League : événements, résultats, profils, portraits et classements officiels. Seules les pages autorisées par son robots.txt sont lues ; les portraits sont stockés ici en petites copies.",
+  FightHub: "L'annuaire des salles et des équipes, et les lutteurs qui s'y entraînent, affiché sur les pages Salles et rapproché par le nom avec les lutteurs de chaque organisation. Seules les pages autorisées par son robots.txt sont lues.",
+  'Next-Fight': 'Annonces de combats, cartes à venir, confirmations d’affrontements et avis de combats de titre (comme UFC 336: Prates vs. Morales).',
+  Wikipedia: "La liste des champions du Bellator MMA : chaque règne, ce qui donne les champions avec lesquels le Bellator s'est achevé et signale ses combats de titre. Texte des contributeurs de Wikipedia, disponible sous la licence Creative Commons Attribution-ShareAlike (CC BY-SA 4.0) ; seuls des faits (noms, dates, catégories) en sont extraits.",
+  Sherdog: "Quelques photos d'archives d'anciens lutteurs.",
+  'Published UFC title histories': 'Champions, règnes et la liste des combats pour le titre BMF, compilés à la main.',
+  'UFC data by scarekrow (Kaggle)': 'L’arbitre, les rounds prévus, l’indicateur de combat de titre et les notes des juges affichés sur les cartes (UFC_full_data_silver_v2.csv).',
+  'flagcdn.com': 'Images des drapeaux.',
+  'Google Fonts': 'Anton, Barlow et Barlow Condensed, toutes sous la SIL Open Font License.',
+  'UFC Historical Fight Dataset (1993–2026) (Kaggle)': "Le jeu de données de l'autrice, publié sur Kaggle : les événements, combats, lutteurs, classements et règnes de titre sur lesquels ce site est construit.",
+}
+
 export function About() {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   return (
     <div className="space-y-3 sm:space-y-4">
@@ -123,14 +142,11 @@ export function About() {
 
       <AboutSection id="data" icon={Database} title={t('about.dataAndSystem')}>
         <p>
-          {isPt ? (
-            <>
-              Perfis de atletas, eventos, resultados e rankings são agregados a partir de fontes públicas (UFCStats.com, ESPN, Next-Fight e UFC.com; pflmma.com para a PFL; ESPN e Wikipedia para o Bellator; FightHub para as academias). O histórico de títulos é compilado e validado meticulosamente. Todas as previsões alimentam um pipeline independente de inteligência artificial com recursos de aprendizado de máquina treinados sobre registros históricos.
-            </>
-          ) : (
-            <>
-              Fighter profiles, events, results and rankings are collected from public sources (UFCStats.com, ESPN, Next-Fight and UFC.com; pflmma.com for the PFL; ESPN and Wikipedia for Bellator; FightHub for the gyms), the title history is compiled by hand from published UFC title records, and everything is saved as CSV files that an automated job refreshes daily. For each matchup the system compares the two fighters and feeds those differences into a machine-learning model that estimates each fighter&apos;s chance of winning.
-            </>
+          {L(
+            i18n.language,
+            'Perfis de atletas, eventos, resultados e rankings são agregados a partir de fontes públicas (UFCStats.com, ESPN, Next-Fight e UFC.com; pflmma.com para a PFL; ESPN e Wikipedia para o Bellator; FightHub para as academias). O histórico de títulos é compilado e validado meticulosamente. Todas as previsões alimentam um pipeline independente de inteligência artificial com recursos de aprendizado de máquina treinados sobre registros históricos.',
+            "Fighter profiles, events, results and rankings are collected from public sources (UFCStats.com, ESPN, Next-Fight and UFC.com; pflmma.com for the PFL; ESPN and Wikipedia for Bellator; FightHub for the gyms), the title history is compiled by hand from published UFC title records, and everything is saved as CSV files that an automated job refreshes daily. For each matchup the system compares the two fighters and feeds those differences into a machine-learning model that estimates each fighter's chance of winning.",
+            "Les profils de lutteurs, les événements, les résultats et les classements sont collectés à partir de sources publiques (UFCStats.com, ESPN, Next-Fight et UFC.com ; pflmma.com pour la PFL ; ESPN et Wikipedia pour le Bellator ; FightHub pour les salles). L'historique des titres est compilé à la main à partir des historiques de titres UFC publiés, et le tout est enregistré en fichiers CSV qu'une tâche automatisée actualise chaque jour. Pour chaque affrontement, le système compare les deux lutteurs et transmet ces écarts à un modèle d'apprentissage automatique qui estime les chances de victoire de chacun.",
           )}
         </p>
       </AboutSection>
@@ -145,7 +161,8 @@ export function About() {
       <AboutSection id="contact" icon={Mail} title={t('about.contact')}>
         <p>
           {t('about.contactText')}{' '}
-          <ExternalAnchor href={GITHUB_PROFILE}>github.com/larissapavan</ExternalAnchor> ou{' '}
+          <ExternalAnchor href={GITHUB_PROFILE}>github.com/larissapavan</ExternalAnchor>{' '}
+          {L(i18n.language, 'ou', 'or', 'ou')}{' '}
           <ExternalAnchor href={LINKEDIN_PROFILE}>LinkedIn</ExternalAnchor>.
         </p>
 
@@ -156,15 +173,18 @@ export function About() {
               <p className="text-sm font-semibold text-[var(--text-main)]">
                 {source.href ? <ExternalAnchor href={source.href}>{source.name}</ExternalAnchor> : source.name}
               </p>
-              <p className="mt-1 text-xs leading-5 text-[#999999]">{isPt ? source.usePt : source.use}</p>
+              <p className="mt-1 text-xs leading-5 text-[#999999]">{L(i18n.language, source.usePt, source.use, SOURCE_USE_FR[source.name])}</p>
             </li>
           ))}
         </ul>
 
         <p className="mt-4 text-xs leading-5 text-[#999999]">
-          {isPt
-            ? 'Desenvolvido com tecnologias open-source: React, Vite, Tailwind CSS, Recharts, Framer Motion e Lucide no frontend; FastAPI, pandas, scikit-learn e SHAP no backend.'
-            : 'Built with open-source software: React, Vite, Tailwind CSS, Recharts, Framer Motion and Lucide on the front end; FastAPI, pandas, scikit-learn and SHAP on the back end.'}
+          {L(
+            i18n.language,
+            'Desenvolvido com tecnologias open-source: React, Vite, Tailwind CSS, Recharts, Framer Motion e Lucide no frontend; FastAPI, pandas, scikit-learn e SHAP no backend.',
+            'Built with open-source software: React, Vite, Tailwind CSS, Recharts, Framer Motion and Lucide on the front end; FastAPI, pandas, scikit-learn and SHAP on the back end.',
+            'Construit avec des logiciels open source : React, Vite, Tailwind CSS, Recharts, Framer Motion et Lucide côté interface ; FastAPI, pandas, scikit-learn et SHAP côté serveur.',
+          )}
         </p>
       </AboutSection>
     </div>
@@ -198,6 +218,7 @@ function AboutSection({
 }
 
 function ExternalAnchor({ href, children }: { href: string; children: ReactNode }) {
+  const { i18n } = useTranslation()
   return (
     <a
       href={href}
@@ -207,7 +228,7 @@ function ExternalAnchor({ href, children }: { href: string; children: ReactNode 
     >
       {children}
       <ExternalLink className="h-3 w-3 shrink-0" aria-hidden />
-      <span className="sr-only">(opens in a new tab)</span>
+      <span className="sr-only">{L(i18n.language, '(abre em nova aba)', '(opens in a new tab)', '(s’ouvre dans un nouvel onglet)')}</span>
     </a>
   )
 }

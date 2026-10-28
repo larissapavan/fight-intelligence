@@ -19,10 +19,33 @@ export const DIVISION_NAMES_PT: Record<string, string> = {
   'Open Class / Unclassified': 'Peso Aberto / Outros',
 }
 
-export function getDivisionName(division: string | null | undefined, isPt = false): string {
+export const DIVISION_NAMES_FR: Record<string, string> = {
+  Flyweight: 'Poids mouche',
+  Bantamweight: 'Poids coq',
+  Featherweight: 'Poids plume',
+  Lightweight: 'Poids léger',
+  Welterweight: 'Poids mi-moyen',
+  Middleweight: 'Poids moyen',
+  'Light Heavyweight': 'Poids mi-lourd',
+  Heavyweight: 'Poids lourd',
+  "Women's Strawweight": 'Poids paille féminin',
+  "Women's Flyweight": 'Poids mouche féminin',
+  "Women's Bantamweight": 'Poids coq féminin',
+  "Women's Featherweight": 'Poids plume féminin',
+  "Women's Lightweight": 'Poids léger féminin',
+  "Women's Atomweight": 'Poids atome féminin',
+  'Catch Weight': 'Poids convenu',
+  Catchweight: 'Poids convenu',
+  'Open Class': 'Poids libre',
+  'Open Class / Unclassified': 'Poids libre / autres',
+}
+
+export function getDivisionName(division: string | null | undefined, language: string | boolean = false): string {
   if (!division) return ''
-  if (!isPt) return division
-  return DIVISION_NAMES_PT[division] ?? division
+  const lang = typeof language === 'string' ? language : language ? 'pt' : 'en'
+  if (lang.startsWith('pt') || lang === 'pt') return DIVISION_NAMES_PT[division] ?? division
+  if (lang.startsWith('fr')) return DIVISION_NAMES_FR[division] ?? division
+  return division
 }
 
 /** Official weight limits (lb) and the order the UFC lists its divisions in, lightest first, men then women. */

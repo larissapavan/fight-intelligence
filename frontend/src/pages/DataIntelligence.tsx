@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { ArrowDown } from 'lucide-react'
 
+import { L, localeTag } from '../i18n/lang'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useDataInfo } from '../shared/hooks/useDataInfo'
@@ -8,10 +9,9 @@ import { useDataInfo } from '../shared/hooks/useDataInfo'
 export function DataIntelligence() {
   const { t, i18n } = useTranslation()
   const { dataInfo, loading, error } = useDataInfo()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const formattedDate = dataInfo?.last_updated
-    ? new Date(`${dataInfo.last_updated}T00:00:00`).toLocaleDateString(isPt ? 'pt-BR' : 'en-US', {
+    ? new Date(`${dataInfo.last_updated}T00:00:00`).toLocaleDateString(localeTag(i18n.language), {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -41,18 +41,18 @@ export function DataIntelligence() {
         <>
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <StatCard label={t('dataIntelligence.lastUpdate')} value={formattedDate} />
-            <StatCard label={t('dataIntelligence.fighters')} value={dataInfo.fighters_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
-            <StatCard label={t('dataIntelligence.events')} value={dataInfo.events_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
-            <StatCard label={t('dataIntelligence.fights')} value={dataInfo.fights_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <StatCard label={t('dataIntelligence.fighters')} value={dataInfo.fighters_count.toLocaleString(localeTag(i18n.language))} />
+            <StatCard label={t('dataIntelligence.events')} value={dataInfo.events_count.toLocaleString(localeTag(i18n.language))} />
+            <StatCard label={t('dataIntelligence.fights')} value={dataInfo.fights_count.toLocaleString(localeTag(i18n.language))} />
           </section>
 
           <section className="surface-card rounded-[20px] p-3 sm:p-4">
             <SectionHeading
-              eyebrow={isPt ? 'Arquitetura' : 'Architecture'}
+              eyebrow={L(i18n.language, 'Arquitetura', 'Architecture', 'Architecture')}
               title={t('dataIntelligence.pipelineTitle')}
               description={t('dataIntelligence.pipelineDesc')}
             />
-            <DataPipelineDiagram sources={dataInfo.sources} isPt={isPt} />
+            <DataPipelineDiagram sources={dataInfo.sources} />
           </section>
         </>
       )}
@@ -60,7 +60,8 @@ export function DataIntelligence() {
   )
 }
 
-function DataPipelineDiagram({ sources, isPt }: { sources: string[]; isPt: boolean }) {
+function DataPipelineDiagram({ sources }: { sources: string[] }) {
+  const { i18n } = useTranslation()
   return (
     <div className="mt-4 flex flex-col items-center">
       <div className="grid w-full max-w-sm grid-cols-2 gap-2.5">
@@ -71,24 +72,24 @@ function DataPipelineDiagram({ sources, isPt }: { sources: string[]; isPt: boole
 
       <PipelineMergeConnector />
 
-      <PipelineNode label={isPt ? 'Dados Brutos' : 'Raw Data'} tone="highlight" />
+      <PipelineNode label={L(i18n.language, 'Dados Brutos', 'Raw Data', 'Données brutes')} tone="highlight" />
       <PipelineArrow />
       <PipelineNode
-        label={isPt ? 'Tratamento & Limpeza' : 'Cleaning'}
-        description={isPt ? 'Padronização de formatos e remoção de duplicatas entre fontes' : 'Fixing formats and removing duplicates across sources'}
+        label={L(i18n.language, 'Tratamento & Limpeza', 'Cleaning', 'Nettoyage')}
+        description={L(i18n.language, 'Padronização de formatos e remoção de duplicatas entre fontes', 'Fixing formats and removing duplicates across sources', 'Correction des formats et suppression des doublons entre les sources')}
       />
       <PipelineArrow />
       <PipelineNode
-        label={isPt ? 'Engenharia de Atributos' : 'Feature Engineering'}
-        description={isPt ? 'Diferenças de envergadura, idade, taxa de vitória, precisão de golpes e quedas' : 'The difference between the two fighters in reach, age, win rate, striking and takedown accuracy'}
+        label={L(i18n.language, 'Engenharia de Atributos', 'Feature Engineering', 'Ingénierie des variables')}
+        description={L(i18n.language, 'Diferenças de envergadura, idade, taxa de vitória, precisão de golpes e quedas', 'The difference between the two fighters in reach, age, win rate, striking and takedown accuracy', "L'écart entre les deux lutteurs en allonge, âge, taux de victoire, précision des coups et des amenées au sol")}
       />
       <PipelineArrow />
-      <PipelineNode label={isPt ? 'Conjunto de Treinamento (ML)' : 'ML Dataset'} tone="highlight" />
+      <PipelineNode label={L(i18n.language, 'Conjunto de Treinamento (ML)', 'ML Dataset', "Jeu d'entraînement (ML)")} tone="highlight" />
       <PipelineArrow />
       <PipelineNode
-        label={isPt ? 'Previsão & Explicabilidade' : 'Prediction'}
+        label={L(i18n.language, 'Previsão & Explicabilidade', 'Prediction', 'Pronostic')}
         tone="accent"
-        description={isPt ? 'Modelo de Gradient Boosting com SHAP para explicar cada palpite' : 'A gradient boosting model, with SHAP to explain each pick'}
+        description={L(i18n.language, 'Modelo de Gradient Boosting com SHAP para explicar cada palpite', 'A gradient boosting model, with SHAP to explain each pick', 'Un modèle de gradient boosting, avec SHAP pour expliquer chaque choix')}
       />
     </div>
   )

@@ -8,6 +8,7 @@ import { LoadingSkeleton } from '../../shared/components/LoadingSkeleton'
 import { OrgFightRow } from '../../shared/components/OrgFightRow'
 import { OrgFighterModal } from '../../shared/components/OrgFighterModal'
 import { SectionHeading } from '../../shared/components/SectionHeading'
+import { L, localeTag } from '../../i18n/lang'
 import { getDivisionName } from '../../shared/data/divisions'
 import { compareDivisions, formatDate } from '../../shared/data/orgFormat'
 import { orgPath, type OrgConfig } from '../../shared/data/orgs'
@@ -19,8 +20,7 @@ import type { OrgEvent } from '../../shared/types/api'
 const LATEST_RESULTS = 4
 
 export function OrgHome() {
-  const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
+  const { t, i18n } = useTranslation()
   const org = useOrg()
   const { fighters } = useOrgFighters(org.id)
   const past = useOrgEvents(org.id)
@@ -54,46 +54,54 @@ export function OrgHome() {
             <SectionHeading
               level={1}
               eyebrow={org.name}
-              title={isPt ? `${org.shortName} • Estatísticas & Inteligência` : `${org.shortName} fight intelligence`}
-              description={org.tagline}
+              title={L(i18n.language, `${org.shortName} • Estatísticas & Inteligência`, `${org.shortName} fight intelligence`, `${org.shortName} • statistiques et intelligence`)}
+              description={t(`landing.taglines.${org.id}`, { defaultValue: org.tagline })}
             />
             <div className="mt-4 flex flex-wrap gap-2">
-              <HeroLink to={orgPath(org, 'events')}>{isPt ? 'Cards & Eventos' : 'Fight cards'}</HeroLink>
-              <HeroLink to={orgPath(org, 'fighters')}>{isPt ? 'Lutadores' : 'Fighters'}</HeroLink>
-              {org.hasRankings ? <HeroLink to={orgPath(org, 'rankings')}>Rankings</HeroLink> : null}
+              <HeroLink to={orgPath(org, 'events')}>{L(i18n.language, 'Cards & Eventos', 'Fight cards', 'Cartes et événements')}</HeroLink>
+              <HeroLink to={orgPath(org, 'fighters')}>{L(i18n.language, 'Lutadores', 'Fighters', 'Combattants')}</HeroLink>
+              {org.hasRankings ? <HeroLink to={orgPath(org, 'rankings')}>{t('nav.rankings', 'Rankings')}</HeroLink> : null}
             </div>
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
             <Tile
-              label={isPt ? 'Lutadores' : 'Fighters'}
-              value={fighters.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')}
-              note={`${activeCount.toLocaleString(isPt ? 'pt-BR' : 'en-US')} ${isPt ? 'em atividade' : 'active'}`}
+              label={L(i18n.language, 'Lutadores', 'Fighters', 'Combattants')}
+              value={fighters.length.toLocaleString(localeTag(i18n.language))}
+              note={`${activeCount.toLocaleString(localeTag(i18n.language))} ${L(i18n.language, 'em atividade', 'active', 'en activité')}`}
             />
-            <Tile label={isPt ? 'Eventos' : 'Events'} value={past.events.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
-            <Tile label={isPt ? 'Lutas Cadastradas' : 'Fights'} value={fightCount.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={L(i18n.language, 'Eventos', 'Events', 'Événements')} value={past.events.length.toLocaleString(localeTag(i18n.language))} />
+            <Tile label={L(i18n.language, 'Lutas Cadastradas', 'Fights', 'Combats')} value={fightCount.toLocaleString(localeTag(i18n.language))} />
           </div>
         </div>
       </section>
 
       {org.archived && !nextEvent ? (
         <p role="note" className="surface-card rounded-[20px] px-4 py-4 text-sm leading-6 text-[var(--text-main)]">
-          {org.archived}
+          {L(
+            i18n.language,
+            'O Bellator realizou seu último evento em 2023 e foi absorvido pela PFL, portanto este é um arquivo histórico: os dados aqui não são mais atualizados.',
+            org.archived,
+            'Le Bellator a organisé son dernier événement en 2023 avant d\'être absorbé par la PFL : il s\'agit donc d\'archives historiques qui ne sont plus mises à jour.',
+          )}
         </p>
       ) : (
         <section aria-label="Next event" className="space-y-3">
           <SectionHeading
-            eyebrow={isPt ? 'Próximo Evento' : 'Next card'}
-            title={nextEvent ? nextEvent.name : (isPt ? 'Nenhum evento anunciado' : 'No event announced')}
+            eyebrow={L(i18n.language, 'Próximo Evento', 'Next card', 'Prochain événement')}
+            title={nextEvent ? nextEvent.name : L(i18n.language, 'Nenhum evento anunciado', 'No event announced', 'Aucun événement annoncé')}
           />
           {upcoming.loading ? (
             <LoadingSkeleton className="h-[150px]" />
           ) : nextEvent ? (
-            <EventPanel org={org} event={nextEvent} limit={3} scheduled onOpenFighter={setProfileName} isPt={isPt} />
+            <EventPanel org={org} event={nextEvent} limit={3} scheduled onOpenFighter={setProfileName} />
           ) : (
             <p className="surface-card rounded-[20px] px-4 py-5 text-sm text-[var(--text-muted)]">
-              {isPt
-                ? `O próximo card do ${org.shortName} ainda não foi confirmado.`
-                : `The next ${org.shortName} card has not been announced yet.`}
+              {L(
+                i18n.language,
+                `O próximo card do ${org.shortName} ainda não foi confirmado.`,
+                `The next ${org.shortName} card has not been announced yet.`,
+                `La prochaine carte ${org.shortName} n'a pas encore été confirmée.`,
+              )}
             </p>
           )}
         </section>
@@ -101,8 +109,8 @@ export function OrgHome() {
 
       <section aria-label="Champions" className="space-y-3">
         <SectionHeading
-          eyebrow={isPt ? (org.archived ? 'Últimos Campeões' : 'Cinturões') : (org.archived ? 'Final champions' : 'Titles')}
-          title={isPt ? `Campeões do ${org.shortName}` : `${org.shortName} champions`}
+          eyebrow={L(i18n.language, org.archived ? 'Últimos Campeões' : 'Cinturões', org.archived ? 'Final champions' : 'Titles', org.archived ? 'Derniers champions' : 'Ceintures')}
+          title={L(i18n.language, `Campeões do ${org.shortName}`, `${org.shortName} champions`, `Champions ${org.shortName}`)}
         />
         {rankingsLoading ? (
           <LoadingSkeleton className="h-[120px]" />
@@ -110,33 +118,41 @@ export function OrgHome() {
           <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
             {champions.map(({ division, holders }) => (
               <li key={division}>
-                <ChampionTile division={division} holders={holders} lookup={lookup} onOpen={setProfileName} isPt={isPt} />
+                <ChampionTile division={division} holders={holders} lookup={lookup} onOpen={setProfileName} />
               </li>
             ))}
           </ul>
         ) : (
           <p className="text-sm text-[var(--text-muted)]">
-            {isPt ? 'Lista de campeões indisponível no momento.' : 'Champions are not available yet.'}
+            {L(i18n.language, 'Lista de campeões indisponível no momento.', 'Champions are not available yet.', 'La liste des champions n\'est pas encore disponible.')}
           </p>
         )}
       </section>
 
       {latestEvent ? (
         <section aria-label="Latest results" className="space-y-3">
-          <SectionHeading eyebrow={isPt ? 'Últimos Resultados' : 'Latest results'} title={latestEvent.name} />
-          <EventPanel org={org} event={latestEvent} limit={LATEST_RESULTS} onOpenFighter={setProfileName} isPt={isPt} />
+          <SectionHeading eyebrow={L(i18n.language, 'Últimos Resultados', 'Latest results', 'Derniers résultats')} title={latestEvent.name} />
+          <EventPanel org={org} event={latestEvent} limit={LATEST_RESULTS} onOpenFighter={setProfileName} />
         </section>
       ) : null}
 
       <p className="text-xs leading-5 text-[var(--text-muted)]">
         {org.archived
-          ? (isPt ? `Arquivo histórico compilado a partir de ${org.sourceName}.` : `Archive built from ${org.sourceName}.`)
-          : (isPt ? `Dados oficiais via ${org.sourceName}, sincronizados diariamente.` : `Data from ${org.sourceName}, refreshed daily.`)}{' '}
-        {isPt
-          ? 'As previsões da IA e o histórico detalhado estão focados no UFC atualmente, onde o modelo preditivo foi validado.'
-          : 'Predictions, head-to-head and the track record are UFC-only for now: the model is trained on UFC fights.'}{' '}
+          ? L(
+              i18n.language,
+              `Arquivo histórico compilado a partir de ${org.sourceName === 'ESPN and Wikipedia' ? 'ESPN e Wikipedia' : org.sourceName}.`,
+              `Archive built from ${org.sourceName}.`,
+              `Archives historiques compilées à partir d'${org.sourceName === 'ESPN and Wikipedia' ? 'ESPN et Wikipédia' : org.sourceName}.`,
+            )
+          : L(i18n.language, `Dados oficiais via ${org.sourceName}, sincronizados diariamente.`, `Data from ${org.sourceName}, refreshed daily.`, `Données officielles via ${org.sourceName}, synchronisées chaque jour.`)}{' '}
+        {L(
+          i18n.language,
+          'As previsões da IA e o histórico detalhado estão focados no UFC atualmente, onde o modelo preditivo foi validado.',
+          'Predictions, head-to-head and the track record are UFC-only for now: the model is trained on UFC fights.',
+          'Les prévisions, le face-à-face et le bilan des pronostics restent pour l\'instant limités à l\'UFC : le modèle est entraîné sur des combats UFC.',
+        )}{' '}
         <Link to="/predictor" className="font-semibold underline decoration-2 underline-offset-2 hover:bg-[#F2C230] hover:text-[#0E0E0E]">
-          {isPt ? 'Simular lutas no UFC →' : 'Try the UFC predictor'}
+          {L(i18n.language, 'Simular lutas no UFC →', 'Try the UFC predictor', 'Simuler des combats UFC →')}
         </Link>
       </p>
 
@@ -170,22 +186,21 @@ function EventPanel({
   limit,
   scheduled = false,
   onOpenFighter,
-  isPt,
 }: {
   org: OrgConfig
   event: OrgEvent
   limit: number
   scheduled?: boolean
   onOpenFighter: (name: string) => void
-  isPt: boolean
 }) {
+  const { i18n } = useTranslation()
   const fights = event.fights.slice(0, limit)
   return (
     <div className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--text-muted)]">
         <span className="inline-flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5" />
-          {formatDate(event.date, true, isPt)}
+          {formatDate(event.date, true, i18n.language)}
         </span>
         {event.location ? (
           <span className="inline-flex items-center gap-1.5">
@@ -204,8 +219,8 @@ function EventPanel({
         className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-main)] underline decoration-2 underline-offset-4 hover:bg-[#F2C230] hover:text-[#0E0E0E]"
       >
         {event.fight_count > fights.length
-          ? (isPt ? `Card completo (${event.fight_count} lutas)` : `Full card (${event.fight_count} fights)`)
-          : (isPt ? 'Ver card completo' : 'Open the card')}
+          ? L(i18n.language, `Card completo (${event.fight_count} lutas)`, `Full card (${event.fight_count} fights)`, `Carte complète (${event.fight_count} combats)`)
+          : L(i18n.language, 'Ver card completo', 'Open the card', 'Voir la carte complète')}
         <ArrowRight className="h-3.5 w-3.5" />
       </Link>
     </div>
@@ -217,32 +232,31 @@ function ChampionTile({
   holders,
   lookup,
   onOpen,
-  isPt,
 }: {
   division: string
   holders: { fighter: string; status: string | null }[]
   lookup: (name: string) => { image_url: string | null } | undefined
   onOpen: (name: string) => void
-  isPt: boolean
 }) {
+  const { i18n } = useTranslation()
   const champion = holders.find((entry) => entry.status !== 'interim') ?? null
   const interim = holders.find((entry) => entry.status === 'interim') ?? null
   return (
     <div className="metric-tile flex h-full items-center gap-3 rounded-2xl px-3 py-3">
       <FighterAvatar name={champion?.fighter ?? division} imageUrl={champion ? (lookup(champion.fighter)?.image_url ?? null) : null} highlight={Boolean(champion)} className="h-14 w-12" />
       <div className="min-w-0 flex-1">
-        <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{getDivisionName(division, isPt)}</p>
+        <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{getDivisionName(division, i18n.language)}</p>
         {champion ? (
           <button type="button" onClick={() => onOpen(champion.fighter)} className="flex max-w-full items-center gap-1.5 text-left text-base font-bold text-[var(--text-main)]">
             <Crown className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" aria-hidden="true" />
             <span className="truncate">{champion.fighter}</span>
           </button>
         ) : (
-          <p className="text-base font-bold text-[var(--text-muted)]">{isPt ? 'Cinturão Vago' : 'Vacant'}</p>
+          <p className="text-base font-bold text-[var(--text-muted)]">{L(i18n.language, 'Cinturão Vago', 'Vacant', 'Ceinture vacante')}</p>
         )}
         {interim ? (
           <button type="button" onClick={() => onOpen(interim.fighter)} className="block max-w-full truncate text-left text-xs text-[var(--text-muted)] underline decoration-2 underline-offset-2">
-            {isPt ? 'Interino' : 'Interim'}: {interim.fighter}
+            {L(i18n.language, 'Interino', 'Interim', 'Intérimaire')}: {interim.fighter}
           </button>
         ) : null}
       </div>

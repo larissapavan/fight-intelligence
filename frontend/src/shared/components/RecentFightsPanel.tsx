@@ -1,23 +1,23 @@
 import { useTranslation } from 'react-i18next'
+import { L, localeTag } from '../../i18n/lang'
 import { getMethodLabel } from '../data/fightLabels'
 import type { FightRecord, FighterPerformance } from '../types/api'
 import { LoadingSkeleton } from './LoadingSkeleton'
 
 function ResultChip({ result }: { result: FightRecord['result'] }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (result === 'win') {
     return (
       <span className="type-tech rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#C8102E]">
-        {isPt ? 'Vitória' : 'Win'}
+        {L(i18n.language, 'Vitória', 'Win', 'Victoire')}
       </span>
     )
   }
   if (result === 'loss') {
     return (
       <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
-        {isPt ? 'Derrota' : 'Loss'}
+        {L(i18n.language, 'Derrota', 'Loss', 'Défaite')}
       </span>
     )
   }
@@ -28,29 +28,28 @@ function ResultChip({ result }: { result: FightRecord['result'] }) {
   )
 }
 
-function formatMethod(fight: FightRecord, isPt = false) {
-  const method = fight.method ? getMethodLabel(fight.method, isPt) : null
+function formatMethod(fight: FightRecord, language: string | boolean = false) {
+  const method = fight.method ? getMethodLabel(fight.method, language) : null
   if (method && fight.method_detail) return `${method} · ${fight.method_detail}`
-  return method ?? fight.outcome ?? (isPt ? 'Resultado a definir' : 'Result pending')
+  return method ?? fight.outcome ?? L(language, 'Resultado a definir', 'Result pending', 'Résultat à venir')
 }
 
 function formatDate(date: string | null, lang = 'en-US') {
   if (!date) return null
   const parsed = new Date(`${date}T00:00:00`)
   if (Number.isNaN(parsed.getTime())) return null
-  return parsed.toLocaleDateString(lang === 'pt-BR' ? 'pt-BR' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  return parsed.toLocaleDateString(localeTag(lang), { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 function FightRow({ fight }: { fight: FightRecord }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const date = formatDate(fight.date, i18n.language)
   return (
     <li className="flex items-start justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2">
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold text-[var(--text-main)]">vs {fight.opponent}</p>
         <p className="mt-0.5 truncate text-[11px] text-[#999999]">
-          {formatMethod(fight, isPt)}
+          {formatMethod(fight, i18n.language)}
           {date ? ` · ${date}` : ''}
         </p>
       </div>
@@ -71,7 +70,6 @@ function Column({
   tone: 'red' | 'blue'
 }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const dotColor = tone === 'red' ? 'bg-[#C8102E]' : 'bg-[var(--accent-blue)]'
   return (
     <div>
@@ -92,7 +90,7 @@ function Column({
           ))}
         </ul>
       ) : (
-        <p className="mt-2 text-xs leading-5 text-[#999999]">{isPt ? 'Nenhuma luta recente registrada no UFC.' : 'No recent UFC fights on file.'}</p>
+        <p className="mt-2 text-xs leading-5 text-[#999999]">{L(i18n.language, 'Nenhuma luta recente registrada no UFC.', 'No recent UFC fights on file.', 'Aucun combat UFC récent enregistré.')}</p>
       )}
     </div>
   )
@@ -112,11 +110,10 @@ export function RecentFightsPanel({
   loading?: boolean
 }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <p className="broadcast-label text-[11px] text-[#999999]">{isPt ? 'Últimos 5 combates' : 'Last five'}</p>
-      <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{isPt ? 'Histórico Recente' : 'Recent fights'}</h2>
+      <p className="broadcast-label text-[11px] text-[#999999]">{L(i18n.language, 'Últimos 5 combates', 'Last five', 'Cinq derniers combats')}</p>
+      <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{L(i18n.language, 'Histórico Recente', 'Recent fights', 'Combats récents')}</h2>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <Column name={nameA} fights={performanceA?.last_performances ?? []} loading={loading} tone="red" />
         <Column name={nameB} fights={performanceB?.last_performances ?? []} loading={loading} tone="blue" />

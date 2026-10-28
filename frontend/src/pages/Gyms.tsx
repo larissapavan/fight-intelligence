@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ChevronRight, Crown, Search } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
+import { L, localeTag } from '../i18n/lang'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { orgPath } from '../shared/data/orgs'
@@ -24,7 +25,6 @@ export function Gyms() {
   const [scope, setScope] = useState<Scope>('org')
   const [sort, setSort] = useState<Sort>('org')
   const [shown, setShown] = useState(PAGE_SIZE)
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const inOrg = (gym: GymSummary) => gym.orgs[org.id] ?? 0
   const orgGyms = useMemo(() => gyms.filter((gym) => (gym.orgs[org.id] ?? 0) > 0), [gyms, org.id])
@@ -57,9 +57,9 @@ export function Gyms() {
             description={t('gyms.description')}
           />
           <div className="grid gap-2 sm:grid-cols-3">
-            <Tile label={t('gyms.totalGyms')} value={gyms.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
-            <Tile label={t('gyms.withOrgFighters')} value={orgGyms.length.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
-            <Tile label={t('gyms.fightersPlaced')} value={orgFighters.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={t('gyms.totalGyms')} value={gyms.length.toLocaleString(localeTag(i18n.language))} />
+            <Tile label={t('gyms.withOrgFighters')} value={orgGyms.length.toLocaleString(localeTag(i18n.language))} />
+            <Tile label={t('gyms.fightersPlaced')} value={orgFighters.toLocaleString(localeTag(i18n.language))} />
           </div>
         </div>
 
@@ -73,14 +73,14 @@ export function Gyms() {
                 reset()
               }}
               placeholder={t('gyms.searchPlaceholder')}
-              aria-label={isPt ? 'Buscar academias' : 'Search gyms'}
+              aria-label={L(i18n.language, 'Buscar academias', 'Search gyms', 'Rechercher des salles')}
               className="theme-text w-full bg-transparent outline-none placeholder:text-[var(--text-muted)]"
             />
           </div>
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as Sort)}
-            aria-label={isPt ? 'Ordenar academias' : 'Sort gyms'}
+            aria-label={L(i18n.language, 'Ordenar academias', 'Sort gyms', 'Trier les salles')}
             className="soft-input theme-text rounded-xl px-3 py-2.5 text-sm outline-none"
           >
             <option value="org">{t('gyms.mostFighters')}</option>
@@ -88,7 +88,7 @@ export function Gyms() {
             <option value="champions">{t('gyms.mostChampions')}</option>
             <option value="name">{t('gyms.name')}</option>
           </select>
-          <div role="group" aria-label={isPt ? 'Filtrar academias' : 'Which gyms'} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
+          <div role="group" aria-label={L(i18n.language, 'Filtrar academias', 'Which gyms', 'Quelles salles')} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
             {(['org', 'all'] as const).map((value) => (
               <button
                 key={value}
@@ -120,11 +120,14 @@ export function Gyms() {
       ) : matches.length ? (
         <section className="space-y-3">
           <p className="text-xs text-[var(--text-muted)]">
-            {isPt
-              ? `Exibindo ${Math.min(shown, matches.length).toLocaleString('pt-BR')} de ${matches.length.toLocaleString('pt-BR')}`
-              : `Showing ${Math.min(shown, matches.length).toLocaleString('en-US')} of ${matches.length.toLocaleString('en-US')}`}
+            {L(
+              i18n.language,
+              `Exibindo ${Math.min(shown, matches.length).toLocaleString('pt-BR')} de ${matches.length.toLocaleString('pt-BR')}`,
+              `Showing ${Math.min(shown, matches.length).toLocaleString('en-US')} of ${matches.length.toLocaleString('en-US')}`,
+              `Affichage de ${Math.min(shown, matches.length).toLocaleString(localeTag(i18n.language))} sur ${matches.length.toLocaleString(localeTag(i18n.language))}`,
+            )}
           </p>
-          <ul aria-label={isPt ? 'Academias' : 'Gyms'} className="grid gap-2.5 md:grid-cols-2">
+          <ul aria-label={L(i18n.language, 'Academias', 'Gyms', 'Salles')} className="grid gap-2.5 md:grid-cols-2">
             {matches.slice(0, shown).map((gym) => (
               <li key={gym.slug}>
                 <GymRow gym={gym} orgName={org.shortName} to={`${orgPath(org, 'gyms')}/${gym.slug}`} inOrg={inOrg(gym)} />
@@ -137,7 +140,7 @@ export function Gyms() {
               onClick={() => setShown((count) => count + PAGE_SIZE)}
               className="ghost-action mx-auto block px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-[var(--text-main)]"
             >
-              {isPt ? 'Mostrar mais academias' : 'Show more gyms'}
+              {L(i18n.language, 'Mostrar mais academias', 'Show more gyms', 'Afficher plus de salles')}
             </button>
           ) : null}
         </section>
@@ -161,7 +164,6 @@ function Tile({ label, value }: { label: string; value: string }) {
 
 function GymRow({ gym, orgName, to, inOrg }: { gym: GymSummary; orgName: string; to: string; inOrg: number }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   return (
     <Link
@@ -172,13 +174,13 @@ function GymRow({ gym, orgName, to, inOrg }: { gym: GymSummary; orgName: string;
         <span className="block truncate text-base font-bold text-[var(--text-main)]">{gym.name}</span>
         <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--text-muted)]">
           <span>
-            <span className="font-semibold text-[var(--text-main)]">{inOrg}</span> {orgName} {isPt ? (inOrg === 1 ? 'lutador' : 'lutadores') : (inOrg === 1 ? 'fighter' : 'fighters')}
+            <span className="font-semibold text-[var(--text-main)]">{inOrg}</span> {orgName} {inOrg === 1 ? L(i18n.language, 'lutador', 'fighter', 'lutteur') : L(i18n.language, 'lutadores', 'fighters', 'lutteurs')}
           </span>
-          <span>{gym.fighters_count} {isPt ? 'atletas' : 'listed'}</span>
+          <span>{gym.fighters_count} {L(i18n.language, 'atletas', 'listed', 'inscrits')}</span>
           {gym.champions > 0 ? (
             <span className="inline-flex items-center gap-1 border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]">
               <Crown className="h-3 w-3" aria-hidden="true" />
-              {gym.champions} {isPt ? (gym.champions === 1 ? 'campeão' : 'campeões') : (gym.champions === 1 ? 'champion' : 'champions')}
+              {gym.champions} {gym.champions === 1 ? L(i18n.language, 'campeão', 'champion', 'champion') : L(i18n.language, 'campeões', 'champions', 'champions')}
             </span>
           ) : null}
         </span>

@@ -3,6 +3,7 @@ import { CircleDot, FolderGit2, Moon, Sun } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../../i18n/lang'
 import { isLandingPath, LANDING_PATH, orgPath, type OrgConfig } from '../data/orgs'
 import { useModelInfo } from '../hooks/useModelInfo'
 import { useOrg } from '../hooks/useOrg'
@@ -55,7 +56,6 @@ const THEME_STORAGE_KEY = 'ufc-predictor:theme'
 
 export function Header() {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const { health, loading } = useModelInfo()
   const { pathname } = useLocation()
   const org = useOrg()
@@ -95,7 +95,7 @@ export function Header() {
         <div className="flex items-center justify-between gap-2">
           <Link
             to={LANDING_PATH}
-            aria-label={isPt ? 'Fight Intelligence • Início' : 'Fight Intelligence home'}
+            aria-label={L(i18n.language, 'Fight Intelligence • Início', 'Fight Intelligence home', 'Fight Intelligence • Accueil')}
             className="brand-badge flex shrink-0 items-center gap-2 border-2 border-black bg-[#EFECE6] px-2 py-1 xs:gap-2.5 xs:px-3 xs:py-1.5 sm:px-4 sm:py-2 text-black"
           >
             <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-8 xs:w-8 sm:h-9 sm:w-9" />
@@ -153,7 +153,7 @@ export function Header() {
         {landing ? null : (
           <div className="mt-2 border-t border-white/10 pt-2 sm:mt-2.5 sm:pt-2">
             <nav
-              aria-label={isPt ? 'Navegação principal' : 'Main navigation'}
+              aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
               className="chip-scroll flex w-fit max-w-full items-center gap-1 sm:gap-1.5 overflow-x-auto rounded-xl sm:rounded-full border border-white/10 bg-white/[0.03] p-1 scroll-smooth"
             >
               {navItems.map((item) => (

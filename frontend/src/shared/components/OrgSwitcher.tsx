@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../../i18n/lang'
 import { ORG_LIST, switchOrgPath } from '../data/orgs'
 import { useOrg } from '../hooks/useOrg'
 
 /** UFC / PFL / Bellator (and any organization added later): the same section of the other organization when it exists. */
 export function OrgSwitcher({ className = '', onNavigate }: { className?: string; onNavigate?: () => void }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const current = useOrg()
   const { pathname } = useLocation()
 
@@ -15,7 +15,7 @@ export function OrgSwitcher({ className = '', onNavigate }: { className?: string
   // The wrapper carries the caller's display classes ("hidden xs:block"); the strip inside is always a row.
   return (
     <div className={className}>
-      <div role="group" aria-label={isPt ? 'Organização' : 'Organization'} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
+      <div role="group" aria-label={L(i18n.language, 'Organização', 'Organization', 'Organisation')} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
         {ORG_LIST.map((org, index) => {
           const active = org.id === current.id
           return (

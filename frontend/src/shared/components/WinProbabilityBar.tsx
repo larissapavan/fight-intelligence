@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { L } from '../../i18n/lang'
 import { edgeLabel, formatProbability } from '../data/probability'
 
 interface WinProbabilityBarProps {
@@ -21,7 +22,6 @@ export function WinProbabilityBar({
   showNames = true,
 }: WinProbabilityBarProps) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const pctA = Math.round(probabilityA * 100)
   const pctB = Math.round(probabilityB * 100)
@@ -56,11 +56,12 @@ export function WinProbabilityBar({
       <div
         className={`mt-3 flex overflow-hidden rounded-full bg-[var(--rule)] ${compact ? 'h-3' : 'h-4'}`}
         role="img"
-        aria-label={
-          isPt
-            ? `Probabilidade de vitória: ${pctA}% ${nameA}, ${pctB}% ${nameB}`
-            : `Win probability ${pctA} percent ${nameA}, ${pctB} percent ${nameB}`
-        }
+        aria-label={L(
+          i18n.language,
+          `Probabilidade de vitória: ${pctA}% ${nameA}, ${pctB}% ${nameB}`,
+          `Win probability ${pctA} percent ${nameA}, ${pctB} percent ${nameB}`,
+          `Probabilité de victoire : ${pctA} % ${nameA}, ${pctB} % ${nameB}`,
+        )}
       >
         <div className={`h-full ${winnerIsA ? 'bg-[var(--accent-red)]' : 'bg-[var(--text-muted)]'}`} style={{ width: `${pctA}%` }} />
         <div className={`h-full ${winnerIsA ? 'bg-[var(--text-muted)]' : 'bg-[var(--accent-red)]'}`} style={{ width: `${pctB}%` }} />
@@ -68,9 +69,9 @@ export function WinProbabilityBar({
 
       {predictedWinner ? (
         <p className={`mt-2 text-center text-[var(--text-muted)] ${compact ? 'text-xs' : 'text-sm'}`}>
-          {isPt ? 'Modelo favorece ' : 'Model favors '}
+          {L(i18n.language, 'Modelo favorece ', 'Model favors ', 'Le modèle favorise ')}
           <span className="font-semibold text-[var(--text-main)]">{predictedWinner}</span>
-          <span> · {edgeLabel(Math.max(probabilityA, probabilityB), isPt).toLowerCase()}</span>
+          <span> · {edgeLabel(Math.max(probabilityA, probabilityB), i18n.language).toLowerCase()}</span>
         </p>
       ) : null}
     </div>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../i18n/lang'
 import { Header } from '../shared/components/Header'
 import { ScrollToTop } from '../shared/components/ScrollToTop'
 import { LanguageSwitcher } from '../shared/components/LanguageSwitcher'
@@ -70,7 +71,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
       >
         {t('common.skipToContent', 'Skip to content')}
       </a>
-      <div className="mx-auto flex min-h-screen w-full max-w-[1500px] flex-col px-3 pb-4 pt-2 sm:px-4 sm:pb-5 md:px-5 lg:px-6 xl:px-8">
+      <div className="mx-auto flex min-h-screen w-full max-w-[min(100%,2400px)] flex-col px-[clamp(0.75rem,1.6vw,2.25rem)] pb-4 pt-2 sm:pb-5">
         <ScrollToTop />
         <PageMeta />
         <Header />
@@ -108,7 +109,14 @@ export function MainLayout({ children }: { children: ReactNode }) {
                   className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
                 >
                   {t('footer.disclaimer', {
-                    org: landing ? 'any of these organizations' : `the ${org.shortName}`,
+                    org: landing
+                      ? L(i18n.language, 'nenhuma dessas organizações', 'any of these organizations', 'ces organisations')
+                      : L(
+                          i18n.language,
+                          org.id === 'pfl' ? `a ${org.shortName}` : `o ${org.shortName}`,
+                          `the ${org.shortName}`,
+                          org.id === 'ufc' ? `l’${org.shortName}` : org.id === 'pfl' ? `la ${org.shortName}` : `le ${org.shortName}`,
+                        ),
                     defaultValue: `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`,
                   })}
                 </Link>

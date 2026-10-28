@@ -9,8 +9,9 @@ import { getFighterImageUrl, useFighterImages } from '../hooks/useFighterImages'
 import { useFighters } from '../hooks/useFighters'
 import { useOrg } from '../hooks/useOrg'
 import { useOrgFighters } from '../hooks/useOrgData'
+import { L } from '../../i18n/lang'
 import { orgPath } from '../data/orgs'
-import { DIVISION_NAMES_PT } from '../data/divisions'
+import { getDivisionName } from '../data/divisions'
 
 function recordOf(fighter: SearchableFighter) {
   if (fighter.wins == null || fighter.losses == null) return null
@@ -22,7 +23,6 @@ export function FighterSearch() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const org = useOrg()
   const isUfc = org.id === 'ufc'
   const { fighters: ufcFighters } = useFighters(isUfc)
@@ -103,9 +103,9 @@ export function FighterSearch() {
           setOpen(!open)
         }}
         className="ghost-action theme-text inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
-        aria-label={isPt ? 'Buscar lutadores' : 'Search fighters'}
+        aria-label={L(i18n.language, 'Buscar lutadores', 'Search fighters', 'Chercher des combattants')}
         aria-expanded={open}
-        title={isPt ? 'Buscar lutadores (pressione /)' : 'Search fighters (press /)'}
+        title={L(i18n.language, 'Buscar lutadores (pressione /)', 'Search fighters (press /)', 'Chercher des combattants (appuyez sur /)')}
       >
         <Search className="h-4 w-4" />
       </button>
@@ -122,8 +122,8 @@ export function FighterSearch() {
                 setActive(0)
               }}
               onKeyDown={onKeyDown}
-              placeholder={isPt ? 'Buscar lutador por nome...' : 'Find a fighter by name'}
-              aria-label={isPt ? 'Buscar lutador por nome' : 'Find a fighter by name'}
+              placeholder={L(i18n.language, 'Buscar lutador por nome...', 'Find a fighter by name', 'Chercher un combattant par nom...')}
+              aria-label={L(i18n.language, 'Buscar lutador por nome', 'Find a fighter by name', 'Chercher un combattant par nom')}
               role="combobox"
               aria-expanded={results.length > 0}
               aria-controls="fighter-search-results"
@@ -133,7 +133,7 @@ export function FighterSearch() {
             <button
               type="button"
               onClick={close}
-              aria-label={isPt ? 'Fechar busca' : 'Close search'}
+              aria-label={L(i18n.language, 'Fechar busca', 'Close search', 'Fermer la recherche')}
               className="inline-flex h-8 w-8 items-center justify-center text-[var(--text-muted)]"
             >
               <X className="h-4 w-4" />
@@ -161,7 +161,7 @@ export function FighterSearch() {
                         <span className="block truncate text-xs text-[var(--text-muted)]">
                           {[
                             recordOf(fighter),
-                            isPt && fighter.division ? (DIVISION_NAMES_PT[fighter.division] ?? fighter.division) : fighter.division,
+                            fighter.division ? getDivisionName(fighter.division, i18n.language) : fighter.division,
                             fighter.nickname ? `“${fighter.nickname}”` : null
                           ]
                             .filter(Boolean)
@@ -174,12 +174,12 @@ export function FighterSearch() {
               </ul>
             ) : (
               <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">
-                {isPt ? `Nenhum atleta encontrado para “${text.trim()}”.` : `No fighter matches “${text.trim()}”.`}
+                {L(i18n.language, `Nenhum atleta encontrado para “${text.trim()}”.`, `No fighter matches “${text.trim()}”.`, `Aucun athlète trouvé pour « ${text.trim()} ».`)}
               </p>
             )
           ) : (
             <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">
-              {isPt ? 'Digite um nome ou apelido. Enter abre o perfil.' : 'Type a name or nickname. Enter opens the profile.'}
+              {L(i18n.language, 'Digite um nome ou apelido. Enter abre o perfil.', 'Type a name or nickname. Enter opens the profile.', 'Saisissez un nom ou un surnom. Entrée ouvre le profil.')}
             </p>
           )}
         </div>

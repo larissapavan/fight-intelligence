@@ -1,6 +1,14 @@
 import { useTranslation } from 'react-i18next'
 import { Languages } from 'lucide-react'
 
+import { localeTag } from '../../i18n/lang'
+
+const LANGUAGES = [
+  { id: 'pt-BR', label: 'PT', titleKey: 'language.ptLong' },
+  { id: 'en-US', label: 'EN', titleKey: 'language.enLong' },
+  { id: 'fr-FR', label: 'FR', titleKey: 'language.frLong' },
+] as const
+
 type LanguageSwitcherProps = {
   className?: string
   compact?: boolean
@@ -8,9 +16,9 @@ type LanguageSwitcherProps = {
 
 export function LanguageSwitcher({ className = '', compact = false }: LanguageSwitcherProps) {
   const { i18n, t } = useTranslation()
-  const currentLang = i18n.resolvedLanguage?.startsWith('pt') ? 'pt-BR' : 'en-US'
+  const currentLang = localeTag(i18n.resolvedLanguage ?? i18n.language)
 
-  const changeLanguage = (lng: 'pt-BR' | 'en-US') => {
+  const changeLanguage = (lng: (typeof LANGUAGES)[number]['id']) => {
     if (currentLang !== lng) {
       i18n.changeLanguage(lng)
     }
@@ -27,32 +35,22 @@ export function LanguageSwitcher({ className = '', compact = false }: LanguageSw
           <Languages className="h-3.5 w-3.5" />
         </span>
       )}
-      <button
-        type="button"
-        onClick={() => changeLanguage('pt-BR')}
-        aria-pressed={currentLang === 'pt-BR'}
-        title={t('language.ptLong', 'Português')}
-        className={`rounded-full px-2 py-1 transition-all ${
-          currentLang === 'pt-BR'
-            ? 'bg-[#C8102E] text-white shadow-sm'
-            : 'text-[var(--text-muted)] hover:text-white'
-        }`}
-      >
-        PT
-      </button>
-      <button
-        type="button"
-        onClick={() => changeLanguage('en-US')}
-        aria-pressed={currentLang === 'en-US'}
-        title={t('language.enLong', 'Inglês')}
-        className={`rounded-full px-2 py-1 transition-all ${
-          currentLang === 'en-US'
-            ? 'bg-[#C8102E] text-white shadow-sm'
-            : 'text-[var(--text-muted)] hover:text-white'
-        }`}
-      >
-        EN
-      </button>
+      {LANGUAGES.map((language) => (
+        <button
+          key={language.id}
+          type="button"
+          onClick={() => changeLanguage(language.id)}
+          aria-pressed={currentLang === language.id}
+          title={t(language.titleKey)}
+          className={`rounded-full px-2 py-1 transition-all ${
+            currentLang === language.id
+              ? 'bg-[#C8102E] text-white shadow-sm'
+              : 'text-[var(--text-muted)] hover:text-white'
+          }`}
+        >
+          {language.label}
+        </button>
+      ))}
     </div>
   )
 }

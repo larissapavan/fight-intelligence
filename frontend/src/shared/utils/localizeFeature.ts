@@ -18,7 +18,30 @@ const FEATURE_NAMES_PT: Record<string, string> = {
   'Fighter B takedown accuracy': 'Aproveitamento de quedas (Lutador B)',
 }
 
-export function localizeFeature(name: string, isPt = false): string {
-  if (!isPt) return name
-  return FEATURE_NAMES_PT[name] ?? name
+const FEATURE_NAMES_FR: Record<string, string> = {
+  'Age difference': "Écart d'âge",
+  'Height difference': 'Écart de taille',
+  'Reach difference': "Écart d'allonge",
+  'Wins difference': 'Écart de victoires',
+  'Losses difference': 'Écart de défaites',
+  'Striking accuracy gap': 'Écart de précision en striking',
+  'Takedown accuracy gap': "Écart de précision aux amenées",
+  'Win rate difference': 'Écart de taux de victoire',
+  'Same stance': 'Même garde',
+  'Fight month': 'Mois du combat',
+  'Fight year': 'Année du combat',
+  'Fighter A win rate': 'Taux de victoire (lutteur A)',
+  'Fighter B win rate': 'Taux de victoire (lutteur B)',
+  'Fighter A striking accuracy': 'Précision en striking (lutteur A)',
+  'Fighter B striking accuracy': 'Précision en striking (lutteur B)',
+  'Fighter A takedown accuracy': 'Précision aux amenées (lutteur A)',
+  'Fighter B takedown accuracy': 'Précision aux amenées (lutteur B)',
+}
+
+export function localizeFeature(name: string, language: string | boolean = false): string {
+  const portuguese = language === true || (typeof language === 'string' && language.startsWith('pt'))
+  const french = typeof language === 'string' && language.startsWith('fr')
+  if (portuguese) return FEATURE_NAMES_PT[name] ?? name
+  if (french) return FEATURE_NAMES_FR[name] ?? name
+  return name
 }

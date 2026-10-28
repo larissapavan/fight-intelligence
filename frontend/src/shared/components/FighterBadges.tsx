@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../../i18n/lang'
 import { BADGES, CHAMPION_SEALS, getBadgeLabel } from '../data/badges'
-import { DIVISION_NAMES_PT } from '../data/divisions'
+import { DIVISION_NAMES_PT, getDivisionName } from '../data/divisions'
 import type { FighterProfile } from '../types/api'
 import { FlagIcon } from './FlagIcon'
 
@@ -16,16 +17,15 @@ type FighterBadgesProps = {
 
 export function FighterBadges({ badges, variant = 'short', className = '' }: FighterBadgesProps) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const known = (badges ?? []).filter((key) => BADGES[key])
   if (known.length === 0) return null
 
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Selos do lutador' : 'Fighter badges'}>
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={L(i18n.language, 'Selos do lutador', 'Fighter badges', 'Badges du combattant')}>
       {known.map((key) => {
         const info = BADGES[key]
-        const label = getBadgeLabel(key, isPt)
+        const label = getBadgeLabel(key, i18n.language)
         return (
           <li
             key={key}
@@ -50,17 +50,16 @@ export function FighterBadges({ badges, variant = 'short', className = '' }: Fig
 /** "Current Lightweight Champion" seals. Profile only; gold. */
 export function CurrentChampionSeals({ titles, className = '' }: { titles: string[] | undefined; className?: string }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (!titles?.length) return null
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Cinturões atuais' : 'Current championships'}>
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={L(i18n.language, 'Cinturões atuais', 'Current championships', 'Ceintures actuelles')}>
       {titles.map((title) => (
         <li
           key={title}
           className="border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]"
         >
-          {isPt ? `Campeão Atual (${DIVISION_NAMES_PT[title] ?? title})` : `Current ${title} Champion`}
+          {L(i18n.language, `Campeão Atual (${getDivisionName(title, 'pt')})`, `Current ${title} Champion`, `Champion actuel (${getDivisionName(title, 'fr')})`)}
         </li>
       ))}
     </ul>
@@ -70,17 +69,16 @@ export function CurrentChampionSeals({ titles, className = '' }: { titles: strin
 /** "Former Lightweight Champion" seals. Profile only; red. */
 export function FormerChampionSeals({ titles, className = '' }: { titles: string[] | undefined; className?: string }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (!titles?.length) return null
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Cinturões anteriores' : 'Former championships'}>
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={L(i18n.language, 'Cinturões anteriores', 'Former championships', 'Anciennes ceintures')}>
       {titles.map((title) => (
         <li
           key={title}
           className="border-2 border-[var(--rule)] bg-[#C8102E] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
         >
-          {isPt ? `Ex-Campeão (${DIVISION_NAMES_PT[title] ?? title})` : `Former ${title} Champion`}
+          {L(i18n.language, `Ex-Campeão (${getDivisionName(title, 'pt')})`, `Former ${title} Champion`, `Ancien champion (${getDivisionName(title, 'fr')})`)}
         </li>
       ))}
     </ul>
@@ -90,17 +88,16 @@ export function FormerChampionSeals({ titles, className = '' }: { titles: string
 /** "Interim Lightweight Champion" seals for anyone who has held an interim belt. Profile only; blue, like title defenses. */
 export function InterimChampionSeals({ titles, className = '' }: { titles: string[] | undefined; className?: string }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (!titles?.length) return null
   return (
-    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={isPt ? 'Cinturões interinos' : 'Interim championships'}>
+    <ul className={`flex flex-wrap items-center gap-1 ${className}`} aria-label={L(i18n.language, 'Cinturões interinos', 'Interim championships', 'Ceintures intérimaires')}>
       {titles.map((title) => (
         <li
           key={title}
           className="border-2 border-[var(--rule)] bg-[#1F4E9C] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-white"
         >
-          {isPt ? `Campeão Interino (${DIVISION_NAMES_PT[title] ?? title})` : `Interim ${title} Champion`}
+          {L(i18n.language, `Campeão Interino (${getDivisionName(title, 'pt')})`, `Interim ${title} Champion`, `Champion intérimaire (${getDivisionName(title, 'fr')})`)}
         </li>
       ))}
     </ul>
@@ -147,18 +144,23 @@ type TitleFightBadgeProps = {
  */
 export function TitleFightBadge({ fight, className = '' }: TitleFightBadgeProps) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const division = fight.weight_class && !/catch/i.test(fight.weight_class) ? fight.weight_class : null
-  const divPt = division ? (DIVISION_NAMES_PT[division] ?? division) : ''
+  const divPt = division ? getDivisionName(division, 'pt') : ''
+  const divFr = division ? getDivisionName(division, 'fr') : ''
   const base = `border-2 border-[var(--rule)] px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] ${className}`
 
   if (fight.interim_title) {
-    const label = isPt
-      ? divPt
+    const label = L(
+      i18n.language,
+      divPt
         ? (fight.interim_title_win ? `Cinturão Interino • ${divPt}` : `Disputa de Cinturão Interino • ${divPt}`)
-        : (fight.interim_title_win ? 'Conquista de Cinturão Interino' : 'Disputa de Cinturão Interino')
-      : `Interim ${division ? `${division} ` : ''}title ${fight.interim_title_win ? 'win' : 'fight'}`
+        : (fight.interim_title_win ? 'Conquista de Cinturão Interino' : 'Disputa de Cinturão Interino'),
+      `Interim ${division ? `${division} ` : ''}title ${fight.interim_title_win ? 'win' : 'fight'}`,
+      divFr
+        ? (fight.interim_title_win ? `Ceinture intérimaire • ${divFr}` : `Combat pour la ceinture intérimaire • ${divFr}`)
+        : (fight.interim_title_win ? 'Conquête de la ceinture intérimaire' : 'Combat pour la ceinture intérimaire'),
+    )
 
     return (
       <span className={`${base} bg-[#1F4E9C] text-white`}>
@@ -169,15 +171,18 @@ export function TitleFightBadge({ fight, className = '' }: TitleFightBadgeProps)
   if (fight.bmf_title) {
     return (
       <span className={`${base} bg-[#C9CDD3] text-[#0E0E0E]`}>
-        {isPt ? 'Disputa de Cinturão BMF' : 'BMF title fight'}
+        {L(i18n.language, 'Disputa de Cinturão BMF', 'BMF title fight', 'Combat de titre BMF')}
       </span>
     )
   }
   if (!fight.title_fight) return null
 
-  const label = isPt
-    ? divPt ? `Disputa de Cinturão • ${divPt}` : 'Disputa de Cinturão'
-    : division ? `${division} title fight` : 'Title fight'
+  const label = L(
+    i18n.language,
+    divPt ? `Disputa de Cinturão • ${divPt}` : 'Disputa de Cinturão',
+    division ? `${division} title fight` : 'Title fight',
+    divFr ? `Combat de titre • ${divFr}` : 'Combat de titre',
+  )
 
   return <span className={`${base} bg-[#F2C230] text-[#0E0E0E]`}>{label}</span>
 }

@@ -4,6 +4,7 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 
 import ptBR from './locales/pt-BR.json'
 import enUS from './locales/en-US.json'
+import frFR from './locales/fr-FR.json'
 
 export const LANGUAGE_STORAGE_KEY = 'ufc-predictor:language'
 
@@ -13,6 +14,9 @@ export const resources = {
   },
   'en-US': {
     translation: enUS,
+  },
+  'fr-FR': {
+    translation: frFR,
   },
 } as const
 

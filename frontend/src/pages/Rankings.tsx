@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowDown, ArrowUp, Crown, Sparkles, Trophy, Zap } from 'lucide-react'
 
+import { L, localeTag, uiLang } from '../i18n/lang'
 import { DivisionMatrixCard } from '../shared/components/DivisionMatrixCard'
 import { FighterAvatar } from '../shared/components/FighterAvatar'
 import { FighterBadges, FlagList } from '../shared/components/FighterBadges'
@@ -100,7 +101,6 @@ function DivisionView({
   onSelect: (category: string) => void
 }) {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (!active) {
     return (
@@ -124,7 +124,7 @@ function DivisionView({
         >
           {divisions.map((division) => (
             <option key={division.category} value={division.category}>
-              {getDivisionName(division.category, isPt)}
+              {getDivisionName(division.category, i18n.language)}
             </option>
           ))}
         </select>
@@ -147,7 +147,6 @@ function P4pView({
   onSelect: (category: string) => void
 }) {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (!active) {
     return (
@@ -161,12 +160,18 @@ function P4pView({
     <div className="space-y-4">
       <div className="surface-card flex flex-wrap gap-2 rounded-[18px] border-white/14 p-3">
         {categories.map((category) => {
-          const label = isPt
+          const lang = uiLang(i18n.language)
+          const label = lang === 'pt'
             ? category.category
                 .replace("Men's Pound-for-Pound", 'Peso por Peso Masculino')
                 .replace("Women's Pound-for-Pound", 'Peso por Peso Feminino')
                 .replace('Pound-for-Pound', 'Peso por Peso')
-            : category.category.replace('Pound-for-Pound ', '')
+            : lang === 'fr'
+              ? category.category
+                  .replace("Men's Pound-for-Pound", 'Toutes catégories hommes')
+                  .replace("Women's Pound-for-Pound", 'Toutes catégories femmes')
+                  .replace('Pound-for-Pound', 'Toutes catégories')
+              : category.category.replace('Pound-for-Pound ', '')
           return (
             <button
               key={category.category}
@@ -190,7 +195,6 @@ function P4pView({
 
 function EloView({ divisions }: { divisions: RankingCategory[] }) {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const [selectedDivision, setSelectedDivision] = useState<string>('all')
   const [activeOnly, setActiveOnly] = useState<boolean>(true)
   const [eloEntries, setEloEntries] = useState<EloRankingEntry[]>([])
@@ -211,7 +215,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
       })
       .catch((err) => {
         console.error(err)
-        if (!cancelled) setError(isPt ? 'Falha ao carregar ranking Elo.' : 'Failed to load Elo rankings.')
+        if (!cancelled) setError(L(i18n.language, 'Falha ao carregar ranking Elo.', 'Failed to load Elo rankings.', 'Impossible de charger le classement Elo.'))
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -219,7 +223,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
     return () => {
       cancelled = true
     }
-  }, [selectedDivision, activeOnly, isPt])
+  }, [selectedDivision, activeOnly, i18n.language])
 
   const profileFor = useMemo(() => {
     const index = new Map(fighters.map((fighter) => [normalizeFighterName(fighter.name), fighter]))
@@ -248,7 +252,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
             <option value="all">{t('rankings.allDivisions')}</option>
             {divisions.map((d) => (
               <option key={d.category} value={d.category}>
-                {getDivisionName(d.category, isPt)}
+                {getDivisionName(d.category, i18n.language)}
               </option>
             ))}
           </select>
@@ -294,13 +298,13 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
           ))}
         </section>
       ) : (
-        <section aria-label={isPt ? 'Rankings Elo' : 'Elo Rankings'} className="space-y-2.5">
+        <section aria-label={L(i18n.language, 'Rankings Elo', 'Elo Rankings', 'Classements Elo')} className="space-y-2.5">
           <div className="flex items-center justify-between border-b border-white/10 px-1 pb-2">
             <h2 className="broadcast-label text-xs text-[var(--text-main)]">
-              {isPt ? 'Top Lutadores por Elo' : 'Top Fighters by Elo'}
+              {L(i18n.language, 'Top Lutadores por Elo', 'Top Fighters by Elo', 'Meilleurs lutteurs par Elo')}
             </h2>
             <span className="text-xs text-[#CCCCCC]">
-              {eloEntries.length} {isPt ? 'atletas' : 'listed'}
+              {eloEntries.length} {L(i18n.language, 'atletas', 'listed', 'listés')}
             </span>
           </div>
 
@@ -314,7 +318,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
                   key={`${entry.name}-${entry.rank}`}
                   type="button"
                   onClick={() => setProfileName(entry.name)}
-                  aria-label={isPt ? `${entry.name}, Elo ${entry.elo}. Ver perfil` : `${entry.name}, Elo ${entry.elo}`}
+                  aria-label={L(i18n.language, `${entry.name}, Elo ${entry.elo}. Ver perfil`, `${entry.name}, Elo ${entry.elo}`, `${entry.name}, Elo ${entry.elo}. Voir le profil`)}
                   className="metric-tile flex w-full items-center gap-3.5 rounded-2xl px-3.5 py-3 cursor-pointer text-left transition hover:!bg-[#F2C230]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F2C230]"
                 >
                   <span
@@ -338,8 +342,8 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
                       ) : null}
                     </p>
                     <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] text-[#CCCCCC]">
-                      <span className="text-[var(--text-muted)]">{entry.division ? getDivisionName(entry.division, isPt) : 'UFC'}</span>
-                      <span>{entry.wins}-{entry.losses}-{entry.draws} ({entry.fights} {isPt ? 'lutas no UFC' : 'UFC fights'})</span>
+                      <span className="text-[var(--text-muted)]">{entry.division ? getDivisionName(entry.division, i18n.language) : 'UFC'}</span>
+                      <span>{entry.wins}-{entry.losses}-{entry.draws} ({entry.fights} {L(i18n.language, 'lutas no UFC', 'UFC fights', 'combats UFC')})</span>
                     </div>
                   </div>
 
@@ -351,7 +355,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
                       </span>
                     </div>
                     <p className="text-[11px] text-[#999999] tabular-nums">
-                      {isPt ? 'Pico:' : 'Peak:'} <span className="text-[#CCCCCC]">{entry.peak_elo}</span>
+                      {L(i18n.language, 'Pico:', 'Peak:', 'Pic :')} <span className="text-[#CCCCCC]">{entry.peak_elo}</span>
                     </p>
                   </div>
                 </button>
@@ -361,7 +365,7 @@ function EloView({ divisions }: { divisions: RankingCategory[] }) {
 
           {eloEntries.length === 0 ? (
             <div className="surface-card rounded-[18px] px-4 py-6 text-center text-sm text-[#999999]">
-              {isPt ? 'Nenhum atleta encontrado para esta seleção de Elo.' : 'No fighters found for this Elo selection.'}
+              {L(i18n.language, 'Nenhum atleta encontrado para esta seleção de Elo.', 'No fighters found for this Elo selection.', 'Aucun lutteur pour cette sélection Elo.')}
             </div>
           ) : null}
         </section>
@@ -395,16 +399,15 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
 
   const champion = entries.find((entry) => entry.rank === 0)
   const contenders = entries.filter((entry) => entry.rank > 0)
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   return (
-    <section aria-label={isPt ? 'Atletas ranqueados' : 'Ranked athletes'} className="space-y-2.5">
+    <section aria-label={L(i18n.language, 'Atletas ranqueados', 'Ranked athletes', 'Athlètes classés')} className="space-y-2.5">
       <div className="flex items-center justify-between border-b border-white/10 px-1 pb-2">
         <h2 className="broadcast-label text-xs text-[var(--text-main)]">
-          {isPt ? 'Lutadores Ranqueados' : 'Ranked athletes'}
+          {L(i18n.language, 'Lutadores Ranqueados', 'Ranked athletes', 'Lutteurs classés')}
         </h2>
         <span className="text-xs text-[#CCCCCC]">
-          {contenders.length + (champion ? 1 : 0)} {isPt ? 'atletas' : 'listed'}
+          {contenders.length + (champion ? 1 : 0)} {L(i18n.language, 'atletas', 'listed', 'listés')}
         </span>
       </div>
       <div className="grid gap-2.5">
@@ -428,7 +431,7 @@ function RankingList({ entries }: { entries: RankingEntry[] }) {
       ))}
       {!champion && contenders.length === 0 ? (
         <div className="surface-card rounded-[18px] px-4 py-6 text-center text-sm text-[#999999]">
-          {isPt ? 'Nenhum atleta ranqueado nesta categoria.' : 'No ranked athletes in this category.'}
+          {L(i18n.language, 'Nenhum atleta ranqueado nesta categoria.', 'No ranked athletes in this category.', 'Aucun athlète classé dans cette catégorie.')}
         </div>
       ) : null}
       </div>
@@ -459,7 +462,6 @@ function RankingRow({
   isChampion?: boolean
 }) {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const content = (
     <>
@@ -485,8 +487,8 @@ function RankingRow({
               <Trophy className="h-3.5 w-3.5" /> {t('rankings.champion')}
             </span>
           ) : null}
-          {entry.win_rate !== null ? <span>{isPt ? 'Taxa de vitória' : 'Win rate'}: {(entry.win_rate * 100).toFixed(1)}%</span> : null}
-          {entry.last_fight ? <span>{isPt ? 'Última luta' : 'Last fight'}: {formatDate(entry.last_fight, i18n.language)}</span> : null}
+          {entry.win_rate !== null ? <span>{L(i18n.language, 'Taxa de vitória', 'Win rate', 'Taux de victoire')}: {(entry.win_rate * 100).toFixed(1)}%</span> : null}
+          {entry.last_fight ? <span>{L(i18n.language, 'Última luta', 'Last fight', 'Dernier combat')}: {formatDate(entry.last_fight, i18n.language)}</span> : null}
         </div>
       </div>
 
@@ -501,9 +503,12 @@ function RankingRow({
       type="button"
       onClick={() => onOpenProfile(profile.name)}
       aria-label={
-        isPt
-          ? `${entry.fighter}, ${entry.rank === 0 ? 'campeão' : `${entry.rank}º lugar`}. Ver perfil`
-          : `${entry.fighter}, rank ${entry.rank || 'champion'}. View profile`
+        L(
+          i18n.language,
+          `${entry.fighter}, ${entry.rank === 0 ? 'campeão' : `${entry.rank}º lugar`}. Ver perfil`,
+          `${entry.fighter}, rank ${entry.rank || 'champion'}. View profile`,
+          `${entry.fighter}, ${entry.rank === 0 ? 'champion' : `rang ${entry.rank}`}. Voir le profil`,
+        )
       }
       className={`${base} cursor-pointer text-left transition hover:!bg-[#F2C230]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]`}
     >
@@ -543,5 +548,5 @@ function RankChangeBadge({ change }: { change: string | null }) {
 function formatDate(date: string, lang: string = 'en-US'): string {
   const parsed = new Date(`${date}T00:00:00`)
   if (Number.isNaN(parsed.getTime())) return date
-  return parsed.toLocaleDateString(lang === 'pt-BR' ? 'pt-BR' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return parsed.toLocaleDateString(localeTag(lang), { year: 'numeric', month: 'short', day: 'numeric' })
 }

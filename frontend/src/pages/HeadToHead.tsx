@@ -2,6 +2,8 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, CalendarDays, LoaderCircle, Share2, Swords, Trophy, Users } from 'lucide-react'
 
+import { L, localeTag, uiLang } from '../i18n/lang'
+import { getDivisionName } from '../shared/data/divisions'
 import { FighterSelect } from '../shared/components/FighterSelect'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { useFighters } from '../shared/hooks/useFighters'
@@ -26,6 +28,15 @@ const METHOD_LABELS_PT: Record<string, string> = {
   DQ: 'Desqualificação',
 }
 
+const METHOD_LABELS_FR: Record<string, string> = {
+  'U-DEC': 'Décision unanime',
+  'S-DEC': 'Décision partagée',
+  'M-DEC': 'Décision majoritaire',
+  'KO/TKO': 'KO/TKO',
+  SUB: 'Soumission',
+  DQ: 'Disqualification',
+}
+
 function useOpponents(fighterName: string): Opponent[] {
   const [loaded, setLoaded] = useState<{ name: string; opponents: Opponent[] } | null>(null)
 
@@ -46,7 +57,7 @@ function useOpponents(fighterName: string): Opponent[] {
 }
 
 export function HeadToHead() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { fighters } = useFighters()
   const [fighterAName, setFighterAName] = useState('')
   const [fighterBName, setFighterBName] = useState('')
@@ -80,7 +91,14 @@ export function HeadToHead() {
       setResult(data)
     } catch (requestError) {
       console.error(requestError)
-      setError('Unable to load head-to-head history. Check whether the backend is available.')
+      setError(
+        L(
+          i18n.language,
+          'Não foi possível carregar o histórico de confrontos. Verifique se o servidor está disponível.',
+          'Unable to load head-to-head history. Check whether the backend is available.',
+          'Impossible de charger l’historique des confrontations. Vérifiez si le serveur est disponible.',
+        ),
+      )
       setResult(null)
     } finally {
       setLoading(false)
@@ -151,7 +169,6 @@ export function HeadToHead() {
 
 function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (result.meetings.length === 0) {
     return (
@@ -173,7 +190,7 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
     <div className="space-y-3">
       <section className="surface-card rounded-[20px] p-4 text-center">
         <p className="broadcast-label text-[11px] text-[#999999]">
-          {isPt ? `${result.meetings.length} ${result.meetings.length === 1 ? 'confronto' : 'confrontos'}` : `${result.meetings.length} ${result.meetings.length === 1 ? 'meeting' : 'meetings'}`}
+          {L(i18n.language, `${result.meetings.length} ${result.meetings.length === 1 ? 'confronto' : 'confrontos'}`, `${result.meetings.length} ${result.meetings.length === 1 ? 'meeting' : 'meetings'}`, `${result.meetings.length} ${result.meetings.length === 1 ? 'affrontement' : 'affrontements'}`)}
         </p>
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <p className="type-display truncate text-right text-lg font-bold uppercase text-[var(--text-main)] sm:text-xl">{result.fighter_a}</p>
@@ -198,7 +215,6 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
 
 function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const degrees = result.degrees_of_separation ?? 0
 
   return (
@@ -206,7 +222,7 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
       <div className="flex items-center gap-2 text-[#C8102E]">
         <Share2 className="h-4 w-4" />
         <p className="broadcast-label text-[11px]">
-          {isPt ? `Conexão pela rede de lutas • ${degrees} grau${degrees === 1 ? '' : 's'} de separação` : `Bout network path • ${degrees} degree${degrees === 1 ? '' : 's'} of separation`}
+          {L(i18n.language, `Conexão pela rede de lutas • ${degrees} grau${degrees === 1 ? '' : 's'} de separação`, `Bout network path • ${degrees} degree${degrees === 1 ? '' : 's'} of separation`, `Réseau de combats • ${degrees} degré${degrees === 1 ? '' : 's'} de séparation`)}
         </p>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
@@ -232,12 +248,11 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
 
 function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex items-center gap-2 text-[#C8102E]">
         <Users className="h-4 w-4" />
-        <p className="broadcast-label text-[11px]">{isPt ? `Adversários em comum (${result.common_opponents.length})` : `Common opponents (${result.common_opponents.length})`}</p>
+        <p className="broadcast-label text-[11px]">{L(i18n.language, `Adversários em comum (${result.common_opponents.length})`, `Common opponents (${result.common_opponents.length})`, `Adversaires communs (${result.common_opponents.length})`)}</p>
       </div>
       <div className="mt-2.5 grid grid-cols-[1fr_auto_auto] items-center gap-x-2.5 gap-y-1.5">
         <span />
@@ -259,19 +274,18 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
 
 function ResultChip({ result }: { result: 'win' | 'loss' | null }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   if (result === 'win') {
     return (
       <span className="type-tech justify-self-end rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#C8102E]">
-        {isPt ? 'Vitória' : 'Win'}
+        {L(i18n.language, 'Vitória', 'Win', 'Victoire')}
       </span>
     )
   }
   if (result === 'loss') {
     return (
       <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
-        {isPt ? 'Derrota' : 'Loss'}
+        {L(i18n.language, 'Derrota', 'Loss', 'Défaite')}
       </span>
     )
   }
@@ -289,7 +303,6 @@ function lastWord(fullName: string) {
 function MeetingRow({ meeting, fighterA, fighterB }: { meeting: FightRecord; fighterA: string; fighterB: string }) {
   const { i18n } = useTranslation()
   const winnerName = meeting.result === 'win' ? fighterA : meeting.result === 'loss' ? fighterB : null
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   return (
     <article className="surface-card rounded-[18px] p-3 sm:p-4">
@@ -307,15 +320,15 @@ function MeetingRow({ meeting, fighterA, fighterB }: { meeting: FightRecord; fig
         {winnerName ? (
           <span className="inline-flex items-center gap-1.5 font-semibold text-[var(--text-main)]">
             <Trophy className="h-4 w-4 text-[#C8102E]" />
-            {winnerName} {isPt ? 'venceu' : 'won'}
+            {winnerName} {L(i18n.language, 'venceu', 'won', 'a gagné')}
           </span>
         ) : (
-          <span className="theme-muted">{isPt ? 'Sem resultado oficial' : 'No official result'}</span>
+          <span className="theme-muted">{L(i18n.language, 'Sem resultado oficial', 'No official result', 'Pas de résultat officiel')}</span>
         )}
-        {meeting.weight_class ? <span className="selector-chip">{meeting.weight_class}</span> : null}
+        {meeting.weight_class ? <span className="selector-chip">{getDivisionName(meeting.weight_class, i18n.language)}</span> : null}
       </div>
 
-      <p className="theme-muted mt-1.5 text-xs">{formatMethod(meeting, isPt)} {meeting.round ? `· R${meeting.round}` : ''} {meeting.time ?? ''}</p>
+      <p className="theme-muted mt-1.5 text-xs">{formatMethod(meeting, i18n.language)} {meeting.round ? `· R${meeting.round}` : ''} {meeting.time ?? ''}</p>
     </article>
   )
 }
@@ -323,12 +336,13 @@ function MeetingRow({ meeting, fighterA, fighterB }: { meeting: FightRecord; fig
 function formatDate(date: string, lang: string = 'en-US'): string {
   const parsed = new Date(`${date}T00:00:00`)
   if (Number.isNaN(parsed.getTime())) return date
-  return parsed.toLocaleDateString(lang === 'pt-BR' ? 'pt-BR' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return parsed.toLocaleDateString(localeTag(lang), { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
-function formatMethod(meeting: FightRecord, isPt = false): string {
-  if (!meeting.method) return isPt ? 'Resultado a definir' : 'Result pending'
-  const labels = isPt ? METHOD_LABELS_PT : METHOD_LABELS_EN
+function formatMethod(meeting: FightRecord, language: string | boolean = false): string {
+  if (!meeting.method) return L(language, 'Resultado a definir', 'Result pending', 'Résultat en attente')
+  const lang = uiLang(language)
+  const labels = lang === 'pt' ? METHOD_LABELS_PT : lang === 'fr' ? METHOD_LABELS_FR : METHOD_LABELS_EN
   const label = labels[meeting.method] ?? meeting.method
   return meeting.method_detail ? `${label} (${meeting.method_detail})` : label
 }

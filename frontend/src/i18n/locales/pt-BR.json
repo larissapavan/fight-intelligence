@@ -35,8 +35,10 @@
     "switch": "Mudar idioma",
     "pt": "PT",
     "en": "EN",
+    "fr": "FR",
     "ptLong": "Português",
-    "enLong": "Inglês"
+    "enLong": "Inglês",
+    "frLong": "Francês"
   },
   "landing": {
     "eyebrow": "Fight Intelligence",
@@ -70,6 +72,12 @@
   },
   "common": {
     "loading": "Carregando...",
+    "pageLoading": "A página está carregando. Os dados estão a caminho.",
+    "pageLoadingLabel": "A página está carregando",
+    "serverWaking": "A primeira visita depois de um tempo parado pode levar até um minuto, enquanto o servidor inicia.",
+    "boutPunch": "Soco",
+    "boutKick": "Chute",
+    "boutHint": "Ele anuncia o golpe. Responda o mesmo para marcar um ponto. Espaço é soco e a seta para baixo é chute. Toque na esquerda para socar e na direita para chutar.",
     "error": "Ocorreu um erro",
     "retry": "Tentar novamente",
     "serverDown": "O servidor não está respondendo no momento. Aguarde um minuto e recarregue a página.",

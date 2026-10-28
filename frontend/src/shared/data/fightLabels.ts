@@ -27,9 +27,24 @@ export const METHOD_LABELS_PT: Record<string, string> = {
 
 export const METHOD_LABELS = METHOD_LABELS_EN
 
-export function getMethodLabel(method: string | null | undefined, isPt = false): string {
-  if (!method) return isPt ? 'A definir' : 'Pending'
-  const map = isPt ? METHOD_LABELS_PT : METHOD_LABELS_EN
+const METHOD_LABELS_FR: Record<string, string> = {
+  'KO/TKO': 'KO/TKO',
+  Submission: 'Soumission',
+  Decision: 'Décision',
+  'U-DEC': 'Décision unanime',
+  'S-DEC': 'Décision partagée',
+  'M-DEC': 'Décision majoritaire',
+  Disqualification: 'Disqualification',
+  DQ: 'Disqualification',
+  Overturned: 'Sans résultat (NC)',
+  Other: 'Autre',
+}
+
+export function getMethodLabel(method: string | null | undefined, language: string | boolean = false): string {
+  const french = typeof language === 'string' && language.startsWith('fr')
+  const portuguese = language === true || (typeof language === 'string' && language.startsWith('pt'))
+  if (!method) return portuguese ? 'A definir' : french ? 'À définir' : 'Pending'
+  const map = portuguese ? METHOD_LABELS_PT : french ? METHOD_LABELS_FR : METHOD_LABELS_EN
   return map[method] ?? method
 }
 

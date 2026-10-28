@@ -1,6 +1,9 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 
+import { L } from '../../i18n/lang'
+import { LANGUAGE_STORAGE_KEY } from '../../i18n'
+
 interface ErrorBoundaryProps {
   children: ReactNode
 }
@@ -22,7 +25,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   render() {
     if (this.state.error) {
-      const isPt = typeof window !== 'undefined' && (localStorage.getItem('i18nextLng') === 'pt-BR' || navigator.language?.startsWith('pt'))
+      const language = typeof window !== 'undefined' ? (localStorage.getItem(LANGUAGE_STORAGE_KEY) || navigator.language) : 'en'
       return (
         <div className="flex min-h-[60vh] items-center justify-center px-3 py-8">
           <div className="surface-card w-full max-w-md rounded-[20px] p-5 text-center">
@@ -30,12 +33,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <AlertTriangle className="h-6 w-6" />
             </div>
             <h1 className="mt-3 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
-              {isPt ? 'Algo deu errado' : 'Something went wrong'}
+              {L(language, 'Algo deu errado', 'Something went wrong', 'Un problème est survenu')}
             </h1>
             <p className="mt-2 text-sm leading-6 text-[#999999]">
-              {isPt
-                ? 'Um erro inesperado interrompeu esta página. Recarregar geralmente resolve.'
-                : 'An unexpected error interrupted this page. Reloading usually fixes it.'}
+              {L(
+                language,
+                'Um erro inesperado interrompeu esta página. Recarregar geralmente resolve.',
+                'An unexpected error interrupted this page. Reloading usually fixes it.',
+                'Une erreur inattendue a interrompu cette page. Recharger règle en général le problème.',
+              )}
             </p>
             <button
               type="button"
@@ -43,7 +49,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               className="primary-action mx-auto mt-4 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
             >
               <RotateCcw className="h-4 w-4" />
-              {isPt ? 'Recarregar página' : 'Reload page'}
+              {L(language, 'Recarregar página', 'Reload page', 'Recharger la page')}
             </button>
           </div>
         </div>

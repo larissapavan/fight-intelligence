@@ -202,3 +202,17 @@ describe('sharing a matchup', () => {
     expect(within(screen.getByRole('button', { name: /link copied/i })).getByRole('status')).toHaveTextContent('Link copied')
   })
 })
+
+describe('French localization (fr-FR)', () => {
+  it('switches the interface to French from the language switcher', async () => {
+    renderAt('/home')
+    await screen.findAllByText('Alpha One', undefined, { timeout: 10000 })
+
+    const frButtons = screen.getAllByRole('button', { name: 'FR' })
+    await userEvent.click(frButtons[0])
+
+    expect(await screen.findByText(/Pronostiquer un combat/i)).toBeInTheDocument()
+    expect(screen.getByText(/Voir la carte complète/i)).toBeInTheDocument()
+    expect(screen.getByText(/Projet personnel indépendant, sans affiliation avec l’UFC/i)).toBeInTheDocument()
+  })
+})

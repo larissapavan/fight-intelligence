@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../../i18n/lang'
 import { getOtherOrganizations } from '../services/api'
 import type { OtherOrganization } from '../types/api'
 import { OrgFightLine } from './OrgFightLine'
@@ -14,7 +15,6 @@ const FIRST_SHOWN = 4
  */
 export function OtherOrganizationsPanel({ name }: { name: string }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const [found, setFound] = useState<OtherOrganization[]>([])
 
   useEffect(() => {
@@ -31,23 +31,27 @@ export function OtherOrganizationsPanel({ name }: { name: string }) {
 
   if (found.length === 0) return null
   return (
-    <section aria-label={isPt ? 'Lutas em outras organizações' : 'Fights in other organizations'} className="mt-3 space-y-3">
+    <section aria-label={L(i18n.language, 'Lutas em outras organizações', 'Fights in other organizations', 'Combats dans d\'autres organisations')} className="mt-3 space-y-3">
       {found.map((item) => (
-        <OrgHistory key={item.org_id} item={item} isPt={isPt} />
+        <OrgHistory key={item.org_id} item={item} />
       ))}
     </section>
   )
 }
 
-function OrgHistory({ item, isPt }: { item: OtherOrganization; isPt: boolean }) {
+function OrgHistory({ item }: { item: OtherOrganization }) {
+  const { i18n } = useTranslation()
   const [all, setAll] = useState(false)
   const shown = all ? item.fights : item.fights.slice(0, FIRST_SHOWN)
   return (
     <div className="metric-tile rounded-2xl p-3">
       <p className="broadcast-label text-[11px] text-[#999999]">
-        {isPt
-          ? `Também lutou no ${item.short_name}${item.org_record ? ` · ${item.org_record} por lá` : ''}`
-          : `Also fought in the ${item.short_name}${item.org_record ? ` · ${item.org_record} there` : ''}`}
+        {L(
+          i18n.language,
+          `Também lutou no ${item.short_name}${item.org_record ? ` · ${item.org_record} por lá` : ''}`,
+          `Also fought in the ${item.short_name}${item.org_record ? ` · ${item.org_record} there` : ''}`,
+          `A aussi combattu dans ${item.short_name}${item.org_record ? ` · ${item.org_record} là-bas` : ''}`,
+        )}
       </p>
       <ul className="mt-2 space-y-2">
         {shown.map((fight) => (
@@ -62,14 +66,17 @@ function OrgHistory({ item, isPt }: { item: OtherOrganization; isPt: boolean }) 
           className="ghost-action mt-2 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#FFFFFF]"
         >
           {all
-            ? (isPt ? 'Mostrar menos' : 'Show fewer')
-            : (isPt ? `Mostrar todas as ${item.fights.length} lutas no ${item.short_name}` : `Show all ${item.fights.length} ${item.short_name} fights`)}
+            ? L(i18n.language, 'Mostrar menos', 'Show fewer', 'Afficher moins')
+            : L(i18n.language, `Mostrar todas as ${item.fights.length} lutas no ${item.short_name}`, `Show all ${item.fights.length} ${item.short_name} fights`, `Afficher les ${item.fights.length} combats ${item.short_name}`)}
         </button>
       ) : null}
       <p className="theme-muted mt-2 text-[11px] leading-4">
-        {isPt
-          ? 'Exibido para contexto completo. O cartel, tendências e palpites do modelo acima consideram apenas lutas do UFC.'
-          : 'Shown for the full picture. The UFC record, trends and the model\'s picks above count UFC fights only.'}
+        {L(
+          i18n.language,
+          'Exibido para contexto completo. O cartel, tendências e palpites do modelo acima consideram apenas lutas do UFC.',
+          'Shown for the full picture. The UFC record, trends and the model\'s picks above count UFC fights only.',
+          'Affiché pour le contexte complet. Le palmarès UFC, les tendances et les pronostics du modèle ci-dessus ne comptent que les combats UFC.',
+        )}
       </p>
     </div>
   )

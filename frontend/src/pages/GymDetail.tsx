@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { ArrowLeft, Crown } from 'lucide-react'
 import { Link, useParams } from 'react-router-dom'
 
+import { L, localeTag } from '../i18n/lang'
+import { getDivisionName } from '../shared/data/divisions'
 import { FighterAvatar } from '../shared/components/FighterAvatar'
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { FlagIcon } from '../shared/components/FlagIcon'
@@ -18,7 +20,6 @@ type Scope = 'org' | 'all'
 
 export function GymDetail() {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const org = useOrg()
   const { slug = '' } = useParams()
   const { gym, loading, error } = useGym(slug)
@@ -40,7 +41,7 @@ export function GymDetail() {
       className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text-main)] underline decoration-2 underline-offset-4 hover:bg-[#F2C230] hover:text-[#0E0E0E]"
     >
       <ArrowLeft className="h-3.5 w-3.5" />
-      {isPt ? `Todas as academias ${org.shortName}` : `All ${org.shortName} gyms`}
+      {L(i18n.language, `Todas as academias ${org.shortName}`, `All ${org.shortName} gyms`, `Toutes les salles ${org.shortName}`)}
     </Link>
   )
 
@@ -60,10 +61,10 @@ export function GymDetail() {
         {back}
         <div className="surface-card rounded-[20px] px-4 py-7 text-center">
           <h1 className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
-            {isPt ? 'Academia não encontrada' : 'Gym not found'}
+            {L(i18n.language, 'Academia não encontrada', 'Gym not found', 'Salle introuvable')}
           </h1>
           <p className="mt-2 text-sm text-[var(--text-muted)]">
-            {isPt ? 'Não encontramos nenhuma academia com esse endereço.' : 'We have no gym with that address.'}
+            {L(i18n.language, 'Não encontramos nenhuma academia com esse endereço.', 'We have no gym with that address.', 'Aucune salle ne correspond à cette adresse.')}
           </p>
         </div>
       </div>
@@ -78,19 +79,19 @@ export function GymDetail() {
         <div className="grid gap-3 xl:grid-cols-[1fr_0.8fr] xl:items-end">
           <SectionHeading
             level={1}
-            eyebrow={isPt ? 'Academia' : 'Gym'}
+            eyebrow={L(i18n.language, 'Academia', 'Gym', 'Salle')}
             title={gym.name}
-            description={isPt ? 'Lutadores cuja última luta teve origem nesta academia, segundo o FightHub.' : 'Fighters whose last fight came out of this gym, as listed by FightHub.'}
+            description={L(i18n.language, 'Lutadores cuja última luta teve origem nesta academia, segundo o FightHub.', 'Fighters whose last fight came out of this gym, as listed by FightHub.', 'Lutteurs dont le dernier combat est sorti de cette salle, selon FightHub.')}
           />
           <div className="grid gap-2 sm:grid-cols-3">
-            <Tile label={isPt ? 'Total de atletas' : 'Fighters listed'} value={gym.fighters_count.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
-            <Tile label={`${org.shortName} (${isPt ? 'atletas' : 'fighters'})`} value={(gym.orgs[org.id] ?? 0).toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
-            <Tile label={isPt ? 'Cinturões / Campeões' : 'Champions'} value={gym.champions.toLocaleString(isPt ? 'pt-BR' : 'en-US')} />
+            <Tile label={L(i18n.language, 'Total de atletas', 'Fighters listed', 'Lutteurs inscrits')} value={gym.fighters_count.toLocaleString(localeTag(i18n.language))} />
+            <Tile label={`${org.shortName} (${L(i18n.language, 'atletas', 'fighters', 'lutteurs')})`} value={(gym.orgs[org.id] ?? 0).toLocaleString(localeTag(i18n.language))} />
+            <Tile label={L(i18n.language, 'Cinturões / Campeões', 'Champions', 'Champions')} value={gym.champions.toLocaleString(localeTag(i18n.language))} />
           </div>
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <div role="group" aria-label={isPt ? 'Filtrar atletas' : 'Which fighters'} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
+          <div role="group" aria-label={L(i18n.language, 'Filtrar atletas', 'Which fighters', 'Quels lutteurs')} className="inline-flex border-2 border-[var(--rule)] bg-[var(--card-bg)]">
             {(['org', 'all'] as const).map((value) => (
               <button
                 key={value}
@@ -101,29 +102,29 @@ export function GymDetail() {
                   activeScope === value ? 'bg-[var(--rule)] text-[var(--card-bg)]' : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]'
                 }`}
               >
-                {value === 'org' ? `${org.shortName} (${inOrg.length})` : `${isPt ? 'Todos' : 'Everyone'} (${gym.fighters.length})`}
+                {value === 'org' ? `${org.shortName} (${inOrg.length})` : `${L(i18n.language, 'Todos', 'Everyone', 'Tout le monde')} (${gym.fighters.length})`}
               </button>
             ))}
           </div>
           {gym.url ? (
             <a href={gym.url} target="_blank" rel="noreferrer" className="text-xs text-[var(--text-muted)] underline decoration-2 underline-offset-2">
-              {isPt ? 'Fonte dos dados: FightHub' : 'Roster source: FightHub'}
+              {L(i18n.language, 'Fonte dos dados: FightHub', 'Roster source: FightHub', 'Source de l’effectif : FightHub')}
             </a>
           ) : null}
         </div>
       </section>
 
       {fighters.length ? (
-        <ul aria-label={isPt ? 'Lutadores' : 'Fighters'} className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+        <ul aria-label={L(i18n.language, 'Lutadores', 'Fighters', 'Lutteurs')} className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[2000px]:grid-cols-5">
           {fighters.map((fighter) => (
             <li key={`${fighter.name}-${fighter.record}`}>
-              <FighterCard fighter={fighter} onOpen={openProfile} isPt={isPt} />
+              <FighterCard fighter={fighter} onOpen={openProfile} />
             </li>
           ))}
         </ul>
       ) : (
         <div className="surface-card rounded-[20px] px-4 py-7 text-center text-sm text-[var(--text-muted)]">
-          {isPt ? 'Nenhum atleta encontrado para esta academia.' : 'No fighters listed for this gym.'}
+          {L(i18n.language, 'Nenhum atleta encontrado para esta academia.', 'No fighters listed for this gym.', 'Aucun lutteur n’est inscrit dans cette salle.')}
         </div>
       )}
 
@@ -152,7 +153,8 @@ function Tile({ label, value }: { label: string; value: string }) {
   )
 }
 
-function FighterCard({ fighter, onOpen, isPt }: { fighter: GymFighter; onOpen: (fighter: GymFighter) => void; isPt: boolean }) {
+function FighterCard({ fighter, onOpen }: { fighter: GymFighter; onOpen: (fighter: GymFighter) => void }) {
+  const { i18n } = useTranslation()
   const body = (
     <>
       <FighterAvatar name={fighter.name} imageUrl={fighter.image_url} highlight={fighter.belt} className="h-16 w-14" />
@@ -164,13 +166,13 @@ function FighterCard({ fighter, onOpen, isPt }: { fighter: GymFighter; onOpen: (
         {fighter.nickname ? <span className="block truncate text-xs italic text-[var(--text-muted)]">“{fighter.nickname}”</span> : null}
         <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--text-muted)]">
           {fighter.record ? <span className="font-semibold text-[var(--text-main)]">{fighter.record}</span> : null}
-          {fighter.division ? <span>{fighter.division}</span> : null}
+          {fighter.division ? <span>{getDivisionName(fighter.division, i18n.language)}</span> : null}
         </span>
         <span className="mt-1.5 flex flex-wrap items-center gap-1">
           {fighter.belt ? (
             <span className="inline-flex items-center gap-1 border-2 border-[var(--rule)] bg-[#F2C230] px-1.5 py-px text-[11px] font-bold uppercase leading-4 tracking-[0.08em] text-[#0E0E0E]">
               <Crown className="h-3 w-3" aria-hidden="true" />
-              {isPt ? 'Campeão' : 'Champion'}
+              {L(i18n.language, 'Campeão', 'Champion', 'Champion')}
             </span>
           ) : null}
           {fighter.orgs.map((orgId) => (
@@ -188,7 +190,7 @@ function FighterCard({ fighter, onOpen, isPt }: { fighter: GymFighter; onOpen: (
     <button
       type="button"
       onClick={() => onOpen(fighter)}
-      aria-label={`${fighter.name}. View profile`}
+      aria-label={L(i18n.language, `${fighter.name}. Ver perfil`, `${fighter.name}. View profile`, `${fighter.name}. Voir le profil`)}
       className={`${base} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F2C230]`}
     >
       {body}

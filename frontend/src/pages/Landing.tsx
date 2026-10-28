@@ -2,6 +2,7 @@ import { ArrowRight, Archive, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../i18n/lang'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { ORG_LIST, orgPath, type OrgConfig, type OrgId } from '../shared/data/orgs'
 
@@ -53,10 +54,11 @@ export function Landing() {
 
 function OrgCard({ org }: { org: OrgConfig }) {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   const tagline = t(`landing.taglines.${org.id}`, { defaultValue: org.tagline })
-  const source = org.sourceName === 'ESPN and Wikipedia' && isPt ? 'ESPN e Wikipedia' : org.sourceName
+  const source = org.sourceName === 'ESPN and Wikipedia'
+    ? L(i18n.language, 'ESPN e Wikipedia', 'ESPN and Wikipedia', 'ESPN et Wikipedia')
+    : org.sourceName
 
   return (
     <Link

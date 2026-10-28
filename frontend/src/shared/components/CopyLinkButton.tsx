@@ -1,5 +1,8 @@
 import { Check, Link2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { L } from '../../i18n/lang'
 
 async function copyText(text: string) {
   try {
@@ -25,7 +28,8 @@ async function copyText(text: string) {
 }
 
 /** Copies a link to the clipboard; `href` is relative to the site (e.g. "/matchup-intelligence?a=..."). */
-export function CopyLinkButton({ href, label = 'Copy link', className = '' }: { href: string; label?: string; className?: string }) {
+export function CopyLinkButton({ href, label, className = '' }: { href: string; label?: string; className?: string }) {
+  const { i18n } = useTranslation()
   const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle')
   const timer = useRef<number | undefined>(undefined)
 
@@ -38,6 +42,10 @@ export function CopyLinkButton({ href, label = 'Copy link', className = '' }: { 
     timer.current = window.setTimeout(() => setState('idle'), 2200)
   }
 
+  const idleLabel = label ?? L(i18n.language, 'Copiar link', 'Copy link', 'Copier le lien')
+  const copiedLabel = L(i18n.language, 'Link copiado', 'Link copied', 'Lien copié')
+  const failedLabel = L(i18n.language, 'Falha ao copiar', 'Copy failed', 'Échec de la copie')
+
   return (
     <button
       type="button"
@@ -45,7 +53,7 @@ export function CopyLinkButton({ href, label = 'Copy link', className = '' }: { 
       className={`ghost-action theme-text inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] ${className}`}
     >
       {state === 'copied' ? <Check className="h-4 w-4" aria-hidden="true" /> : <Link2 className="h-4 w-4" aria-hidden="true" />}
-      <span role="status">{state === 'copied' ? 'Link copied' : state === 'failed' ? 'Copy failed' : label}</span>
+      <span role="status">{state === 'copied' ? copiedLabel : state === 'failed' ? failedLabel : idleLabel}</span>
     </button>
   )
 }

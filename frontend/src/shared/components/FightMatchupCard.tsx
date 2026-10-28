@@ -2,11 +2,12 @@ import { Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../../i18n/lang'
 import { getFighterImageUrl, useFighterImages } from '../hooks/useFighterImages'
 import { useFighterLookup } from '../hooks/useFighterLookup'
 import type { FightResult, UpcomingPick } from '../types/api'
 import { getMatchupTitleFight } from '../data/titleFights'
-import { DIVISION_NAMES_PT } from '../data/divisions'
+import { getDivisionName } from '../data/divisions'
 import { FighterAvatar } from './FighterAvatar'
 import { TitleFightBadge } from './FighterBadges'
 import { PickChip } from './PickChip'
@@ -32,7 +33,6 @@ export function FightMatchupCard({
   details?: string[]
 }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const to = matchupPath(fight, eventName)
   const fighter1Won = fight.winner != null && fight.winner === fight.fighter_1
   const fighter2Won = fight.winner != null && fight.winner === fight.fighter_2
@@ -48,9 +48,7 @@ export function FightMatchupCard({
     weight_class: fight.weight_class ?? fallback?.weight_class ?? null,
   }
 
-  const weightClassDisplay = fight.weight_class
-    ? (isPt ? (DIVISION_NAMES_PT[fight.weight_class] ?? fight.weight_class) : fight.weight_class)
-    : null
+  const weightClassDisplay = fight.weight_class ? getDivisionName(fight.weight_class, i18n.language) : null
 
   return (
     <article className="metric-tile relative rounded-2xl px-3 py-3 sm:px-4 sm:py-3.5">
@@ -107,6 +105,7 @@ function CornerName({
   won: boolean
   onOpenFighter?: (name: string) => void
 }) {
+  const { i18n } = useTranslation()
   const profile = useFighterLookup()(name)
   const side = align === 'right' ? 'justify-end text-right' : 'justify-start text-left'
   const label = (
@@ -122,7 +121,7 @@ function CornerName({
       <button
         type="button"
         onClick={() => onOpenFighter(profile.name)}
-        aria-label={`${name}. View profile`}
+        aria-label={L(i18n.language, `${name}. Ver perfil`, `${name}. View profile`, `${name}. Voir le profil`)}
         className={`pointer-events-auto flex min-w-0 items-center gap-1.5 px-1 py-1 ${side}`}
       >
         {label}

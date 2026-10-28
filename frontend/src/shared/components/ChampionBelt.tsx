@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../../i18n/lang'
+
 /**
  * Championship belt shown next to the name of a current champion: an ink strap, two side plates and a big octagon
  * centre plate with a star. Flat colours with an ink outline, like the rest of the site (no glow). The icon is wider
@@ -7,8 +9,7 @@ import { useTranslation } from 'react-i18next'
  */
 export function ChampionBelt({ className = 'h-[18px] w-9' }: { className?: string }) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
-  const label = isPt ? 'Campeão Atual' : 'Current Champion'
+  const label = L(i18n.language, 'Campeão Atual', 'Current Champion', 'Champion actuel')
 
   return (
     <svg viewBox="0 0 48 24" role="img" aria-label={label} className={`shrink-0 ${className}`}>

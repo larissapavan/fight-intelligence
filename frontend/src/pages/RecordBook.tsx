@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, Trophy } from 'lucide-react'
 
+import { L, uiLang } from '../i18n/lang'
 import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
@@ -65,9 +66,65 @@ const STAT_NOTES_PT: Record<string, string> = {
   'Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent': 'Mínimo de 5 lutas no UFC e 20 tentativas de queda pelo oponente',
 }
 
+const CATEGORY_NAMES_FR: Record<string, string> = {
+  Fights: 'Combats et victoires',
+  Time: 'Temps de combat',
+  Striking: 'Frappe',
+  Grappling: 'Lutte au sol',
+}
+
+const STAT_TITLES_FR: Record<string, string> = {
+  TotalFights: 'Total de combats',
+  Wins: 'Victoires',
+  Finishes: 'Victoires avant la limite',
+  KOTKOWins: 'Victoires par KO/TKO',
+  SubmissionWins: 'Victoires par soumission',
+  DecisionWins: 'Victoires par décision',
+  WinStreak: 'Plus longue série de victoires',
+  TitleFightWins: 'Victoires en combat de titre',
+  TotalAwards: 'Total des bonus de la soirée',
+  AverageFightTimeShort: 'Temps de combat moyen le plus court',
+  AverageFightTimeLong: 'Temps de combat moyen le plus long',
+  TotalFightTime: 'Temps de combat total dans l’octogone',
+  ControlTime: 'Temps de contrôle total',
+  ControlTimePercentage: 'Pourcentage de temps de contrôle',
+  TopPositionTime: 'Temps de contrôle en position haute',
+  TopPositionTimePercentage: 'Pourcentage de temps en position haute',
+  BottomPositionTime: 'Temps au sol en position basse',
+  BottomPositionTimePercentage: 'Pourcentage de temps en position basse',
+  Knockdowns: 'Knockdowns infligés',
+  KnockdownsAverage: 'Moyenne de knockdowns (par 15 min)',
+  SigStrikesLanded: 'Coups significatifs réussis',
+  SigStrikesAccuracy: 'Précision des coups significatifs',
+  SLpM: 'Coups significatifs réussis par minute',
+  SignificantStrikesDifferential: 'Différentiel de coups significatifs',
+  SignificantStrikesDefense: 'Défense des coups significatifs',
+  SApM: 'Coups significatifs absorbés par minute',
+  TotalStrikesLanded: 'Total des coups réussis',
+  TakedownsLanded: 'Amenées au sol réussies',
+  TakedownsAccuracy: 'Précision des amenées au sol',
+  TakedownsDefense: 'Défense des amenées au sol',
+  SubmissionsAttempted: 'Tentatives de soumission',
+  SubmissionsAverage: 'Moyenne des tentatives de soumission (par 15 min)',
+}
+
+const STAT_NOTES_FR: Record<string, string> = {
+  'Minimum 5 UFC Fights': 'Au moins 5 combats à l’UFC',
+  'Minimum 5 UFC Fights and 500 Significant Strike Attempts': 'Au moins 5 combats à l’UFC et 500 tentatives de coups significatifs',
+  'Minimum 5 UFC Fights and 500 Strike Attempts by Opponents': 'Au moins 5 combats à l’UFC et 500 tentatives de coups des adversaires',
+  'Minimum 5 UFC Fights and 20 Takedown Attempts': 'Au moins 5 combats à l’UFC et 20 tentatives d’amenée au sol',
+  'Minimum 5 UFC Fights and 20 Takedown Attempts by Opponent': 'Au moins 5 combats à l’UFC et 20 tentatives d’amenée au sol de l’adversaire',
+}
+
+function localizedLabel(language: string, english: string, pt: Record<string, string>, fr: Record<string, string>, key: string) {
+  const lang = uiLang(language)
+  if (lang === 'pt') return pt[key] ?? english
+  if (lang === 'fr') return fr[key] ?? english
+  return english
+}
+
 export function RecordBook() {
   const { t, i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const { data, loading, error } = useRecordBook()
   const [categoryName, setCategoryName] = useState<string | null>(null)
   const [profileName, setProfileName] = useState<string | null>(null)
@@ -93,7 +150,7 @@ export function RecordBook() {
         />
 
         {categories.length ? (
-          <div role="group" aria-label={isPt ? 'Categorias de recordes' : 'Record categories'} className="mt-4 inline-flex max-w-full overflow-x-auto border-2 border-[var(--rule)] bg-[var(--card-bg)] chip-scroll">
+          <div role="group" aria-label={L(i18n.language, 'Categorias de recordes', 'Record categories', 'Catégories de records')} className="mt-4 inline-flex max-w-full overflow-x-auto border-2 border-[var(--rule)] bg-[var(--card-bg)] chip-scroll">
             {categories.map((category) => (
               <button
                 key={category.name}
@@ -106,7 +163,7 @@ export function RecordBook() {
                     : 'text-[var(--text-main)] hover:bg-[#F2C230] hover:text-[#0E0E0E]'
                 }`}
               >
-                {isPt ? (CATEGORY_NAMES_PT[category.name] ?? category.name) : category.name}
+                {localizedLabel(i18n.language, category.name, CATEGORY_NAMES_PT, CATEGORY_NAMES_FR, category.name)}
                 <span className="ml-1.5 opacity-70">{category.stats.length}</span>
               </button>
             ))}
@@ -126,7 +183,7 @@ export function RecordBook() {
       ) : active ? (
         <section className="grid gap-2.5">
           {active.stats.map((stat) => (
-            <StatCard key={stat.key} stat={stat} onOpenProfile={setProfileName} isPt={isPt} />
+            <StatCard key={stat.key} stat={stat} onOpenProfile={setProfileName} />
           ))}
         </section>
       ) : null}
@@ -143,11 +200,12 @@ export function RecordBook() {
   )
 }
 
-function StatCard({ stat, onOpenProfile, isPt }: { stat: RecordBookStat; onOpenProfile: (name: string) => void; isPt: boolean }) {
+function StatCard({ stat, onOpenProfile }: { stat: RecordBookStat; onOpenProfile: (name: string) => void }) {
+  const { i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const panelId = `stat-${stat.key}`
-  const title = isPt ? (STAT_TITLES_PT[stat.key] ?? stat.title) : stat.title
-  const note = isPt && stat.note ? (STAT_NOTES_PT[stat.note] ?? stat.note) : stat.note
+  const title = localizedLabel(i18n.language, stat.title, STAT_TITLES_PT, STAT_TITLES_FR, stat.key)
+  const note = stat.note ? localizedLabel(i18n.language, stat.note, STAT_NOTES_PT, STAT_NOTES_FR, stat.note) : stat.note
 
   return (
     <section className="surface-card overflow-hidden rounded-[20px]">
@@ -170,7 +228,7 @@ function StatCard({ stat, onOpenProfile, isPt }: { stat: RecordBookStat; onOpenP
           <ol className="lg:columns-2 lg:gap-x-8">
             {stat.leaders.map((leader, index) => (
               <li key={`${leader.rank}-${leader.fighter}-${index}`} className="break-inside-avoid">
-                <LeaderRow leader={leader} onOpenProfile={onOpenProfile} isPt={isPt} />
+                <LeaderRow leader={leader} onOpenProfile={onOpenProfile} />
               </li>
             ))}
           </ol>
@@ -183,17 +241,16 @@ function StatCard({ stat, onOpenProfile, isPt }: { stat: RecordBookStat; onOpenP
 function LeaderRow({
   leader,
   onOpenProfile,
-  isPt,
 }: {
   leader: RecordBookStat['leaders'][number]
   onOpenProfile: (name: string) => void
-  isPt: boolean
 }) {
+  const { i18n } = useTranslation()
   return (
     <button
       type="button"
       onClick={() => onOpenProfile(leader.fighter)}
-      aria-label={isPt ? `${leader.fighter}, #${leader.rank}. Ver perfil` : `${leader.fighter}, rank ${leader.rank}. View profile`}
+      aria-label={L(i18n.language, `${leader.fighter}, #${leader.rank}. Ver perfil`, `${leader.fighter}, rank ${leader.rank}. View profile`, `${leader.fighter}, rang ${leader.rank}. Voir le profil`)}
       className="flex w-full cursor-pointer items-center text-left gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-[#F2C230]/40 focus-visible:bg-[#F2C230]/40 focus-visible:outline-none"
     >
       <span className="type-num w-4 shrink-0 text-right text-[11px] text-[#999999]">{leader.rank}</span>

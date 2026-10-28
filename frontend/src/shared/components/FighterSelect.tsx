@@ -7,7 +7,8 @@ import { useTranslation } from 'react-i18next'
 import { FighterAvatar } from './FighterAvatar'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../hooks/useFighterImages'
 import type { FighterProfile, Opponent } from '../types/api'
-import { DIVISION_NAMES_PT } from '../data/divisions'
+import { L, uiLang } from '../../i18n/lang'
+import { getDivisionName } from '../data/divisions'
 
 interface FighterSelectProps {
   label: string
@@ -48,7 +49,6 @@ export function FighterSelect({
   onChange,
 }: FighterSelectProps) {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -167,7 +167,11 @@ export function FighterSelect({
       <button
         type="button"
         onClick={openSearch}
-        aria-label={selectedFighter ? `${label}: ${selectedFighter.name}. Change fighter` : `${label}: search fighter`}
+        aria-label={
+          selectedFighter
+            ? L(i18n.language, `${label}: ${selectedFighter.name}. Trocar lutador`, `${label}: ${selectedFighter.name}. Change fighter`, `${label} : ${selectedFighter.name}. Changer de combattant`)
+            : L(i18n.language, `${label}: buscar lutador`, `${label}: search fighter`, `${label} : chercher un combattant`)
+        }
         className="flex min-h-[60px] w-full items-center gap-3 border-[3px] border-[var(--rule)] bg-[var(--card-bg)] px-3 py-2 text-left text-[var(--text-main)] shadow-[4px_4px_0_var(--hard)] outline-none transition hover:border-[var(--accent-red)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
       >
         {selectedFighter ? (
@@ -182,7 +186,7 @@ export function FighterSelect({
         <span className="min-w-0 flex-1 truncate text-sm font-bold uppercase tracking-wide sm:text-base">
           {selectedFighter?.name ?? placeholder}
         </span>
-        <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest text-[var(--accent-red)]">{selectedFighter ? 'Change' : 'Search'}</span>
+        <span className="shrink-0 text-[11px] font-bold uppercase tracking-widest text-[var(--accent-red)]">{selectedFighter ? L(i18n.language, 'Trocar', 'Change', 'Changer') : L(i18n.language, 'Buscar', 'Search', 'Chercher')}</span>
       </button>
 
       {createPortal(
@@ -213,16 +217,19 @@ export function FighterSelect({
                     {placeholder}
                   </h2>
                   <p className="theme-muted mt-1 hidden text-sm leading-6 sm:block">
-                    {isPt
-                      ? 'Busque por nome, apelido, categoria, cartel ou ranking. Lutador selecionado no outro canto fica indisponível.'
-                      : 'Search by name, nickname, weight class, record, or ranking. A fighter selected in the opposite corner is locked.'}
+                    {L(
+                      i18n.language,
+                      'Busque por nome, apelido, categoria, cartel ou ranking. Lutador selecionado no outro canto fica indisponível.',
+                      'Search by name, nickname, weight class, record, or ranking. A fighter selected in the opposite corner is locked.',
+                      'Cherchez par nom, surnom, catégorie, palmarès ou classement. Le combattant choisi dans l\'autre coin est indisponible.',
+                    )}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   className="ghost-action theme-text grid h-9 w-9 shrink-0 place-items-center rounded-full"
-                  aria-label={isPt ? 'Fechar busca de atletas' : 'Close fighter search'}
+                  aria-label={L(i18n.language, 'Fechar busca de atletas', 'Close fighter search', 'Fermer la recherche de combattants')}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -244,7 +251,7 @@ export function FighterSelect({
                       setActiveIndex(0)
                     }}
                     onKeyDown={handleKeyDown}
-                    placeholder={isPt ? 'Buscar lutador, apelido ou categoria...' : 'Search fighter, nickname, or weight class'}
+                    placeholder={L(i18n.language, 'Buscar lutador, apelido ou categoria...', 'Search fighter, nickname, or weight class', 'Chercher un combattant, un surnom ou une catégorie...')}
                     className="theme-text min-w-0 flex-1 bg-transparent text-base font-semibold outline-none placeholder:text-[var(--text-muted)]"
                   />
                 </div>
@@ -261,12 +268,15 @@ export function FighterSelect({
                   )}
                   <span className="broadcast-label truncate text-[11px]">
                     {opponentView
-                      ? isPt
-                        ? `${results.length} ${results.length === 1 ? 'adversário' : 'adversários'} de ${suggestions?.label}`
-                        : `${results.length} ${results.length === 1 ? 'opponent' : 'opponents'} of ${suggestions?.label}`
+                      ? L(
+                          i18n.language,
+                          `${results.length} ${results.length === 1 ? 'adversário' : 'adversários'} de ${suggestions?.label}`,
+                          `${results.length} ${results.length === 1 ? 'opponent' : 'opponents'} of ${suggestions?.label}`,
+                          `${results.length} ${results.length === 1 ? 'adversaire' : 'adversaires'} de ${suggestions?.label}`,
+                        )
                       : showRecent && recentFighters.length
-                        ? isPt ? 'Lutadores recentes' : 'Recent fighters'
-                        : isPt ? `${results.length} resultados` : `${results.length} results`}
+                        ? L(i18n.language, 'Lutadores recentes', 'Recent fighters', 'Combattants récents')
+                        : L(i18n.language, `${results.length} resultados`, `${results.length} results`, `${results.length} résultats`)}
                   </span>
                 </div>
                 {opponentFighters.length > 0 ? (
@@ -279,13 +289,13 @@ export function FighterSelect({
                     className="type-tech ghost-action theme-text shrink-0 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] hover:!bg-[#F2C230] hover:!text-[#0E0E0E]"
                   >
                     {onlyOpponents
-                      ? (isPt ? 'Ver todos os lutadores' : 'Show all fighters')
-                      : (isPt ? 'Apenas adversários' : 'Only opponents')}
+                      ? L(i18n.language, 'Ver todos os lutadores', 'Show all fighters', 'Voir tous les combattants')
+                      : L(i18n.language, 'Apenas adversários', 'Only opponents', 'Adversaires seulement')}
                   </button>
                 ) : null}
                 {selectedFighter ? (
                   <span className={`type-tech rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
-                    {isPt ? 'Selecionado:' : 'Selected:'} {selectedFighter.name}
+                    {L(i18n.language, 'Selecionado:', 'Selected:', 'Sélectionné :')} {selectedFighter.name}
                   </span>
                 ) : null}
               </div>
@@ -301,12 +311,17 @@ export function FighterSelect({
                       const isSelected = fighter.name === value
                       const isDisabled = isFighterDisabled(fighter, disabledFighterName)
                       const isActive = index === activeIndex
-                      const ranking = getRankingLabel(fighter, isPt)
-                      const rawDiv = getDivision(fighter)
-                      const divDisplay = isPt && rawDiv ? (DIVISION_NAMES_PT[rawDiv] ?? rawDiv) : rawDiv
-                      const stanceDisplay = isPt && fighter.stance
-                        ? (fighter.stance === 'Orthodox' ? 'Destro' : fighter.stance === 'Southpaw' ? 'Canhoto' : fighter.stance === 'Switch' ? 'Ambidestro' : fighter.stance)
-                        : (fighter.stance || (isPt ? 'Estilo não informado' : 'Style unavailable'))
+                      const ranking = getRankingLabel(fighter, i18n.language)
+                      const rawDiv = getDivision(fighter, i18n.language)
+                      const divDisplay = rawDiv ? getDivisionName(rawDiv, i18n.language) : rawDiv
+                      const stanceLang = uiLang(i18n.language)
+                      const stanceDisplay = fighter.stance
+                        ? stanceLang === 'pt'
+                          ? (fighter.stance === 'Orthodox' ? 'Destro' : fighter.stance === 'Southpaw' ? 'Canhoto' : fighter.stance === 'Switch' ? 'Ambidestro' : fighter.stance)
+                          : stanceLang === 'fr'
+                            ? (fighter.stance === 'Orthodox' ? 'Orthodoxe' : fighter.stance === 'Southpaw' ? 'Gaucher' : fighter.stance === 'Switch' ? 'Ambidextre' : fighter.stance)
+                            : fighter.stance
+                        : L(i18n.language, 'Estilo não informado', 'Style unavailable', 'Garde non renseignée')
 
                       return (
                         <button
@@ -336,7 +351,7 @@ export function FighterSelect({
                               </span>
                               {isSelected ? (
                                 <span className={`type-tech rounded-full border px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.12em] ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
-                                  {isPt ? 'Selecionado' : 'Selected'}
+                                  {L(i18n.language, 'Selecionado', 'Selected', 'Sélectionné')}
                                 </span>
                               ) : null}
                             </span>
@@ -344,7 +359,7 @@ export function FighterSelect({
                               {[fighter.nickname ? `"${fighter.nickname}"` : null, divDisplay].filter(Boolean).join(' • ')}
                             </span>
                             <span className="theme-muted mt-2 flex flex-wrap gap-2 text-xs">
-                              <span className="selector-chip">{isPt ? 'Cartel:' : 'Record:'} {formatRecord(fighter)}</span>
+                              <span className="selector-chip">{L(i18n.language, 'Cartel:', 'Record:', 'Palmarès :')} {formatRecord(fighter)}</span>
                               <span className="selector-chip">{stanceDisplay}</span>
                               {ranking ? (
                                 <span className={`rounded-full border px-2.5 py-1 ${styles.border} ${corner === 'blue' ? 'bg-[#2F5FA8]/10' : 'bg-[#C8102E]/10'} ${styles.accent}`}>
@@ -357,7 +372,7 @@ export function FighterSelect({
                             {isDisabled ? (
                               <span className="type-tech theme-muted inline-flex items-center gap-1.5 rounded-full border border-[var(--line-soft)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em]">
                                 <Lock className="h-3 w-3" />
-                                {isPt ? 'Outro canto' : 'Other corner'}
+                                {L(i18n.language, 'Outro canto', 'Other corner', 'Autre coin')}
                               </span>
                             ) : isSelected ? (
                               <Check className={`h-5 w-5 ${styles.accent}`} />
@@ -372,12 +387,15 @@ export function FighterSelect({
                 ) : (
                   <div className="rounded-2xl border border-dashed border-[var(--line-soft)] bg-[var(--surface-3)] px-4 py-10 text-center">
                     <p className="type-display theme-text text-2xl font-bold uppercase tracking-[0.03em]">
-                      {isPt ? 'Nenhum lutador encontrado' : 'No fighters found'}
+                      {L(i18n.language, 'Nenhum lutador encontrado', 'No fighters found', 'Aucun combattant trouvé')}
                     </p>
                     <p className="theme-muted mx-auto mt-2 max-w-md text-sm leading-6">
-                      {isPt
-                        ? 'Ajuste a busca para encontrar outro nome, apelido, categoria de peso ou cartel.'
-                        : 'Adjust the search to find another name, nickname, weight class, or record.'}
+                      {L(
+                        i18n.language,
+                        'Ajuste a busca para encontrar outro nome, apelido, categoria de peso ou cartel.',
+                        'Adjust the search to find another name, nickname, weight class, or record.',
+                        'Ajustez la recherche pour trouver un autre nom, surnom, catégorie de poids ou palmarès.',
+                      )}
                     </p>
                   </div>
                 )}
@@ -441,14 +459,14 @@ function isFighterDisabled(fighter: FighterProfile, disabledFighterName?: string
   return Boolean(disabledFighterName && fighter.name === disabledFighterName)
 }
 
-function getDivision(fighter: FighterProfile) {
-  return fighter.division ?? formatWeight(fighter.weight_lbs)
+function getDivision(fighter: FighterProfile, language: string | boolean = false) {
+  return fighter.division ?? formatWeight(fighter.weight_lbs, language)
 }
 
-function getRankingLabel(fighter: FighterProfile, isPt = false) {
+function getRankingLabel(fighter: FighterProfile, language: string | boolean = false) {
   if (fighter.ranking) return fighter.ranking.startsWith('#') ? fighter.ranking : `#${fighter.ranking}`
   if (fighter.rank_signal) return fighter.rank_signal
-  if (fighter.belt) return isPt ? 'Campeão' : 'Champion'
+  if (fighter.belt) return L(language, 'Campeão', 'Champion', 'Champion')
   return null
 }
 
@@ -473,8 +491,8 @@ function formatRecord(fighter: FighterProfile) {
   return `${fighter.wins ?? 0}-${fighter.losses ?? 0}${fighter.draws ? `-${fighter.draws}` : ''}`
 }
 
-function formatWeight(weight: number | null | undefined) {
-  return weight ? `${weight.toFixed(0)} lb` : 'Weight class pending'
+function formatWeight(weight: number | null | undefined, language: string | boolean = false) {
+  return weight ? `${weight.toFixed(0)} lb` : L(language, 'Categoria a definir', 'Weight class pending', 'Catégorie à définir')
 }
 
 function getInitials(name: string) {

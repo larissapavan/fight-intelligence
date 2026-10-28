@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { LoadingBout } from './LoadingBout'
 import { LoadingSkeleton } from './LoadingSkeleton'
 
 export function ServerLoadingState({
@@ -6,23 +7,15 @@ export function ServerLoadingState({
 }: {
   waking?: boolean
 }) {
-  const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
+  const { t } = useTranslation()
 
   return (
-    <section
-      className="space-y-3"
-      role="status"
-      aria-live="polite"
-      aria-label={waking ? (isPt ? 'O servidor está iniciando' : 'The server is waking up') : (isPt ? 'Carregando' : 'Loading')}
-    >
-      {waking ? (
-        <p className="px-1 text-xs leading-5 text-[#999999]">
-          {isPt
-            ? 'O servidor está iniciando. A primeira visita após um período inativo pode levar até um minuto.'
-            : 'The server is waking up. The first visit after a quiet spell can take up to a minute.'}
-        </p>
-      ) : null}
+    <section className="space-y-3" role="status" aria-live="polite" aria-label={t('common.pageLoadingLabel')}>
+      <div className="border-2 border-[var(--rule)] bg-[var(--card-bg)] px-4 py-3 shadow-[4px_4px_0_var(--hard)]">
+        <p className="text-sm font-semibold leading-6 text-[var(--text-main)]">{t('common.pageLoading')}</p>
+        {waking ? <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">{t('common.serverWaking')}</p> : null}
+        <LoadingBout />
+      </div>
       <LoadingSkeleton className="h-[88px] rounded-[20px]" />
       <div className="grid gap-3 lg:grid-cols-2">
         <LoadingSkeleton className="h-[220px] rounded-[20px]" />

@@ -2,9 +2,10 @@ import { Compass } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { L } from '../i18n/lang'
+
 export function NotFound() {
   const { i18n } = useTranslation()
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-3 py-8">
@@ -14,18 +15,21 @@ export function NotFound() {
         </div>
         <p className="data-value mt-3 text-5xl font-bold text-[#FFFFFF]">404</p>
         <h1 className="mt-2 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
-          {isPt ? 'Página não encontrada' : 'Page not found'}
+          {L(i18n.language, 'Página não encontrada', 'Page not found', 'Page introuvable')}
         </h1>
         <p className="mt-2 text-sm leading-6 text-[#999999]">
-          {isPt
-            ? 'A página que você procura não existe ou foi movida.'
-            : "The page you're looking for doesn't exist or may have moved."}
+          {L(
+            i18n.language,
+            'A página que você procura não existe ou foi movida.',
+            "The page you're looking for doesn't exist or may have moved.",
+            "La page que vous cherchez n'existe pas ou a été déplacée.",
+          )}
         </p>
         <Link
           to="/"
           className="primary-action mx-auto mt-4 inline-flex w-fit items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
         >
-          {isPt ? 'Voltar ao início' : 'Back to home'}
+          {L(i18n.language, 'Voltar ao início', 'Back to home', "Retour à l'accueil")}
         </Link>
       </div>
     </div>

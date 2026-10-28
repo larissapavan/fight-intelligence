@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
+import { L } from '../i18n/lang'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { MetricsNote } from '../shared/components/MetricsNote'
 import { SectionHeading } from '../shared/components/SectionHeading'
@@ -11,8 +12,7 @@ import { useModelInfo } from '../shared/hooks/useModelInfo'
 export function Model() {
   const { t, i18n } = useTranslation()
   const { modelInfo, health, loading, error } = useModelInfo()
-  const shown = shownMetrics(modelInfo)
-  const isPt = Boolean(i18n.language?.startsWith('pt'))
+  const shown = shownMetrics(modelInfo, i18n.language)
 
   const baselineChart =
     modelInfo == null
@@ -52,7 +52,7 @@ export function Model() {
         <>
           <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label={t('model.modelCard')} value={modelInfo.model_name} />
-            <MetricCard label={`${isPt ? 'Acurácia' : 'Accuracy'} (${shown.caption})`} value={shown.accuracy != null ? `${(shown.accuracy * 100).toFixed(1)}%` : '—'} />
+            <MetricCard label={`${L(i18n.language, 'Acurácia', 'Accuracy', 'Précision')} (${shown.caption})`} value={shown.accuracy != null ? `${(shown.accuracy * 100).toFixed(1)}%` : '—'} />
             <MetricCard label={t('model.rocAuc')} value={shown.rocAuc != null ? shown.rocAuc.toFixed(3) : '—'} />
             <MetricCard label="Log Loss" value={shown.logLoss != null ? shown.logLoss.toFixed(3) : '—'} />
           </section>
@@ -62,9 +62,9 @@ export function Model() {
           <section className="grid gap-3 xl:grid-cols-[1fr_1fr]">
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow={isPt ? 'Comparação com baselines' : 'Baseline comparison'}
+                eyebrow={L(i18n.language, 'Comparação com baselines', 'Baseline comparison', 'Comparaison aux références')}
                 title={t('model.baselines')}
-                description={isPt ? 'Testado contra modelos lineares simples para garantir que a abordagem traz ganho preditivo real.' : "As reported in the model's file, it was tested against simpler models, and gradient boosting had the best accuracy and log loss."}
+                description={L(i18n.language, 'Testado contra modelos lineares simples para garantir que a abordagem traz ganho preditivo real.', "As reported in the model's file, it was tested against simpler models, and gradient boosting had the best accuracy and log loss.", "Comme indiqué dans le fichier du modèle, il a été comparé à des modèles plus simples, et le gradient boosting obtenait la meilleure précision et la meilleure log loss.")}
               />
               <div className="mt-3 h-[210px] min-w-0 sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%" minWidth={280}>
@@ -89,9 +89,9 @@ export function Model() {
 
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow={isPt ? 'Engenharia de features' : 'Feature design'}
+                eyebrow={L(i18n.language, 'Engenharia de features', 'Feature design', 'Conception des variables')}
                 title={t('model.featureImportance')}
-                description={isPt ? 'Diferenças de idade, envergadura, histórico e taxas de golpes e quedas.' : 'Mostly the difference between the two fighters: age, reach, record, striking and takedown accuracy.'}
+                description={L(i18n.language, 'Diferenças de idade, envergadura, histórico e taxas de golpes e quedas.', 'Mostly the difference between the two fighters: age, reach, record, striking and takedown accuracy.', 'Surtout l’écart entre les deux lutteurs : âge, allonge, palmarès, précision des coups et des amenées au sol.')}
               />
               <div className="mt-3 h-[210px] min-w-0 sm:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%" minWidth={280}>
@@ -117,9 +117,9 @@ export function Model() {
           <section className="grid gap-3 xl:grid-cols-[0.95fr_1.05fr]">
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow={isPt ? 'Arquitetura do sistema' : 'System design'}
-                title={isPt ? 'Do dado bruto ao site' : 'From data to this site'}
-                description={isPt ? 'Os dados são limpos, transformados em atributos e servidos via API.' : 'Fight data is cleaned, turned into features and served by the API to this site.'}
+                eyebrow={L(i18n.language, 'Arquitetura do sistema', 'System design', 'Conception du système')}
+                title={L(i18n.language, 'Do dado bruto ao site', 'From data to this site', 'Des données à ce site')}
+                description={L(i18n.language, 'Os dados são limpos, transformados em atributos e servidos via API.', 'Fight data is cleaned, turned into features and served by the API to this site.', 'Les données de combat sont nettoyées, transformées en variables et servies par l’API à ce site.')}
               />
               <div className="mt-3 space-y-2">
                 {modelInfo.highlights.map((item) => (
@@ -138,9 +138,9 @@ export function Model() {
 
             <article className="surface-card rounded-[20px] p-3 sm:p-4">
               <SectionHeading
-                eyebrow={isPt ? 'Limitações' : 'Limitations'}
-                title={isPt ? 'O que o modelo não prevê' : "What it can't do"}
-                description={isPt ? 'Fatores intangíveis e limites da abordagem estatística.' : 'Where the model falls short.'}
+                eyebrow={L(i18n.language, 'Limitações', 'Limitations', 'Limites')}
+                title={L(i18n.language, 'O que o modelo não prevê', "What it can't do", 'Ce qu’il ne peut pas faire')}
+                description={L(i18n.language, 'Fatores intangíveis e limites da abordagem estatística.', 'Where the model falls short.', 'Là où le modèle atteint ses limites.')}
               />
               <div className="mt-3 rounded-2xl border border-[#C8102E]/18 bg-[#C8102E]/8 p-3">
                 <ul className="space-y-2 text-xs leading-5 text-[#FFFFFF]">
@@ -150,8 +150,8 @@ export function Model() {
                 </ul>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2.5">
-                <MetricCard label="API status" value={health?.model_loaded ? (isPt ? 'Online' : 'Online') : (isPt ? 'Offline' : 'Offline')} compact />
-                <MetricCard label={isPt ? 'Lutadores no modelo' : 'Fighters loaded'} value={`${health?.fighters_loaded ?? 0}`} compact />
+                <MetricCard label="API status" value={health?.model_loaded ? L(i18n.language, 'Online', 'Online', 'En ligne') : L(i18n.language, 'Offline', 'Offline', 'Hors ligne')} compact />
+                <MetricCard label={L(i18n.language, 'Lutadores no modelo', 'Fighters loaded', 'Lutteurs chargés')} value={`${health?.fighters_loaded ?? 0}`} compact />
               </div>
             </article>
           </section>
