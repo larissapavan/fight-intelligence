@@ -157,6 +157,39 @@ export function OrgHome() {
         </div>
       </section>
 
+      {isArchived ? (
+        <p role="note" className="surface-card rounded-[20px] px-4 py-4 text-sm leading-6 text-[var(--text-main)]">
+          {L(
+            i18n.language,
+            'O Bellator realizou seu último evento em 2023 e foi absorvido pela PFL, portanto este é um arquivo histórico: os dados aqui não são mais atualizados.',
+            org.archived ?? 'Archive 2009–2023. Bellator held its last event in 2023.',
+            "Le Bellator a organisé son dernier événement en 2023 avant d'être absorbé par la PFL : il s'agit donc d'archives historiques qui ne sont plus mises à jour.",
+          )}
+        </p>
+      ) : null}
+
+      {isArchived ? (
+        <section aria-label="Archive sections" className="space-y-3">
+          <SectionHeading
+            eyebrow={L(i18n.language, 'Seções do Arquivo', 'Archive sections', "Sections d'archive")}
+            title={L(i18n.language, 'Navegue pelo Arquivo Histórico', 'Explore the archive', "Explorer l'archive")}
+          />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Link to={orgPath(org, 'events')} className="surface-card rounded-2xl p-4 transition hover:bg-[var(--bg-surface-hover)]">
+              <span className="text-sm font-bold">{L(i18n.language, 'Eventos', 'Events', 'Événements')}</span>
+            </Link>
+            <Link to={orgPath(org, 'fighters')} className="surface-card rounded-2xl p-4 transition hover:bg-[var(--bg-surface-hover)]">
+              <span className="text-sm font-bold">{L(i18n.language, 'Lutadores', 'Fighters', 'Combattants')}</span>
+            </Link>
+            {org.hasChampions ? (
+              <Link to={orgPath(org, 'champions')} className="surface-card rounded-2xl p-4 transition hover:bg-[var(--bg-surface-hover)]">
+                <span className="text-sm font-bold">{L(i18n.language, 'Campeões', 'Champions', 'Champions')}</span>
+              </Link>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
       {!isArchived && nextEvent ? (
         <section aria-label="Next event" className="space-y-3">
           <SectionHeading

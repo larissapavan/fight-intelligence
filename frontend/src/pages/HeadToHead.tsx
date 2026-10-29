@@ -177,12 +177,16 @@ export function HeadToHead() {
       </div>
 
       {viewMode === 'editorial' ? (
-        <EditorialHeadToHeadSimulator
+        <>
+          <h1 className="sr-only">{t('headToHead.title')}</h1>
+          <p className="sr-only">{t('headToHead.description')}</p>
+          <EditorialHeadToHeadSimulator
           initialFighterA={fighterAName || 'Alex Pereira'}
           initialFighterB={fighterBName || 'Magomed Ankalaev'}
           onSelectFighterA={(name) => chooseFighter('a', name)}
           onSelectFighterB={(name) => chooseFighter('b', name)}
         />
+        </>
       ) : (
         <>
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">

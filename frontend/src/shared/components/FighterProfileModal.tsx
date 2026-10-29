@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 import { L } from '../../i18n/lang'
+import { OtherOrganizationsPanel } from './OtherOrganizationsPanel'
 import { getDivisionName } from '../data/divisions'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../hooks/useFighterImages'
 import { useFighters } from '../hooks/useFighters'
@@ -361,7 +362,7 @@ export function FighterProfileModal({
             type="button"
             onClick={onClose}
             className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-neutral-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition cursor-pointer"
-            aria-label="Fechar"
+            aria-label={L(i18n.language, "Fechar (Close performance profile)", "Close performance profile", "Fermer (Close performance profile)")}
           >
             <X className="h-4 w-4" />
           </button>
@@ -797,6 +798,7 @@ export function FighterProfileModal({
                     </p>
                   </div>
                 </div>
+                <OtherOrganizationsPanel name={name} />
               </>
             )}
           </div>

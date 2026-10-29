@@ -270,18 +270,19 @@ export function Landing() {
               {L(i18n.language, 'LIGAS & ORGANIZAÇÕES', 'LEAGUES & ORGANIZATIONS', 'LIGUES & ORGANISATIONS')}
             </span>
             <h2 className="mt-1 font-display font-extrabold text-2xl sm:text-3xl uppercase tracking-tight text-[var(--text-primary)] dark:text-white">
-              {L(i18n.language, 'Escolha uma Organização', 'Select an Organization', 'Choisir une Organisation')}
+              {L(i18n.language, 'Escolha uma Organização', 'Pick an Organization', 'Choisir une Organisation')}
             </h2>
           </div>
 
           {/* Grade de Organizações contínua sem espaço entre cards (Connected Editorial Strip) */}
-          <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] dark:border-white/10 dark:bg-[#0A0B10]/90 backdrop-blur-xl overflow-hidden shadow-lg grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-[var(--border-subtle)] dark:divide-white/10">
+          <div role="list" aria-label="Organizations" className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] dark:border-white/10 dark:bg-[#0A0B10]/90 backdrop-blur-xl overflow-hidden shadow-lg grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-[var(--border-subtle)] dark:divide-white/10">
             {ORG_CARDS.map((card) => {
               const orgConfig = ORGS[card.id]
               return (
                 <Link
                   key={card.id}
                   to={orgPath(orgConfig)}
+                  aria-label={`Open ${card.fullName}`}
                   className="group relative flex flex-col justify-between p-4 sm:p-5 transition-all duration-300 hover:bg-[var(--bg-surface-hover)] dark:hover:bg-white/[0.04] cursor-pointer min-w-0 overflow-hidden"
                 >
                   {/* Linha de acento sutil no topo do card ao passar o cursor */}
@@ -301,9 +302,21 @@ export function Landing() {
                           {card.fullName}
                         </p>
                       </div>
-                      <span className="pointer-events-none font-display font-black text-2xl text-black/[0.08] dark:text-white/[0.06] group-hover:text-black/[0.14] dark:group-hover:text-white/[0.12] transition-colors select-none leading-none shrink-0">
-                        {card.watermark}
-                      </span>
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        <span className="pointer-events-none font-display font-black text-2xl text-black/[0.08] dark:text-white/[0.06] group-hover:text-black/[0.14] dark:group-hover:text-white/[0.12] transition-colors select-none leading-none">
+                          {card.watermark}
+                        </span>
+                        {orgConfig.hasPredictions ? (
+                          <span className="rounded-full bg-rose-500/15 border border-rose-500/30 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-rose-500">
+                            {L(i18n.language, 'Previsões de vitória', 'Win predictions', 'Pronostics')}
+                          </span>
+                        ) : null}
+                        {orgConfig.archived ? (
+                          <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-500">
+                            {L(i18n.language, 'Arquivo', 'Archive', 'Archive')}
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
 
                     {/* Luva 3D da Organização em TODOS os cards - Altura e Alinhamento Idênticos */}
