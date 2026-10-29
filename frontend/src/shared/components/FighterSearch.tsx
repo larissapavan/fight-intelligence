@@ -18,7 +18,7 @@ function recordOf(fighter: SearchableFighter) {
   return `${fighter.wins}-${fighter.losses}${fighter.draws ? `-${fighter.draws}` : ''}`
 }
 
-/** A search button for the header: type a name, pick a fighter, land on their profile. Works from every page. */
+/** Minimalist SaaS command-style fighter search. */
 export function FighterSearch() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
@@ -29,7 +29,6 @@ export function FighterSearch() {
   const { fighters: orgFighters } = useOrgFighters(isUfc ? null : org.id)
   const fighters: SearchableFighter[] = isUfc ? ufcFighters : orgFighters
   const { imageByName } = useFighterImages()
-  // The box belongs to the page it was opened on: moving to another page closes it.
   const [openAt, setOpenAt] = useState<string | null>(null)
   const open = openAt === pathname
   const setOpen = (value: boolean | ((current: boolean) => boolean)) =>
@@ -47,13 +46,13 @@ export function FighterSearch() {
     setActive(0)
   }, [])
 
-  // "/" opens the box from anywhere that is not a text field.
+  // "/" or Cmd+K opens the search box
   useEffect(() => {
     const onKey = (event: globalThis.KeyboardEvent) => {
       const target = event.target as HTMLElement | null
       const typing =
         target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)
-      if (event.key === '/' && !typing && !event.metaKey && !event.ctrlKey) {
+      if (((event.key === '/' && !event.metaKey && !event.ctrlKey) || ((event.metaKey || event.ctrlKey) && event.key === 'k')) && !typing) {
         event.preventDefault()
         setOpenAt(pathname)
       }
@@ -95,24 +94,30 @@ export function FighterSearch() {
   }
 
   return (
-    <div ref={rootRef} className="contents">
+    <div ref={rootRef} className="relative">
       <button
         type="button"
         onClick={() => {
           if (!open) setText('')
           setOpen(!open)
         }}
-        className={`inline-flex h-full w-8 shrink-0 items-center justify-center transition cursor-pointer ${open ? 'bg-[var(--rule)] text-[var(--card-bg)]' : 'text-[var(--text-muted)] hover:bg-[var(--action-hover-bg)] hover:text-[var(--text-main)]'}`}
+        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-2.5 text-xs transition cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
         aria-label={L(i18n.language, 'Buscar lutadores', 'Search fighters', 'Chercher des combattants')}
         aria-expanded={open}
-        title={L(i18n.language, 'Buscar lutadores (pressione /)', 'Search fighters (press /)', 'Chercher des combattants (appuyez sur /)')}
+        title={L(i18n.language, 'Buscar lutadores (pressione / ou ⌘K)', 'Search fighters (press / or ⌘K)', 'Chercher des combattants (appuyez sur / ou ⌘K)')}
       >
         <Search className="h-3.5 w-3.5" />
+        <span className="hidden xl:inline text-[11px] font-normal text-[var(--text-muted)]">
+          {L(i18n.language, 'Buscar...', 'Search...', 'Chercher...')}
+        </span>
+        <kbd className="hidden md:inline-block rounded px-1 py-0.2 font-mono text-[9px] bg-[var(--bg-surface-hover)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
+          ⌘K
+        </kbd>
       </button>
 
       {open ? (
-        <div className="surface-card absolute inset-x-2.5 top-full z-50 mt-2 border-2 border-[var(--rule)] p-2.5 shadow-[4px_4px_0_var(--rule)] sm:left-auto sm:right-3.5 sm:w-[26rem]">
-          <div className="flex items-center gap-2 border-2 border-[var(--rule)] bg-[var(--surface-3)] px-2.5">
+        <div className="surface-card-elevated absolute right-0 top-full z-50 mt-2 w-[22rem] sm:w-[26rem] p-2 backdrop-blur-xl animate-in fade-in-0 zoom-in-95">
+          <div className="soft-input flex items-center gap-2 rounded-lg px-2.5">
             <Search className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden />
             <input
               ref={inputRef}
@@ -128,36 +133,40 @@ export function FighterSearch() {
               aria-expanded={results.length > 0}
               aria-controls="fighter-search-results"
               autoComplete="off"
-              className="h-10 min-w-0 flex-1 bg-transparent text-sm text-[var(--text-main)] outline-none placeholder:text-[var(--text-muted)]"
+              className="h-9 min-w-0 flex-1 bg-transparent text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)]"
             />
             <button
               type="button"
               onClick={close}
               aria-label={L(i18n.language, 'Fechar busca', 'Close search', 'Fermer la recherche')}
-              className="inline-flex h-8 w-8 items-center justify-center text-[var(--text-muted)]"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md transition text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] cursor-pointer"
             >
-              <X className="h-4 w-4" />
+              <X className="h-3.5 w-3.5" />
             </button>
           </div>
 
           {text.trim() ? (
             results.length > 0 ? (
-              <ul id="fighter-search-results" role="listbox" className="mt-2 space-y-1">
+              <ul id="fighter-search-results" role="listbox" className="mt-2 max-h-72 overflow-y-auto space-y-1">
                 {results.map((fighter, index) => (
                   <li key={fighter.name} role="option" aria-selected={index === active}>
                     <button
                       type="button"
                       onClick={() => pick(fighter)}
                       onMouseEnter={() => setActive(index)}
-                      className={`flex w-full items-center gap-2.5 px-2 py-1.5 text-left transition ${index === active ? 'bg-[#F2C230]/30' : ''}`}
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left transition cursor-pointer ${
+                        index === active
+                          ? 'bg-[var(--bg-surface-hover)] text-[var(--text-primary)] font-medium shadow-xs'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
+                      }`}
                     >
                       <FighterAvatar
                         name={fighter.name}
                         imageUrl={getFighterImageUrl(fighter.name, imageByName, fighter.image_url)}
-                        className="h-9 w-8"
+                        className="h-9 w-8 rounded-md"
                       />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-bold text-[var(--text-main)]">{fighter.name}</span>
+                        <span className="block truncate text-sm font-semibold text-[var(--text-primary)]">{fighter.name}</span>
                         <span className="block truncate text-xs text-[var(--text-muted)]">
                           {[
                             recordOf(fighter),
@@ -173,13 +182,13 @@ export function FighterSearch() {
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">
+              <p className="mt-2 px-2 py-3 text-center text-xs text-[var(--text-muted)]">
                 {L(i18n.language, `Nenhum atleta encontrado para “${text.trim()}”.`, `No fighter matches “${text.trim()}”.`, `Aucun athlète trouvé pour « ${text.trim()} ».`)}
               </p>
             )
           ) : (
-            <p className="mt-2 px-1 text-xs text-[var(--text-muted)]">
-              {L(i18n.language, 'Digite um nome ou apelido. Enter abre o perfil.', 'Type a name or nickname. Enter opens the profile.', 'Saisissez un nom ou un surnom. Entrée ouvre le profil.')}
+            <p className="mt-2 px-2 py-3 text-center text-xs text-[var(--text-muted)]">
+              {L(i18n.language, 'Digite o nome do lutador...', 'Start typing a fighter name...', 'Tapez le nom du combattant...')}
             </p>
           )}
         </div>

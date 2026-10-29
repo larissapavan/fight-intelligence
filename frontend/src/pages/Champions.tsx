@@ -69,9 +69,9 @@ export function Champions() {
                 aria-selected={view === item.key}
                 aria-controls="champions-panel"
                 onClick={() => chooseView(item.key)}
-                className={`shrink-0 px-3.5 py-2 text-xs font-bold uppercase tracking-[0.14em] transition sm:px-5 ${
+                className={`shrink-0 px-3.5 py-2 text-xs font-black uppercase tracking-[0.14em] transition sm:px-5 ${
                   view === item.key
-                    ? 'bg-[var(--rule)] text-[var(--card-bg)]'
+                    ? 'bg-[#0E0E0E] text-white dark:bg-white dark:text-[#0E0E0E] shadow-sm'
                     : 'text-[var(--text-main)] hover:bg-[#F2C230] hover:text-[#0E0E0E]'
                 }`}
               >
@@ -98,7 +98,7 @@ export function Champions() {
             {view === 'greatest' ? <GreatestChampionsSection champions={data.greatest_champions} /> : null}
             {view === 'records' ? (
               <section>
-                <div className="mb-3 inline-flex max-w-full overflow-x-auto rounded-full border border-white/8 bg-white/[0.035] p-0.5 chip-scroll">
+                <div className="mb-3 inline-flex max-w-full overflow-x-auto rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] p-0.5 chip-scroll">
                   <TabButton active={tab === 'positive'} onClick={() => setTab('positive')}>
                     {t('champions.positive')}
                   </TabButton>
@@ -628,7 +628,7 @@ function RecordCard({ category }: { category: RecordCategory }) {
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls={panelId}
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-[var(--bg-surface-subtle)] sm:px-4"
       >
         <Icon className={`h-4 w-4 shrink-0 ${category.kind === 'positive' ? 'text-[#C8102E]' : 'text-[var(--text-muted)]'}`} />
         <h3 className="broadcast-label text-xs text-[var(--text-main)]">{label}</h3>

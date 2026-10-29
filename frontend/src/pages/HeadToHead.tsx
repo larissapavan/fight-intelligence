@@ -1,11 +1,14 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, CalendarDays, LoaderCircle, Share2, Swords, Trophy, Users } from 'lucide-react'
+import { ArrowLeftRight, ArrowRight, CalendarDays, LoaderCircle, Share2, Sparkles, Swords, Trophy, Users } from 'lucide-react'
 
 import { L, localeTag, uiLang } from '../i18n/lang'
 import { getDivisionName } from '../shared/data/divisions'
+import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { FighterSelect } from '../shared/components/FighterSelect'
 import { SectionHeading } from '../shared/components/SectionHeading'
+import { EditorialHeadToHeadSimulator } from '../shared/components/editorial/EditorialHeadToHeadSimulator'
 import { useFighters } from '../shared/hooks/useFighters'
 import { getHeadToHead, getOpponents } from '../shared/services/api'
 import type { FightRecord, HeadToHeadResponse, Opponent } from '../shared/types/api'
@@ -59,11 +62,39 @@ function useOpponents(fighterName: string): Opponent[] {
 export function HeadToHead() {
   const { t, i18n } = useTranslation()
   const { fighters } = useFighters()
-  const [fighterAName, setFighterAName] = useState('')
-  const [fighterBName, setFighterBName] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const presetA = searchParams.get('a') || searchParams.get('fighter_a') || ''
+  const presetB = searchParams.get('b') || searchParams.get('fighter_b') || ''
+  const [fighterAName, setFighterAName] = useState(() => presetA)
+  const [fighterBName, setFighterBName] = useState(() => presetB)
   const [result, setResult] = useState<HeadToHeadResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [profileName, setProfileName] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<'editorial' | 'classic'>('editorial')
+
+  const chooseFighter = (side: 'a' | 'b', value: string) => {
+    if (side === 'a') setFighterAName(value)
+    else setFighterBName(value)
+    const next = new URLSearchParams(searchParams)
+    if (value) next.set(side, value)
+    else next.delete(side)
+    setSearchParams(next, { replace: true })
+  }
+
+  const swapCorners = () => {
+    if (!fighterAName && !fighterBName) return
+    const nextA = fighterBName
+    const nextB = fighterAName
+    setFighterAName(nextA)
+    setFighterBName(nextB)
+    const next = new URLSearchParams(searchParams)
+    if (nextA) next.set('a', nextA)
+    else next.delete('a')
+    if (nextB) next.set('b', nextB)
+    else next.delete('b')
+    setSearchParams(next, { replace: true })
+  }
 
   const opponentsOfA = useOpponents(fighterAName)
   const opponentsOfB = useOpponents(fighterBName)
@@ -78,8 +109,8 @@ export function HeadToHead() {
 
   const canCompare = Boolean(fighterAName && fighterBName && fighterAName !== fighterBName)
 
-  const handleCompare = async () => {
-    if (!canCompare) {
+  const handleCompare = async (a = fighterAName, b = fighterBName) => {
+    if (!a || !b || a === b) {
       setError(t('predictor.selectTwoDifferent'))
       return
     }
@@ -87,7 +118,7 @@ export function HeadToHead() {
     try {
       setLoading(true)
       setError(null)
-      const data = await getHeadToHead(fighterAName, fighterBName)
+      const data = await getHeadToHead(a, b)
       setResult(data)
     } catch (requestError) {
       console.error(requestError)
@@ -105,8 +136,55 @@ export function HeadToHead() {
     }
   }
 
+  useEffect(() => {
+    if (!presetA || !presetB || presetA === presetB) return
+    void handleCompare(presetA, presetB)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
-    <div className="space-y-3 sm:space-y-4">
+    <div className="space-y-4">
+      {/* Editorial vs Classic Mode Switcher */}
+      <div className="surface-card flex items-center justify-between rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] dark:border-white/10 dark:bg-[#0c0d12]/90 px-4 py-3 shadow-sm text-[var(--text-primary)] dark:text-zinc-300">
+        <span className="font-['Anton','Barlow_Condensed',Impact,sans-serif] text-sm uppercase tracking-widest text-zinc-300">
+          {L(i18n.language, 'Modo de Confronto', 'Matchup Mode', 'Mode de confrontation')}
+        </span>
+        <div className="inline-flex rounded-xl bg-[var(--bg-surface-subtle)] dark:bg-black/40 p-1 border border-[var(--border-subtle)] dark:border-white/10">
+          <button
+            type="button"
+            onClick={() => setViewMode('editorial')}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition ${
+              viewMode === 'editorial'
+                ? 'bg-[#E11D48] text-white shadow-md'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Tale of the Tape ✨
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('classic')}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition ${
+              viewMode === 'classic'
+                ? 'bg-zinc-700 text-white shadow-md'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            {L(i18n.language, 'Histórico Completo', 'Full History', 'Historique complet')}
+          </button>
+        </div>
+      </div>
+
+      {viewMode === 'editorial' ? (
+        <EditorialHeadToHeadSimulator
+          initialFighterA={fighterAName || 'Alex Pereira'}
+          initialFighterB={fighterBName || 'Magomed Ankalaev'}
+          onSelectFighterA={(name) => chooseFighter('a', name)}
+          onSelectFighterB={(name) => chooseFighter('b', name)}
+        />
+      ) : (
+        <>
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4">
         <SectionHeading
           level={1}
@@ -124,13 +202,25 @@ export function HeadToHead() {
             disabledFighterName={fighterBName}
             placeholder={t('headToHead.selectFirst')}
             suggestions={suggestionsForA}
-            onChange={setFighterAName}
+            onChange={(val) => chooseFighter('a', val)}
           />
 
-          <div className="hidden justify-center pb-3.5 lg:flex">
-            <span className="type-display rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-3 py-1.5 text-xl font-bold uppercase text-[#C8102E]">
-              {t('common.vs')}
-            </span>
+          <div className="hidden justify-center pb-2.5 lg:flex">
+            <button
+              type="button"
+              onClick={swapCorners}
+              disabled={!fighterAName && !fighterBName}
+              title={L(i18n.language, 'Inverter lutadores', 'Swap fighters', 'Inverser les lutteurs')}
+              aria-label={L(i18n.language, 'Inverter lutadores', 'Swap fighters', 'Inverser les lutteurs')}
+              className={`type-display group relative inline-flex items-center justify-center rounded-full border border-[#C8102E]/25 bg-[#C8102E]/10 px-3 py-1.5 text-xl font-bold uppercase text-[#C8102E] transition ${
+                fighterAName || fighterBName ? 'cursor-pointer hover:bg-[#C8102E] hover:text-white' : 'cursor-default'
+              }`}
+            >
+              <span className={fighterAName || fighterBName ? 'group-hover:opacity-0 transition-opacity' : ''}>{t('common.vs')}</span>
+              {fighterAName || fighterBName ? (
+                <ArrowLeftRight className="absolute h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+              ) : null}
+            </button>
           </div>
 
           <FighterSelect
@@ -141,7 +231,7 @@ export function HeadToHead() {
             disabledFighterName={fighterAName}
             placeholder={t('headToHead.selectSecond')}
             suggestions={suggestionsForB}
-            onChange={setFighterBName}
+            onChange={(val) => chooseFighter('b', val)}
           />
         </div>
 
@@ -162,12 +252,23 @@ export function HeadToHead() {
         ) : null}
       </section>
 
-      {result ? <HeadToHeadResultView result={result} /> : null}
+      {result ? <HeadToHeadResultView result={result} onOpenProfile={setProfileName} /> : null}
+        </>
+      )}
+
+      {profileName ? (
+        <FighterProfileModal
+          key={profileName}
+          name={profileName}
+          onClose={() => setProfileName(null)}
+          onSelectFighter={setProfileName}
+        />
+      ) : null}
     </div>
   )
 }
 
-function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
+function HeadToHeadResultView({ result, onOpenProfile }: { result: HeadToHeadResponse; onOpenProfile: (name: string) => void }) {
   const { t, i18n } = useTranslation()
 
   if (result.meetings.length === 0) {
@@ -175,12 +276,12 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
       <div className="space-y-3">
         <section className="surface-card rounded-[20px] px-4 py-7 text-center">
           <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{t('headToHead.neverFought')}</p>
-          <p className="mt-2 text-sm text-[#999999]">
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
             {t('headToHead.neverFoughtDesc', { fighterA: result.fighter_a, fighterB: result.fighter_b })}
           </p>
         </section>
 
-        {result.network_path.length > 0 ? <NetworkPathCard result={result} /> : null}
+        {result.network_path.length > 0 ? <NetworkPathCard result={result} onOpenProfile={onOpenProfile} /> : null}
         {result.common_opponents.length > 0 ? <CommonOpponentsCard result={result} /> : null}
       </div>
     )
@@ -189,16 +290,28 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
   return (
     <div className="space-y-3">
       <section className="surface-card rounded-[20px] p-4 text-center">
-        <p className="broadcast-label text-[11px] text-[#999999]">
+        <p className="broadcast-label text-[11px] text-[var(--text-muted)]">
           {L(i18n.language, `${result.meetings.length} ${result.meetings.length === 1 ? 'confronto' : 'confrontos'}`, `${result.meetings.length} ${result.meetings.length === 1 ? 'meeting' : 'meetings'}`, `${result.meetings.length} ${result.meetings.length === 1 ? 'affrontement' : 'affrontements'}`)}
         </p>
         <div className="mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <p className="type-display truncate text-right text-lg font-bold uppercase text-[var(--text-main)] sm:text-xl">{result.fighter_a}</p>
+          <button
+            type="button"
+            onClick={() => onOpenProfile(result.fighter_a)}
+            className="type-display cursor-pointer truncate text-right text-lg font-bold uppercase text-[var(--text-main)] hover:text-[#C8102E] hover:underline sm:text-xl"
+          >
+            {result.fighter_a}
+          </button>
           <p className="data-value text-3xl font-bold text-[#C8102E] sm:text-4xl">
             {result.fighter_a_wins}-{result.fighter_b_wins}
             {result.no_contests ? `-${result.no_contests}` : ''}
           </p>
-          <p className="type-display truncate text-left text-lg font-bold uppercase text-[var(--text-main)] sm:text-xl">{result.fighter_b}</p>
+          <button
+            type="button"
+            onClick={() => onOpenProfile(result.fighter_b)}
+            className="type-display cursor-pointer truncate text-left text-lg font-bold uppercase text-[var(--text-main)] hover:text-[#C8102E] hover:underline sm:text-xl"
+          >
+            {result.fighter_b}
+          </button>
         </div>
       </section>
 
@@ -213,7 +326,7 @@ function HeadToHeadResultView({ result }: { result: HeadToHeadResponse }) {
   )
 }
 
-function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
+function NetworkPathCard({ result, onOpenProfile }: { result: HeadToHeadResponse; onOpenProfile: (name: string) => void }) {
   const { i18n } = useTranslation()
   const degrees = result.degrees_of_separation ?? 0
 
@@ -230,13 +343,15 @@ function NetworkPathCard({ result }: { result: HeadToHeadResponse }) {
           const isEndpoint = index === 0 || index === result.network_path.length - 1
           return (
             <div key={`${name}-${index}`} className="flex items-center gap-1.5">
-              <span
-                className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.06em] ${
-                  isEndpoint ? 'border-[#C8102E]/25 bg-[#C8102E]/10 text-[var(--accent-red)]' : 'border-white/10 bg-white/[0.04] text-[#CCCCCC]'
+              <button
+                type="button"
+                onClick={() => onOpenProfile(name)}
+                className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.06em] transition hover:border-[#F2C230] ${
+                  isEndpoint ? 'border-[#C8102E]/25 bg-[#C8102E]/10 text-[var(--accent-red)]' : 'border-[var(--line-soft)] bg-[var(--surface-3)] text-[var(--text-main)]'
                 }`}
               >
                 {name}
-              </span>
+              </button>
               {index < result.network_path.length - 1 ? <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#666666]" /> : null}
             </div>
           )
@@ -260,7 +375,7 @@ function CommonOpponentsCard({ result }: { result: HeadToHeadResponse }) {
         <span className="type-tech text-right text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-blue)]">{lastWord(result.fighter_b)}</span>
         {result.common_opponents.map((common) => (
           <Fragment key={common.opponent}>
-            <span className="min-w-0 truncate rounded-xl border border-white/6 bg-black/18 px-3 py-2 text-sm font-semibold text-[var(--text-main)]">
+            <span className="min-w-0 truncate rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-3 py-2 text-sm font-semibold text-[var(--text-main)]">
               {common.opponent}
             </span>
             <ResultChip result={common.fighter_a_result} />
@@ -284,13 +399,13 @@ function ResultChip({ result }: { result: 'win' | 'loss' | null }) {
   }
   if (result === 'loss') {
     return (
-      <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
+      <span className="type-tech justify-self-end rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[11px] font-bold uppercase text-[var(--text-muted)]">
         {L(i18n.language, 'Derrota', 'Loss', 'Défaite')}
       </span>
     )
   }
   return (
-    <span className="type-tech justify-self-end rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
+    <span className="type-tech justify-self-end rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[11px] font-bold uppercase text-[var(--text-muted)]">
       NC
     </span>
   )

@@ -99,7 +99,7 @@ export function MatchupRadarChart({
 
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <p className="broadcast-label text-[11px] text-[#999999]">{L(i18n.language, 'Comparativo de Estilos', 'Style comparison', 'Comparaison de styles')}</p>
+      <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Comparativo de Estilos', 'Style comparison', 'Comparaison de styles')}</p>
       <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{L(i18n.language, 'Radar de Habilidades', 'Radar', 'Radar')}</h2>
       {loading ? (
         <LoadingSkeleton className="mt-3 h-[280px] rounded-2xl sm:h-[320px]" label={L(i18n.language, 'Carregando comparativo...', 'Loading style comparison', 'Chargement de la comparaison...')} />
@@ -121,7 +121,7 @@ export function MatchupRadarChart({
           </ResponsiveContainer>
         </div>
       )}
-      <p className="mt-1 text-center text-[11px] leading-4 text-[#999999]">
+      <p className="mt-1 text-center text-[11px] leading-4 text-[var(--text-muted)]">
         {L(
           i18n.language,
           'Volume de golpes e média de quedas calibrados nas escalas do UFC (0 a 100) para comparação direta entre os atletas.',

@@ -36,7 +36,7 @@ export function WinProbabilityBar({
               {nameA}
             </p>
           ) : null}
-          <p className={`data-value font-bold leading-none ${winnerIsA ? 'text-[var(--accent-red)]' : 'text-[var(--text-main)]'} ${compact ? 'text-3xl' : 'text-5xl sm:text-6xl'}`}>
+          <p className={`data-value font-bold leading-none ${winnerIsA ? 'text-[var(--accent-red)]' : 'text-[var(--text-main)]'} ${compact ? 'text-2xl' : 'text-3xl sm:text-4xl'}`}>
             {formatProbability(probabilityA)}
           </p>
         </div>
@@ -47,14 +47,14 @@ export function WinProbabilityBar({
               {nameB}
             </p>
           ) : null}
-          <p className={`data-value font-bold leading-none ${!winnerIsA ? 'text-[var(--accent-red)]' : 'text-[var(--text-main)]'} ${compact ? 'text-3xl' : 'text-5xl sm:text-6xl'}`}>
+          <p className={`data-value font-bold leading-none ${!winnerIsA ? 'text-[var(--accent-red)]' : 'text-[var(--text-main)]'} ${compact ? 'text-2xl' : 'text-3xl sm:text-4xl'}`}>
             {formatProbability(probabilityB)}
           </p>
         </div>
       </div>
 
       <div
-        className={`mt-3 flex overflow-hidden rounded-full bg-[var(--rule)] ${compact ? 'h-3' : 'h-4'}`}
+        className={`mt-3 flex overflow-hidden rounded-full bg-[var(--border-subtle)] ${compact ? 'h-3' : 'h-4'}`}
         role="img"
         aria-label={L(
           i18n.language,

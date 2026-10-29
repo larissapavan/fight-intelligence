@@ -172,7 +172,7 @@ export function FighterSelect({
             ? L(i18n.language, `${label}: ${selectedFighter.name}. Trocar lutador`, `${label}: ${selectedFighter.name}. Change fighter`, `${label} : ${selectedFighter.name}. Changer de combattant`)
             : L(i18n.language, `${label}: buscar lutador`, `${label}: search fighter`, `${label} : chercher un combattant`)
         }
-        className="flex min-h-[60px] w-full items-center gap-3 border-[3px] border-[var(--rule)] bg-[var(--card-bg)] px-3 py-2 text-left text-[var(--text-main)] shadow-[4px_4px_0_var(--hard)] outline-none transition hover:border-[var(--accent-red)] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
+        className="flex min-h-[56px] w-full items-center gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface-subtle)] px-3.5 py-2.5 text-left text-[var(--text-primary)] shadow-xs outline-none transition hover:border-[var(--border-strong)] hover:bg-[var(--bg-surface-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-red)] cursor-pointer"
       >
         {selectedFighter ? (
           <FighterAvatar
@@ -203,7 +203,7 @@ export function FighterSelect({
             }}
           >
             <motion.section
-              className={`surface-card flex h-[min(720px,calc(100vh-1.5rem))] w-full max-w-[760px] flex-col overflow-hidden rounded-[20px] border-white/14 sm:h-[min(760px,calc(100vh-2.5rem))] sm:rounded-[24px] ${corner === 'blue' ? 'picker-blue' : ''}`}
+              className={`surface-card flex h-[min(720px,calc(100vh-1.5rem))] w-full max-w-[760px] flex-col overflow-hidden rounded-[20px] border border-[var(--border-default)] shadow-2xl sm:h-[min(760px,calc(100vh-2.5rem))] sm:rounded-[24px] ${corner === 'blue' ? 'picker-blue' : ''}`}
               initial={{ opacity: 0, y: 18, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.98 }}
@@ -449,7 +449,7 @@ function PickerAvatar({
         </span>
       ) : null}
       {!fighter ? (
-        <UserRound className={`${large ? 'h-6 w-6' : 'h-5 w-5'} text-[#999999]`} />
+        <UserRound className={`${large ? 'h-6 w-6' : 'h-5 w-5'} text-[var(--text-muted)]`} />
       ) : null}
     </span>
   )

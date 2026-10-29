@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
@@ -118,8 +118,26 @@ export function CardSimulatorModal({ event, pickFor, onClose }: CardSimulatorMod
     })
   }
 
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [onClose])
+
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-2.5 backdrop-blur-sm sm:p-5">
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-2.5 backdrop-blur-sm sm:p-5"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

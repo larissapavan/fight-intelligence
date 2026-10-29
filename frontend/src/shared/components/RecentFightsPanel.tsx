@@ -16,13 +16,13 @@ function ResultChip({ result }: { result: FightRecord['result'] }) {
   }
   if (result === 'loss') {
     return (
-      <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
+      <span className="type-tech rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[11px] font-bold uppercase text-[var(--text-muted)]">
         {L(i18n.language, 'Derrota', 'Loss', 'Défaite')}
       </span>
     )
   }
   return (
-    <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-bold uppercase text-[#999999]">
+    <span className="type-tech rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[11px] font-bold uppercase text-[var(--text-muted)]">
       N/C
     </span>
   )
@@ -45,10 +45,10 @@ function FightRow({ fight }: { fight: FightRecord }) {
   const { i18n } = useTranslation()
   const date = formatDate(fight.date, i18n.language)
   return (
-    <li className="flex items-start justify-between gap-2 rounded-xl border border-white/6 bg-black/18 px-3 py-2">
+    <li className="flex items-start justify-between gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-3 py-2">
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold text-[var(--text-main)]">vs {fight.opponent}</p>
-        <p className="mt-0.5 truncate text-[11px] text-[#999999]">
+        <p className="mt-0.5 truncate text-[11px] text-[var(--text-muted)]">
           {formatMethod(fight, i18n.language)}
           {date ? ` · ${date}` : ''}
         </p>
@@ -90,7 +90,7 @@ function Column({
           ))}
         </ul>
       ) : (
-        <p className="mt-2 text-xs leading-5 text-[#999999]">{L(i18n.language, 'Nenhuma luta recente registrada no UFC.', 'No recent UFC fights on file.', 'Aucun combat UFC récent enregistré.')}</p>
+        <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{L(i18n.language, 'Nenhuma luta recente registrada no UFC.', 'No recent UFC fights on file.', 'Aucun combat UFC récent enregistré.')}</p>
       )}
     </div>
   )
@@ -112,7 +112,7 @@ export function RecentFightsPanel({
   const { i18n } = useTranslation()
   return (
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
-      <p className="broadcast-label text-[11px] text-[#999999]">{L(i18n.language, 'Últimos 5 combates', 'Last five', 'Cinq derniers combats')}</p>
+      <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Últimos 5 combates', 'Last five', 'Cinq derniers combats')}</p>
       <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{L(i18n.language, 'Histórico Recente', 'Recent fights', 'Combats récents')}</h2>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <Column name={nameA} fights={performanceA?.last_performances ?? []} loading={loading} tone="red" />

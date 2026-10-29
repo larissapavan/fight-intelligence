@@ -19,10 +19,10 @@ export function FighterOrigin({ fighter, className = '' }: FighterOriginProps) {
   if (!place && !nationalities) return null
 
   return (
-    <ul className={`space-y-1 text-xs leading-5 text-[#CCCCCC] ${className}`}>
+    <ul className={`space-y-1 text-xs leading-5 text-[var(--text-secondary)] ${className}`}>
       {place ? (
         <li className="flex items-start gap-1.5">
-          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#999999]" aria-hidden="true" />
+          <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
           <span className="min-w-0">
             <span className="sr-only">{L(i18n.language, 'Origem: ', 'From: ', 'Origine : ')}</span>
             {place}
@@ -31,7 +31,7 @@ export function FighterOrigin({ fighter, className = '' }: FighterOriginProps) {
       ) : null}
       {nationalities ? (
         <li className="flex items-start gap-1.5">
-          <Flag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#999999]" aria-hidden="true" />
+          <Flag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--text-muted)]" aria-hidden="true" />
           <span className="min-w-0">
             <span className="sr-only">{L(i18n.language, 'Nacionalidades: ', 'Nationalities: ', 'Nationalités : ')}</span>
             {nationalities}

@@ -10,9 +10,9 @@ export function SectionHeading({ eyebrow, title, description, level = 2 }: Secti
   const Heading = level === 1 ? 'h1' : 'h2'
   return (
     <div>
-      <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{eyebrow}</p>
-      <Heading className="title-chamfer mt-1.5 text-2xl font-black uppercase tracking-wide text-[var(--text-main)] md:text-3xl">{title}</Heading>
-      {description ? <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-muted)]">{description}</p> : null}
+      <p className="font-mono text-[11px] font-medium tracking-widest uppercase text-[var(--text-secondary)]">{eyebrow}</p>
+      <Heading className="mt-1 font-display font-extrabold uppercase tracking-tight text-2xl md:text-3xl lg:text-4xl text-[var(--text-main)]">{title}</Heading>
+      {description ? <p className="mt-1.5 max-w-3xl font-sans text-xs md:text-sm leading-relaxed text-[var(--text-secondary)]">{description}</p> : null}
     </div>
   )
 }

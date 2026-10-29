@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <h1 className="mt-3 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
               {L(language, 'Algo deu errado', 'Something went wrong', 'Un problème est survenu')}
             </h1>
-            <p className="mt-2 text-sm leading-6 text-[#999999]">
+            <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
               {L(
                 language,
                 'Um erro inesperado interrompeu esta página. Recarregar geralmente resolve.',

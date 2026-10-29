@@ -901,7 +901,7 @@ export function LoadingBout() {
           >
             <span className="h-2 w-2 rounded-full bg-[#C8102E] ring-1 ring-current" aria-hidden="true" />
             <span>{punchLabel}</span>
-            <kbd className="hidden border border-current/35 bg-black/20 px-1.5 py-0.5 font-mono text-[10px] leading-none sm:inline-block">
+            <kbd className="hidden border border-current/35 bg-[var(--bg-surface-subtle)] px-1.5 py-0.5 font-mono text-[10px] leading-none sm:inline-block">
               SPACE / ↑
             </kbd>
           </button>
@@ -921,7 +921,7 @@ export function LoadingBout() {
           >
             <span className="h-2 w-2 rounded-full bg-[#F2C230] ring-1 ring-current" aria-hidden="true" />
             <span>{kickLabel}</span>
-            <kbd className="hidden border border-current/35 bg-black/20 px-1.5 py-0.5 font-mono text-[10px] leading-none sm:inline-block">
+            <kbd className="hidden border border-current/35 bg-[var(--bg-surface-subtle)] px-1.5 py-0.5 font-mono text-[10px] leading-none sm:inline-block">
               ↓ / K
             </kbd>
           </button>

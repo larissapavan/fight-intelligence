@@ -1,12 +1,14 @@
 import { Fragment, useEffect, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LoaderCircle, Ruler, ShieldAlert, Swords, Target } from 'lucide-react'
+import { ArrowLeftRight, LoaderCircle, Ruler, ShieldAlert, Swords, Target } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 
 import { L, uiLang } from '../i18n/lang'
 import { CopyLinkButton } from '../shared/components/CopyLinkButton'
+import { FighterAvatar } from '../shared/components/FighterAvatar'
+import { FighterProfileModal } from '../shared/components/FighterProfileModal'
 import { FighterSelect } from '../shared/components/FighterSelect'
-import { TitleFightBadge } from '../shared/components/FighterBadges'
+import { FlagList, TitleFightBadge } from '../shared/components/FighterBadges'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { MatchupRadarChart } from '../shared/components/MatchupRadarChart'
 import { RecentFightsPanel } from '../shared/components/RecentFightsPanel'
@@ -14,6 +16,7 @@ import { SectionHeading } from '../shared/components/SectionHeading'
 import { ShapFactorBars } from '../shared/components/ShapFactorBars'
 import { WinProbabilityBar } from '../shared/components/WinProbabilityBar'
 import { localizePredictionMessage } from '../shared/data/probability'
+import { getFighterImageUrl, useFighterImages } from '../shared/hooks/useFighterImages'
 import { useFighters } from '../shared/hooks/useFighters'
 import { DataConfidenceNote } from '../shared/components/DataConfidenceNote'
 import { usePrediction } from '../shared/hooks/usePrediction'
@@ -59,6 +62,9 @@ export function MatchupIntelligence() {
     if (presetFighterB) setFighterBName(presetFighterB)
   }
 
+  const { imageByName } = useFighterImages()
+  const [profileName, setProfileName] = useState<string | null>(null)
+
   useEffect(() => {
     if (!fighterAName || !fighterBName || fighterAName === fighterBName) return
     void runPrediction(fighterAName, fighterBName)
@@ -70,11 +76,26 @@ export function MatchupIntelligence() {
     if (side === 'a') setFighterAName(name)
     else setFighterBName(name)
     const params = new URLSearchParams(searchParams)
-    params.set(side, name)
+    if (name) params.set(side, name)
+    else params.delete(side)
     setSearchParams(params, { replace: true })
     if (nextA && nextB && nextA === nextB) {
       setError(t('predictor.selectTwoDifferent'))
     }
+  }
+
+  const swapCorners = () => {
+    if (!fighterAName && !fighterBName) return
+    const nextA = fighterBName
+    const nextB = fighterAName
+    setFighterAName(nextA)
+    setFighterBName(nextB)
+    const params = new URLSearchParams(searchParams)
+    if (nextA) params.set('a', nextA)
+    else params.delete('a')
+    if (nextB) params.set('b', nextB)
+    else params.delete('b')
+    setSearchParams(params, { replace: true })
   }
 
   const fighterA = prediction?.fighter_a_profile ?? null
@@ -140,7 +161,7 @@ export function MatchupIntelligence() {
       </section>
 
       <section id="matchup-fighters" className="surface-card scroll-mt-4 rounded-[20px] p-4 sm:p-5">
-        <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto] sm:items-end">
           <FighterSelect
             label={t('predictor.redCorner')}
             corner="red"
@@ -150,6 +171,18 @@ export function MatchupIntelligence() {
             placeholder={t('headToHead.selectFirst')}
             onChange={(name) => chooseFighter('a', name)}
           />
+          <div className="flex justify-center sm:pb-1">
+            <button
+              type="button"
+              onClick={swapCorners}
+              disabled={!fighterAName && !fighterBName}
+              title={L(i18n.language, 'Inverter cantos (Vermelho ⇄ Azul)', 'Swap corners (Red ⇄ Blue)', 'Inverser les coins (Rouge ⇄ Bleu)')}
+              aria-label={L(i18n.language, 'Inverter cantos', 'Swap corners', 'Inverser les coins')}
+              className="ghost-action inline-flex h-10 w-10 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:text-[var(--text-main)] disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+            >
+              <ArrowLeftRight className="h-4 w-4" />
+            </button>
+          </div>
           <FighterSelect
             label={t('predictor.blueCorner')}
             corner="blue"
@@ -194,27 +227,61 @@ export function MatchupIntelligence() {
                 label={L(i18n.language, 'Copiar link do combate', 'Copy matchup link', 'Copier le lien du combat')}
               />
             </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end">
-              <FighterSelect
-                label={t('predictor.redCorner')}
-                corner="red"
-                value={fighterAName}
-                fighters={fighters}
-                disabledFighterName={fighterBName}
-                placeholder={t('headToHead.selectFirst')}
-                onChange={(name) => chooseFighter('a', name)}
-              />
-              <span className="broadcast-label pb-4 text-center text-[11px] text-[var(--text-muted)]">vs</span>
-              <FighterSelect
-                label={t('predictor.blueCorner')}
-                corner="blue"
-                value={fighterBName}
-                fighters={fighters}
-                disabledFighterName={fighterAName}
-                placeholder={t('headToHead.selectSecond')}
-                onChange={(name) => chooseFighter('b', name)}
-              />
-            </div>
+
+            {fighterA && fighterB ? (
+              <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-3)] p-3 sm:gap-4">
+                <button
+                  type="button"
+                  onClick={() => setProfileName(fighterA.name)}
+                  className="flex min-w-0 cursor-pointer items-center gap-2.5 text-left transition hover:opacity-85"
+                  title={L(i18n.language, `Ver perfil de ${fighterA.name}`, `View ${fighterA.name}'s profile`, `Voir le profil de ${fighterA.name}`)}
+                >
+                  <FighterAvatar
+                    name={fighterA.name}
+                    imageUrl={getFighterImageUrl(fighterA.name, imageByName, fighterA.image_url)}
+                    highlight={fighterA.belt}
+                    className="h-11 w-11 shrink-0 sm:h-13 sm:w-13"
+                  />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <FlagList fighter={fighterA} className="h-3.5 w-5 shrink-0" />
+                      <span className="truncate text-sm font-bold text-[var(--text-main)] sm:text-base">{fighterA.name}</span>
+                    </div>
+                    <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--text-muted)]">
+                      <span className="type-num font-semibold">{fighterA.wins ?? 0}-{fighterA.losses ?? 0}{fighterA.draws ? `-${fighterA.draws}` : ''}</span>
+
+                    </div>
+                  </div>
+                </button>
+
+                <span className="broadcast-label rounded border border-[var(--line-soft)] px-2 py-0.5 text-[10px] text-[var(--text-muted)]">VS</span>
+
+                <button
+                  type="button"
+                  onClick={() => setProfileName(fighterB.name)}
+                  className="flex min-w-0 cursor-pointer flex-row-reverse items-center gap-2.5 text-right transition hover:opacity-85"
+                  title={L(i18n.language, `Ver perfil de ${fighterB.name}`, `View ${fighterB.name}'s profile`, `Voir le profil de ${fighterB.name}`)}
+                >
+                  <FighterAvatar
+                    name={fighterB.name}
+                    imageUrl={getFighterImageUrl(fighterB.name, imageByName, fighterB.image_url)}
+                    highlight={fighterB.belt}
+                    className="h-11 w-11 shrink-0 sm:h-13 sm:w-13"
+                  />
+                  <div className="min-w-0">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <span className="truncate text-sm font-bold text-[var(--text-main)] sm:text-base">{fighterB.name}</span>
+                      <FlagList fighter={fighterB} className="h-3.5 w-5 shrink-0" />
+                    </div>
+                    <div className="mt-0.5 flex flex-wrap items-center justify-end gap-1.5 text-[11px] text-[var(--text-muted)]">
+
+                      <span className="type-num font-semibold">{fighterB.wins ?? 0}-{fighterB.losses ?? 0}{fighterB.draws ? `-${fighterB.draws}` : ''}</span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            ) : null}
+
             <div className="mt-4">
               {analyzing || !showResults || !fighterA || !fighterB || !prediction ? (
                 <LoadingSkeleton className="h-[120px]" label={L(i18n.language, 'Carregando probabilidade de vitória', 'Loading win probability', 'Chargement de la probabilité de victoire')} />
@@ -230,7 +297,7 @@ export function MatchupIntelligence() {
               )}
             </div>
             {!analyzing && prediction?.message ? (
-              <p className="mt-3 text-sm leading-6 text-[#999999]">
+              <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">
                 {localizePredictionMessage(prediction.message, prediction.predicted_winner, i18n.language)}
               </p>
             ) : null}
@@ -309,7 +376,7 @@ export function MatchupIntelligence() {
 
       {!canAnalyze ? (
         <section className="surface-card rounded-[20px] px-4 py-8 text-center">
-          <p className="text-sm leading-6 text-[#999999]">
+          <p className="text-sm leading-6 text-[var(--text-muted)]">
             {L(
               i18n.language,
               'Selecione dois lutadores e execute a análise para ver a comparação de trocação, luta agarrada, dados físicos e os fatores SHAP que explicam a previsão do modelo.',
@@ -318,6 +385,15 @@ export function MatchupIntelligence() {
             )}
           </p>
         </section>
+      ) : null}
+
+      {profileName ? (
+        <FighterProfileModal
+          key={profileName}
+          name={profileName}
+          onClose={() => setProfileName(null)}
+          onSelectFighter={setProfileName}
+        />
       ) : null}
     </div>
   )

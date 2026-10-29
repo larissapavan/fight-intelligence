@@ -134,6 +134,9 @@ type TitleFightBadgeProps = {
     interim_title?: boolean
     interim_title_win?: boolean
     weight_class?: string | null
+    notes?: string | null
+    event?: string | null
+    event_name?: string | null
   }
   className?: string
 }

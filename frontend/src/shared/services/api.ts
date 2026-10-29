@@ -192,6 +192,11 @@ export const getOrgDataInfo = async (org: string) => {
   return response.data
 }
 
+export const getOrgUpcomingPicks = async (org: string) => {
+  const response = await api.get<UpcomingPick[]>(`/orgs/${encodeURIComponent(org)}/predict/upcoming`)
+  return response.data
+}
+
 // Gyms are shared by every organization: a gym is matched with the fighters of each one.
 
 export const getGyms = async () => {

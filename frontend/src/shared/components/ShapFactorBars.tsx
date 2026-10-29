@@ -27,7 +27,7 @@ export function ShapFactorBars({
     <article className="surface-card rounded-[20px] p-3 sm:p-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="broadcast-label text-[11px] text-[#999999]">{L(i18n.language, 'Explicabilidade da IA (SHAP)', 'SHAP explainability', 'Explicabilité de l\'IA (SHAP)')}</p>
+          <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Explicabilidade da IA (SHAP)', 'SHAP explainability', 'Explicabilité de l\'IA (SHAP)')}</p>
           <h2 className="mt-0.5 text-lg font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">{L(i18n.language, 'Fatores Decisivos do Combate', 'Key matchup factors', 'Facteurs décisifs du combat')}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-[0.12em]">
@@ -41,7 +41,7 @@ export function ShapFactorBars({
           </span>
         </div>
       </div>
-      <p className="mt-1 text-xs text-[#999999]">
+      <p className="mt-1 text-xs text-[var(--text-muted)]">
         {L(
           i18n.language,
           'As barras indicam qual lutador foi favorecido por cada métrica estatística. Barras maiores indicam impacto mais forte.',
@@ -79,7 +79,7 @@ export function ShapFactorBars({
               >
                 <div className={`h-full rounded-full ${color}`} style={{ width: `${width}%` }} />
               </div>
-              <p className="mt-1 text-[12px] leading-5 text-[#999999]">{explanation}</p>
+              <p className="mt-1 text-[12px] leading-5 text-[var(--text-muted)]">{explanation}</p>
             </div>
           )
         })}

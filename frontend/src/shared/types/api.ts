@@ -44,6 +44,9 @@ export interface FighterProfile {
   elo_rank?: number | null
   next_fight?: UpcomingBout | null
   upcoming_fights?: UpcomingBout[]
+  ufc_record?: RecordSummary | null
+  complete_record?: RecordSummary | null
+  organizations?: string[]
 }
 
 export interface UpcomingBout {
@@ -216,6 +219,19 @@ export interface FightRecord {
   interim_title_win?: boolean
   outcome?: string | null
   result_details?: string | null
+  organization?: string | null
+  is_ufc?: boolean
+  notes?: string | null
+  event?: string | null
+}
+
+export interface RecordSummary {
+  total: number
+  wins: number
+  losses: number
+  draws?: number
+  nc?: number
+  win_rate?: number
 }
 
 export interface CommonOpponent {
@@ -362,6 +378,9 @@ export interface FighterPerformance {
   yearly_trends: YearlyTrend[]
   next_fight?: UpcomingBout | null
   upcoming_fights?: UpcomingBout[]
+  ufc_record?: RecordSummary | null
+  complete_record?: RecordSummary | null
+  organizations?: string[]
 }
 
 export interface RecordBookLeader {
@@ -509,6 +528,18 @@ export interface OrgFighter {
   first_fight_date: string | null
   last_fight_date: string | null
   next_fight: NextFight | null
+  sig_str_acc?: number | null
+  sig_strikes_landed_per_min?: number | null
+  sig_strikes_absorbed_per_min?: number | null
+  striking_defense?: number | null
+  takedown_avg_per_15min?: number | null
+  takedown_acc?: number | null
+  takedown_defense?: number | null
+  submission_avg_per_15min?: number | null
+  finish_rate?: number | null
+  ko_rate?: number | null
+  sub_rate?: number | null
+  win_streak?: number | null
 }
 
 export interface OrgFightResult extends FightResult {

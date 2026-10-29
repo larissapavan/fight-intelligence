@@ -49,10 +49,13 @@ export function FightMatchupCard({
   }
 
   const weightClassDisplay = fight.weight_class ? getDivisionName(fight.weight_class, i18n.language) : null
+  const isTbdMatchup = fight.fighter_1?.toUpperCase() === 'TBD' || fight.fighter_2?.toUpperCase() === 'TBD'
 
   return (
     <article className="metric-tile relative rounded-2xl px-3 py-3 sm:px-4 sm:py-3.5">
-      <Link to={to} aria-label={`${fight.fighter_1} vs ${fight.fighter_2}`} className="absolute inset-0 z-0 rounded-2xl" />
+      {!isTbdMatchup && (
+        <Link to={to} aria-label={`${fight.fighter_1} vs ${fight.fighter_2}`} className="absolute inset-0 z-0 rounded-2xl" />
+      )}
       <div className="relative z-10 grid grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto] items-center gap-x-1.5 xs:gap-x-2 gap-y-1 pointer-events-none">
         <CornerPhoto name={fight.fighter_1} />
         <CornerName name={fight.fighter_1} align="right" won={fighter1Won} onOpenFighter={onOpenFighter} />
@@ -63,9 +66,15 @@ export function FightMatchupCard({
 
       <div className="relative z-10 mt-2.5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5 pointer-events-none">
         <TitleFightBadge fight={titleFightInfo} />
-        <span className="pointer-events-auto">
-          <PickChip pick={pick} />
-        </span>
+        {isTbdMatchup ? (
+          <span className="selector-chip border-amber-400/40 bg-amber-400/10 text-amber-500 dark:text-amber-300 font-mono text-[11px] font-bold uppercase tracking-wider">
+            {L(i18n.language, '✦ Buscando Substituto', '✦ Seeking Replacement', '✦ En recherche d\'adversaire')}
+          </span>
+        ) : (
+          <span className="pointer-events-auto">
+            <PickChip pick={pick} />
+          </span>
+        )}
         {weightClassDisplay ? <span className="selector-chip text-[11px] text-[var(--text-main)]">{weightClassDisplay}</span> : null}
       </div>
 
@@ -84,6 +93,15 @@ function CornerPhoto({ name }: { name: string }) {
   const lookup = useFighterLookup()
   const { imageByName } = useFighterImages()
   const fighter = lookup(name)
+  const isTbd = name?.toUpperCase() === 'TBD' || name?.toUpperCase() === 'TBA'
+
+  if (isTbd) {
+    return (
+      <span className="relative grid h-10 w-9 sm:h-12 sm:w-10 shrink-0 place-items-center overflow-hidden rounded-lg border-2 border-dashed border-amber-400/50 bg-amber-400/10 text-amber-500 dark:text-amber-400 font-mono font-bold text-base select-none">
+        ?
+      </span>
+    )
+  }
 
   return (
     <FighterAvatar
@@ -108,6 +126,18 @@ function CornerName({
   const { i18n } = useTranslation()
   const profile = useFighterLookup()(name)
   const side = align === 'right' ? 'justify-end text-right' : 'justify-start text-left'
+  const isTbd = name?.toUpperCase() === 'TBD' || name?.toUpperCase() === 'TBA'
+
+  if (isTbd) {
+    return (
+      <span className={`flex min-w-0 items-center gap-1.5 px-1 py-1 ${side}`}>
+        <span className="min-w-0 truncate font-mono text-xs xs:text-sm font-bold uppercase tracking-wider text-amber-500 dark:text-amber-400">
+          {L(i18n.language, 'Aguardando Oponente (TBD)', 'Awaiting Opponent (TBD)', 'Adversaire à déterminer (TBD)')}
+        </span>
+      </span>
+    )
+  }
+
   const label = (
     <>
       {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" /> : null}
