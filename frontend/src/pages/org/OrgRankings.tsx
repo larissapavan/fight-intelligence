@@ -46,7 +46,7 @@ export function OrgRankings() {
           )}
         />
         {p4p.length ? (
-          <div className="mt-4 inline-flex max-w-full overflow-x-auto chip-scroll rounded-full border border-white/14 bg-white/[0.04] p-1">
+          <div className="mt-4 inline-flex max-w-full overflow-x-auto chip-scroll rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] p-1">
             <TabButton active={tab === 'division'} onClick={() => setTab('division')}>
               {L(i18n.language, 'Por Categoria', 'Category Ranking', 'Par catégorie')}
             </TabButton>
@@ -130,7 +130,7 @@ function TabButton({ active, onClick, children }: { active: boolean; onClick: ()
       onClick={onClick}
       aria-pressed={active}
       className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition sm:text-[13px] ${
-        active ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[#CCCCCC] hover:text-white'
+        active ? 'bg-[#FFFFFF] text-[#050505]' : 'text-[var(--text-secondary)] hover:text-white'
       }`}
     >
       {children}
@@ -157,7 +157,7 @@ function RankingList({
 
   return (
     <section aria-label={L(i18n.language, 'Atletas ranqueados', 'Ranked athletes', 'Athlètes classés')} className="space-y-2.5">
-      <div className="flex items-center justify-between border-b border-white/10 px-1 pb-2">
+      <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-1 pb-2">
         <h2 className="broadcast-label text-xs text-[var(--text-main)]">{L(i18n.language, 'Atletas ranqueados', 'Ranked athletes', 'Athlètes classés')}</h2>
         <span className="text-xs text-[var(--text-muted)]">
           {contenders.length + titleHolders.length} {L(i18n.language, 'listados', 'listed', 'listés')}
@@ -300,5 +300,5 @@ function RankChange({ change }: { change: string | null }) {
     )
   }
   const label = change === 'new' ? L(i18n.language, 'Novo', change, 'Nouveau') : change
-  return <span className="type-tech rounded-full border border-white/10 px-2 py-0.5 text-[11px] font-semibold uppercase text-[var(--text-muted)]">{label}</span>
+  return <span className="type-tech rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-[11px] font-semibold uppercase text-[var(--text-muted)]">{label}</span>
 }

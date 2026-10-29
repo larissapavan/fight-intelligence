@@ -11,6 +11,8 @@ import { L, localeTag } from '../../i18n/lang'
 import { formatDate } from '../../shared/data/orgFormat'
 import { useOrg } from '../../shared/hooks/useOrg'
 import { useOrgEvents, useOrgUpcomingEvents } from '../../shared/hooks/useOrgData'
+import { useUpcomingPicks } from '../../shared/hooks/useUpcomingPicks'
+import type { UpcomingPick } from '../../shared/types/api'
 import type { OrgEvent } from '../../shared/types/api'
 
 /** Today's card still counts as to come until its results are in. */
@@ -29,6 +31,7 @@ export function OrgEvents() {
   const org = useOrg()
   const { events, loading, error } = useOrgEvents(org.id)
   const upcoming = useOrgUpcomingEvents(org.id)
+  const pickFor = useUpcomingPicks(org.id, org.hasPredictions)
   const [searchParams] = useSearchParams()
   const [query, setQuery] = useState(() => searchParams.get('q') ?? '')
   const [yearFilter, setYearFilter] = useState('ALL')
@@ -152,6 +155,7 @@ export function OrgEvents() {
                   isOpen={openEvents.has(key) !== (index === 0 && !isSearching)}
                   onToggle={() => setOpenEvents((current) => toggle(current, key))}
                   onOpenFighter={setProfileName}
+                  pickFor={pickFor}
                 />
               )
             })}
@@ -176,7 +180,7 @@ export function OrgEvents() {
                 <button
                   type="button"
                   onClick={() => setOpenYears((current) => toggle(current, year))}
-                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-[var(--bg-surface-subtle)] sm:px-4"
                   aria-expanded={isOpen}
                 >
                   <Swords className="h-4 w-4 text-[var(--accent-red)]" />
@@ -227,12 +231,14 @@ function EventCard({
   isOpen,
   onToggle,
   onOpenFighter,
+  pickFor,
 }: {
   org: string
   event: OrgEvent
   isOpen: boolean
   onToggle: () => void
   onOpenFighter: (name: string) => void
+  pickFor?: (event: string, fighterA: string, fighterB: string) => UpcomingPick | undefined
 }) {
   const { i18n } = useTranslation()
   return (
@@ -240,7 +246,7 @@ function EventCard({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition duration-150 hover:bg-white/[0.03]"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition duration-150 hover:bg-[var(--bg-surface-subtle)]"
         aria-expanded={isOpen}
       >
         <div className="min-w-0 flex-1">
@@ -271,7 +277,7 @@ function EventCard({
           {event.fights.length ? (
             <div className="grid gap-3">
               {event.fights.map((fight, index) => (
-                <OrgFightRow key={fight.fight_url ?? index} org={org} fight={fight} scheduled={isUpcoming(event.date)} onOpenFighter={onOpenFighter} />
+                <OrgFightRow key={fight.fight_url ?? index} org={org} fight={fight} scheduled={isUpcoming(event.date)} pick={pickFor?.(event.name, fight.fighter_1, fight.fighter_2)} onOpenFighter={onOpenFighter} />
               ))}
             </div>
           ) : (

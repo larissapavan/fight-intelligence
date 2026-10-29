@@ -45,7 +45,7 @@ function OrgHistory({ item }: { item: OtherOrganization }) {
   const shown = all ? item.fights : item.fights.slice(0, FIRST_SHOWN)
   return (
     <div className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[11px] text-[#999999]">
+      <p className="broadcast-label text-[11px] text-[var(--text-muted)]">
         {L(
           i18n.language,
           `Também lutou no ${item.short_name}${item.org_record ? ` · ${item.org_record} por lá` : ''}`,

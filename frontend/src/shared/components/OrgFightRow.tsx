@@ -1,11 +1,11 @@
-import { Trophy } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { L } from '../../i18n/lang'
 import { getDivisionName } from '../data/divisions'
 import { fightSummary } from '../data/orgFormat'
 import { useOrgFighterLookup } from '../hooks/useOrgFighterLookup'
-import type { OrgFightResult } from '../types/api'
+import type { OrgFightResult, UpcomingPick } from '../types/api'
 import { FighterAvatar } from './FighterAvatar'
 
 /** One bout of an organization's card: both corners, the weight class, the stage and, once fought, how it ended. */
@@ -13,12 +13,14 @@ export function OrgFightRow({
   org,
   fight,
   scheduled = false,
+  pick,
   onOpenFighter,
 }: {
   org: string
   fight: OrgFightResult
   /** The bout is still to come: without a result that means "scheduled", not "the site has no result". */
   scheduled?: boolean
+  pick?: UpcomingPick
   onOpenFighter?: (name: string) => void
 }) {
   const { i18n } = useTranslation()
@@ -53,8 +55,25 @@ export function OrgFightRow({
         {stage ? <span className="selector-chip text-[11px] text-[var(--text-main)]">{stage}</span> : null}
       </div>
 
+      {scheduled && pick ? (
+        <div className="mt-2.5 flex items-center justify-center">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-[#F2C230]/40 bg-[#F2C230]/10 px-3 py-1 text-xs">
+            <Sparkles className="h-3 w-3 text-[#F2C230]" />
+            <span className="font-bold uppercase tracking-wider text-[#F2C230]">
+              {L(i18n.language, 'Predição:', 'AI Pick:', 'Pronostic :')}
+            </span>
+            <span className="font-extrabold text-[var(--text-main)]">
+              {pick.predicted_winner}
+            </span>
+            <span className="rounded bg-[#F2C230] px-1.5 py-0.5 font-mono text-[10px] font-extrabold text-[#0E0E0E]">
+              {Math.round(pick.probability * 100)}%
+            </span>
+          </div>
+        </div>
+      ) : null}
+
       <p className="mt-2 text-center text-[11px] leading-4 text-[var(--text-muted)] sm:text-xs">
-        {summary ?? (fight.winner ? L(i18n.language, 'Resultado oficial registrado', 'Result recorded', 'Résultat officiel enregistré') : scheduled ? L(i18n.language, 'Luta programada', 'Scheduled', 'Combat programmé') : L(i18n.language, 'Sem resultado registrado', 'No result recorded', 'Aucun résultat enregistré'))}
+        {summary ?? (fight.winner ? L(i18n.language, 'Resultado oficial registrado', 'Result recorded', 'Résultat officiel enregistré') : scheduled ? (pick ? null : L(i18n.language, 'Luta programada', 'Scheduled', 'Combat programmé')) : L(i18n.language, 'Sem resultado registrado', 'No result recorded', 'Aucun resultado enregistré'))}
       </p>
     </article>
   )
@@ -73,28 +92,27 @@ function Corner({
   known: boolean
   onOpen?: (name: string) => void
 }) {
-  const { i18n } = useTranslation()
-  const side = align === 'right' ? 'justify-end text-right' : 'justify-start text-left'
-  const winnerLabel = L(i18n.language, 'Vencedor', 'Winner', 'Vainqueur')
-  const label = (
-    <>
-      {align === 'right' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" aria-label={winnerLabel} /> : null}
-      <span className={`min-w-0 truncate text-xs xs:text-sm leading-tight text-[var(--text-main)] sm:text-base ${won ? 'font-bold' : 'font-semibold'}`}>{name}</span>
-      {align === 'left' && won ? <Trophy className="h-3.5 w-3.5 shrink-0 text-[var(--accent-red)]" aria-label={winnerLabel} /> : null}
-    </>
+  const content = (
+    <span
+      className={`block truncate text-sm sm:text-base font-extrabold uppercase tracking-tight transition ${
+        won ? 'text-[#F2C230]' : 'text-[var(--text-main)]'
+      } ${known ? 'group-hover:text-[#F2C230]' : ''}`}
+    >
+      {name}
+    </span>
   )
 
-  if (known && onOpen) {
-    return (
-      <button
-        type="button"
-        onClick={() => onOpen(name)}
-        aria-label={L(i18n.language, `${name}. Ver perfil`, `${name}. View profile`, `${name}. Voir le profil`)}
-        className={`flex min-w-0 items-center gap-1.5 px-1 py-1 ${side}`}
-      >
-        {label}
-      </button>
-    )
+  if (!known) {
+    return <div className={`min-w-0 ${align === 'right' ? 'text-right' : 'text-left'}`}>{content}</div>
   }
-  return <span className={`flex min-w-0 items-center gap-1.5 px-1 py-1 ${side}`}>{label}</span>
+
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen?.(name)}
+      className={`group min-w-0 cursor-pointer ${align === 'right' ? 'text-right' : 'text-left'}`}
+    >
+      {content}
+    </button>
+  )
 }

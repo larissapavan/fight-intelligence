@@ -96,9 +96,9 @@ export function formatWeight(lbs: number | null, language: string | boolean = fa
 
 /** Lightest to heaviest, men's divisions first, then women's. */
 const DIVISION_ORDER = [
-  'Flyweight', 'Bantamweight', 'Featherweight', 'Lightweight', 'Welterweight', 'Middleweight', 'Light Heavyweight',
-  'Heavyweight', "Women's Atomweight", "Women's Strawweight", "Women's Flyweight", "Women's Bantamweight", "Women's Featherweight",
-  "Women's Lightweight",
+  'Flyweight', 'Bantamweight', 'Featherweight', 'Lightweight', 'Welterweight', 'Middleweight', 'Super Middleweight',
+  'Light Heavyweight', 'Cruiserweight', 'Heavyweight', "Women's Atomweight", "Women's Strawweight", "Women's Flyweight",
+  "Women's Bantamweight", "Women's Featherweight", "Women's Lightweight",
 ]
 
 export function compareDivisions(a: string, b: string) {
