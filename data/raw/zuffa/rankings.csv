@@ -1,0 +1,53 @@
+category,is_p4p,rank,fighter,rank_change,status,athlete_url
+Pound-for-Pound (Men's),True,1,Terence Crawford,,,https://www.ufc.com/zuffa-boxing#terence-crawford
+Pound-for-Pound (Men's),True,2,Jai Opetaia,,,https://www.ufc.com/zuffa-boxing#jai-opetaia
+Pound-for-Pound (Men's),True,3,Canelo Alvarez,,,https://www.ufc.com/zuffa-boxing#canelo-alvarez
+Pound-for-Pound (Men's),True,4,Tyson Fury,,,https://www.ufc.com/zuffa-boxing#tyson-fury
+Pound-for-Pound (Men's),True,5,Aaron McKenna,up 2,,https://www.ufc.com/zuffa-boxing#aaron-mckenna
+Pound-for-Pound (Men's),True,6,Jose Valenzuela,up 1,,https://www.ufc.com/zuffa-boxing#jose-valenzuela
+Pound-for-Pound (Men's),True,7,Ryan Garcia,,,https://www.ufc.com/zuffa-boxing#ryan-garcia
+Pound-for-Pound (Men's),True,8,Callum Walsh,up 1,,https://www.ufc.com/zuffa-boxing#callum-walsh
+Pound-for-Pound (Men's),True,9,Efe Ajagba,,,https://www.ufc.com/zuffa-boxing#efe-ajagba
+Pound-for-Pound (Men's),True,10,Chris Billam-Smith,,,https://www.ufc.com/zuffa-boxing#chris-billam-smith
+Heavyweight,False,0,Tyson Fury,,champion,https://www.ufc.com/zuffa-boxing#tyson-fury
+Heavyweight,False,1,Efe Ajagba,,,https://www.ufc.com/zuffa-boxing#efe-ajagba
+Heavyweight,False,2,Johnny Fisher,up 2,,https://www.ufc.com/zuffa-boxing#johnny-fisher
+Heavyweight,False,3,Arslanbek Makhmudov,down 1,,https://www.ufc.com/zuffa-boxing#arslanbek-makhmudov
+Heavyweight,False,4,Charles Martin,,,https://www.ufc.com/zuffa-boxing#charles-martin
+Heavyweight,False,5,Da'Mazion Vanhouter,up 1,,https://www.ufc.com/zuffa-boxing#da-mazion-vanhouter
+Cruiserweight,False,0,Jai Opetaia,,champion,https://www.ufc.com/zuffa-boxing#jai-opetaia
+Cruiserweight,False,1,Chris Billam-Smith,,,https://www.ufc.com/zuffa-boxing#chris-billam-smith
+Cruiserweight,False,2,Cheavon Clarke,up 1,,https://www.ufc.com/zuffa-boxing#cheavon-clarke
+Cruiserweight,False,3,Brandon Glanton,down 1,,https://www.ufc.com/zuffa-boxing#brandon-glanton
+Cruiserweight,False,4,Ryan Rozicki,,,https://www.ufc.com/zuffa-boxing#ryan-rozicki
+Cruiserweight,False,5,Jamar Talley,,,https://www.ufc.com/zuffa-boxing#jamar-talley
+Light Heavyweight,False,0,,,vacant,
+Light Heavyweight,False,1,Radivoje Kalajdzic,up 1,,https://www.ufc.com/zuffa-boxing#radivoje-kalajdzic
+Light Heavyweight,False,2,Umar Dzambekov,up 2,,https://www.ufc.com/zuffa-boxing#umar-dzambekov
+Light Heavyweight,False,3,Zach Parker,,,https://www.ufc.com/zuffa-boxing#zach-parker
+Light Heavyweight,False,4,Joe Ward,up 1,,https://www.ufc.com/zuffa-boxing#joe-ward
+Light Heavyweight,False,5,Craig Richards,down 2,,https://www.ufc.com/zuffa-boxing#craig-richards
+Super Middleweight,False,0,Terence Crawford,,champion,https://www.ufc.com/zuffa-boxing#terence-crawford
+Super Middleweight,False,1,Canelo Alvarez,,,https://www.ufc.com/zuffa-boxing#canelo-alvarez
+Super Middleweight,False,2,Edgar Berlanga,up 1,,https://www.ufc.com/zuffa-boxing#edgar-berlanga
+Super Middleweight,False,3,Steven Butler,down 1,,https://www.ufc.com/zuffa-boxing#steven-butler
+Middleweight,False,0,Aaron McKenna,,champion,https://www.ufc.com/zuffa-boxing#aaron-mckenna
+Middleweight,False,1,Callum Walsh,up 1,,https://www.ufc.com/zuffa-boxing#callum-walsh
+Middleweight,False,2,Shane Mosley Jr.,up 2,,https://www.ufc.com/zuffa-boxing#shane-mosley-jr
+Middleweight,False,3,Serhii Bohachuk,down 1,,https://www.ufc.com/zuffa-boxing#serhii-bohachuk
+Middleweight,False,4,Misael Rodriguez,,,https://www.ufc.com/zuffa-boxing#misael-rodriguez
+Middleweight,False,5,Denzel Bentley,,,https://www.ufc.com/zuffa-boxing#denzel-bentley
+Middleweight,False,6,Etinosa Oliha,down 3,,https://www.ufc.com/zuffa-boxing#etinosa-oliha
+Middleweight,False,7,Stevie McKenna,up 1,,https://www.ufc.com/zuffa-boxing#stevie-mckenna
+Middleweight,False,8,Connor Coyle,,,https://www.ufc.com/zuffa-boxing#connor-coyle
+Welterweight,False,0,Ryan Garcia,,champion,https://www.ufc.com/zuffa-boxing#ryan-garcia
+Welterweight,False,1,Richardson Hitchins,up 1,,https://www.ufc.com/zuffa-boxing#richardson-hitchins
+Welterweight,False,2,Conor Benn,down 1,,https://www.ufc.com/zuffa-boxing#conor-benn
+Welterweight,False,3,Julian Rodriguez,,,https://www.ufc.com/zuffa-boxing#julian-rodriguez
+Welterweight,False,4,Jalil Hackett,up 1,,https://www.ufc.com/zuffa-boxing#jalil-hackett
+Lightweight,False,0,Jose Valenzuela,,champion,https://www.ufc.com/zuffa-boxing#jose-valenzuela
+Lightweight,False,1,Andres Cortes,up 1,,https://www.ufc.com/zuffa-boxing#andres-cortes
+Lightweight,False,2,Edwin De Los Santos,down 1,,https://www.ufc.com/zuffa-boxing#edwin-de-los-santos
+Lightweight,False,3,Justin Viloria,up 2,,https://www.ufc.com/zuffa-boxing#justin-viloria
+Lightweight,False,4,Diego Torres,,,https://www.ufc.com/zuffa-boxing#diego-torres
+Lightweight,False,5,Eridson Garcia,down 1,,https://www.ufc.com/zuffa-boxing#eridson-garcia

@@ -1,0 +1,45 @@
+category,is_p4p,rank,fighter,rank_change,status,athlete_url
+Heavyweight,False,0,Oumar Kane,,champion,https://www.onefc.com/athletes/oumar-kane/
+Heavyweight,False,1,Anatoly Malykhin,,,https://www.onefc.com/athletes/anatoly-malykhin/
+Heavyweight,False,2,Shamil Erdogan,up 1,,https://www.onefc.com/athletes/shamil-erdogan/
+Heavyweight,False,3,Marcus Buchecha,,,https://www.onefc.com/athletes/marcus-almeida/
+Welterweight,False,0,Christian Lee,,champion,https://www.onefc.com/athletes/christian-lee/
+Welterweight,False,1,Roberto Soldic,up 1,,https://www.onefc.com/athletes/roberto-soldic/
+Welterweight,False,2,Zebaztian Kadestam,,,https://www.onefc.com/athletes/zebaztian-kadestam/
+Welterweight,False,3,Maurice Abevi,up 1,,https://www.onefc.com/athletes/maurice-abevi/
+Lightweight,False,0,Christian Lee,,champion,https://www.onefc.com/athletes/christian-lee/
+Lightweight,False,1,Alibeg Rasulov,,,https://www.onefc.com/athletes/alibeg-rasulov/
+Lightweight,False,2,Kade Ruotolo,up 2,,https://www.onefc.com/athletes/kade-ruotolo/
+Lightweight,False,3,Ok Rae Yoon,,,https://www.onefc.com/athletes/ok-rae-yoon/
+Lightweight,False,4,Lucas Gabriel,up 1,,https://www.onefc.com/athletes/lucas-gabriel/
+Featherweight,False,0,Tang Kai,,champion,https://www.onefc.com/athletes/tang-kai/
+Featherweight,False,1,Akbar Abdullaev,,,https://www.onefc.com/athletes/akbar-abdullaev/
+Featherweight,False,2,Garry Tonon,,,https://www.onefc.com/athletes/garry-tonon/
+Featherweight,False,3,Shamil Gasanov,,,https://www.onefc.com/athletes/shamil-gasanov/
+Featherweight,False,4,Ilya Freymanov,,,https://www.onefc.com/athletes/ilya-freymanov/
+Bantamweight,False,0,Elbek Alyshov,,champion,https://www.onefc.com/athletes/elbek-alyshov/
+Bantamweight,False,1,Fabricio Andrade,down 1,,https://www.onefc.com/athletes/fabricio-andrade/
+Bantamweight,False,2,Kwon Won Il,,,https://www.onefc.com/athletes/kwon-won-il/
+Bantamweight,False,3,John Lineker,,,https://www.onefc.com/athletes/john-lineker/
+Bantamweight,False,4,Jonathan Haggerty,,,https://www.onefc.com/athletes/jonathan-haggerty/
+Flyweight,False,0,Avazbek Kholmirzaev,,champion,https://www.onefc.com/athletes/avazbek-kholmirzaev/
+Flyweight,False,1,Adriano Moraes,down 1,,https://www.onefc.com/athletes/adriano-moraes/
+Flyweight,False,2,Joshua Pacio,,,https://www.onefc.com/athletes/joshua-pacio/
+Flyweight,False,3,Yuya Wakamatsu,,,https://www.onefc.com/athletes/yuya-wakamatsu/
+Flyweight,False,4,Jarred Brooks,,,https://www.onefc.com/athletes/jarred-brooks/
+Flyweight,False,5,Danny Kingad,,,https://www.onefc.com/athletes/danny-kingad/
+Women's Strawweight,False,0,Xiong Jing Nan,,champion,https://www.onefc.com/athletes/xiong-jing-nan/
+Women's Strawweight,False,1,Ayaka Miura,up 1,,https://www.onefc.com/athletes/ayaka-miura/
+Women's Strawweight,False,2,Meng Bo,,,https://www.onefc.com/athletes/meng-bo/
+Women's Atomweight,False,0,Stamp Fairtex,,champion,https://www.onefc.com/athletes/stamp-fairtex/
+Women's Atomweight,False,0,Denice Zamboanga,,interim,https://www.onefc.com/athletes/denice-zamboanga/
+Women's Atomweight,False,1,Ham Seo Hee,,,https://www.onefc.com/athletes/ham-seo-hee/
+Women's Atomweight,False,2,Alyona Rassohyna,,,https://www.onefc.com/athletes/alyona-rassohyna/
+Pound-for-Pound,True,1,Christian Lee,,,https://www.onefc.com/athletes/christian-lee/
+Pound-for-Pound,True,2,Tang Kai,,,https://www.onefc.com/athletes/tang-kai/
+Pound-for-Pound,True,3,Anatoly Malykhin,,,https://www.onefc.com/athletes/anatoly-malykhin/
+Pound-for-Pound,True,4,Superlek Kiatmoo9,,,https://www.onefc.com/athletes/superlek-kiatmoo9/
+Pound-for-Pound,True,5,Rodtang Jitmuangnon,,,https://www.onefc.com/athletes/rodtang-jitmuangnon/
+Pound-for-Pound,True,6,Stamp Fairtex,,,https://www.onefc.com/athletes/stamp-fairtex/
+Pound-for-Pound,True,7,Elbek Alyshov,,,https://www.onefc.com/athletes/elbek-alyshov/
+Pound-for-Pound,True,8,Avazbek Kholmirzaev,,,https://www.onefc.com/athletes/avazbek-kholmirzaev/

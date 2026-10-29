@@ -9,6 +9,7 @@ scripts/__pycache__/
 *.log
 .pytest_cache/
 .mypy_cache/
+node_modules/
 frontend/node_modules/
 frontend/dist/
 frontend/.env

@@ -1,7 +1,7 @@
 slug,name,url,fighters_count,checked
-american-top-team,American Top Team,https://fighthub-app.com/br/gyms/american-top-team/,58,2026-10-26
-kill-cliff-fc,Kill Cliff FC,https://fighthub-app.com/br/gyms/kill-cliff-fc/,41,2026-10-26
-xtreme-couture,Xtreme Couture,https://fighthub-app.com/br/gyms/xtreme-couture/,37,2026-10-26
+american-top-team,American Top Team,https://fighthub-app.com/br/gyms/american-top-team/,61,2026-10-26
+kill-cliff-fc,Kill Cliff FC,https://fighthub-app.com/br/gyms/kill-cliff-fc/,46,2026-10-26
+xtreme-couture,Xtreme Couture,https://fighthub-app.com/br/gyms/xtreme-couture/,68,2026-10-26
 syndicate-mma,Syndicate MMA,https://fighthub-app.com/br/gyms/syndicate-mma/,24,2026-10-26
 sbg-ireland,SBG Ireland,https://fighthub-app.com/br/gyms/sbg-ireland/,23,2026-10-21
 team-alpha-male,Team Alpha Male,https://fighthub-app.com/br/gyms/team-alpha-male/,19,2026-10-21
@@ -22,12 +22,12 @@ manchester-top-team,Manchester Top Team,https://fighthub-app.com/en/gyms/manches
 entram-gym,Entram Gym,https://fighthub-app.com/br/gyms/entram-gym/,8,2026-10-26
 next-generation-mma-liverpool,Next Generation MMA Liverpool,https://fighthub-app.com/en/gyms/next-generation-mma-liverpool/,8,2026-10-26
 team-oyama,Team Oyama,https://fighthub-app.com/br/gyms/team-oyama/,8,2026-10-21
-tiger-muay-thai,Tiger Muay Thai,https://fighthub-app.com/br/gyms/tiger-muay-thai/,8,2026-10-21
+tiger-muay-thai,Tiger Muay Thai,https://fighthub-app.com/br/gyms/tiger-muay-thai/,145,2026-10-21
 american-kickboxing-academy,American Kickboxing Academy,https://fighthub-app.com/br/gyms/american-kickboxing-academy/,7,2026-10-21
 kings-mma,Kings MMA,https://fighthub-app.com/br/gyms/kings-mma/,7,2026-10-21
 pitbull-brothers,Pitbull Brothers,https://fighthub-app.com/en/gyms/pitbull-brothers/,7,2026-10-26
-ufd-gym,UFD Gym,https://fighthub-app.com/en/gyms/ufd-gym/,7,2026-10-21
-alliance-mma,Alliance MMA,https://fighthub-app.com/br/gyms/alliance-mma/,6,2026-10-21
+ufd-gym,UFD Gym,https://fighthub-app.com/en/gyms/ufd-gym/,8,2026-10-21
+alliance-mma,Alliance MMA,https://fighthub-app.com/br/gyms/alliance-mma/,7,2026-10-21
 american-top-team-atlanta,American Top Team Atlanta,https://fighthub-app.com/en/gyms/american-top-team-atlanta/,6,2026-10-21
 boxing-squad,Boxing Squad,https://fighthub-app.com/en/gyms/boxing-squad/,6,2026-10-21
 fight-ready,Fight Ready,https://fighthub-app.com/br/gyms/fight-ready/,6,2026-10-21
@@ -38,7 +38,7 @@ sikjitsu,Sikjitsu,https://fighthub-app.com/br/gyms/sikjitsu/,6,2026-10-21
 teixeira-mma-fitness,Teixeira MMA & Fitness,https://fighthub-app.com/br/gyms/teixeira-mma-fitness/,6,2026-10-21
 valle-flow-striking,Valle Flow Striking,https://fighthub-app.com/br/gyms/valle-flow-striking/,6,2026-10-26
 4oz-fight-club,4oz. Fight Club,https://fighthub-app.com/en/gyms/4oz-fight-club/,5,2026-10-26
-astra-fight-team,Astra Fight Team,https://fighthub-app.com/en/gyms/astra-fight-team/,5,2026-10-21
+astra-fight-team,Astra Fight Team,https://fighthub-app.com/en/gyms/astra-fight-team/,6,2026-10-21
 black-house,Black House,https://fighthub-app.com/br/gyms/black-house/,5,2026-10-21
 brazilian-tko,Brazilian TKO,https://fighthub-app.com/br/gyms/brazilian-tko/,5,2026-10-21
 dagfighter,DagFighter,https://fighthub-app.com/en/gyms/dagfighter/,5,2026-10-21
@@ -136,7 +136,7 @@ cesar-gracie-fight-team,Cesar Gracie Fight Team,https://fighthub-app.com/en/gyms
 china-top-team,China Top Team,https://fighthub-app.com/en/gyms/china-top-team/,2,2026-10-21
 chute-boxe-monstro,Chute Boxe Monstro,https://fighthub-app.com/en/gyms/chute-boxe-monstro/,2,2026-10-21
 climent-club,Climent Club,https://fighthub-app.com/en/gyms/climent-club/,2,2026-10-21
-combat-brothers,Combat Brothers,https://fighthub-app.com/en/gyms/combat-brothers/,2,2026-10-26
+combat-brothers,Combat Brothers,https://fighthub-app.com/en/gyms/combat-brothers/,3,2026-10-26
 combat-sport-fitness,Combat Sport & Fitness,https://fighthub-app.com/en/gyms/combat-sport-fitness/,2,2026-10-21
 combat-sports-academy,Combat Sports Academy,https://fighthub-app.com/en/gyms/combat-sports-academy/,2,2026-10-21
 daas-berserkers-team-bielsko-biala,DAAS Berserker's Team Bielsko-Biała,https://fighthub-app.com/en/gyms/daas-berserkers-team-bielsko-biala/,2,2026-10-21
@@ -268,7 +268,7 @@ altitude-mma,Altitude MMA,https://fighthub-app.com/en/gyms/altitude-mma/,1,2026-
 ama-fight-club,AMA Fight Club,https://fighthub-app.com/en/gyms/ama-fight-club/,1,2026-10-21
 amazon-school,Amazon School,https://fighthub-app.com/en/gyms/amazon-school/,1,2026-10-21
 ambush-muay-thai,Ambush Muay Thai,https://fighthub-app.com/en/gyms/ambush-muay-thai/,1,2026-10-21
-amc-pankration,AMC Pankration,https://fighthub-app.com/en/gyms/amc-pankration/,1,2026-10-21
+amc-pankration,AMC Pankration,https://fighthub-app.com/en/gyms/amc-pankration/,2,2026-10-21
 american-elite-mma,American Elite MMA,https://fighthub-app.com/en/gyms/american-elite-mma/,1,2026-10-21
 american-top-team-happy-valley,American Top Team Happy Valley,https://fighthub-app.com/en/gyms/american-top-team-happy-valley/,1,2026-10-21
 american-top-team-okc,American Top Team OKC,https://fighthub-app.com/en/gyms/american-top-team-okc/,1,2026-10-21
@@ -448,7 +448,7 @@ evolution-tajikistan,Evolution Tajikistan,https://fighthub-app.com/en/gyms/evolu
 evolution-team-bayonov,Evolution Team Bayonov,https://fighthub-app.com/en/gyms/evolution-team-bayonov/,1,2026-10-26
 evolve-gym,Evolve Gym,https://fighthub-app.com/en/gyms/evolve-gym/,1,2026-10-21
 evolve-gym-moscow,"Evolve Gym, Moscow",https://fighthub-app.com/en/gyms/evolve-gym-moscow/,1,2026-10-26
-evolve-mma,Evolve MMA,https://fighthub-app.com/en/gyms/evolve-mma/,1,2026-10-21
+evolve-mma,Evolve MMA,https://fighthub-app.com/en/gyms/evolve-mma/,163,2026-10-21
 exfight,EXFIGHT,https://fighthub-app.com/en/gyms/exfight/,1,2026-10-26
 falcons-mma,Falcons MMA,https://fighthub-app.com/en/gyms/falcons-mma/,1,2026-10-26
 family-fight-team,Family Fight Team,https://fighthub-app.com/en/gyms/family-fight-team/,1,2026-10-21
@@ -689,7 +689,7 @@ pesfa,PESFA,https://fighthub-app.com/en/gyms/pesfa/,1,2026-10-21
 phalanx-mma-academy,Phalanx MMA Academy,https://fighthub-app.com/en/gyms/phalanx-mma-academy/,1,2026-10-21
 phd-athletics,PHD Athletics,https://fighthub-app.com/en/gyms/phd-athletics/,1,2026-10-21
 phoenix-sportakademie-kassel,Phoenix Sportakademie Kassel,https://fighthub-app.com/en/gyms/phoenix-sportakademie-kassel/,1,2026-10-21
-phuket-fight-club,Phuket Fight Club,https://fighthub-app.com/en/gyms/phuket-fight-club/,1,2026-10-21
+phuket-fight-club,Phuket Fight Club,https://fighthub-app.com/en/gyms/phuket-fight-club/,2,2026-10-21
 phuket-top-team,Phuket Top Team,https://fighthub-app.com/en/gyms/phuket-top-team/,1,2026-10-21
 piranha-grappling-team,Piranha Grappling Team,https://fighthub-app.com/en/gyms/piranha-grappling-team/,1,2026-10-21
 pit-mma,Pit MMA,https://fighthub-app.com/en/gyms/pit-mma/,1,2026-10-21
@@ -903,7 +903,7 @@ thunderkick-fitness,Thunderkick Fitness,https://fighthub-app.com/en/gyms/thunder
 tiger-gym,Tiger Gym,https://fighthub-app.com/en/gyms/tiger-gym/,1,2026-10-21
 timoshkov-sport-club,Timoshkov Sport Club,https://fighthub-app.com/en/gyms/timoshkov-sport-club/,1,2026-10-21
 titan-fighter,Titan Fighter,https://fighthub-app.com/en/gyms/titan-fighter/,1,2026-10-21
-titan-gym,Titan Gym,https://fighthub-app.com/en/gyms/titan-gym/,1,2026-10-21
+titan-gym,Titan Gym,https://fighthub-app.com/en/gyms/titan-gym/,2,2026-10-21
 titans-mma,Titans MMA,https://fighthub-app.com/en/gyms/titans-mma/,1,2026-10-21
 titletown-mma,Titletown MMA,https://fighthub-app.com/en/gyms/titletown-mma/,1,2026-10-21
 tkbc-prague,TKBC Prague,https://fighthub-app.com/en/gyms/tkbc-prague/,1,2026-10-21
@@ -916,7 +916,7 @@ toshido-mixed-martial-arts,Toshido Mixed Martial Arts,https://fighthub-app.com/e
 tp-fight-team,TP Fight Team,https://fighthub-app.com/en/gyms/tp-fight-team/,1,2026-10-21
 training-day-boxing,Training Day Boxing,https://fighthub-app.com/en/gyms/training-day-boxing/,1,2026-10-21
 trevor-prangleys-american-kickboxing-academy,Trevor Prangley's American Kickboxing Academy,https://fighthub-app.com/en/gyms/trevor-prangleys-american-kickboxing-academy/,1,2026-10-21
-tribe-tokyo-mma,Tribe Tokyo MMA,https://fighthub-app.com/en/gyms/tribe-tokyo-mma/,1,2026-10-21
+tribe-tokyo-mma,Tribe Tokyo MMA,https://fighthub-app.com/en/gyms/tribe-tokyo-mma/,146,2026-10-21
 tripl3-mma,Tripl3 MMA,https://fighthub-app.com/en/gyms/tripl3-mma/,1,2026-10-21
 triple-mma-dubai,Triple MMA Dubai,https://fighthub-app.com/en/gyms/triple-mma-dubai/,1,2026-10-21
 tristar-lebanon,Tristar Lebanon,https://fighthub-app.com/en/gyms/tristar-lebanon/,1,2026-10-21
@@ -978,3 +978,42 @@ yoshida-dojo,Yoshida Dojo,https://fighthub-app.com/en/gyms/yoshida-dojo/,1,2026-
 zenith-mma,Zenith MMA,https://fighthub-app.com/en/gyms/zenith-mma/,1,2026-10-21
 zingano-brazilian-jiu-jitsu,Zingano Brazilian Jiu-Jitsu,https://fighthub-app.com/en/gyms/zingano-brazilian-jiu-jitsu/,1,2026-10-21
 orebro-fight-gym,Örebro Fight Gym,https://fighthub-app.com/en/gyms/orebro-fight-gym/,1,2026-10-21
+tasman-fighters,Tasman Fighters,,1,2026-10-28
+b-b-sports-academy,B&B Sports Academy,,1,2026-10-28
+reynoso-boxing-team,Reynoso Boxing Team,,3,2026-10-28
+sugarhill-kronk-gym,SugarHill Kronk Gym,,1,2026-10-28
+wild-card-boxing-club,Wild Card Boxing Club,,6,2026-10-28
+brickhouse-boxing-club,Brickhouse Boxing Club,,6,2026-10-28
+robert-garcia-boxing-academy,Robert Garcia Boxing Academy,,4,2026-10-28
+matchroom-boxing-gym,Matchroom Boxing Gym,,6,2026-10-28
+mcguigan-gym,McGuigan Gym,,1,2026-10-28
+kay-koroma-boxing,Kay Koroma Boxing,,1,2026-10-28
+three-lions-promotions,Three Lions Promotions,,1,2026-10-28
+eye-of-the-tiger,Eye of the Tiger,,1,2026-10-28
+celtic-warriors-gym,Celtic Warriors Gym,,2,2026-10-28
+hyperion-fighters,Hyperion Fighters,,1,2026-10-28
+united-mma,United MMA,,2,2026-10-28
+lions-nation-mma,Lions Nation MMA,,120,2026-10-28
+t-rex-mma,T-Rex MMA,,1,2026-10-28
+akhmat-fight-team,Akhmat Fight Team,,1,2026-10-28
+new-wave-jiu-jitsu,New Wave Jiu-Jitsu,,1,2026-10-28
+kuznya-fight-club,Kuznya Fight Club,,1,2026-10-28
+mash-fight-team,Mash Fight Team,,1,2026-10-28
+team-underground,Team Underground,,1,2026-10-28
+atos-jiu-jitsu,Atos Jiu-Jitsu,,2,2026-10-28
+extreme-combat,Extreme Combat,,1,2026-10-28
+team-mad,Team MAD,,117,2026-10-28
+black-panther-sports,Black Panther Sports,,1,2026-10-28
+jitmuangnon-gym,Jitmuangnon Gym,,1,2026-10-28
+kremost-fight-club,Kremost Fight Club,,1,2026-10-28
+fairtex-training-center,Fairtex Training Center,,121,2026-10-28
+kiatmoo9-gym,Kiatmoo9 Gym,,1,2026-10-28
+sunkin-international-fight-club,Sunkin International Fight Club,,1,2026-10-28
+pk-saenchai-muaythaigym,PK Saenchai Muaythaigym,,144,2026-10-28
+legacy-gym,Legacy Gym,,1,2026-10-28
+marrok-force-mma,Marrok Force MMA,,117,2026-10-28
+basement-martial-arts,Basement Martial Arts,,1,2026-10-28
+aka-american-kickboxing-academy,AKA (American Kickboxing Academy),,1,2026-10-28
+sityodtong-amsterdam,Sityodtong Amsterdam,,1,2026-10-28
+gridin-gym,Gridin Gym,,1,2026-10-28
+superbon-training-camp,Superbon Training Camp,,1,2026-10-28
