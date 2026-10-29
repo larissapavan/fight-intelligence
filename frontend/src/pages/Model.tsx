@@ -164,7 +164,7 @@ export function Model() {
 function MetricCard({ label, value, compact = false }: { label: string; value: string; compact?: boolean }) {
   return (
     <article className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
+      <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{label}</p>
       <p className={`data-value mt-1.5 font-bold text-[#FFFFFF] ${compact ? 'text-xl' : 'text-2xl'}`}>
         {value}
       </p>

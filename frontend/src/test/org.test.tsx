@@ -75,8 +75,8 @@ describe('the page that chooses an organization', () => {
     renderAt('/')
     const list = await screen.findByRole('list', { name: 'Organizations' }, WAIT)
     const links = within(list).getAllByRole('link')
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/home', '/pfl', '/bellator'])
-    expect(within(list).getAllByText('Win predictions')).toHaveLength(1)  // only the UFC
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/home', '/pfl', '/one', '/bellator', '/zuffa'])
+    expect(within(list).getAllByText('Win predictions')).toHaveLength(2)  // only the UFC
     expect(within(list).getByText('Archive')).toBeInTheDocument()  // Bellator
   })
 
@@ -241,18 +241,20 @@ describe('the PFL pages', () => {
 })
 
 describe('the Bellator archive', () => {
-  it('says it is an archive instead of announcing a next card', async () => {
+  it('says it is an archive instead of announcing a next card and shows archive sections and title history', async () => {
     renderAt('/bellator')
     expect(await screen.findByRole('note', undefined, WAIT)).toHaveTextContent(/last event in 2023/i)
     expect(screen.queryByRole('region', { name: 'Next event' })).not.toBeInTheDocument()
-    expect(await screen.findByRole('region', { name: 'Latest results' }, WAIT)).toBeInTheDocument()
+    expect(await screen.findByRole('region', { name: 'Archive sections' }, WAIT)).toBeInTheDocument()
+    const history = await screen.findByRole('region', { name: 'Title history' }, WAIT)
+    expect(await within(history).findByText(/def\. Dax Moore/i, undefined, WAIT)).toBeInTheDocument()
     expect(screen.getByText(/Archive built from ESPN and Wikipedia/)).toBeInTheDocument()
   })
 
-  it('lists everyone who ever fought there, not only the active ones', async () => {
+  it('lists everyone who ever fought there without an active-only filter', async () => {
     renderAt('/bellator/fighters')
     expect(await screen.findByText('Lena Ortiz', undefined, WAIT)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'All time' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByRole('group', { name: 'Status' })).not.toBeInTheDocument()
   })
 
   it('has no rankings page: no menu entry, no route, and the final champions sit on the home page', async () => {
@@ -276,7 +278,27 @@ describe('the Bellator archive', () => {
     renderAt('/events')
     await screen.findByRole('heading', { name: 'UFC fight cards' }, WAIT)
     const switcher = screen.getAllByRole('group', { name: 'Organization' })[0]
-    expect(within(switcher).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['/events', '/pfl/events', '/bellator/events'])
+    expect(within(switcher).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['/events', '/pfl/events', '/one/events', '/bellator/events', '/zuffa/events'])
+  })
+})
+
+describe('ONE Championship and Zuffa Boxing', () => {
+  it('renders upcoming cards, champions, rankings and past events on /one', async () => {
+    renderAt('/one')
+    expect(await screen.findByRole('heading', { name: 'ONE Fight Night 49: Gabriel vs. Magomedov' }, WAIT)).toBeInTheDocument()
+    const champions = await screen.findByRole('region', { name: 'Champions' }, WAIT)
+    expect(await within(champions).findByRole('button', { name: /Riko Stone/ }, WAIT)).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'Rankings' })[0]).toHaveAttribute('href', '/one/rankings')
+    expect(screen.getAllByRole('link', { name: 'Champions' })[0]).toHaveAttribute('href', '/one/champions')
+  })
+
+  it('renders upcoming cards, champions, rankings and past events on /zuffa', async () => {
+    renderAt('/zuffa')
+    expect(await screen.findByRole('heading', { name: 'Zuffa Boxing 12: Billam-Smith vs. Clarke' }, WAIT)).toBeInTheDocument()
+    const champions = await screen.findByRole('region', { name: 'Champions' }, WAIT)
+    expect(await within(champions).findByRole('button', { name: /Riko Stone/ }, WAIT)).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: 'Rankings' })[0]).toHaveAttribute('href', '/zuffa/rankings')
+    expect(screen.getByRole('region', { name: 'Latest results' })).toBeInTheDocument()
   })
 })
 
@@ -300,8 +322,18 @@ describe('the organization switcher', () => {
     const links = screen.getAllByRole('link').map((link) => link.getAttribute('href'))
     expect(links).toContain('/pfl/fighters')
     expect(links).toContain('/pfl/rankings')
+    expect(links).toContain('/pfl/champions')
     expect(links).not.toContain('/predictor')
     expect(links).not.toContain('/champions')
+  })
+
+  it('the PFL and Bellator champions pages show current/final champions, division history and greatest champions', async () => {
+    renderAt('/pfl/champions')
+    expect(await screen.findByRole('heading', { name: 'PFL champions' }, WAIT)).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /Riko Stone/ }, WAIT)).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Greatest Champions' }))
+    expect(await screen.findByText(/All-Time Greatest Champions Leaderboard/i, undefined, WAIT)).toBeInTheDocument()
   })
 
   it('the header search finds PFL fighters on PFL pages', async () => {

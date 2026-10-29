@@ -169,7 +169,7 @@ export function RecordBook() {
             ))}
           </div>
         ) : null}
-        {active ? <p className="mt-2 text-sm text-[#999999]">{getBlurb(active.name)}</p> : null}
+        {active ? <p className="mt-2 text-sm text-[var(--text-muted)]">{getBlurb(active.name)}</p> : null}
       </section>
 
       {error ? <p className="rounded-xl border border-[#C8102E]/25 bg-[#C8102E]/8 px-3 py-2 text-sm font-semibold text-[var(--text-red)]">{error}</p> : null}
@@ -214,7 +214,7 @@ function StatCard({ stat, onOpenProfile }: { stat: RecordBookStat; onOpenProfile
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls={panelId}
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-[var(--bg-surface-subtle)] sm:px-4"
       >
         <Trophy className="h-4 w-4 shrink-0 text-[#C8102E]" />
         <h3 className="broadcast-label text-xs text-[var(--text-main)]">{title}</h3>
@@ -253,7 +253,7 @@ function LeaderRow({
       aria-label={L(i18n.language, `${leader.fighter}, #${leader.rank}. Ver perfil`, `${leader.fighter}, rank ${leader.rank}. View profile`, `${leader.fighter}, rang ${leader.rank}. Voir le profil`)}
       className="flex w-full cursor-pointer items-center text-left gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-[#F2C230]/40 focus-visible:bg-[#F2C230]/40 focus-visible:outline-none"
     >
-      <span className="type-num w-4 shrink-0 text-right text-[11px] text-[#999999]">{leader.rank}</span>
+      <span className="type-num w-4 shrink-0 text-right text-[11px] text-[var(--text-muted)]">{leader.rank}</span>
       <div className="min-w-0 flex-1">
         <p className="truncate text-[13px] font-semibold leading-tight text-[var(--text-main)]">{leader.fighter}</p>
       </div>

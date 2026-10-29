@@ -102,9 +102,9 @@ function formatSourceLabel(source: string) {
 }
 
 const PIPELINE_TONE_CLASSES: Record<string, string> = {
-  default: 'border-white/10 bg-white/[0.03] text-[#FFFFFF]',
+  default: 'border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] text-[#FFFFFF]',
   source: 'border-[#2F5FA8]/25 bg-[#2F5FA8]/10 text-[var(--accent-blue)]',
-  highlight: 'border-white/18 bg-white/[0.06] text-[#FFFFFF]',
+  highlight: 'border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] text-[#FFFFFF]',
   accent: 'border-[#C8102E]/30 bg-[#C8102E]/10 text-[var(--accent-red)]',
 }
 
@@ -120,7 +120,7 @@ function PipelineNode({
   return (
     <div className={`w-full max-w-sm rounded-2xl border px-4 py-2.5 text-center ${PIPELINE_TONE_CLASSES[tone]}`}>
       <p className="type-display text-sm font-bold uppercase tracking-[0.06em]">{label}</p>
-      {description ? <p className="mt-1 text-[11px] leading-4 text-[#999999]">{description}</p> : null}
+      {description ? <p className="mt-1 text-[11px] leading-4 text-[var(--text-muted)]">{description}</p> : null}
     </div>
   )
 }
@@ -146,7 +146,7 @@ function PipelineMergeConnector() {
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <article className="metric-tile rounded-2xl p-3">
-      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
+      <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{label}</p>
       <p className="data-value mt-1.5 text-2xl font-bold text-[#FFFFFF]">{value}</p>
     </article>
   )

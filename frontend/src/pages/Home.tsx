@@ -80,15 +80,20 @@ export function Home() {
       ) : null}
 
       <motion.section
-        className="page-hero overflow-hidden rounded-[20px] px-3 py-3 sm:px-4 sm:py-4"
+        className="surface-card relative overflow-hidden rounded-[24px] border border-[var(--border-subtle)] p-5 sm:p-7 shadow-xl"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.3 }}
       >
-        <h1 className="text-3xl font-bold uppercase leading-[0.92] tracking-[0.02em] text-[var(--text-main)] sm:text-4xl">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-3 py-1 text-xs font-semibold tracking-wide text-[var(--text-muted)] backdrop-blur-sm">
+          <span className="h-2 w-2 rounded-full bg-[var(--accent-red)] animate-pulse" />
+          <span>UFC Intelligence • Machine Learning & Analytics</span>
+        </div>
+
+        <h1 className="mt-3 text-3xl font-black uppercase leading-tight tracking-tight text-[var(--text-main)] sm:text-5xl">
           Fight Intelligence
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-muted)]">
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--text-muted)] sm:text-base font-normal">
           {L(
             i18n.language,
             'O que vem a seguir no UFC: a próxima luta principal, o palpite da IA, o momento dos lutadores e os líderes do ranking peso por peso.',
@@ -97,23 +102,23 @@ export function Home() {
           )}
         </p>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-4 flex flex-wrap items-center gap-2.5">
           <Link
             to="/predictor"
-            className="primary-action inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white max-xs:w-full"
+            className="primary-action inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-md hover:shadow-lg transition-all max-xs:w-full"
           >
             {L(i18n.language, 'Simular uma Luta', 'Predict a fight', 'Pronostiquer un combat')}
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/events"
-            className="ghost-action theme-text inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] max-xs:w-full"
+            className="ghost-action theme-text inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-[0.14em] transition-all hover:bg-[var(--bg-surface-hover)] max-xs:w-full"
           >
             {L(i18n.language, 'Ver Card Completo', 'See the full card', 'Voir la carte complète')}
           </Link>
         </div>
 
-        <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2">
+        <div className="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
           <MiniStat
             label={L(i18n.language, 'Lutadores no banco', 'Fighters tracked', 'Lutteurs suivis')}
             value={health?.fighters_loaded ? health.fighters_loaded.toLocaleString(localeTag(i18n.language)) : '—'}
@@ -223,7 +228,7 @@ function MainEventCard({
   if (error || !nextEvent || !mainEvent) {
     return (
       <div className="surface-card rounded-[20px] p-4 text-center">
-        <p className="text-sm leading-6 text-[#999999]">
+        <p className="text-sm leading-6 text-[var(--text-muted)]">
           {error ?? L(i18n.language, 'Nenhum evento do UFC agendado no momento.', 'No upcoming UFC events are scheduled right now.', 'Aucun événement UFC n’est programmé pour le moment.')}
         </p>
       </div>
@@ -452,7 +457,7 @@ function RankingsCard({
           ))}
         </div>
       ) : error ? (
-        <p className="mt-2.5 text-xs text-[#999999]">{error}</p>
+        <p className="mt-2.5 text-xs text-[var(--text-muted)]">{error}</p>
       ) : category ? (
         <div className="mt-2.5 space-y-1.5">
           {category.entries.slice(0, 3).map((entry) => {
@@ -488,7 +493,7 @@ function RankingsCard({
           })}
         </div>
       ) : (
-        <p className="mt-2.5 text-xs text-[#999999]">{L(i18n.language, 'Rankings indisponíveis no momento.', 'Rankings unavailable right now.', 'Classements indisponibles pour le moment.')}</p>
+        <p className="mt-2.5 text-xs text-[var(--text-muted)]">{L(i18n.language, 'Rankings indisponíveis no momento.', 'Rankings unavailable right now.', 'Classements indisponibles pour le moment.')}</p>
       )}
     </article>
   )
@@ -520,16 +525,16 @@ function TrackRecordStrip({
     <section className="surface-card flex flex-wrap items-center justify-between gap-3 rounded-[20px] px-3 py-3 sm:px-4">
       <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
         <div>
-          <p className="broadcast-label text-[11px] text-[#999999]">{L(i18n.language, 'Taxa de Acerto da IA', 'Model accuracy', 'Précision du modèle')}</p>
+          <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Taxa de Acerto da IA', 'Model accuracy', 'Précision du modèle')}</p>
           <p className="data-value text-xl font-bold text-[var(--text-main)]">{percentLabel(accuracy)}</p>
-          <p className="text-[11px] text-[#999999]">{accuracyNote}</p>
+          <p className="text-[11px] text-[var(--text-muted)]">{accuracyNote}</p>
         </div>
         <div>
-          <p className="broadcast-label text-[11px] text-[#999999]">{L(i18n.language, 'Lutas Analisadas', 'Fights analyzed', 'Combats analysés')}</p>
+          <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'Lutas Analisadas', 'Fights analyzed', 'Combats analysés')}</p>
           <p className="data-value text-xl font-bold text-[var(--text-main)]">
             {fightsAnalyzed ? fightsAnalyzed.toLocaleString(localeTag(i18n.language)) : '—'}
           </p>
-          <p className="text-[11px] text-[#999999]">{L(i18n.language, 'histórico oficial do UFC', 'career bouts on file', 'combats de carrière au dossier')}</p>
+          <p className="text-[11px] text-[var(--text-muted)]">{L(i18n.language, 'histórico oficial do UFC', 'career bouts on file', 'combats de carrière au dossier')}</p>
         </div>
       </div>
       <Link
@@ -553,10 +558,10 @@ function MiniStat({
   icon: React.ComponentType<{ className?: string }>
 }) {
   return (
-    <div className="min-w-0 rounded-xl border border-white/6 bg-black/18 px-2 py-1.5 sm:px-3 sm:py-2">
-      <div className="flex items-center gap-1.5 text-[#C8102E] sm:gap-2">
+    <div className="min-w-0 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-2 py-1.5 sm:px-3 sm:py-2">
+      <div className="flex items-center gap-1.5 text-[var(--accent-red)] sm:gap-2">
         <Icon className="hidden h-3.5 w-3.5 shrink-0 sm:block" />
-        <p className="broadcast-label truncate text-[11px] text-[#999999]">{label}</p>
+        <p className="broadcast-label truncate text-[11px] text-[var(--text-muted)]">{label}</p>
       </div>
       <p className="data-value mt-0.5 truncate text-base font-bold text-[var(--text-main)] sm:mt-1 sm:text-xl">{value}</p>
     </div>

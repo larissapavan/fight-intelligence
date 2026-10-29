@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { L } from '../i18n/lang'
 import { Header } from '../shared/components/Header'
 import { ScrollToTop } from '../shared/components/ScrollToTop'
-import { LanguageSwitcher } from '../shared/components/LanguageSwitcher'
 import { PageMeta } from '../shared/components/PageMeta'
 import { isLandingPath } from '../shared/data/orgs'
 import { useOrg } from '../shared/hooks/useOrg'
@@ -64,25 +63,37 @@ export function MainLayout({ children }: { children: ReactNode }) {
   const footerDate = landing ? null : org.id === 'ufc' ? dataDate : orgDataDate?.org === org.id ? orgDataDate.date : null
 
   return (
-    <div className="dashboard-shell min-h-screen text-[var(--text-main)] w-full max-w-full overflow-x-hidden">
+    <div
+      className="dashboard-shell w-full max-w-full min-h-screen transition-colors duration-200 bg-[var(--bg-app)] text-[var(--text-primary)] flex flex-col overflow-x-hidden"
+    >
       <a
         href="#main-content"
         className="type-tech sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-[#C8102E] focus:px-4 focus:py-2 focus:text-xs focus:font-semibold focus:uppercase focus:tracking-[0.14em] focus:text-white"
       >
         {t('common.skipToContent', 'Skip to content')}
       </a>
-      <div className="mx-auto flex min-h-screen w-full max-w-[min(100%,2400px)] flex-col px-[clamp(0.75rem,1.6vw,2.25rem)] pb-4 pt-2 sm:pb-5">
+      {/* Pinned Sticky Header: Always visible across all scroll positions */}
+      <div className="sticky top-0 z-50 w-full bg-[var(--bg-app)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]/40 px-[clamp(0.75rem,1.4vw,2rem)] py-2">
+        <div className="mx-auto w-full max-w-[min(100%,2560px)]">
+          <Header />
+        </div>
+      </div>
+
+      <div className="mx-auto flex w-full max-w-[min(100%,2560px)] flex-1 flex-col px-[clamp(0.75rem,1.4vw,2rem)]">
         <ScrollToTop />
         <PageMeta />
-        <Header />
         {apiState === 'down' ? (
-          <p role="status" className="mt-3 border-2 border-[var(--rule)] bg-[#C8102E] px-3 py-2 text-sm font-semibold text-white">
+          <p role="status" className="mt-3 border border-[var(--border-subtle)] bg-[#C8102E] px-3 py-2 text-sm font-semibold text-white rounded-lg">
             {t('common.serverDown', 'The server is not answering right now. Give it a minute and reload the page.')}
           </p>
         ) : null}
         <motion.main
           id="main-content"
-          className="flex-1 border-t border-[var(--line-soft)] mt-4 pt-5 sm:mt-5 sm:pt-6 w-full max-w-full min-w-0"
+          className={
+            landing
+              ? 'flex-1 flex flex-col w-full max-w-full my-1.5 sm:my-2'
+              : 'flex-1 border-t border-[var(--border-subtle)] mt-4 pt-5 sm:mt-5 sm:pt-6 w-full max-w-full min-w-0'
+          }
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -94,42 +105,60 @@ export function MainLayout({ children }: { children: ReactNode }) {
             children
           )}
         </motion.main>
-        <footer className="mt-6 border-[3px] border-[var(--rule)] bg-[var(--card-bg)] px-4 py-3 text-sm font-medium text-[var(--text-main)] shadow-[5px_5px_0_var(--hard)]">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="type-tech text-xs uppercase tracking-[0.14em]">
-                {t('footer.tagline', 'Fight Intelligence • AI sports analytics for matchup analysis')}
-              </p>
-              {footerDate ? (
-                <p className="mt-1.5">{t('footer.dataUpTo', { date: footerDate, defaultValue: `Data up to ${footerDate}` })}</p>
-              ) : null}
-              <p className="mt-1.5">
-                <Link
-                  to="/about"
-                  className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 transition hover:bg-[#F2C230] hover:text-[#0E0E0E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
-                >
-                  {t('footer.disclaimer', {
-                    org: landing
-                      ? L(i18n.language, 'nenhuma dessas organizações', 'any of these organizations', 'ces organisations')
-                      : L(
-                          i18n.language,
-                          org.id === 'pfl' ? `a ${org.shortName}` : `o ${org.shortName}`,
-                          `the ${org.shortName}`,
-                          org.id === 'ufc' ? `l’${org.shortName}` : org.id === 'pfl' ? `la ${org.shortName}` : `le ${org.shortName}`,
-                        ),
-                    defaultValue: `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`,
-                  })}
-                </Link>
-              </p>
-            </div>
-            <div className="flex shrink-0 items-center gap-2 border-t border-[var(--rule)]/20 pt-2.5 sm:border-t-0 sm:pt-0">
-              <span className="type-tech text-xs uppercase tracking-wider text-[var(--text-muted)]">
-                {t('language.switch', 'Idioma')}:
+        {landing ? (
+          <footer
+            className="shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border-subtle)] px-2 py-1 text-[11px] transition-colors text-[var(--text-muted)]"
+          >
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+                Fight Intelligence • {t('footer.tagline', 'AI sports analytics for matchup analysis')}
               </span>
-              <LanguageSwitcher />
             </div>
-          </div>
-        </footer>
+            <div className="flex items-center gap-3 text-xs">
+              <Link
+                to="/about"
+                className="underline underline-offset-2 decoration-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
+              >
+                {t('footer.disclaimer', {
+                  org: L(i18n.language, 'nenhuma dessas organizações', 'any of these organizations', 'ces organisations'),
+                  defaultValue: 'Independent personal project, not affiliated with any of these organizations',
+                })}
+              </Link>
+            </div>
+          </footer>
+        ) : (
+          <footer className="mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-xs">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="type-tech text-xs uppercase tracking-[0.14em]">
+                  {t('footer.tagline', 'Fight Intelligence • AI sports analytics for matchup analysis')}
+                </p>
+                {footerDate ? (
+                  <p className="mt-1.5">{t('footer.dataUpTo', { date: footerDate, defaultValue: `Data up to ${footerDate}` })}</p>
+                ) : null}
+                <p className="mt-1.5">
+                  <Link
+                    to="/about"
+                    className="underline decoration-[var(--rule)] decoration-1 underline-offset-4 transition hover:text-[#C8102E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
+                  >
+                    {t('footer.disclaimer', {
+                      org: landing
+                        ? L(i18n.language, 'nenhuma dessas organizações', 'any of these organizations', 'ces organisations')
+                        : L(
+                            i18n.language,
+                            org.id === 'pfl' ? `a ${org.shortName}` : `o ${org.shortName}`,
+                            `the ${org.shortName}`,
+                            org.id === 'ufc' ? `l’${org.shortName}` : org.id === 'pfl' ? `la ${org.shortName}` : `le ${org.shortName}`,
+                          ),
+                      defaultValue: `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`,
+                    })}
+                  </Link>
+                </p>
+              </div>
+            </div>
+          </footer>
+        )}
       </div>
     </div>
   )

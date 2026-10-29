@@ -67,9 +67,9 @@ export function TrackRecord() {
           type="button"
           onClick={handleSync}
           disabled={syncing}
-          className="ghost-action flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/[0.04] px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.08em] text-white hover:bg-white/[0.1] disabled:opacity-50 transition shrink-0 cursor-pointer"
+          className="ghost-action flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-main)] disabled:opacity-50 transition shrink-0 cursor-pointer"
         >
-          <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin text-[#F2C230]' : 'text-[#CCCCCC]'}`} />
+          <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin text-[#F2C230]' : 'text-[var(--text-muted)]'}`} />
           {syncing ? t('trackRecord.syncing') : t('trackRecord.syncButton')}
         </button>
       </section>

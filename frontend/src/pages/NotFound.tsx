@@ -17,7 +17,7 @@ export function NotFound() {
         <h1 className="mt-2 text-2xl font-bold uppercase tracking-[0.03em] text-[#FFFFFF]">
           {L(i18n.language, 'Página não encontrada', 'Page not found', 'Page introuvable')}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-[#999999]">
+        <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
           {L(
             i18n.language,
             'A página que você procura não existe ou foi movida.',

@@ -57,16 +57,34 @@ const sources: { name: string; href?: string; use: string; usePt: string }[] = [
     usePt: 'Anúncios antecipados de lutas, confirmação de cards futuros e disputas de cinturão (como o UFC 336: Prates vs. Morales).',
   },
   {
-    name: 'Wikipedia',
-    href: 'https://en.wikipedia.org/wiki/List_of_Bellator_MMA_champions',
-    use: 'The list of Bellator MMA champions: every title reign, which gives the champions Bellator ended with and flags its title fights. Text from Wikipedia contributors, available under the Creative Commons Attribution-ShareAlike license (CC BY-SA 4.0); only facts (names, dates, divisions) are taken from it.',
-    usePt: 'Histórico de reinados e campeões do Bellator MMA sob licença Creative Commons (CC BY-SA 4.0).',
+    name: 'Tapology',
+    href: 'https://www.tapology.com',
+    use: 'Fighter career records, comprehensive fight histories across regional and global MMA circuits (Jungle Fight, Predador FC, LFA, etc.), and finish methods.',
+    usePt: 'Cartéis completos de lutadores, histórico de lutas em circuitos regionais e internacionais de MMA (Jungle Fight, Predador FC, LFA, etc.) e métodos de encerramento.',
+  },
+  {
+    name: 'ONE Championship',
+    href: 'https://www.onefc.com',
+    use: 'Official ONE Championship event cards, results, fighter profiles, and divisional champions across MMA and Muay Thai.',
+    usePt: 'Cards oficiais de eventos do ONE Championship, resultados, perfis de atletas e campeões das divisões de MMA e Muay Thai.',
+  },
+  {
+    name: 'Zuffa Boxing / TKO Group Holdings',
+    href: 'https://www.ufc.com',
+    use: 'Professional boxing weight classes, bout schedules, and athlete rosters under Zuffa Boxing Promotions.',
+    usePt: 'Categorias de peso de boxe profissional, cronogramas de combate e plantel de atletas sob a Zuffa Boxing Promotions.',
   },
   {
     name: 'Sherdog',
     href: 'https://www.sherdog.com',
-    use: 'A few archive photos of former fighters.',
-    usePt: 'Fotos históricas de arquivo de ex-lutadores.',
+    use: 'Fighter career fight archives, historical records, physical attributes, and career lineages.',
+    usePt: 'Arquivo histórico de lutas de carreira, cartéis oficiais, atributos físicos e fotos históricas de ex-lutadores.',
+  },
+  {
+    name: 'Wikipedia',
+    href: 'https://en.wikipedia.org',
+    use: 'Complete professional MMA fight records, tournament Grand Prix brackets (Predador FC, Jungle Fight, PRIDE, WEC, Strikeforce), and historical title lineages (CC BY-SA 4.0).',
+    usePt: 'Registros completos de lutas de MMA profissional, chaves de torneios Grand Prix e históricos de reinados de cinturão sob licença Creative Commons (CC BY-SA 4.0).',
   },
   {
     name: 'Published UFC title histories',
@@ -108,8 +126,11 @@ const SOURCE_USE_FR: Record<string, string> = {
   'pflmma.com': "Le site de la Professional Fighters League : événements, résultats, profils, portraits et classements officiels. Seules les pages autorisées par son robots.txt sont lues ; les portraits sont stockés ici en petites copies.",
   FightHub: "L'annuaire des salles et des équipes, et les lutteurs qui s'y entraînent, affiché sur les pages Salles et rapproché par le nom avec les lutteurs de chaque organisation. Seules les pages autorisées par son robots.txt sont lues.",
   'Next-Fight': 'Annonces de combats, cartes à venir, confirmations d’affrontements et avis de combats de titre (comme UFC 336: Prates vs. Morales).',
-  Wikipedia: "La liste des champions du Bellator MMA : chaque règne, ce qui donne les champions avec lesquels le Bellator s'est achevé et signale ses combats de titre. Texte des contributeurs de Wikipedia, disponible sous la licence Creative Commons Attribution-ShareAlike (CC BY-SA 4.0) ; seuls des faits (noms, dates, catégories) en sont extraits.",
-  Sherdog: "Quelques photos d'archives d'anciens lutteurs.",
+  Tapology: "Palmarès complets des combattants, historiques des combats à travers les circuits régionaux et mondiaux de MMA (Jungle Fight, Predador FC, LFA, etc.) et méthodes de victoire.",
+  'ONE Championship': "Cartes officielles d'événements du ONE Championship, résultats, profils d'athlètes et champions des divisions de MMA et Muay Thai.",
+  'Zuffa Boxing / TKO Group Holdings': "Catégories de poids de boxe professionnelle, programmations de combats et effectif d'athlètes de Zuffa Boxing Promotions.",
+  Sherdog: "Archives des combats de carrière, palmarès officiels, attributs physiques et photos d'archives.",
+  Wikipedia: "Registres complets des combats professionnels de MMA, tableaux de tournois Grand Prix et historiques des règnes de titres (CC BY-SA 4.0).",
   'Published UFC title histories': 'Champions, règnes et la liste des combats pour le titre BMF, compilés à la main.',
   'UFC data by scarekrow (Kaggle)': 'L’arbitre, les rounds prévus, l’indicateur de combat de titre et les notes des juges affichés sur les cartes (UFC_full_data_silver_v2.csv).',
   'flagcdn.com': 'Images des drapeaux.',
@@ -123,11 +144,11 @@ export function About() {
   return (
     <div className="space-y-3 sm:space-y-4">
       <section className="page-hero rounded-[20px] px-3 py-3 sm:px-4 sm:py-4" aria-labelledby="about-title">
-        <p className="broadcast-label text-[11px] text-[#999999]">{t('about.eyebrow')}</p>
+        <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{t('about.eyebrow')}</p>
         <h1 id="about-title" className="mt-1.5 text-3xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)] md:text-4xl">
           {t('about.title')}
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-[#CCCCCC]">
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">
           {t('about.description')}
         </p>
       </section>
@@ -173,12 +194,12 @@ export function About() {
               <p className="text-sm font-semibold text-[var(--text-main)]">
                 {source.href ? <ExternalAnchor href={source.href}>{source.name}</ExternalAnchor> : source.name}
               </p>
-              <p className="mt-1 text-xs leading-5 text-[#999999]">{L(i18n.language, source.usePt, source.use, SOURCE_USE_FR[source.name])}</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{L(i18n.language, source.usePt, source.use, SOURCE_USE_FR[source.name])}</p>
             </li>
           ))}
         </ul>
 
-        <p className="mt-4 text-xs leading-5 text-[#999999]">
+        <p className="mt-4 text-xs leading-5 text-[var(--text-muted)]">
           {L(
             i18n.language,
             'Desenvolvido com tecnologias open-source: React, Vite, Tailwind CSS, Recharts, Framer Motion e Lucide no frontend; FastAPI, pandas, scikit-learn e SHAP no backend.',
@@ -212,7 +233,7 @@ function AboutSection({
           {title}
         </h2>
       </div>
-      <div className="mt-3 max-w-3xl space-y-3 text-sm leading-6 text-[#CCCCCC]">{children}</div>
+      <div className="mt-3 max-w-3xl space-y-3 text-sm leading-6 text-[var(--text-secondary)]">{children}</div>
     </section>
   )
 }

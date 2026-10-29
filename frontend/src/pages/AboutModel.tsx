@@ -213,7 +213,7 @@ export function AboutModel() {
               <Metric label="ROC AUC" value={(shownMetrics(modelInfo, i18n.language).rocAuc ?? 0).toFixed(3)} />
               <Metric label="Log loss" value={(shownMetrics(modelInfo, i18n.language).logLoss ?? 0).toFixed(3)} />
             </div>
-            {modelInfo.metrics_note ? <p className="mt-3 text-xs leading-5 text-[#CCCCCC]">{modelInfo.metrics_note}</p> : null}
+            {modelInfo.metrics_note ? <p className="mt-3 text-xs leading-5 text-[var(--text-secondary)]">{modelInfo.metrics_note}</p> : null}
           </article>
 
           <article className="surface-card rounded-[20px] p-3 sm:p-4">
@@ -264,7 +264,7 @@ function InfoCard({
   description: string
 }) {
   return (
-    <article className="surface-card rounded-[20px] p-3 transition duration-300 hover:-translate-y-0.5 hover:border-white/16">
+    <article className="surface-card rounded-[20px] p-3 transition duration-300 hover:-translate-y-0.5 hover:border-[var(--border-subtle)]">
       <div className="inline-flex rounded-xl bg-[#C8102E]/10 p-2.5 text-[var(--accent-red)]">
         <Icon className="h-4 w-4" />
       </div>

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
 
 @theme {
   --color-octagon-bg: #000000;
@@ -10,125 +11,219 @@
   --color-octagon-blue: #2f5fa8;
   --color-octagon-text: #ffffff;
   --color-octagon-muted: #999999;
-  --font-sports-display: 'Barlow Condensed', sans-serif;
-  --font-sports-ui: 'Barlow', sans-serif;
-  --font-sports-tech: 'Barlow Condensed', sans-serif;
-  --font-poster: 'Anton', 'Barlow Condensed', Impact, sans-serif;
-  /* legacy aliases used throughout this stylesheet */
-  --font-display: var(--font-sports-display);
-  --font-body: var(--font-sports-ui);
-  --font-ui: var(--font-sports-ui);
+
+  /* Semantic Design Tokens for Tailwind v4 */
+  --color-canvas: var(--bg-app);
+  --color-surface-base: var(--bg-surface);
+  --color-surface-elevated: var(--bg-surface-elevated);
+  --color-surface-subtle: var(--bg-surface-subtle);
+  --color-surface-hover: var(--bg-surface-hover);
+  --color-surface-active: var(--bg-surface-active);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-accent-red: var(--accent-red);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-green: var(--accent-green);
+  --color-accent-gold: var(--accent-gold);
+
+  --font-display: 'Syne', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --font-sports-display: 'Syne', sans-serif;
+  --font-sports-ui: 'Plus Jakarta Sans', sans-serif;
+  --font-sports-tech: 'JetBrains Mono', monospace;
+  --font-poster: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-ui: 'Plus Jakarta Sans', sans-serif;
   --breakpoint-xs: 30rem; /* 480px */
   --breakpoint-3xl: 90rem; /* 1440px */
 }
 
-/* Fight-poster identity. Light = paper (default), dark = ink. Flat colors, hard rules, no glow. */
-:root,
-:root[data-theme='light'] {
-  color-scheme: light;
-  --ink: #0e0e0e;
-  --paper: #ede6d6;
-  --blood: #c8102e;
-  --tape: #f2c230;
-  --surface-1: #f7f2e7;
-  --surface-2: #ede6d6;
-  --surface-3: rgba(14, 14, 14, 0.06);
-  --line-soft: rgba(14, 14, 14, 0.28);
-  --line-strong: #0e0e0e;
-  --rule: #0e0e0e;
-  --hard: #0e0e0e;
-  --text-main: #0e0e0e;
-  --text-muted: #4a463b;
-  --text-soft: #2b2922;
-  --app-background: #e4dcc8;
-  --grid-pattern: radial-gradient(rgba(14, 14, 14, 0.11) 1.2px, transparent 1.3px);
-  --hero-bg: #ede6d6;
-  --card-bg: #f7f2e7;
-  --tile-bg: #fbf8f0;
-  --tile-hover-bg: #f2ecdc;
-  --input-bg: #ffffff;
-  --input-hover-bg: #ffffff;
-  --action-bg: #ffffff;
-  --action-hover-bg: #f2ecdc;
-  --option-bg: #ffffff;
-  --option-hover-bg: #f2ecdc;
-  --chip-bg: rgba(14, 14, 14, 0.06);
-  --modal-backdrop: rgba(14, 14, 14, 0.72);
-  --shadow-soft: rgba(14, 14, 14, 0.12);
-  --shadow-page: rgba(14, 14, 14, 0.12);
-  --avatar-bg: #d9d0bc;
-  --logo-bg: #0e0e0e;
-  --accent-red: #c8102e;
-  --text-red: #b80f2b; /* small red text: darker than the brand red so it keeps 4.5:1 on paper and on tinted chips */
-  --brand-red-dark: #8e0b21;
-  --brand-outline: #0e0e0e;
-  --accent-blue: #1f4e9c;
-  --accent-green: #2e7d4f;
-  --accent-gold: #d9a21b;
-}
+/* ==========================================================================
+   SCALABLE DESIGN TOKENS ARCHITECTURE (WCAG AA COMPLIANT)
+   Octagon Dark (Graphite / Deep Charcoal) & Championship Light (Crisp SaaS)
+   ========================================================================== */
 
+:root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --surface-1: #121212;
-  --surface-2: #171717;
-  --surface-3: rgba(237, 230, 214, 0.06);
-  --line-soft: rgba(237, 230, 214, 0.26);
-  --line-strong: #ede6d6;
-  --rule: #ede6d6;
-  --hard: #c8102e;
-  --text-main: #ede6d6;
-  --text-muted: #a39d8c;
-  --text-soft: #cfc8b6;
-  --app-background: #0e0e0e;
-  --grid-pattern: radial-gradient(rgba(237, 230, 214, 0.07) 1.2px, transparent 1.3px);
-  --hero-bg: #171717;
-  --card-bg: #171717;
-  --tile-bg: #1e1e1e;
-  --tile-hover-bg: #262626;
-  --input-bg: #121212;
-  --input-hover-bg: #121212;
-  --action-bg: #1e1e1e;
-  --action-hover-bg: #2a2a2a;
-  --option-bg: #171717;
-  --option-hover-bg: #262626;
-  --chip-bg: rgba(237, 230, 214, 0.08);
-  --modal-backdrop: rgba(0, 0, 0, 0.8);
-  --shadow-soft: rgba(0, 0, 0, 0.5);
-  --shadow-page: rgba(0, 0, 0, 0.5);
-  --avatar-bg: #262626;
+
+  /* Backgrounds & Surfaces */
+  --bg-app: #08090d;
+  --bg-surface: #10131b;
+  --bg-surface-elevated: #161a25;
+  --bg-surface-subtle: #191e2b;
+  --bg-surface-hover: #22293b;
+  --bg-surface-active: #2b344a;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.28);
+
+  /* Typography (WCAG AA: >= 4.5:1 against #08090d & #10131b) */
+  --text-primary: #f8fafc;        /* Slate 50: 16.9:1 */
+  --text-secondary: #cbd5e1;      /* Slate 300: 12.0:1 */
+  --text-muted: #94a3b8;          /* Slate 400: 6.8:1 */
+
+  /* Accents & States */
+  --accent-red: #ef4444;
+  --text-red: #f87171;            /* 6.4:1 */
+  --accent-blue: #3b82f6;
+  --text-blue: #60a5fa;           /* 7.4:1 */
+  --accent-green: #22c55e;
+  --text-green: #4ade80;          /* 10.3:1 */
+  --accent-gold: #f59e0b;
+  --text-gold: #fbbf24;           /* 10.6:1 */
+
+  /* Inputs & Components */
+  --input-bg: #10131b;
+  --input-border: rgba(255, 255, 255, 0.16);
+  --input-focus: #ef4444;
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  --elevated-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.65);
+  --modal-backdrop: rgba(0, 0, 0, 0.78);
+  --grid-pattern: radial-gradient(rgba(255, 255, 255, 0.06) 1.2px, transparent 1.3px);
+
+  /* Backward compatibility aliases */
+  --app-background: var(--bg-app);
+  --card-bg: var(--bg-surface);
+  --hero-bg: var(--bg-surface);
+  --tile-bg: var(--bg-surface-subtle);
+  --tile-hover-bg: var(--bg-surface-hover);
+  --input-hover-bg: var(--bg-surface-hover);
+  --action-bg: var(--bg-surface-subtle);
+  --action-hover-bg: var(--bg-surface-hover);
+  --option-bg: var(--bg-surface);
+  --option-hover-bg: var(--bg-surface-hover);
+  --chip-bg: var(--bg-surface-subtle);
+  --surface-1: var(--bg-surface);
+  --surface-2: var(--bg-surface-subtle);
+  --surface-3: var(--bg-surface-subtle);
+  --rule: var(--text-primary);
+  --hard: var(--border-default);
+  --line-soft: var(--border-subtle);
+  --line-strong: var(--border-strong);
+  --text-main: var(--text-primary);
+  --text-soft: var(--text-secondary);
+  --shadow-soft: rgba(0, 0, 0, 0.4);
+  --shadow-page: rgba(0, 0, 0, 0.4);
+  --avatar-bg: #1c2230;
   --logo-bg: #000000;
-  --accent-red: #e02a45;
-  --text-red: #f0475e;
-  --brand-red-dark: #8e0b21;
-  --brand-outline: #000000;
-  --accent-blue: #4a82d6;
-  --accent-green: #3fb27f;
-  --accent-gold: #f2c230;
+  --tape: #f59e0b;
 }
 
-/* Each organization gets its own accent: the red marks of the UFC pages turn corner blue on the others. */
-:root[data-org='pfl'],
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* Backgrounds & Surfaces (Crisp, High-Grade Sports Analytics) */
+  --bg-app: #f1f5f9;              /* Slate 100: Soft cool backdrop, never washed-out */
+  --bg-surface: #ffffff;          /* Pure crisp white card/surface */
+  --bg-surface-elevated: #ffffff; /* Elevated cards and popovers with rich soft shadow */
+  --bg-surface-subtle: #f8fafc;   /* Slate 50: Chips, pill controls, inputs */
+  --bg-surface-hover: #e2e8f0;    /* Slate 200: Clear responsive hover state */
+  --bg-surface-active: #cbd5e1;   /* Slate 300: Active/pressed */
+
+  /* Borders & Dividers */
+  --border-subtle: #cbd5e1;       /* Slate 300: Clean card borders with visible boundary */
+  --border-default: #94a3b8;      /* Slate 400: UI borders with strong contrast */
+  --border-strong: #64748b;       /* Slate 500: Clear emphasis */
+
+  /* Typography (WCAG AA: >= 4.5:1 against #ffffff & #f1f5f9) */
+  --text-primary: #090d16;        /* Deep Slate-black: 18.5:1 on #ffffff (AAA) */
+  --text-secondary: #1e293b;      /* Slate 800: 12.6:1 on #ffffff (AAA, ultra-crisp!) */
+  --text-muted: #334155;          /* Slate 700: 10.0:1 on #ffffff (AAA, never washed-out!) */
+
+  /* Accents & States */
+  --accent-red: #c8102e;          /* Official Combat Red */
+  --text-red: #b91c1c;            /* 7.6:1 on #ffffff (AAA) */
+  --accent-blue: #1d4ed8;
+  --text-blue: #1e40af;           /* 7.8:1 on #ffffff (AAA) */
+  --accent-green: #15803d;
+  --text-green: #166534;          /* 6.8:1 on #ffffff (AA) */
+  --accent-gold: #b45309;
+  --text-gold: #92400e;           /* 6.9:1 on #ffffff (AA) */
+
+  /* Inputs & Components */
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --input-focus: #c8102e;
+  --card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+  --elevated-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --modal-backdrop: rgba(15, 23, 42, 0.55);
+  --grid-pattern: radial-gradient(rgba(15, 23, 42, 0.05) 1.2px, transparent 1.3px);
+
+  /* Backward compatibility aliases */
+  --app-background: var(--bg-app);
+  --card-bg: var(--bg-surface);
+  --hero-bg: var(--bg-surface);
+  --tile-bg: var(--bg-surface-subtle);
+  --tile-hover-bg: var(--bg-surface-hover);
+  --input-hover-bg: var(--bg-surface-hover);
+  --action-bg: var(--bg-surface);
+  --action-hover-bg: var(--bg-surface-hover);
+  --option-bg: var(--bg-surface);
+  --option-hover-bg: var(--bg-surface-hover);
+  --chip-bg: var(--bg-surface-subtle);
+  --surface-1: var(--bg-surface);
+  --surface-2: var(--bg-surface-subtle);
+  --surface-3: var(--bg-surface-subtle);
+  --rule: var(--text-primary);
+  --hard: var(--border-default);
+  --line-soft: var(--border-subtle);
+  --line-strong: var(--border-strong);
+  --text-main: var(--text-primary);
+  --text-soft: var(--text-secondary);
+  --shadow-soft: rgba(15, 23, 42, 0.06);
+  --shadow-page: rgba(15, 23, 42, 0.05);
+  --avatar-bg: #e2e8f0;
+  --logo-bg: #0f172a;
+  --tape: #b45309;
+}
+
+/* Organization Specific Theme Customizations */
+:root[data-org='pfl'] {
+  --accent-red: #3b82f6;
+  --text-red: #60a5fa;
+  --hard: #1d4ed8;
+}
+
 :root[data-org='pfl'][data-theme='light'] {
-  --accent-red: #1f4e9c;
-  --text-red: #1f4e9c;
+  --accent-red: #1d4ed8;
+  --text-red: #1e40af;
+  --hard: #cbd5e1;
 }
 
-:root[data-org='bellator'],
+:root[data-org='bellator'] {
+  --accent-red: #22c55e;
+  --text-red: #4ade80;
+  --hard: #15803d;
+}
+
 :root[data-org='bellator'][data-theme='light'] {
-  --accent-red: #2e7d4f;
-  --text-red: #1f6a3f;
+  --accent-red: #15803d;
+  --text-red: #166534;
+  --hard: #cbd5e1;
 }
 
-:root[data-org='bellator'][data-theme='dark'] {
-  --accent-red: #3fb27f;
-  --text-red: #6fd0a3;
-  --hard: #2e7d4f;
+:root[data-org='zuffa'] {
+  --accent-red: #f59e0b;
+  --text-red: #fbbf24;
+  --hard: #b45309;
 }
 
-:root[data-org='pfl'][data-theme='dark'] {
-  --accent-red: #4a82d6;
-  --text-red: #8fb3e8;
-  --hard: #1f4e9c;
+:root[data-org='zuffa'][data-theme='light'] {
+  --accent-red: #b45309;
+  --text-red: #92400e;
+  --hard: #cbd5e1;
 }
 
 html {
@@ -179,15 +274,6 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Predictor fight poster maintains high-contrast ink-on-paper typography across all themes */
-.fight-poster-card,
-.fight-poster-card h1,
-.fight-poster-card h2,
-.fight-poster-card h3,
-.fight-poster-card h4 {
-  color: #0e0e0e !important;
-}
-
 .dashboard-shell {
   position: relative;
   width: 100%;
@@ -207,7 +293,7 @@ h3,
   text-transform: uppercase;
   letter-spacing: 0.01em;
   line-height: 0.98;
-  color: var(--text-main);
+  color: inherit;
 }
 
 .type-tech {
@@ -238,57 +324,60 @@ h3,
   letter-spacing: 0.01em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 .page-hero {
   position: relative;
-  background-color: var(--hero-bg);
+  background-color: var(--bg-surface);
   background-image: var(--grid-pattern);
   background-size: 7px 7px;
-  border: 3px solid var(--rule);
-  box-shadow: 6px 6px 0 var(--hard);
-  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow);
+  color: var(--text-primary);
+  border-radius: 1rem;
 }
 
-/* Flat corner triangle, like a folded poster edge. */
-.page-hero::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  background: var(--accent-red);
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  pointer-events: none;
-}
-
+/* Surface Cards & Containers */
 .surface-card {
   position: relative;
-  background: var(--card-bg);
-  border: 3px solid var(--rule);
-  box-shadow: 5px 5px 0 var(--hard);
-  color: var(--text-main);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow);
+  color: var(--text-primary);
+  border-radius: 1rem;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.surface-card-elevated {
+  position: relative;
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--elevated-shadow);
+  color: var(--text-primary);
+  border-radius: 1.25rem;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .metric-tile {
   position: relative;
-  background: var(--tile-bg);
-  border: 2px solid var(--rule);
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
   overflow: hidden;
-  color: var(--text-main);
+  color: var(--text-primary);
   transition:
     transform 120ms ease,
     box-shadow 120ms ease,
-    background 120ms ease;
+    border-color 120ms ease,
+    background-color 120ms ease;
 }
 
 .metric-tile::before {
   content: "";
   position: absolute;
   inset: 0 0 auto 0;
-  height: 4px;
+  height: 3px;
   background: var(--accent-red);
 }
 
@@ -297,165 +386,147 @@ h3,
 }
 
 .metric-tile:hover {
-  background: var(--tile-hover-bg);
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--hard);
+  background-color: var(--bg-surface-hover);
+  border-color: var(--border-default);
+  transform: translateY(-1px);
+  box-shadow: var(--card-shadow);
 }
 
+/* Interactive Component Tokens */
 .primary-action {
   position: relative;
   font-family: var(--font-sports-tech);
   font-weight: 700;
   letter-spacing: 0.12em;
-  background: var(--tape);
-  color: #0e0e0e !important;
-  border: 3px solid var(--rule);
-  box-shadow: 4px 4px 0 var(--hard);
+  background-color: var(--accent-red);
+  color: #ffffff !important;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 14px -2px rgba(200, 16, 46, 0.4);
   transition:
     transform 120ms ease,
-    box-shadow 120ms ease;
+    box-shadow 120ms ease,
+    filter 120ms ease;
 }
 
 .primary-action:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--hard);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -2px rgba(200, 16, 46, 0.5);
 }
 
 .primary-action:active {
-  transform: translate(4px, 4px);
-  box-shadow: none;
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px -1px rgba(200, 16, 46, 0.3);
 }
 
 .primary-action:disabled {
-  background: transparent;
-  border-style: dashed;
-  border-color: var(--line-soft);
-  box-shadow: none;
-  color: var(--text-muted) !important;
+  opacity: 0.45;
+  cursor: not-allowed;
   transform: none;
+  box-shadow: none;
+  filter: grayscale(0.5);
 }
 
 .ghost-action {
   font-family: var(--font-sports-tech);
   font-weight: 700;
   letter-spacing: 0.1em;
-  background: var(--action-bg);
-  border: 2px solid var(--rule);
-  color: var(--text-main);
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
   transition:
-    background 120ms ease,
-    transform 120ms ease,
-    box-shadow 120ms ease;
+    background-color 120ms ease,
+    border-color 120ms ease,
+    transform 120ms ease;
 }
 
 .ghost-action:hover {
-  background: var(--action-hover-bg);
-  transform: translate(-1px, -1px);
-  box-shadow: 2px 2px 0 var(--hard);
+  background-color: var(--bg-surface-hover);
+  border-color: var(--border-default);
+  transform: translateY(-1px);
 }
 
 .soft-input {
-  background: var(--input-bg);
-  border: 2px solid var(--rule);
-  transition: box-shadow 120ms ease;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
 }
 
 .soft-input:focus-within,
 .soft-input:focus {
-  background: var(--input-hover-bg);
-  box-shadow: 0 0 0 3px var(--tape);
+  background-color: var(--bg-surface);
+  border-color: var(--accent-red);
+  box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.18);
 }
 
 .soft-input-blue:focus-within,
 .soft-input-blue:focus {
-  background: var(--input-hover-bg);
-  box-shadow: 0 0 0 3px var(--accent-blue);
+  background-color: var(--bg-surface);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 .progress-track {
-  background: var(--surface-3);
-  border: 2px solid var(--rule);
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
 }
 
-/* Header: a paper bar with a hard shadow; the cream badge carries the brand. */
-header nav {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-header nav a {
-  font-family: var(--font-sports-tech);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-header nav a.nav-link-active {
-  background: var(--tape) !important;
-  color: #0e0e0e !important;
-  box-shadow: none !important;
-  outline: 2px solid var(--rule);
-  outline-offset: -2px;
-}
-
-.corner-flag {
-  position: relative;
-  height: 8px;
-  width: 100%;
-}
-
-.corner-flag--red {
-  background: var(--accent-red);
-}
-
-.corner-flag--blue {
-  background: var(--accent-blue);
-}
-
-.vs-medallion {
-  display: grid;
-  place-items: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 9999px;
-  background: var(--tape);
-  border: 3px solid #0e0e0e;
-  box-shadow: 3px 3px 0 #0e0e0e;
-  transform: rotate(-6deg);
-}
-
-.vs-medallion span {
-  font-family: var(--font-poster);
-  font-size: 1.6rem;
-  line-height: 1;
-  color: #0e0e0e;
-}
-
+/* Semantic Helper Utilities */
 .theme-text {
-  color: var(--text-main);
+  color: var(--text-primary) !important;
+}
+
+.theme-secondary {
+  color: var(--text-secondary) !important;
 }
 
 .theme-muted {
-  color: var(--text-muted);
+  color: var(--text-muted) !important;
 }
 
 .theme-soft-text {
-  color: var(--text-soft);
+  color: var(--text-secondary) !important;
+}
+
+.theme-border {
+  border-color: var(--border-subtle) !important;
+}
+
+.theme-border-default {
+  border-color: var(--border-default) !important;
+}
+
+.theme-border-strong {
+  border-color: var(--border-strong) !important;
+}
+
+.theme-bg-surface {
+  background-color: var(--bg-surface) !important;
+}
+
+.theme-bg-subtle {
+  background-color: var(--bg-surface-subtle) !important;
+}
+
+.theme-bg-elevated {
+  background-color: var(--bg-surface-elevated) !important;
 }
 
 .selector-backdrop {
-  background: var(--modal-backdrop);
+  background-color: var(--modal-backdrop);
 }
 
 .selector-option {
-  background: var(--option-bg);
-  border: 2px solid var(--rule);
-  color: var(--text-main);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  transition: background-color 120ms ease, border-color 120ms ease;
 }
 
 .selector-option:hover,
 .selector-option-active {
-  background: var(--option-hover-bg);
+  background-color: var(--bg-surface-hover);
   border-color: var(--accent-red);
 }
 
@@ -465,73 +536,25 @@ header nav a.nav-link-active {
 }
 
 .selector-chip {
-  border: 2px solid var(--rule);
-  background: var(--chip-bg);
-  border-radius: 0;
-  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface-subtle);
+  color: var(--text-secondary);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
 }
 
 select.soft-input {
-  color: var(--text-main);
+  color: var(--text-primary);
 }
 
 select.soft-input option {
-  background: var(--surface-1);
-  color: var(--text-main);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-primary);
 }
 
 .soft-input input,
 .soft-input select {
-  color: var(--text-main);
-}
-
-:root[data-theme='light'] .text-\[\#FFFFFF\],
-:root[data-theme='light'] .text-\[\#E5E5E5\],
-:root[data-theme='light'] .text-\[\#CCCCCC\] {
-  color: var(--text-main) !important;
-}
-
-:root[data-theme='light'] .text-\[\#999999\] {
-  color: var(--text-muted) !important;
-}
-
-:root[data-theme='light'] .border-white\/8,
-:root[data-theme='light'] .border-white\/10,
-:root[data-theme='light'] .border-white\/12,
-:root[data-theme='light'] .border-white\/14,
-:root[data-theme='light'] .border-white\/16,
-:root[data-theme='light'] .border-white\/18,
-:root[data-theme='light'] .hover\:border-white\/14:hover,
-:root[data-theme='light'] .hover\:border-white\/16:hover {
-  border-color: var(--line-soft) !important;
-}
-
-:root[data-theme='light'] .bg-white\/\[0\.025\],
-:root[data-theme='light'] .bg-white\/\[0\.03\],
-:root[data-theme='light'] .bg-white\/\[0\.035\],
-:root[data-theme='light'] .bg-white\/\[0\.04\],
-:root[data-theme='light'] .bg-white\/\[0\.045\],
-:root[data-theme='light'] .bg-white\/\[0\.055\] {
-  background-color: var(--surface-3) !important;
-}
-
-:root[data-theme='light'] .hover\:bg-white\/7:hover,
-:root[data-theme='light'] .hover\:bg-white\/\[0\.055\]:hover,
-:root[data-theme='light'] .hover\:bg-white\/\[0\.065\]:hover,
-:root[data-theme='light'] .hover\:bg-white\/\[0\.075\]:hover {
-  background-color: var(--option-hover-bg) !important;
-}
-
-:root[data-theme='light'] .hover\:text-white:hover,
-:root[data-theme='light'] .group:hover .group-hover\:text-\[\#FFFFFF\] {
-  color: var(--text-main) !important;
-}
-
-:root[data-theme='light'] .bg-black\/15,
-:root[data-theme='light'] .bg-black\/16,
-:root[data-theme='light'] .bg-black\/18,
-:root[data-theme='light'] .bg-black\/24 {
-  background-color: var(--surface-3) !important;
+  color: var(--text-primary);
 }
 
 .pill-scroll {
@@ -616,9 +639,8 @@ select.soft-input option {
 }
 
 /* Square the whole interface: poster prints have no rounded corners. Opt back in with .keep-round. */
-.dashboard-shell [class*="rounded"]:not(.keep-round) {
-  border-radius: 2px !important;
-}
+/* Square corners override disabled for modern UI */
+/* .dashboard-shell [class*="rounded"]:not(.keep-round) { border-radius: 2px !important; } */
 
 .keep-round {
   border-radius: 9999px !important;

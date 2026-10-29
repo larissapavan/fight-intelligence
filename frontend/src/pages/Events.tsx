@@ -81,14 +81,16 @@ export function Events() {
 
   const matchesFilters = useCallback(
     (event: EventSummary) => {
-      const term = query.trim().toLowerCase()
-      const formattedDate = formatEventDate(event.date, i18n.language).toLowerCase()
+      const fold = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      const term = fold(query.trim())
+      const formattedDate = fold(formatEventDate(event.date, i18n.language))
       const matchesQuery =
         !term ||
-        event.name.toLowerCase().includes(term) ||
+        fold(event.name).includes(term) ||
         formattedDate.includes(term) ||
         (event.date ?? '').includes(term) ||
-        (event.location ?? '').toLowerCase().includes(term)
+        fold(event.location ?? '').includes(term) ||
+        (event.fights ?? []).some((f) => fold(f.fighter_1).includes(term) || fold(f.fighter_2).includes(term))
 
       const matchesYear = yearFilter === 'ALL' || event.date?.slice(0, 4) === yearFilter
       const matchesMonth =
@@ -178,7 +180,7 @@ export function Events() {
           <p className="type-display text-2xl font-bold uppercase tracking-[0.03em] text-[var(--text-main)]">
             {t('events.noEventsFound')}
           </p>
-          <p className="mt-2 text-sm text-[#999999]">{t('events.noEventsSub')}</p>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">{t('events.noEventsSub')}</p>
         </div>
       )}
     </>
@@ -360,7 +362,7 @@ function EventGroup({
       <button
         type="button"
         onClick={() => onToggleGroup(groupKey)}
-        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-white/[0.03] sm:px-4"
+        className="flex w-full items-center gap-2 px-3 py-2.5 text-left transition duration-150 hover:bg-[var(--bg-surface-subtle)] sm:px-4"
         aria-expanded={isOpen}
       >
         <Icon className="h-4 w-4 text-[#C8102E]" />
@@ -381,7 +383,7 @@ function EventGroup({
               })}
             </div>
           ) : (
-            <div className="rounded-[16px] px-4 py-4 text-center text-sm text-[#999999]">
+            <div className="rounded-[16px] px-4 py-4 text-center text-sm text-[var(--text-muted)]">
               {L(i18n.language, 'Nenhum resultado nesta seção.', 'No matches in this section.', 'Aucun résultat dans cette section.')}
             </div>
           )}
@@ -411,7 +413,7 @@ function EventCard({
       <button
         type="button"
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition duration-150 hover:bg-white/[0.03]"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition duration-150 hover:bg-[var(--bg-surface-subtle)]"
         aria-expanded={isOpen}
       >
         <div className="min-w-0 flex-1">
@@ -459,7 +461,7 @@ function EventCard({
               ))}
             </div>
           ) : (
-            <p className="text-sm text-[#999999]">{t('common.noResults')}</p>
+            <p className="text-sm text-[var(--text-muted)]">{t('common.noResults')}</p>
           )}
         </div>
       ) : null}
@@ -484,7 +486,7 @@ function FightRow({ eventName, fight, pick }: { eventName: string; fight: FightR
 function SummaryTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="metric-tile rounded-xl px-3 py-2.5">
-      <p className="broadcast-label text-[11px] text-[#999999]">{label}</p>
+      <p className="broadcast-label text-[11px] text-[var(--text-muted)]">{label}</p>
       <p className="data-value mt-1 text-2xl font-bold text-[var(--text-main)]">{value}</p>
     </div>
   )

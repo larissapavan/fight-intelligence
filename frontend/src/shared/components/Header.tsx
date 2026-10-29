@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { FolderGit2, Moon, Sun } from 'lucide-react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -7,12 +6,13 @@ import { L } from '../../i18n/lang'
 import { isLandingPath, LANDING_PATH, orgPath, type OrgConfig } from '../data/orgs'
 import { useModelInfo } from '../hooks/useModelInfo'
 import { useOrg } from '../hooks/useOrg'
+import { useTheme } from '../context/ThemeContext'
 import { BrandMark } from './BrandMark'
 import { FighterSearch } from './FighterSearch'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { OrgSwitcher } from './OrgSwitcher'
 
-type NavItem = { to: string; label: string; group?: string[]; /** Also active on the pages below it (a gym under Gyms). */ section?: boolean }
+type NavItem = { to: string; label: string; group?: string[]; section?: boolean }
 
 const NAV_I18N_KEYS: Record<string, string> = {
   Predict: 'nav.predict',
@@ -31,16 +31,16 @@ const ufcNavItems: NavItem[] = [
   { to: '/rankings', label: 'Rankings' },
   { to: '/gyms', label: 'Gyms', section: true },
   { to: '/champions', label: 'Champions', group: ['/champions', '/record-book'] },
-  { to: '/about', label: 'About', group: ['/about', '/data', '/model', '/track-record'] },
 ]
 
-/** Every organization other than the UFC has the same three sections. */
 function navItemsFor(org: OrgConfig): NavItem[] {
   if (org.id === 'ufc') return ufcNavItems
   return [
+    ...(org.hasPredictions ? [{ to: orgPath(org, 'predictor'), label: 'Predict' }] : []),
     { to: orgPath(org, 'fighters'), label: 'Fighters' },
     { to: orgPath(org, 'events'), label: 'Events' },
     ...(org.hasRankings ? [{ to: orgPath(org, 'rankings'), label: 'Rankings' }] : []),
+    ...(org.hasChampions ? [{ to: orgPath(org, 'champions'), label: 'Champions' }] : []),
     { to: orgPath(org, 'gyms'), label: 'Gyms', section: true },
   ]
 }
@@ -51,138 +51,177 @@ function isItemActive(item: NavItem, pathname: string) {
   return (item.group ?? [item.to]).includes(current)
 }
 
-type ThemeMode = 'dark' | 'light'
-const THEME_STORAGE_KEY = 'ufc-predictor:theme'
-
+/**
+ * Modern, Minimalist SaaS Combat Sports Analytics Navbar (Clean Single-Bar Layout).
+ */
 export function Header() {
   const { t, i18n } = useTranslation()
   const { health, loading } = useModelInfo()
   const { pathname } = useLocation()
   const org = useOrg()
   const landing = isLandingPath(pathname)
-  const navItems = landing ? [] : navItemsFor(org)
-  const [theme, setTheme] = useState<ThemeMode>(() => readThemePreference())
+  const isAbout = pathname === '/about' || pathname.startsWith('/about/') || pathname === '/data' || pathname === '/model' || pathname === '/track-record'
+  const navItems = landing || isAbout ? [] : navItemsFor(org)
+  const { isLight, toggleTheme } = useTheme()
+
   const apiLabel = loading
     ? t('header.apiWaking', 'Waking up')
     : health?.model_loaded
       ? t('header.apiLive', 'Live')
       : t('header.apiOffline', 'Offline')
+
   const apiTitle = loading
     ? t('header.apiWakingTitle', 'The API is starting. The first visit after a quiet spell can take up to a minute.')
     : health?.model_loaded
       ? t('header.apiLiveTitle', 'API is live and the model is loaded')
       : t('header.apiOfflineTitle', 'API is unreachable')
+
   const apiDotColor = loading
     ? 'bg-[#F2C230] animate-pulse'
     : health?.model_loaded
-      ? 'bg-[#3FB27F]'
+      ? 'bg-[#22c55e]'
       : 'bg-[#C8102E]'
-  const isLight = theme === 'light'
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-  }, [theme])
-
-  const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))
 
   return (
-    <header>
-      <div className="surface-card relative border-b border-white/10 rounded-[18px] px-2.5 py-2 sm:px-4 sm:py-2.5">
-        {/* Tier 1: Logo and Unified Toolbar */}
-        <div className="flex items-center justify-between gap-2">
+    <header className="w-full shrink-0">
+      <div className="relative flex h-14 sm:h-16 w-full items-center justify-between gap-3 sm:gap-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)]/85 px-3 sm:px-5 backdrop-blur-md transition-colors duration-200 shadow-sm text-[var(--text-primary)]">
+        {/* Left: Native Brand Identity */}
+        <div className="flex shrink-0 items-center gap-4 xl:gap-8">
           <Link
             to={LANDING_PATH}
             aria-label={L(i18n.language, 'Fight Intelligence • Início', 'Fight Intelligence home', 'Fight Intelligence • Accueil')}
-            className="brand-badge flex shrink-0 items-center gap-2 border-2 border-black bg-[#EFECE6] px-2 py-1 xs:gap-2.5 xs:px-3 xs:py-1.5 sm:px-3.5 sm:py-1.5 text-black"
+            className="flex items-center gap-2.5 transition opacity-95 hover:opacity-100"
           >
             <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-8 xs:w-8" />
-            <span className="flex flex-col items-start justify-center leading-none">
-              <span className="font-mono text-[9px] xs:text-[10px] font-bold uppercase tracking-wider text-[#A80D26]">
-                {t('header.matchupAnalytics', 'Matchup analytics')}
+            <span className="flex flex-col items-start justify-center leading-tight">
+              <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                {t('header.matchupAnalytics', 'Matchup Analytics')}
               </span>
-              <span className="font-['Anton','Bebas_Neue',Impact,sans-serif] text-[1.1rem] xs:text-[1.25rem] sm:text-[1.4rem] uppercase leading-none tracking-[0.02em] text-black whitespace-nowrap">
+              <span className="text-sm xs:text-base font-bold tracking-tight whitespace-nowrap text-[var(--text-primary)]">
                 Fight Intelligence
               </span>
             </span>
           </Link>
 
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            {landing ? null : <OrgSwitcher className="shrink-0" />}
-
-            {/* Minimalist API status pill */}
-            <div
-              title={apiTitle}
-              className="type-tech hidden md:inline-flex h-8 items-center gap-2 border border-[var(--line-soft)] bg-[var(--surface-3)] px-2.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-soft)]"
-            >
-              <span className={`keep-round h-2 w-2 shrink-0 ${apiDotColor}`} aria-hidden="true" />
-              <span>{apiLabel}</span>
-            </div>
-
-            <LanguageSwitcher className="hidden sm:inline-flex" />
-
-            {/* Unified Action Dock: Search + Theme + GitHub */}
-            <div className="inline-flex h-8 items-center divide-x divide-[var(--line-soft)] border border-[var(--line-soft)] bg-[var(--surface-3)]">
-              {landing ? null : <FighterSearch />}
-
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="inline-flex h-full w-8 items-center justify-center text-[var(--text-muted)] transition cursor-pointer hover:bg-[var(--action-hover-bg)] hover:text-[var(--text-main)]"
-                aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
-                title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
-              >
-                {isLight ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
-              </button>
-
-              <a
-                href="https://github.com/larissapavan"
-                target="_blank"
-                rel="noreferrer"
-                title="GitHub"
-                aria-label="GitHub"
-                className="hidden sm:inline-flex h-full w-8 items-center justify-center text-[var(--text-muted)] transition hover:bg-[var(--action-hover-bg)] hover:text-[var(--text-main)]"
-              >
-                <FolderGit2 className="h-3.5 w-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Tier 2: Dedicated Navigation Row - always visible, smoothly scrollable on mobile */}
-        {landing ? null : (
-          <div className="mt-2 border-t border-white/10 pt-2 sm:mt-2.5 sm:pt-2">
+          {/* Center-Left: Desktop Single-Bar Navigation */}
+          {landing || isAbout ? (
             <nav
               aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
-              className="chip-scroll flex w-fit max-w-full items-center gap-1 sm:gap-1.5 overflow-x-auto rounded-xl sm:rounded-full border border-white/10 bg-white/[0.03] p-1 scroll-smooth"
+              className="flex items-center gap-1.5"
             >
-              {navItems.map((item) => (
+              <NavLink
+                to="/about"
+                style={{
+                  color: isAbout ? '#ffffff' : 'var(--text-primary)',
+                  backgroundColor: isAbout ? '#C8102E' : undefined,
+                }}
+                className={`rounded-lg px-3.5 py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap shadow-xs hover:bg-black/5 dark:hover:bg-white/10 ${
+                  isAbout ? 'shadow-xs' : ''
+                }`}
+              >
+                {t('nav.about', 'About')}
+              </NavLink>
+            </nav>
+          ) : (
+            <nav
+              aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
+              className="hidden lg:flex items-center gap-1.5"
+            >
+              {navItems.map((item) => {
+                const active = isItemActive(item, pathname)
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    style={{
+                      color: active ? '#ffffff' : 'var(--text-primary)',
+                      backgroundColor: active ? '#C8102E' : undefined,
+                    }}
+                    className={`rounded-lg px-3.5 py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
+                      active ? 'shadow-xs' : ''
+                    }`}
+                  >
+                    {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
+                  </NavLink>
+                )
+              })}
+            </nav>
+          )}
+        </div>
+
+        {/* Right: Modern SaaS Utility Toolbar */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {!landing && !isAbout && <OrgSwitcher className="shrink-0" />}
+
+          {!landing && !isAbout && <FighterSearch />}
+
+          {/* Minimalist LIVE Status Pill */}
+          <div
+            title={apiTitle}
+            className="hidden sm:inline-flex items-center gap-1.5 px-1.5 py-1 text-xs font-medium cursor-default text-[var(--text-muted)]"
+          >
+            <span className={`h-2 w-2 rounded-full ${apiDotColor}`} aria-hidden="true" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+              {apiLabel}
+            </span>
+          </div>
+
+          <LanguageSwitcher />
+
+          {/* Theme Toggle & GitHub in subtle outline style */}
+          <div className="inline-flex items-center gap-0.5 border-l border-[var(--border-default)] pl-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
+              aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
+              title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
+            >
+              {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            </button>
+
+            <a
+              href="https://github.com/larissapavan"
+              target="_blank"
+              rel="noreferrer"
+              title="GitHub"
+              aria-label="GitHub"
+              className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-lg transition text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
+            >
+              <FolderGit2 className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile-Only Horizontal Scroll Navigation (narrow screens below lg) */}
+      {!landing && !isAbout && (
+        <div className="mt-1.5 lg:hidden overflow-x-auto no-scrollbar py-1">
+          <nav
+            aria-label={L(i18n.language, 'Navegação móvel', 'Mobile navigation', 'Navigation mobile')}
+            className="flex items-center gap-1 w-max rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 backdrop-blur-md shadow-xs"
+          >
+            {navItems.map((item) => {
+              const active = isItemActive(item, pathname)
+              return (
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  className={[
-                    'rounded-lg sm:rounded-full px-2.5 py-1.5 sm:px-3 text-xs sm:text-[13px] font-semibold uppercase tracking-[0.05em] sm:tracking-[0.08em] transition whitespace-nowrap shrink-0',
-                    isItemActive(item, pathname)
-                      ? 'nav-link-active'
-                      : 'text-[var(--text-main)] hover:bg-[var(--tape)] hover:text-[#0E0E0E]',
-                  ].join(' ')}
+                  style={{
+                    color: active ? '#ffffff' : 'var(--text-primary)',
+                    backgroundColor: active ? '#C8102E' : undefined,
+                  }}
+                  className={`rounded-lg px-3 py-1 text-xs font-bold transition whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
+                    active ? 'shadow-xs' : ''
+                  }`}
                 >
                   {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
                 </NavLink>
-              ))}
-            </nav>
-          </div>
-        )}
-      </div>
+              )
+            })}
+          </nav>
+        </div>
+      )}
     </header>
   )
-}
-
-function readThemePreference(): ThemeMode {
-  try {
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
-    return stored === 'dark' ? 'dark' : 'light'
-  } catch {
-    return 'light'
-  }
 }

@@ -249,10 +249,32 @@ export const orgRoutes: Record<string, unknown> = {
   '/orgs/pfl/fighters/Riko Stone/fights': pflFights,
   // Bellator: an archive, so there is no upcoming card and the fighters are mostly retired.
   '/orgs/bellator/fighters': [pflChampion, pflVeteran],
-  '/orgs/bellator/events': [orgEvent('Bellator 301', '2023-11-17', [orgFight({ winner: 'Riko Stone', method: 'U-DEC', round: 3, time: '5:00' })], { circuit: null })],
+  '/orgs/bellator/events': [
+    orgEvent('Bellator 301', '2023-11-17', [orgFight({ winner: 'Riko Stone', method: 'U-DEC', round: 3, time: '5:00', title_fight: true, stage: 'World Title' })], { circuit: null }),
+  ],
   '/orgs/bellator/events/upcoming': [],
   '/orgs/bellator/rankings': [{ category: 'Lightweight', is_p4p: false, entries: [{ rank: 0, fighter: 'Riko Stone', status: 'champion', win_rate: 0.83, last_fight: '2023-11-17', rank_change: null, athlete_url: null }] }],
   '/orgs/bellator/data-info': { last_updated: '2026-10-21', fighters_count: 2, events_count: 1, fights_count: 1, sources: ['espn.com'] },
+  // Zuffa Boxing: PFL-style active boxing organization with upcoming cards, results and rankings.
+  '/orgs/zuffa/fighters': [pflChampion, pflContender],
+  '/orgs/zuffa/events': [
+    orgEvent('Zuffa Boxing 04: Opetaia vs. Glanton', '2026-03-08', [orgFight({ winner: 'Riko Stone', method: 'U-DEC', round: 12, time: '3:00', title_fight: true, stage: 'Championship' })], { circuit: 'Zuffa Boxing' }),
+  ],
+  '/orgs/zuffa/events/upcoming': [
+    orgEvent('Zuffa Boxing 12: Billam-Smith vs. Clarke', '2030-11-07', [orgFight({ title_fight: false, stage: 'Main Event' })], { circuit: 'Zuffa Boxing' }),
+  ],
+  '/orgs/zuffa/rankings': pflRankings,
+  '/orgs/zuffa/data-info': { last_updated: '2026-10-28', fighters_count: 2, events_count: 2, fights_count: 2, sources: ['ufc.com'] },
+  // ONE Championship: active organization with upcoming cards, past events, champions and rankings.
+  '/orgs/one/fighters': [pflChampion, pflContender],
+  '/orgs/one/events': [
+    orgEvent('ONE 173: Superbon vs. Noiri', '2025-11-16', [orgFight({ winner: 'Riko Stone', method: 'KO/TKO', round: 2, time: '4:02', title_fight: true, stage: 'World Title' })], { circuit: 'ONE Championship' }),
+  ],
+  '/orgs/one/events/upcoming': [
+    orgEvent('ONE Fight Night 49: Gabriel vs. Magomedov', '2030-11-06', [orgFight({ title_fight: false, stage: 'Main Event' })], { circuit: 'ONE Championship' }),
+  ],
+  '/orgs/one/rankings': pflRankings,
+  '/orgs/one/data-info': { last_updated: '2026-10-28', fighters_count: 2, events_count: 2, fights_count: 2, sources: ['onefc.com'] },
 }
 
 
@@ -400,6 +422,7 @@ export function respond(rawUrl: string): unknown {
   if (url in orgRoutes) return orgRoutes[url]
   if (url in gymRoutes) return gymRoutes[url]
   if (/^\/orgs\/[a-z]+\/fighters\/.+\/fights$/.test(url)) return []
+  if (url.includes('/predict/upcoming')) return []
   if (url.endsWith('/performance')) return { ...performance, fighter: url.split('/')[2] }
   if (url.endsWith('/opponents')) return { fighter: '', opponents: [] }
   if (url.endsWith('/similar')) return []
