@@ -221,19 +221,21 @@ function CompactChampionCard({
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <p className="truncate text-sm font-semibold text-[var(--text-main)]">{name}</p>
+        <div className="flex items-center gap-2 min-w-0">
+          <p className="truncate text-sm sm:text-base font-bold text-[var(--text-main)]" title={name}>
+            {name}
+          </p>
           {current ? (
-            <span className="type-tech rounded-full border border-[var(--rule)] bg-[#F2C230] px-2 py-0.5 text-[11px] font-bold uppercase text-[#0E0E0E]">
+            <span className="type-tech shrink-0 rounded-full border border-[var(--rule)] bg-[#F2C230] px-1.5 py-0.5 text-[10px] font-bold uppercase text-[#0E0E0E]">
               {t('rankings.champion')}
             </span>
           ) : null}
         </div>
-        <p className="theme-muted mt-0.5 truncate text-[11px]">{subtitle}</p>
+        <p className="theme-muted mt-0.5 truncate text-xs" title={subtitle}>{subtitle}</p>
         <p className="theme-muted mt-0.5 truncate text-[11px] sm:hidden">{stats.map((stat) => `${stat.value} ${stat.label.toLowerCase()}`).join(' · ')}</p>
       </div>
 
-      <div className="theme-muted hidden shrink-0 gap-3 text-right text-[11px] sm:flex lg:gap-3.5">
+      <div className="theme-muted hidden shrink-0 items-center gap-2.5 sm:gap-4 text-right text-[11px] sm:flex">
         {stats.map((stat) => (
           <Stat key={stat.label} label={stat.label} value={stat.value} />
         ))}
@@ -555,9 +557,9 @@ function GreatestChampionsSection({ champions }: { champions: ChampionSummary[] 
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <p className="data-value text-sm font-bold text-[var(--text-main)]">{value}</p>
-      <p className="broadcast-label text-[11px]">{label}</p>
+    <div className="min-w-[48px] text-right">
+      <p className="data-value text-sm sm:text-base font-bold text-[var(--text-main)] leading-none">{value}</p>
+      <p className="broadcast-label text-[10px] text-[var(--text-muted)] tracking-wider mt-0.5 whitespace-nowrap">{label}</p>
     </div>
   )
 }
@@ -717,8 +719,8 @@ function MultiDivisionSection({ category, current }: { category: RecordCategory;
                 subtitle={divisions.join(' · ')}
                 current={holdsBelt}
                 stats={[
-                  { label: L(i18n.language, 'Disputas de cinturão', 'Title fights', 'Combats de titre'), value: String(fights.length) },
-                  { label: L(i18n.language, 'Cinturões conquistados', 'Belts won', 'Ceintures gagnées'), value: String(fights.filter((fight) => fight.role === 'won_title').length) },
+                  { label: L(i18n.language, 'Disputas', 'Fights', 'Combats'), value: String(fights.length) },
+                  { label: L(i18n.language, 'Cinturões', 'Belts', 'Ceintures'), value: String(fights.filter((fight) => fight.role === 'won_title').length) },
                   { label: L(i18n.language, 'Defesas', 'Defenses', 'Défenses'), value: String(fights.filter((fight) => fight.role === 'defense').length) },
                 ]}
                 onClick={() => setOpenName(isOpen ? null : entry.champion)}
