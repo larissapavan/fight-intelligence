@@ -339,6 +339,37 @@ def get_fighter_performance(name: str) -> dict:
     except Exception:
         upcoming = []
 
+    career_data = None
+    try:
+        from backend.app.services.career_fights_service import get_career_history
+        career_data = get_career_history(name)
+    except Exception:
+        career_data = None
+
+    if career_data and career_data.get("fights"):
+        timeline = career_data["fights"]
+        ufc_rec = career_data.get("ufc_record")
+        comp_rec = career_data.get("complete_record")
+        orgs = career_data.get("organizations", ["UFC"])
+    else:
+        ufc_fights_chronological = list(reversed(fights))
+        for f in ufc_fights_chronological:
+            f["is_ufc"] = True
+            f["organization"] = "UFC"
+        timeline = ufc_fights_chronological
+        nc_count = sum(1 for f in fights if f.get("result") is None)
+        win_rate = round((len(wins) / len(fights) * 100)) if fights else 0
+        ufc_rec = {
+            "total": len(fights),
+            "wins": len(wins),
+            "losses": len(losses),
+            "draws": 0,
+            "nc": nc_count,
+            "win_rate": win_rate,
+        }
+        comp_rec = ufc_rec
+        orgs = ["UFC"]
+
     return {
         "fighter": name,
         "total_fights": len(fights),
@@ -349,10 +380,13 @@ def get_fighter_performance(name: str) -> dict:
         "avg_win_time_seconds": avg_win_seconds,
         "weight_class_history": weight_class_history,
         "last_performances": fights[:5],
-        "career_timeline": list(reversed(fights)),  # oldest first, for chronological display
+        "career_timeline": timeline,
         "yearly_trends": _build_yearly_trends(fights),
         "next_fight": upcoming[0] if upcoming else None,
         "upcoming_fights": upcoming,
+        "ufc_record": ufc_rec,
+        "complete_record": comp_rec,
+        "organizations": orgs,
     }
 
 

@@ -481,6 +481,46 @@ def get_fighter_profile(name: str) -> dict:
     catalog = get_fighter_catalog()
     match = catalog.loc[catalog["name"] == (canonical_name(name) or name)]
     if match.empty:
+        for org_id in ("one", "pfl", "bellator", "zuffa"):
+            try:
+                from backend.app.services.org_service import get_org_fighters, _name_key
+                org_fighters = get_org_fighters(org_id)
+                target_key = _name_key(name)
+                found = next((f for f in org_fighters if _name_key(f["name"]) == target_key), None)
+                if found:
+                    wins = int(found.get("wins") or 0)
+                    losses = int(found.get("losses") or 0)
+                    draws = int(found.get("draws") or 0)
+                    total = wins + losses + draws
+                    win_rate = wins / total if total > 0 else 0.5
+                    return {
+                        "name": found["name"],
+                        "is_active": bool(found.get("is_active", False)),
+                        "nickname": _nullable_string(found.get("nickname")),
+                        "age": _to_float(found.get("age")) or 30.0,
+                        "height_cm": _to_float(found.get("height_cm")) or 178.0,
+                        "weight_lbs": _to_float(found.get("weight_lbs")) or 155.0,
+                        "reach_cm": _to_float(found.get("reach_cm")) or 183.0,
+                        "wins": wins,
+                        "losses": losses,
+                        "draws": draws,
+                        "total_fights": total,
+                        "win_rate": _to_float(found.get("win_rate")) or round(win_rate, 3),
+                        "sig_str_acc": _to_float(found.get("sig_str_acc")) or 0.45,
+                        "takedown_acc": _to_float(found.get("takedown_acc")) or 0.40,
+                        "stance": found.get("stance") or "Orthodox",
+                        "division": _nullable_string(found.get("division")),
+                        "image_url": _nullable_string(found.get("image_url")),
+                        "country": _nullable_string(found.get("country")),
+                        "country_code": _nullable_string(found.get("country_code")),
+                        "hometown": _nullable_string(found.get("hometown")),
+                        "belt": bool(found.get("belt", False)),
+                        "title_status": _nullable_string(found.get("title_status")),
+                        "ranking": _nullable_string(found.get("ranking")),
+                        "org_fights": int(found.get("org_fights") or 0),
+                    }
+            except Exception:
+                pass
         raise KeyError(f"Fighter '{name}' was not found in the catalog.")
 
     rec = match.iloc[0].to_dict()

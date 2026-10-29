@@ -11,6 +11,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
+from backend.app.dependencies import get_prediction_service, set_prediction_service
 from backend.app.rate_limit import limiter
 from backend.app.routers.champions import router as champions_router
 from backend.app.routers.events import router as events_router
@@ -49,22 +50,22 @@ def build_allowed_origins() -> list[str]:
 prediction_service: PredictionService | None = None
 
 
-def get_prediction_service() -> PredictionService | None:
-    return prediction_service
-
-
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     global prediction_service
     try:
-        prediction_service = PredictionService()
-        logger.info("Prediction service initialized with %d features.", len(prediction_service.feature_columns))
+        service = PredictionService()
+        set_prediction_service(service)
+        prediction_service = service
+        logger.info("Prediction service initialized with %d features.", len(service.feature_columns))
     except Exception:
         logger.exception("Failed to initialize prediction service.")
+        set_prediction_service(None)
         prediction_service = None
     try:
         yield
     finally:
+        set_prediction_service(None)
         prediction_service = None
 
 

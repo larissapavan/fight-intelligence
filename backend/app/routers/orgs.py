@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 
+from backend.app.dependencies import get_prediction_service
 from backend.app.rate_limit import limiter
 from backend.app.schemas.data_info import DataInfoResponse
 from backend.app.schemas.fight_history import FightRecord
 from backend.app.schemas.orgs import OrgEvent, OrgFighter, OrgInfo, OrgRankingCategory
+from backend.app.schemas.prediction import UpcomingPick
 from backend.app.services.crossorg_service import ufc_names_for_org
 from backend.app.services.org_service import (
     _name_key,
@@ -14,6 +16,7 @@ from backend.app.services.org_service import (
     get_org_fighters,
     get_org_rankings,
     get_org_upcoming_events,
+    get_org_upcoming_predictions,
     list_orgs,
 )
 
@@ -81,6 +84,16 @@ def org_upcoming_events(request: Request, response: Response, org_id: str) -> li
     events = get_org_upcoming_events(_known_org(org_id))
     response.headers["Cache-Control"] = "public, max-age=300"
     return [OrgEvent(**event) for event in events]
+
+
+@router.get("/{org_id}/predict/upcoming", response_model=list[UpcomingPick])
+@limiter.limit("30/minute")
+def org_upcoming_predictions(request: Request, response: Response, org_id: str) -> list[UpcomingPick]:
+    org = _known_org(org_id)
+    response.headers["Cache-Control"] = "public, max-age=600"
+    service = get_prediction_service()
+    picks = get_org_upcoming_predictions(org, service)
+    return [UpcomingPick(**pick) for pick in picks]
 
 
 @router.get("/{org_id}/rankings", response_model=list[OrgRankingCategory])

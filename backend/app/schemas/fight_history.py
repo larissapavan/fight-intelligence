@@ -24,6 +24,17 @@ class FightRecord(BaseModel):
     interim_title_win: bool = False
     outcome: str | None = None
     result_details: str | None = None
+    organization: str | None = None
+    is_ufc: bool = True
+
+
+class RecordSummary(BaseModel):
+    total: int
+    wins: int
+    losses: int
+    draws: int = 0
+    nc: int = 0
+    win_rate: int = 0
 
 
 class OtherOrganization(BaseModel):
@@ -91,3 +102,6 @@ class FighterPerformance(BaseModel):
     yearly_trends: list[YearlyTrend]
     next_fight: UpcomingBout | None = None
     upcoming_fights: list[UpcomingBout] = []
+    ufc_record: RecordSummary | None = None
+    complete_record: RecordSummary | None = None
+    organizations: list[str] = []

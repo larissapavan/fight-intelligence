@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
+from backend.app.dependencies import PredictionServiceGetter, get_prediction_service
 from backend.app.schemas.data_info import DataInfoResponse
 from backend.app.schemas.model_info import HealthResponse, ModelInfoResponse
 from backend.app.services.catalog_service import (
@@ -14,11 +15,13 @@ from backend.app.services.prediction_service import PredictionService
 from backend.app.utils.constants import SYSTEM_TAGLINE
 
 
-def build_meta_router(get_service) -> APIRouter:
+def build_meta_router(
+    get_service: PredictionServiceGetter = get_prediction_service,
+) -> APIRouter:
     router = APIRouter(tags=["meta"])
 
     @router.get("/")
-    def root() -> dict:
+    def root() -> dict[str, str]:
         return {
             "name": "Fight Intelligence API",
             "tagline": SYSTEM_TAGLINE,

@@ -162,11 +162,12 @@ def get_upcoming_bouts_by_fighter() -> dict[str, list[dict]]:
                     "event_url": event.get("event_url"),
                 }
                 for ftr, opp in ((f1, f2), (f2, f1)):
-                    key = _normalize_name(ftr)
-                    by_fighter.setdefault(key, []).append({
-                        **bout_common,
-                        "opponent": opp,
-                    })
+                    if ftr and ftr.strip().upper() not in ("TBD", "TBA"):
+                        key = _normalize_name(ftr)
+                        by_fighter.setdefault(key, []).append({
+                            **bout_common,
+                            "opponent": opp,
+                        })
         _upcoming_bouts_cache["by_fighter"] = by_fighter
         _upcoming_bouts_cache["signature"] = cache_key
     return _upcoming_bouts_cache["by_fighter"]
