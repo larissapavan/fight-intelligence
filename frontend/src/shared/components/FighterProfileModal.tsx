@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { L } from '../../i18n/lang'
 import { OtherOrganizationsPanel } from './OtherOrganizationsPanel'
 import { getDivisionName } from '../data/divisions'
+import { translateFightMethod, translateHometown, translateStance } from '../data/fightLabels'
 import { getFighterImageUrl, normalizeFighterName, useFighterImages } from '../hooks/useFighterImages'
 import { useFighters } from '../hooks/useFighters'
 import { useUpcomingPicks } from '../hooks/useUpcomingPicks'
@@ -146,11 +147,11 @@ export function FighterProfileModal({
     document.body.style.overflow = 'hidden'
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (selectedEra) {
-          setSelectedEra(null)
-        } else {
+        setSelectedEra((prev) => {
+          if (prev) return null
           onClose()
-        }
+          return null
+        })
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -166,11 +167,11 @@ export function FighterProfileModal({
 
     // País / Origem
     if (profile?.country) {
-      parts.push(profile.country.toUpperCase())
+      parts.push(translateHometown(profile.country, i18n.language).toUpperCase())
     } else if (profile?.nationalities && profile.nationalities.length > 0) {
-      parts.push(profile.nationalities[0].name.toUpperCase())
+      parts.push(translateHometown(profile.nationalities[0].name, i18n.language).toUpperCase())
     } else if (profile?.hometown) {
-      const city = profile.hometown.split(',').pop()?.trim().toUpperCase()
+      const city = translateHometown(profile.hometown.split(',').pop()?.trim(), i18n.language).toUpperCase()
       if (city) parts.push(city)
     } else {
       parts.push('UFC')
@@ -324,7 +325,7 @@ export function FighterProfileModal({
         hasTitleFight,
       }
     })
-  }, [performance])
+  }, [performance, i18n.language])
 
   const imageUrl = getFighterImageUrl(name, headerImages, profile?.image_url)
 
@@ -596,13 +597,11 @@ export function FighterProfileModal({
                       </p>
                       <p className="font-mono text-sm font-bold text-white truncate mt-0.5">
                         {profile?.stance
-                          ? (i18n.language.startsWith('pt')
-                              ? (profile.stance === 'Orthodox' ? 'Destro' : profile.stance === 'Southpaw' ? 'Canhoto' : profile.stance === 'Switch' ? 'Ambidestro' : profile.stance)
-                              : profile.stance)
+                          ? translateStance(profile.stance, i18n.language)
                           : '—'}
                       </p>
                       <p className="font-mono text-[10px] text-neutral-400 truncate">
-                        {profile?.stance ? `(${profile.stance})` : ''}
+                        {profile?.stance ? (i18n.language.startsWith('pt') ? 'Postura marcial' : profile.stance) : ''}
                       </p>
                     </div>
                   </div>
@@ -939,10 +938,10 @@ export function FighterProfileModal({
                       {/* Right: Method, Round, Time & Badges */}
                       <div className="text-right shrink-0">
                         <p className="font-mono text-xs font-semibold text-neutral-200">
-                          {fight.method || L(i18n.language, 'Decisão', 'Decision', 'Décision')}
+                          {translateFightMethod(fight.method, i18n.language) || L(i18n.language, 'Decisão', 'Decision', 'Décision')}
                         </p>
                         <p className="font-mono text-[10px] text-neutral-400">
-                          {fight.round ? `Round ${fight.round}` : ''} {fight.time ? `(${fight.time})` : ''}
+                          {fight.round ? (i18n.language.startsWith('pt') ? `${fight.round}º Round` : `Round ${fight.round}`) : ''} {fight.time ? `(${fight.time})` : ''}
                         </p>
                         {(fight.title_fight || fight.bmf_title || fight.interim_title) && (() => {
                           const division = resolveFightDivision(fight, profile?.division)
@@ -1062,7 +1061,7 @@ export function FighterProfileModal({
                                         isWin ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
                                       }`}
                                     >
-                                      {isWin ? 'W' : 'L'}
+                                      {isWin ? L(i18n.language, 'V', 'W', 'V') : L(i18n.language, 'D', 'L', 'D')}
                                     </span>
                                     <button
                                       type="button"
@@ -1077,7 +1076,12 @@ export function FighterProfileModal({
                                     </button>
                                   </div>
                                   <span className="font-mono text-[10px] text-neutral-400 shrink-0">
-                                    {fight.method ? fight.method.split(' ')[0] : 'DEC'}
+                                    {(() => {
+                                      const m = (fight.method || '').toLowerCase()
+                                      if (m.includes('sub')) return L(i18n.language, 'FINALIZ.', 'SUB', 'SOUM.')
+                                      if (m.includes('ko') || m.includes('tko')) return 'KO/TKO'
+                                      return L(i18n.language, 'DEC', 'DEC', 'DÉC')
+                                    })()}
                                   </span>
                                 </div>
                               )

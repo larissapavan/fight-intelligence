@@ -17,6 +17,8 @@ import { useTranslation } from 'react-i18next'
 import { L, uiLang } from '../../../i18n/lang'
 import { AnimatedCounter } from './AnimatedCounter'
 import { buildCareerPhases, type CareerPhase } from './careerPhases'
+import { getDivisionName } from '../../data/divisions'
+import { translateFightMethod, translateHometown, translateStance } from '../../data/fightLabels'
 import { getFighterImageUrl, useFighterImages } from '../../hooks/useFighterImages'
 import { useFighters } from '../../hooks/useFighters'
 import { getFighterPerformance, predictFight } from '../../services/api'
@@ -27,6 +29,37 @@ interface EditorialFighterDossierProps {
   initialOpponentName?: string
   onClose?: () => void
   onSelectFighter?: (name: string) => void
+}
+
+function translateBadge(badge: string | undefined, lang: string): string {
+  if (!badge) return ''
+  const isPt = lang.startsWith('pt') || lang === 'pt'
+  const isFr = lang.startsWith('fr')
+  const upper = badge.toUpperCase()
+
+  if (isPt) {
+    if (upper === 'DEBUT ERA') return 'ESTREIA NO OCTÓGONO'
+    if (upper === 'CONTENDER RUN') return 'CORRIDA AO TÍTULO'
+    if (upper === 'CHAMPIONSHIP') return 'DISPUTA DE CINTURÃO'
+    if (upper === 'ELITE WARS') return 'BATALHAS DA ELITE'
+    if (upper === 'UNDISPUTED REIGN') return 'REINADO ABSOLUTO'
+    if (upper === 'POUND-FOR-POUND') return 'ELITE PESO POR PESO'
+    if (upper === 'UNDISPUTED CHAMPION') return 'CAMPEÃO INDISCUTÍVEL'
+    if (upper === 'TOP CONTENDER') return 'DESAFIANTE PRINCIPAL'
+    if (upper === 'CHAMPION') return 'CAMPEÃO'
+  }
+
+  if (isFr) {
+    if (upper === 'DEBUT ERA') return 'DÉBUTS À L’OCTOGONE'
+    if (upper === 'CONTENDER RUN') return 'COURSE AU TITRE'
+    if (upper === 'CHAMPIONSHIP') return 'CHAMPIONNAT'
+    if (upper === 'ELITE WARS') return 'GUERRES D’ÉLITE'
+    if (upper === 'UNDISPUTED REIGN') return 'RÈGNE ABSOLU'
+    if (upper === 'UNDISPUTED CHAMPION') return 'CHAMPION INCONTESTÉ'
+    if (upper === 'TOP CONTENDER') return 'ASPIRANT PRINCIPAL'
+  }
+
+  return badge
 }
 
 export function EditorialFighterDossier({
@@ -309,15 +342,13 @@ export function EditorialFighterDossier({
                 ) : profile?.ranking ? (
                   <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
                     <Award className="h-3.5 w-3.5 text-[#c8102e]" />
-                    {profile.ranking} • {profile.division}
+                    {profile.ranking} • {getDivisionName(profile.division, i18n.language).toUpperCase()}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-300">
-                    {profile?.division ?? 'UFC CONTENDER'}
+                    {getDivisionName(profile?.division, i18n.language).toUpperCase() || 'UFC CONTENDER'}
                   </span>
                 )}
-
-                
               </div>
 
               {/* Fighter Name and Nickname */}
@@ -337,7 +368,7 @@ export function EditorialFighterDossier({
                 {profile?.hometown && (
                   <span className="inline-flex items-center gap-1.5">
                     <Globe2 className="h-4 w-4 text-zinc-500" />
-                    {profile.hometown}
+                    {translateHometown(profile.hometown, i18n.language)}
                   </span>
                 )}
                 {profile?.age && (
@@ -352,7 +383,9 @@ export function EditorialFighterDossier({
                   </span>
                 )}
                 {profile?.stance && (
-                  <span className="uppercase text-zinc-300 font-semibold">{profile.stance}</span>
+                  <span className="uppercase text-zinc-300 font-semibold">
+                    {translateStance(profile.stance, i18n.language).toUpperCase()}
+                  </span>
                 )}
               </div>
 
@@ -364,9 +397,9 @@ export function EditorialFighterDossier({
                   </span>
                   <span className="font-black text-2xl sm:text-3xl tracking-tight text-white">
                     {profile?.wins ?? 0}
-                    <span className="text-zinc-500 font-normal">W</span> — {profile?.losses ?? 0}
-                    <span className="text-zinc-500 font-normal">L</span>
-                    {profile?.draws ? ` — ${profile.draws}D` : ''}
+                    <span className="text-zinc-500 font-normal">{L(i18n.language, 'V', 'W', 'V')}</span> — {profile?.losses ?? 0}
+                    <span className="text-zinc-500 font-normal">{L(i18n.language, 'D', 'L', 'D')}</span>
+                    {profile?.draws ? ` — ${profile.draws}${L(i18n.language, 'E', 'D', 'N')}` : ''}
                   </span>
                   <span className="ml-2 rounded-md bg-[#22c55e]/20 px-2 py-0.5 text-xs font-bold text-[#4ade80]">
                     {Math.round((profile?.win_rate ?? 0) * 100)}% {L(i18n.language, 'vitórias', 'wins', 'victoires')}
@@ -431,10 +464,12 @@ export function EditorialFighterDossier({
                   ) : null}
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#c8102e]">CORNER RED</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#c8102e]">
+                    {L(i18n.language, 'CÓRNER VERMELHO', 'CORNER RED', 'COIN ROUGE')}
+                  </span>
                   <h3 className="text-xl font-black uppercase text-white">{activeFighterName}</h3>
                   <p className="text-xs font-mono text-zinc-400">
-                    {profile?.wins}W - {profile?.losses}L
+                    {profile?.wins}{L(i18n.language, 'V', 'W', 'V')} — {profile?.losses}{L(i18n.language, 'D', 'L', 'D')}
                   </p>
                 </div>
               </div>
@@ -458,10 +493,12 @@ export function EditorialFighterDossier({
                 {opponentProfile ? (
                   <>
                     <div className="text-right">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">CORNER BLUE</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
+                        {L(i18n.language, 'CÓRNER AZUL', 'CORNER BLUE', 'COIN BLEU')}
+                      </span>
                       <h3 className="text-xl font-black uppercase text-white">{opponentProfile.name}</h3>
                       <p className="text-xs font-mono text-zinc-400">
-                        {opponentProfile.wins}W - {opponentProfile.losses}L
+                        {opponentProfile.wins}{L(i18n.language, 'V', 'W', 'V')} — {opponentProfile.losses}{L(i18n.language, 'D', 'L', 'D')}
                       </p>
                     </div>
                     <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/20 bg-white/5 shrink-0">
@@ -485,7 +522,7 @@ export function EditorialFighterDossier({
           </section>
         )}
 
-        {/* SECTION 2: EDITORIAL GIGANTIC STAT CARDS (NUMBERS 48px - 72px) */}
+        {/* SECTION 2: EDITORIAL GIGANTIC STAT CARDS */}
         <section className="mt-12 sm:mt-16">
           <div className="mb-6 flex items-baseline justify-between border-b border-white/10 pb-3">
             <div>
@@ -681,14 +718,16 @@ export function EditorialFighterDossier({
                   <div className="lg:col-span-3 flex lg:flex-col justify-between items-baseline lg:items-start border-b lg:border-b-0 lg:border-r border-white/10 pb-4 lg:pb-0 lg:pr-6">
                     <div>
                       <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#c8102e]">
-                        CHAPTER {phase.chapterNumber}
+                        {L(i18n.language, `CAPÍTULO ${phase.chapterNumber}`, `CHAPTER ${phase.chapterNumber}`, `CHAPITRE ${phase.chapterNumber}`)}
                       </span>
-                      <p className="mt-1 font-mono text-2xl font-black text-white">{phase.period}</p>
+                      <p className="mt-1 font-mono text-2xl font-black text-white">
+                        {phase.period.replace('PRESENT', L(i18n.language, 'ATUAL', 'PRESENT', 'PRÉSENT'))}
+                      </p>
                     </div>
 
                     {phase.highlightBadge && (
                       <span className="mt-2 inline-flex items-center rounded-full border border-white/15 bg-white/5 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-300">
-                        {phase.highlightBadge}
+                        {translateBadge(phase.highlightBadge, i18n.language)}
                       </span>
                     )}
                   </div>
@@ -715,10 +754,14 @@ export function EditorialFighterDossier({
                               className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-mono"
                             >
                               <span className={bout.result === 'win' ? 'text-[#4ade80] font-bold' : 'text-[#c8102e]'}>
-                                {bout.result === 'win' ? 'W' : 'L'}
+                                {bout.result === 'win' ? L(i18n.language, 'V', 'W', 'V') : L(i18n.language, 'D', 'L', 'D')}
                               </span>
                               <span className="text-white font-medium">{bout.opponent}</span>
-                              {bout.method && <span className="text-zinc-500 text-[10px]">({bout.method})</span>}
+                              {bout.method && (
+                                <span className="text-zinc-500 text-[10px]">
+                                  ({translateFightMethod(bout.method, i18n.language)})
+                                </span>
+                              )}
                             </div>
                           ))}
                         </div>
@@ -733,7 +776,7 @@ export function EditorialFighterDossier({
                         {L(i18n.language, 'CARTEL NA FASE', 'ERA RECORD', 'PALMARÈS')}
                       </span>
                       <p className="text-xl font-black text-white">
-                        {phase.wins}W — {phase.losses}L
+                        {phase.wins}{L(i18n.language, 'V', 'W', 'V')} — {phase.losses}{L(i18n.language, 'D', 'L', 'D')}
                       </p>
                     </div>
 
@@ -779,7 +822,7 @@ export function EditorialFighterDossier({
                 <button
                   type="button"
                   onClick={() => setSelectingCorner(null)}
-                  className="rounded-full p-1 text-zinc-400 hover:text-white"
+                  className="rounded-full p-1 text-zinc-400 hover:text-white cursor-pointer"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -809,7 +852,7 @@ export function EditorialFighterDossier({
                       <div>
                         <p className="font-bold text-white text-sm">{f.name}</p>
                         <p className="text-xs text-zinc-400 font-mono">
-                          {f.division ?? 'UFC'} • {f.wins}W - {f.losses}L
+                          {getDivisionName(f.division, i18n.language) || 'UFC'} • {f.wins}{L(i18n.language, 'V', 'W', 'V')} - {f.losses}{L(i18n.language, 'D', 'L', 'D')}
                         </p>
                       </div>
                       <ChevronRight className="h-4 w-4 text-zinc-500" />

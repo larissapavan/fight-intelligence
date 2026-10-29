@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 
 import { L } from '../../../i18n/lang'
 import { AnimatedCounter } from './AnimatedCounter'
+import { getDivisionName } from '../../data/divisions'
 import { getFighterImageUrl, useFighterImages } from '../../hooks/useFighterImages'
 import { useFighters } from '../../hooks/useFighters'
 import { usePrediction } from '../../hooks/usePrediction'
@@ -116,7 +117,7 @@ export function EditorialHeadToHeadSimulator({
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-[#E11D48] animate-pulse" />
           <span className="font-mono text-xs font-bold uppercase tracking-[0.25em] text-[var(--text-muted)]">
-            SIMULATEUR DE COMBAT // TALE OF THE TAPE ÉDITORIAL
+            {L(i18n.language, 'SIMULADOR DE COMBATE // TALE OF THE TAPE EDITORIAL', 'FIGHT SIMULATOR // EDITORIAL TALE OF THE TAPE', 'SIMULATEUR DE COMBAT // TALE OF THE TAPE ÉDITORIAL')}
           </span>
         </div>
 
@@ -143,11 +144,11 @@ export function EditorialHeadToHeadSimulator({
         >
           <div className="flex items-center gap-2">
             <span className="rounded bg-[#E11D48] px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-wider text-white">
-              CORNER RED
+              {L(i18n.language, 'CÓRNER VERMELHO', 'CORNER RED', 'COIN ROUGE')}
             </span>
             {profileA?.belt && (
               <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase text-[#fbbf24]">
-                <Trophy className="h-3 w-3" /> CHAMPION
+                <Trophy className="h-3 w-3" /> {L(i18n.language, 'CAMPEÃO', 'CHAMPION', 'CHAMPION')}
               </span>
             )}
           </div>
@@ -171,8 +172,7 @@ export function EditorialHeadToHeadSimulator({
           </button>
 
           <p className="font-mono text-xs text-zinc-400">
-            {profileA?.division ?? 'UFC'} • {profileA?.wins ?? 0}W - {profileA?.losses ?? 0}L
-            
+            {getDivisionName(profileA?.division, i18n.language) || 'UFC'} • {profileA?.wins ?? 0}{L(i18n.language, 'V', 'W', 'V')} - {profileA?.losses ?? 0}{L(i18n.language, 'D', 'L', 'D')}
           </p>
 
           {/* Cutout Hero Image */}
@@ -215,7 +215,9 @@ export function EditorialHeadToHeadSimulator({
             </div>
 
             <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-neutral-400 font-medium">
-              {predicting ? 'CALCULATING SHAP ENGINE...' : '● ENGINE v2.4 // SHAP PROBABILITY'}
+              {predicting
+                ? L(i18n.language, 'CALCULANDO MOTOR SHAP...', 'CALCULATING SHAP ENGINE...', 'CALCUL DU MOTEUR SHAP...')
+                : L(i18n.language, '● MOTOR v2.4 // PROBABILIDADE SHAP', '● ENGINE v2.4 // SHAP PROBABILITY', '● MOTEUR v2.4 // PROBABILITÉ SHAP')}
             </p>
 
             {/* Prediction Indicator */}
@@ -223,7 +225,7 @@ export function EditorialHeadToHeadSimulator({
               <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/60 px-3 py-1 shadow-md">
                 <Sparkles className="h-3 w-3 text-[#fbbf24]" />
                 <span className="font-mono text-[11px] font-medium tracking-widest uppercase text-white truncate max-w-[140px]">
-                  FAVORITO: {prediction.predicted_winner.split(' ').pop()}
+                  {L(i18n.language, 'FAVORITO:', 'FAVORITE:', 'FAVORI :')} {prediction.predicted_winner.split(' ').pop()}
                 </span>
               </div>
             )}
@@ -240,11 +242,11 @@ export function EditorialHeadToHeadSimulator({
           <div className="flex items-center gap-2">
             {profileB?.belt && (
               <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase text-[#fbbf24]">
-                <Trophy className="h-3 w-3" /> CHAMPION
+                <Trophy className="h-3 w-3" /> {L(i18n.language, 'CAMPEÃO', 'CHAMPION', 'CHAMPION')}
               </span>
             )}
             <span className="rounded bg-[#2563EB] px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-wider text-white">
-              CORNER BLUE
+              {L(i18n.language, 'CÓRNER AZUL', 'CORNER BLUE', 'COIN BLEU')}
             </span>
           </div>
 
@@ -267,8 +269,7 @@ export function EditorialHeadToHeadSimulator({
           </button>
 
           <p className="font-mono text-xs text-zinc-400">
-            {profileB?.division ?? 'UFC'} • {profileB?.wins ?? 0}W - {profileB?.losses ?? 0}L
-            
+            {getDivisionName(profileB?.division, i18n.language) || 'UFC'} • {profileB?.wins ?? 0}{L(i18n.language, 'V', 'W', 'V')} - {profileB?.losses ?? 0}{L(i18n.language, 'D', 'L', 'D')}
           </p>
 
           {/* Cutout Hero Image */}
@@ -291,7 +292,7 @@ export function EditorialHeadToHeadSimulator({
       {/* COMPARATIVE METRIC BARS */}
       <div className="relative z-10 mt-8 space-y-4 pt-5 border-t border-[var(--border-subtle)] dark:border-white/10">
         <h4 className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-zinc-400 text-center">
-          ANALYSE COMPARATIVE DES VOLUMES ET DE LA DÉFENSE
+          {L(i18n.language, 'ANÁLISE COMPARATIVA DE VOLUME E DEFESA', 'COMPARATIVE VOLUME & DEFENSE ANALYSIS', 'ANALYSE COMPARATIVE DES VOLUMES ET DE LA DÉFENSE')}
         </h4>
 
         {/* Striking Volume (SLpM) */}
@@ -366,7 +367,7 @@ export function EditorialHeadToHeadSimulator({
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar atleta pelo nome..."
+                    placeholder={L(i18n.language, 'Buscar atleta pelo nome...', 'Search fighter by name...', 'Rechercher un athlète...')}
                     className="w-full rounded-xl border border-[var(--border-default)] dark:border-white/15 bg-[var(--bg-surface-subtle)] dark:bg-white/5 py-2.5 pl-10 pr-4 text-sm text-[var(--text-primary)] dark:text-white placeholder-[var(--text-muted)] focus:border-[#E11D48] focus:outline-none"
                     autoFocus
                   />
@@ -383,10 +384,12 @@ export function EditorialHeadToHeadSimulator({
                       <div>
                         <p className="font-bold text-[var(--text-primary)] dark:text-white text-sm">{f.name}</p>
                         <p className="text-xs text-zinc-400 font-mono">
-                          {f.division ?? 'UFC'} • {f.wins}W - {f.losses}L
+                          {getDivisionName(f.division, i18n.language) || 'UFC'} • {f.wins}{L(i18n.language, 'V', 'W', 'V')} - {f.losses}{L(i18n.language, 'D', 'L', 'D')}
                         </p>
                       </div>
-                      <span className="font-mono text-xs text-zinc-500">Selecionar</span>
+                      <span className="font-mono text-xs text-zinc-500">
+                        {L(i18n.language, 'Selecionar', 'Select', 'Sélectionner')}
+                      </span>
                     </button>
                   ))}
                 </div>

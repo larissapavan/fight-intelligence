@@ -46,10 +46,23 @@ export const DIVISION_NAMES_FR: Record<string, string> = {
 
 export function getDivisionName(division: string | null | undefined, language: string | boolean = false): string {
   if (!division) return ''
+  const trimmed = division.trim()
+  const lower = trimmed.toLowerCase()
   const lang = typeof language === 'string' ? language : language ? 'pt' : 'en'
-  if (lang.startsWith('pt') || lang === 'pt') return DIVISION_NAMES_PT[division] ?? division
-  if (lang.startsWith('fr')) return DIVISION_NAMES_FR[division] ?? division
-  return division
+
+  if (lang.startsWith('pt') || lang === 'pt') {
+    const key = Object.keys(DIVISION_NAMES_PT).find((k) => k.toLowerCase() === lower)
+    if (key) return DIVISION_NAMES_PT[key]
+    return trimmed
+  }
+
+  if (lang.startsWith('fr')) {
+    const key = Object.keys(DIVISION_NAMES_FR).find((k) => k.toLowerCase() === lower)
+    if (key) return DIVISION_NAMES_FR[key]
+    return trimmed
+  }
+
+  return trimmed
 }
 
 /** Official weight limits (lb) and the order the UFC lists its divisions in, lightest first, men then women. */
