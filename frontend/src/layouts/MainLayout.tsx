@@ -105,34 +105,12 @@ export function MainLayout({ children }: { children: ReactNode }) {
             children
           )}
         </motion.main>
-        {landing ? (
-          <footer
-            className="shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--border-subtle)] px-2 py-1 text-[11px] transition-colors text-[var(--text-muted)]"
-          >
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                Vektor MMA • {t('footer.tagline', 'AI sports analytics for matchup analysis')}
-              </span>
-            </div>
-            <div className="flex items-center gap-3 text-xs">
-              <Link
-                to="/about"
-                className="underline underline-offset-2 decoration-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
-              >
-                {t('footer.disclaimer', {
-                  org: L(i18n.language, 'nenhuma dessas organizações', 'any of these organizations', 'ces organisations'),
-                  defaultValue: 'Independent personal project, not affiliated with any of these organizations',
-                })}
-              </Link>
-            </div>
-          </footer>
-        ) : (
+        {landing ? null : (
           <footer className="mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-xs">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="type-tech text-xs uppercase tracking-[0.14em]">
-                  {t('footer.tagline', 'Vektor MMA • AI sports analytics for matchup analysis')}
+                  {t('footer.tagline', 'Vektor MMA • Combat sports analytics & AI predictions')}
                 </p>
                 {footerDate ? (
                   <p className="mt-1.5">{t('footer.dataUpTo', { date: footerDate, defaultValue: `Data up to ${footerDate}` })}</p>
@@ -143,15 +121,13 @@ export function MainLayout({ children }: { children: ReactNode }) {
                     className="underline decoration-[var(--rule)] decoration-1 underline-offset-4 transition hover:text-[#C8102E] focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E]"
                   >
                     {t('footer.disclaimer', {
-                      org: landing
-                        ? L(i18n.language, 'nenhuma dessas organizações', 'any of these organizations', 'ces organisations')
-                        : L(
-                            i18n.language,
-                            org.id === 'pfl' ? `a ${org.shortName}` : `o ${org.shortName}`,
-                            `the ${org.shortName}`,
-                            org.id === 'ufc' ? `l’${org.shortName}` : org.id === 'pfl' ? `la ${org.shortName}` : `le ${org.shortName}`,
-                          ),
-                      defaultValue: `Independent personal project, not affiliated with ${landing ? 'any of these organizations' : `the ${org.shortName}`}`,
+                      org: L(
+                        i18n.language,
+                        org.id === 'pfl' ? `a ${org.shortName}` : `o ${org.shortName}`,
+                        `the ${org.shortName}`,
+                        org.id === 'ufc' ? `l’${org.shortName}` : org.id === 'pfl' ? `la ${org.shortName}` : `le ${org.shortName}`,
+                      ),
+                      defaultValue: `Independent personal project, not affiliated with the ${org.shortName}`,
                     })}
                   </Link>
                 </p>

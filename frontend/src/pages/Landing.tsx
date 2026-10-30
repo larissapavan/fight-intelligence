@@ -80,7 +80,7 @@ export function Landing() {
   const { i18n } = useTranslation()
 
   return (
-    <div className="min-h-screen w-full bg-[var(--bg-app)] text-[var(--text-primary)] dark:bg-[#08090C] dark:text-white selection:bg-[#E11D48] selection:text-white relative scroll-smooth">
+    <div className="w-full bg-[var(--bg-app)] text-[var(--text-primary)] dark:bg-[#08090C] dark:text-white selection:bg-[#E11D48] selection:text-white relative scroll-smooth flex flex-col justify-between">
       {/* Cinematic Ambient Background Lighting */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-30 dark:opacity-100">
         <div className="absolute left-1/2 top-0 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-[#E11D48]/[0.07] blur-[150px]" />
@@ -88,11 +88,11 @@ export function Landing() {
         <div className="absolute left-0 bottom-0 h-[380px] w-[500px] rounded-full bg-[#2563EB]/[0.04] blur-[160px]" />
       </div>
 
-      <div className="relative z-10 flex flex-col">
+      <div className="relative z-10 flex flex-col flex-1">
         {/* =========================================================================
             1. HERO SECTION (Layout fluido e equilibrado com cabeçalho)
             ========================================================================= */}
-        <section className="relative px-4 sm:px-8 lg:px-16 pt-2 sm:pt-4 lg:pt-6 pb-12 lg:pb-16 flex items-center">
+        <section className="relative px-4 sm:px-8 lg:px-16 pt-2 sm:pt-4 lg:pt-6 pb-6 lg:pb-8 flex items-center">
           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Lado Esquerdo: Tipografia de Impacto & Conteúdo Editorial */}
             <motion.div
@@ -250,8 +250,8 @@ export function Landing() {
         {/* =========================================================================
             3. GRID DE ORGANIZAÇÕES (Cards Limpos e sem Truncamento)
             ========================================================================= */}
-        <section id="organizations-grid" className="scroll-mt-28 max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 py-12 sm:py-16">
-          <div className="mb-8">
+        <section id="organizations-grid" className="scroll-mt-28 max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 pt-6 sm:pt-8 pb-3 sm:pb-4 w-full">
+          <div className="mb-4 sm:mb-5">
             <span className="font-mono text-xs uppercase tracking-widest text-[#E11D48] font-bold">
               {L(i18n.language, 'LIGAS & ORGANIZAÇÕES', 'LEAGUES & ORGANIZATIONS', 'LIGUES & ORGANISATIONS')}
             </span>
@@ -358,22 +358,23 @@ export function Landing() {
         {/* =========================================================================
             4. FOOTER EDITORIAL (Sobre o Projeto & Links Rápidos)
             ========================================================================= */}
-        <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/75 dark:border-white/10 dark:bg-[#08090C] py-8 px-4 sm:px-8 lg:px-16 mt-6">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--text-secondary)] dark:text-neutral-400 font-sans">
+        <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/75 dark:border-white/10 dark:bg-[#08090C] py-3.5 sm:py-4 px-4 sm:px-8 lg:px-16 mt-3 sm:mt-4">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--text-secondary)] dark:text-neutral-400 font-sans">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-bold text-[var(--text-primary)] dark:text-white">Vektor MMA</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+              <span className="font-bold text-[var(--text-primary)] dark:text-white tracking-tight">Vektor MMA</span>
               <span>•</span>
               <span>
                 {L(
                   i18n.language,
-                  'Plataforma de Predições e Telemetria em Esportes de Combate',
-                  'Combat Sports Telemetry & Predictive Analytics',
-                  'Analytique Prédictive & Télémétrie',
+                  'Telemetria e predições em esportes de combate',
+                  'Combat sports analytics & AI predictions',
+                  'Télémétrie et prédictions en sports de combat',
                 )}
               </span>
             </div>
 
-            <div className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-wider">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 font-mono text-[11px] uppercase tracking-wider">
               <Link to="/about" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
                 {L(i18n.language, 'Sobre', 'About', 'À propos')}
               </Link>
@@ -385,6 +386,18 @@ export function Landing() {
               </Link>
               <Link to="/track-record" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
                 {L(i18n.language, 'Acurácia', 'Track Record', 'Historique')}
+              </Link>
+              <span className="hidden md:inline text-[var(--border-subtle)] dark:text-white/20">•</span>
+              <Link
+                to="/about"
+                className="hover:text-[var(--text-primary)] dark:hover:text-white transition normal-case font-sans text-[11px] opacity-75 hover:opacity-100"
+              >
+                {L(
+                  i18n.language,
+                  'Projeto independente, sem afiliação com nenhuma dessas organizações',
+                  'Independent project, not affiliated with any of these organizations',
+                  'Projet indépendant, sans affiliation avec ces organisations',
+                )}
               </Link>
             </div>
           </div>
