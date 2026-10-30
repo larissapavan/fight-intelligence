@@ -58,7 +58,7 @@ export function LanguageSwitcher({ className = '' }: LanguageSwitcherProps) {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex h-7.5 sm:h-8 items-center gap-1 sm:gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-1.5 sm:px-2 text-[11px] sm:text-xs font-medium transition cursor-pointer text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
+        className="inline-flex h-7.5 sm:h-8 items-center gap-1 sm:gap-1.5 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] dark:border-white/10 dark:bg-white/[0.04] px-2 sm:px-2.5 text-[11px] sm:text-xs font-medium transition cursor-pointer text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)] shadow-xs"
         aria-label={t('language.switch', 'Mudar idioma')}
         aria-expanded={isOpen}
         aria-haspopup="true"
