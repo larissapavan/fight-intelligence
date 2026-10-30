@@ -297,15 +297,25 @@ export function EditorialHeadToHeadSimulator({
 
         {/* Striking Volume (SLpM) */}
         <ComparativeBar
-          label="Golpes Significativos Conectados / Min (SLpM)"
+          label={L(
+            i18n.language,
+            'Golpes Significativos Conectados / Min (SLpM)',
+            'Significant Strikes Landed / Min (SLpM)',
+            'Coups Significatifs Réussis / Min (SLpM)',
+          )}
           valA={profileA?.sig_strikes_landed_per_min ?? 4.2}
           valB={profileB?.sig_strikes_landed_per_min ?? 3.8}
-          unit=" golpes"
+          unit={` ${L(i18n.language, 'golpes', 'strikes', 'coups')}`}
         />
 
         {/* Striking Accuracy */}
         <ComparativeBar
-          label="Precisão de Golpes (Strike Accuracy %)"
+          label={L(
+            i18n.language,
+            'Precisão de Golpes (Strike Accuracy %)',
+            'Striking Accuracy (Strike Accuracy %)',
+            'Précision des Coups (Précision %)',
+          )}
           valA={Math.round((profileA?.sig_str_acc ?? 0.5) * 100)}
           valB={Math.round((profileB?.sig_str_acc ?? 0.48) * 100)}
           unit="%"
@@ -313,7 +323,12 @@ export function EditorialHeadToHeadSimulator({
 
         {/* Takedown Defense */}
         <ComparativeBar
-          label="Defesa de Quedas (TDD %)"
+          label={L(
+            i18n.language,
+            'Defesa de Quedas (TDD %)',
+            'Takedown Defense (TDD %)',
+            'Défense d’Amenées au Sol (TDD %)',
+          )}
           valA={Math.round((profileA?.takedown_defense ?? 0.75) * 100)}
           valB={Math.round((profileB?.takedown_defense ?? 0.72) * 100)}
           unit="%"
@@ -321,16 +336,22 @@ export function EditorialHeadToHeadSimulator({
 
         {/* Physical measurements info row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-4">
-          <MeasurementCard label="Envergadura A" val={`${Math.round(profileA?.reach_cm ?? 180)} cm`} />
           <MeasurementCard
-            label="Diferencial de Alcance"
+            label={L(i18n.language, 'Envergadura A', 'Reach A', 'Allonge A')}
+            val={`${Math.round(profileA?.reach_cm ?? 180)} cm`}
+          />
+          <MeasurementCard
+            label={L(i18n.language, 'Diferencial de Alcance', 'Reach Advantage', 'Écart d’Allonge')}
             val={`${reachDiff >= 0 ? '+' : ''}${Math.round(reachDiff)} cm`}
             highlight={reachDiff !== 0}
           />
-          <MeasurementCard label="Envergadura B" val={`${Math.round(profileB?.reach_cm ?? 180)} cm`} />
           <MeasurementCard
-            label="Diferença de Idade"
-            val={`${ageDiff >= 0 ? '+' : ''}${Math.round(ageDiff)} anos`}
+            label={L(i18n.language, 'Envergadura B', 'Reach B', 'Allonge B')}
+            val={`${Math.round(profileB?.reach_cm ?? 180)} cm`}
+          />
+          <MeasurementCard
+            label={L(i18n.language, 'Diferença de Idade', 'Age Difference', 'Écart d’Âge')}
+            val={`${ageDiff >= 0 ? '+' : ''}${Math.round(ageDiff)} ${L(i18n.language, 'anos', 'yrs', 'ans')}`}
           />
         </div>
       </div>

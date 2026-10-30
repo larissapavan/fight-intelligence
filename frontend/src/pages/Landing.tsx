@@ -7,18 +7,26 @@ import { L } from '../i18n/lang'
 import { ORGS, orgPath, type OrgId } from '../shared/data/orgs'
 import { AnimatedCounter } from '../shared/components/editorial/AnimatedCounter'
 
+interface OrgMetric {
+  labelPt: string
+  labelEn: string
+  labelFr: string
+  valuePt: string
+  valueEn: string
+  valueFr: string
+}
+
 interface OrgCardInfo {
   id: OrgId
   watermark: string
   shortName: string
   fullName: string
+  fullNameEn?: string
+  fullNameFr?: string
   accentColor: string
   hoverBorder: string
   gloveImage: string
-  metrics: [
-    { label: string; value: string },
-    { label: string; value: string },
-  ]
+  metrics: [OrgMetric, OrgMetric]
 }
 
 const ORG_CARDS: OrgCardInfo[] = [
@@ -31,8 +39,8 @@ const ORG_CARDS: OrgCardInfo[] = [
     hoverBorder: 'hover:border-[#E11D48]',
     gloveImage: '/mma-glove-ufc.png',
     metrics: [
-      { label: 'Divisões', value: '12' },
-      { label: 'Lutas', value: '8.9k+' },
+      { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '12', valueEn: '12', valueFr: '12' },
+      { labelPt: 'Lutas', labelEn: 'Bouts', labelFr: 'Combats', valuePt: '8.9k+', valueEn: '8.9k+', valueFr: '8.9k+' },
     ],
   },
   {
@@ -44,8 +52,8 @@ const ORG_CARDS: OrgCardInfo[] = [
     hoverBorder: 'hover:border-[#2563EB]',
     gloveImage: '/mma-glove-pfl.png',
     metrics: [
-      { label: 'Divisões', value: '10' },
-      { label: 'Estrutura', value: 'Torneio' },
+      { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '10', valueEn: '10', valueFr: '10' },
+      { labelPt: 'Estrutura', labelEn: 'Format', labelFr: 'Format', valuePt: 'Torneio', valueEn: 'Tournament', valueFr: 'Tournoi' },
     ],
   },
   {
@@ -57,8 +65,8 @@ const ORG_CARDS: OrgCardInfo[] = [
     hoverBorder: 'hover:border-[#F59E0B]',
     gloveImage: '/mma-glove-one.png',
     metrics: [
-      { label: 'Divisões', value: '10' },
-      { label: 'Artes', value: 'MMA + Muay Thai' },
+      { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '10', valueEn: '10', valueFr: '10' },
+      { labelPt: 'Modalidades', labelEn: 'Disciplines', labelFr: 'Disciplines', valuePt: 'MMA + Muay Thai', valueEn: 'MMA + Muay Thai', valueFr: 'MMA + Muay Thai' },
     ],
   },
   {
@@ -66,12 +74,14 @@ const ORG_CARDS: OrgCardInfo[] = [
     watermark: '04',
     shortName: 'BELLATOR',
     fullName: 'Bellator MMA (Arquivo Histórico)',
+    fullNameEn: 'Bellator MMA (Historical Archive)',
+    fullNameFr: 'Bellator MMA (Archives Historiques)',
     accentColor: '#10B981',
     hoverBorder: 'hover:border-[#10B981]',
     gloveImage: '/mma-glove-bellator.png',
     metrics: [
-      { label: 'Divisões', value: '10' },
-      { label: 'Campeões', value: '71' },
+      { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '10', valueEn: '10', valueFr: '10' },
+      { labelPt: 'Campeões', labelEn: 'Champions', labelFr: 'Champions', valuePt: '71', valueEn: '71', valueFr: '71' },
     ],
   },
 ]
@@ -285,7 +295,7 @@ export function Landing() {
                           {card.shortName}
                         </h3>
                         <p className="font-sans text-[11px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium truncate mt-0.5">
-                          {card.fullName}
+                          {L(i18n.language, card.fullName, card.fullNameEn ?? card.fullName, card.fullNameFr ?? card.fullName)}
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1 shrink-0">
@@ -326,18 +336,18 @@ export function Landing() {
                     <div className="my-3 grid grid-cols-2 gap-2 border-y border-[var(--border-subtle)] dark:border-white/5 py-2.5">
                       <div>
                         <span className="font-sans text-[10px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium block truncate">
-                          {card.metrics[0].label}
+                          {L(i18n.language, card.metrics[0].labelPt, card.metrics[0].labelEn, card.metrics[0].labelFr)}
                         </span>
                         <p className="mt-0.5 font-display font-bold text-sm sm:text-base text-[var(--text-primary)] dark:text-white tabular-nums truncate">
-                          {card.metrics[0].value}
+                          {L(i18n.language, card.metrics[0].valuePt, card.metrics[0].valueEn, card.metrics[0].valueFr)}
                         </p>
                       </div>
                       <div>
                         <span className="font-sans text-[10px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium block truncate">
-                          {card.metrics[1].label}
+                          {L(i18n.language, card.metrics[1].labelPt, card.metrics[1].labelEn, card.metrics[1].labelFr)}
                         </span>
                         <p className="mt-0.5 font-display font-bold text-sm sm:text-base text-[var(--text-primary)] dark:text-white tabular-nums truncate">
-                          {card.metrics[1].value}
+                          {L(i18n.language, card.metrics[1].valuePt, card.metrics[1].valueEn, card.metrics[1].valueFr)}
                         </p>
                       </div>
                     </div>
