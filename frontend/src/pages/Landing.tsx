@@ -133,9 +133,9 @@ export function Landing() {
 
       <div className="relative z-10 flex flex-col flex-1">
         {/* =========================================================================
-            1. HERO SECTION (Com Iluminação de Arena e Grelha Analítica)
+            1. HERO SECTION (Com Iluminação de Arena e Grelha Analítica - Espaçamento Compacto)
             ========================================================================= */}
-        <section className="relative px-4 sm:px-8 lg:px-16 pt-6 sm:pt-8 lg:pt-10 pb-8 lg:pb-12 flex items-center overflow-hidden">
+        <section className="relative px-4 sm:px-8 lg:px-16 pt-2 sm:pt-3 lg:pt-4 pb-4 sm:pb-5 lg:pb-6 flex items-center overflow-hidden">
           {/* Refletores de Arena do Topo e Grelha Milimétrica Esportiva */}
           <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
             {/* Refletor Esquerdo: Tom Vermelho Volumétrico */}
@@ -257,9 +257,9 @@ export function Landing() {
         </section>
 
         {/* =========================================================================
-            2. BARRA DE MÉTRICAS GLOBAIS (Editorial Big Numbers)
+            2. BARRA DE MÉTRICAS GLOBAIS (Editorial Big Numbers - Espaçamento Otimizado)
             ========================================================================= */}
-        <section className="border-y border-[var(--border-subtle)] bg-[var(--bg-surface)]/95 dark:border-white/10 dark:bg-[#0c0e14]/90 backdrop-blur-md py-6 px-4 sm:px-8 lg:px-16">
+        <section className="border-y border-[var(--border-subtle)] bg-[var(--bg-surface)]/95 dark:border-white/10 dark:bg-[#0c0e14]/90 backdrop-blur-md py-3.5 sm:py-4 px-4 sm:px-8 lg:px-16">
           <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 divide-y lg:divide-y-0 lg:divide-x divide-[var(--border-subtle)] dark:divide-white/10">
             {/* Métrica 1: Lutas */}
             <div className="pt-4 lg:pt-0 lg:px-6 first:pl-0 text-left">
