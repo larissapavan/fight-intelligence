@@ -10,7 +10,7 @@ import { useOrg } from '../hooks/useOrg'
 const isJSDOM = typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent)
 
 /**
- * Minimalist, discreet dropdown selector for combat sports organizations (UFC, PFL, ONE, Bellator, Zuffa).
+ * Minimalist, discreet dropdown selector for combat sports organizations (UFC, PFL, ONE, Bellator).
  */
 export function OrgSwitcher({ className = '', onNavigate }: { className?: string; onNavigate?: () => void }) {
   const { i18n } = useTranslation()
@@ -48,20 +48,20 @@ export function OrgSwitcher({ className = '', onNavigate }: { className?: string
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-2.5 text-xs font-semibold transition cursor-pointer text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
+          className="inline-flex h-7.5 sm:h-8 items-center gap-1 sm:gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-2 sm:px-2.5 text-[11px] sm:text-xs font-semibold transition cursor-pointer text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
           aria-expanded={isOpen}
           aria-haspopup="true"
         >
           <span className="font-bold tracking-wide">{current.shortName}</span>
           <ChevronDown
-            className={`h-3.5 w-3.5 text-[var(--text-muted)] transition-transform duration-200 ${isOpen && !isJSDOM ? 'rotate-180' : ''}`}
+            className={`h-3 w-3 sm:h-3.5 sm:w-3.5 text-[var(--text-muted)] transition-transform duration-200 ${isOpen && !isJSDOM ? 'rotate-180' : ''}`}
           />
         </button>
 
         {/* Dropdown Menu */}
         {(isOpen || isJSDOM) && (
           <div
-            className="surface-card-elevated absolute left-0 top-full z-50 mt-1.5 w-48 p-1 backdrop-blur-xl animate-in fade-in-0 zoom-in-95"
+            className="surface-card-elevated absolute left-0 max-sm:left-auto max-sm:right-0 top-full z-50 mt-1.5 w-44 sm:w-48 p-1 backdrop-blur-xl animate-in fade-in-0 zoom-in-95"
           >
             <div className="px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
               {L(i18n.language, 'Selecionar Liga', 'Select League', 'Choisir la Ligue')}

@@ -481,7 +481,7 @@ def get_fighter_profile(name: str) -> dict:
     catalog = get_fighter_catalog()
     match = catalog.loc[catalog["name"] == (canonical_name(name) or name)]
     if match.empty:
-        for org_id in ("one", "pfl", "bellator", "zuffa"):
+        for org_id in ("one", "pfl", "bellator"):
             try:
                 from backend.app.services.org_service import get_org_fighters, _name_key
                 org_fighters = get_org_fighters(org_id)

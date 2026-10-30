@@ -4,16 +4,16 @@ import { useTranslation } from 'react-i18next'
 
 import { L, uiLang } from '../../i18n/lang'
 
-const SITE = 'Fight Intelligence'
+const SITE = 'Vektor MMA'
 const DEFAULT_DESCRIPTION =
-  'Fight stats, rankings and results for the UFC, the PFL, Zuffa Boxing and the Bellator archive, plus UFC win predictions with the reasons behind each one.'
+  'Fight stats, rankings and results for the UFC, the PFL, ONE Championship and the Bellator archive, plus UFC win predictions with the reasons behind each one.'
 const DEFAULT_DESCRIPTION_PT =
-  'Estatísticas, rankings e resultados para o UFC, a PFL, Zuffa Boxing e o acervo histórico do Bellator, com previsões de vitória e inteligência analítica.'
+  'Estatísticas, rankings e resultados para o UFC, a PFL, ONE Championship e o acervo histórico do Bellator, com previsões de vitória e inteligência analítica.'
 
 const DEFAULT_DESCRIPTION_FR =
-  'Statistiques, classements et résultats pour l\'UFC, la PFL, Zuffa Boxing et les archives Bellator, plus des prévisions de victoire UFC avec les raisons de chacune.'
+  'Statistiques, classements et résultats pour l\'UFC, la PFL, ONE Championship et les archives Bellator, plus des prévisions de victoire UFC avec les raisons de chacune.'
 
-const GYM_PAGE = /^(\/pfl|\/bellator|\/zuffa|\/one)?\/gyms\/[^/]+$/
+const GYM_PAGE = /^(\/pfl|\/bellator|\/one)?\/gyms\/[^/]+$/
 const GYM_DETAIL = { title: 'Gym', description: 'Who trains at this gym: its fighters, champions and records.' }
 const GYM_DETAIL_PT = { title: 'Academia', description: 'Quem treina nesta academia: atletas, campeões e estatísticas.' }
 const GYM_DETAIL_FR = { title: 'Salle', description: 'Qui s\'entraîne dans cette salle : combattants, champions et palmarès.' }
@@ -44,11 +44,6 @@ const PAGES: Record<string, { title: string; description: string }> = {
   '/bellator/gyms': { title: 'Bellator gyms', description: 'Where Bellator fighters train: every gym and team with its fighters.' },
   '/bellator/champions': { title: 'Bellator champions', description: 'Final 2023 Bellator champions, complete 2009–2023 lineage by division and greatest champions.' },
   '/pfl/rankings': { title: 'PFL rankings', description: 'The official PFL divisional and pound-for-pound rankings.' },
-  '/zuffa': { title: 'Zuffa Boxing', description: 'Zuffa Boxing: upcoming cards, champions, official results and rankings.' },
-  '/zuffa/fighters': { title: 'Zuffa Boxing fighters', description: 'Zuffa Boxing fighter profiles: records, builds, camps and every bout.' },
-  '/zuffa/events': { title: 'Zuffa Boxing events', description: 'Full Zuffa Boxing event archive with results, plus upcoming fight cards.' },
-  '/zuffa/rankings': { title: 'Zuffa Boxing rankings', description: 'Official Zuffa Boxing divisional and pound-for-pound rankings.' },
-  '/zuffa/gyms': { title: 'Zuffa Boxing gyms', description: 'Where Zuffa Boxing fighters train: every boxing gym and camp.' },
   '/one': { title: 'ONE Championship', description: 'ONE Championship: upcoming cards, world champions, official results and rankings.' },
   '/one/fighters': { title: 'ONE Championship fighters', description: 'ONE Championship fighter profiles: records, builds, camps and every bout.' },
   '/one/events': { title: 'ONE Championship events', description: 'Full ONE Championship event archive with results, plus upcoming fight cards.' },
@@ -84,11 +79,6 @@ const PAGES_PT: Record<string, { title: string; description: string }> = {
   '/bellator/gyms': { title: 'Academias do Bellator', description: 'Academias e equipes dos atletas do Bellator.' },
   '/bellator/champions': { title: 'Campeões do Bellator', description: 'Últimos campeões do Bellator em 2023, histórico por categoria e maiores campeões.' },
   '/pfl/rankings': { title: 'Rankings da PFL', description: 'Rankings oficiais da PFL por categoria e peso por peso.' },
-  '/zuffa': { title: 'Zuffa Boxing', description: 'Zuffa Boxing: próximos cards de boxe, campeões, resultados oficiais e rankings.' },
-  '/zuffa/fighters': { title: 'Lutadores da Zuffa Boxing', description: 'Perfis de boxeadores da Zuffa Boxing: cartel, medidas, equipes e lutas.' },
-  '/zuffa/events': { title: 'Eventos da Zuffa Boxing', description: 'Todos os eventos e próximos cards da Zuffa Boxing com resultados.' },
-  '/zuffa/rankings': { title: 'Rankings da Zuffa Boxing', description: 'Rankings oficiais da Zuffa Boxing por categoria e peso por peso.' },
-  '/zuffa/gyms': { title: 'Academias da Zuffa Boxing', description: 'Academias e centros de treinamento dos boxeadores da Zuffa Boxing.' },
   '/one': { title: 'ONE Championship', description: 'ONE Championship: próximos eventos, campeões mundiais, resultados e rankings.' },
   '/one/fighters': { title: 'Lutadores do ONE Championship', description: 'Perfis de atletas do ONE Championship: cartel, medidas, equipes e lutas.' },
   '/one/events': { title: 'Eventos do ONE Championship', description: 'Arquivo completo de eventos do ONE Championship com resultados e próximos cards.' },
@@ -124,11 +114,6 @@ const PAGES_FR: Record<string, { title: string; description: string }> = {
   '/bellator/gyms': { title: 'Salles Bellator', description: 'Où les combattants Bellator s\'entraînaient : chaque salle et équipe, avec ses combattants.' },
   '/bellator/champions': { title: 'Champions Bellator', description: 'Derniers champions Bellator fin 2023, lignée par catégorie et plus grands champions.' },
   '/pfl/rankings': { title: 'Classements PFL', description: 'Les classements officiels PFL par catégorie et livre pour livre.' },
-  '/zuffa': { title: 'Zuffa Boxing', description: 'Zuffa Boxing : prochaines cartes, champions, résultats officiels et classements.' },
-  '/zuffa/fighters': { title: 'Boxeurs Zuffa Boxing', description: 'Profils des boxeurs Zuffa Boxing : palmarès, mensurations, salles et combats.' },
-  '/zuffa/events': { title: 'Événements Zuffa Boxing', description: 'Archives complètes des événements Zuffa Boxing avec résultats et prochaines cartes.' },
-  '/zuffa/rankings': { title: 'Classements Zuffa Boxing', description: 'Classements officiels Zuffa Boxing par catégorie et livre pour livre.' },
-  '/zuffa/gyms': { title: 'Salles Zuffa Boxing', description: 'Où s\'entraînent les boxeurs Zuffa Boxing : chaque salle et équipe.' },
   '/one': { title: 'ONE Championship', description: 'ONE Championship : prochaines cartes, champions du monde, résultats et classements.' },
   '/one/fighters': { title: 'Combattants ONE Championship', description: 'Profils des combattants ONE Championship : palmarès, mensurations, salles et combats.' },
   '/one/events': { title: 'Événements ONE Championship', description: 'Archives complètes des événements ONE Championship avec résultats et prochaines cartes.' },

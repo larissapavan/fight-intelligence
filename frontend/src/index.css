@@ -214,18 +214,6 @@
   --hard: #cbd5e1;
 }
 
-:root[data-org='zuffa'] {
-  --accent-red: #f59e0b;
-  --text-red: #fbbf24;
-  --hard: #b45309;
-}
-
-:root[data-org='zuffa'][data-theme='light'] {
-  --accent-red: #b45309;
-  --text-red: #92400e;
-  --hard: #cbd5e1;
-}
-
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;

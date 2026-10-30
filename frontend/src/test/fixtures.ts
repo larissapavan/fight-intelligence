@@ -255,16 +255,6 @@ export const orgRoutes: Record<string, unknown> = {
   '/orgs/bellator/events/upcoming': [],
   '/orgs/bellator/rankings': [{ category: 'Lightweight', is_p4p: false, entries: [{ rank: 0, fighter: 'Riko Stone', status: 'champion', win_rate: 0.83, last_fight: '2023-11-17', rank_change: null, athlete_url: null }] }],
   '/orgs/bellator/data-info': { last_updated: '2026-10-21', fighters_count: 2, events_count: 1, fights_count: 1, sources: ['espn.com'] },
-  // Zuffa Boxing: PFL-style active boxing organization with upcoming cards, results and rankings.
-  '/orgs/zuffa/fighters': [pflChampion, pflContender],
-  '/orgs/zuffa/events': [
-    orgEvent('Zuffa Boxing 04: Opetaia vs. Glanton', '2026-03-08', [orgFight({ winner: 'Riko Stone', method: 'U-DEC', round: 12, time: '3:00', title_fight: true, stage: 'Championship' })], { circuit: 'Zuffa Boxing' }),
-  ],
-  '/orgs/zuffa/events/upcoming': [
-    orgEvent('Zuffa Boxing 12: Billam-Smith vs. Clarke', '2030-11-07', [orgFight({ title_fight: false, stage: 'Main Event' })], { circuit: 'Zuffa Boxing' }),
-  ],
-  '/orgs/zuffa/rankings': pflRankings,
-  '/orgs/zuffa/data-info': { last_updated: '2026-10-28', fighters_count: 2, events_count: 2, fights_count: 2, sources: ['ufc.com'] },
   // ONE Championship: active organization with upcoming cards, past events, champions and rankings.
   '/orgs/one/fighters': [pflChampion, pflContender],
   '/orgs/one/events': [

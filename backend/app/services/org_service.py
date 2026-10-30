@@ -51,13 +51,6 @@ ORGS: dict[str, Org] = {
         tagline="The Bellator archive: every event from 2009 to 2023, its fighters and its champions.",
         sources=("espn.com", "wikipedia.org"),
     ),
-    "zuffa": Org(
-        id="zuffa",
-        name="Zuffa Boxing",
-        short_name="Zuffa Boxing",
-        tagline="Zuffa Boxing fighters, event results, upcoming cards and divisional rankings.",
-        sources=("ufc.com", "paramountplus.com"),
-    ),
     "one": Org(
         id="one",
         name="ONE Championship",

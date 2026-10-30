@@ -75,7 +75,7 @@ describe('the page that chooses an organization', () => {
     renderAt('/')
     const list = await screen.findByRole('list', { name: 'Organizations' }, WAIT)
     const links = within(list).getAllByRole('link')
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/home', '/pfl', '/one', '/bellator', '/zuffa'])
+    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/home', '/pfl', '/one', '/bellator'])
     expect(within(list).getAllByText('Win predictions')).toHaveLength(2)  // only the UFC
     expect(within(list).getByText('Archive')).toBeInTheDocument()  // Bellator
   })
@@ -95,9 +95,9 @@ describe('the page that chooses an organization', () => {
   it('choosing one opens its home page, where the switcher and the logo lead back', async () => {
     renderAt('/')
     await userEvent.click(await screen.findByRole('link', { name: 'Open Professional Fighters League' }, WAIT))
-    expect(await screen.findByText(/PFL fight intelligence/i, undefined, WAIT)).toBeInTheDocument()
+    expect(await screen.findByText(/PFL Vektor MMA/i, undefined, WAIT)).toBeInTheDocument()
     expect(screen.getByRole('group', { name: 'Organization' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Fight Intelligence home' })).toHaveAttribute('href', '/')
+    expect(screen.getByRole('link', { name: 'Vektor MMA home' })).toHaveAttribute('href', '/')
   })
 
   it('the UFC home page is still reachable and its other pages keep their addresses', async () => {
@@ -278,11 +278,11 @@ describe('the Bellator archive', () => {
     renderAt('/events')
     await screen.findByRole('heading', { name: 'UFC fight cards' }, WAIT)
     const switcher = screen.getAllByRole('group', { name: 'Organization' })[0]
-    expect(within(switcher).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['/events', '/pfl/events', '/one/events', '/bellator/events', '/zuffa/events'])
+    expect(within(switcher).getAllByRole('link').map((link) => link.getAttribute('href'))).toEqual(['/events', '/pfl/events', '/one/events', '/bellator/events'])
   })
 })
 
-describe('ONE Championship and Zuffa Boxing', () => {
+describe('ONE Championship', () => {
   it('renders upcoming cards, champions, rankings and past events on /one', async () => {
     renderAt('/one')
     expect(await screen.findByRole('heading', { name: 'ONE Fight Night 49: Gabriel vs. Magomedov' }, WAIT)).toBeInTheDocument()
@@ -292,14 +292,7 @@ describe('ONE Championship and Zuffa Boxing', () => {
     expect(screen.getAllByRole('link', { name: 'Champions' })[0]).toHaveAttribute('href', '/one/champions')
   })
 
-  it('renders upcoming cards, champions, rankings and past events on /zuffa', async () => {
-    renderAt('/zuffa')
-    expect(await screen.findByRole('heading', { name: 'Zuffa Boxing 12: Billam-Smith vs. Clarke' }, WAIT)).toBeInTheDocument()
-    const champions = await screen.findByRole('region', { name: 'Champions' }, WAIT)
-    expect(await within(champions).findByRole('button', { name: /Riko Stone/ }, WAIT)).toBeInTheDocument()
-    expect(screen.getAllByRole('link', { name: 'Rankings' })[0]).toHaveAttribute('href', '/zuffa/rankings')
-    expect(screen.getByRole('region', { name: 'Latest results' })).toBeInTheDocument()
-  })
+
 })
 
 describe('the organization switcher', () => {

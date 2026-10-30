@@ -16,7 +16,7 @@
   },
   "header": {
     "matchupAnalytics": "Analytique des Combats",
-    "fightIntelligence": "Fight Intelligence",
+    "fightIntelligence": "Vektor MMA",
     "apiLive": "En direct",
     "apiOffline": "Hors ligne",
     "apiWaking": "Démarrage",
@@ -41,7 +41,7 @@
     "frLong": "Français"
   },
   "landing": {
-    "eyebrow": "Fight Intelligence",
+    "eyebrow": "Vektor MMA",
     "title": "Choisir une Organisation",
     "description": "Stats, rankings et résultats. Win predictions avec machine learning.",
     "footerNotice": "Changez d’organisation à tout moment en haut. Projet indépendant, sans affiliation officielle.",
@@ -62,12 +62,11 @@
       "ufc": "Stats, rankings et AI win predictions.",
       "pfl": "Fighters, événements et league rankings.",
       "one": "MMA, Muay Thai, champions et AI win predictions.",
-      "bellator": "Archive 2009–2023: fighters, événements et champions.",
-      "zuffa": "Pro boxing: fighters, fight cards et rankings."
+      "bellator": "Archive 2009–2023: fighters, événements et champions."
     }
   },
   "footer": {
-    "tagline": "Fight Intelligence • Télémétrie et prédictions en sports de combat",
+    "tagline": "Vektor MMA • Télémétrie et prédictions en sports de combat",
     "dataUpTo": "Données jusqu’au {{date}}",
     "disclaimer": "Projet personnel indépendant, sans affiliation avec {{org}}",
     "rssFeed": "Flux RSS : picks et résultats"

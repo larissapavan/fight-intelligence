@@ -69,12 +69,6 @@ const sources: { name: string; href?: string; use: string; usePt: string }[] = [
     usePt: 'Cards oficiais de eventos do ONE Championship, resultados, perfis de atletas e campeões das divisões de MMA e Muay Thai.',
   },
   {
-    name: 'Zuffa Boxing / TKO Group Holdings',
-    href: 'https://www.ufc.com',
-    use: 'Professional boxing weight classes, bout schedules, and athlete rosters under Zuffa Boxing Promotions.',
-    usePt: 'Categorias de peso de boxe profissional, cronogramas de combate e plantel de atletas sob a Zuffa Boxing Promotions.',
-  },
-  {
     name: 'Sherdog',
     href: 'https://www.sherdog.com',
     use: 'Fighter career fight archives, historical records, physical attributes, and career lineages.',
@@ -128,7 +122,6 @@ const SOURCE_USE_FR: Record<string, string> = {
   'Next-Fight': 'Annonces de combats, cartes à venir, confirmations d’affrontements et avis de combats de titre (comme UFC 336: Prates vs. Morales).',
   Tapology: "Palmarès complets des combattants, historiques des combats à travers les circuits régionaux et mondiaux de MMA (Jungle Fight, Predador FC, LFA, etc.) et méthodes de victoire.",
   'ONE Championship': "Cartes officielles d'événements du ONE Championship, résultats, profils d'athlètes et champions des divisions de MMA et Muay Thai.",
-  'Zuffa Boxing / TKO Group Holdings': "Catégories de poids de boxe professionnelle, programmations de combats et effectif d'athlètes de Zuffa Boxing Promotions.",
   Sherdog: "Archives des combats de carrière, palmarès officiels, attributs physiques et photos d'archives.",
   Wikipedia: "Registres complets des combats professionnels de MMA, tableaux de tournois Grand Prix et historiques des règnes de titres (CC BY-SA 4.0).",
   'Published UFC title histories': 'Champions, règnes et la liste des combats pour le titre BMF, compilés à la main.',

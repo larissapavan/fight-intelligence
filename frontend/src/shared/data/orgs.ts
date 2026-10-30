@@ -1,4 +1,4 @@
-export type OrgId = 'ufc' | 'pfl' | 'one' | 'bellator' | 'zuffa'
+export type OrgId = 'ufc' | 'pfl' | 'one' | 'bellator'
 
 export type OrgSection = 'fighters' | 'events' | 'rankings' | 'gyms' | 'champions' | 'predictor'
 
@@ -72,22 +72,10 @@ export const ORGS: Record<OrgId, OrgConfig> = {
     hasRankings: false,
     hasChampions: true,
   },
-  zuffa: {
-    id: 'zuffa',
-    name: 'Zuffa Boxing',
-    shortName: 'Zuffa Boxing',
-    basePath: '/zuffa',
-    sourceName: 'TKO & Paramount+',
-    sourceUrl: 'https://www.ufc.com',
-    tagline: 'Pro boxing: fighters, fight cards and rankings.',
-    hasPredictions: false,
-    hasRankings: true,
-    hasChampions: false,
-  },
 }
 
 /** Display order of the organization switcher. Add a new organization here and in ORGS. */
-export const ORG_LIST: OrgConfig[] = [ORGS.ufc, ORGS.pfl, ORGS.one, ORGS.bellator, ORGS.zuffa]
+export const ORG_LIST: OrgConfig[] = [ORGS.ufc, ORGS.pfl, ORGS.one, ORGS.bellator]
 
 /** Organizations served by the generic /orgs/{id} API (everything but the UFC, which has its own endpoints). */
 export const GENERIC_ORGS: OrgConfig[] = ORG_LIST.filter((org) => org.id !== 'ufc')

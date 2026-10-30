@@ -37,7 +37,6 @@ Páginas e dados integrados cobrindo múltiplos cenários do MMA e esportes de c
 - **PFL (Professional Fighters League):** Formato de torneio regular e playoffs.
 - **ONE Championship:** Modalidades de MMA e Muay Thai em luvas abertas de 4oz.
 - **Bellator MMA:** Acervo documental e histórico completo (2009–2023).
-- **Zuffa Boxing:** Cobertura de eventos e estatísticas dedicadas de boxe.
 
 ### 📈 6. Auditoria Pública de Acurácia (Track Record)
 - **Transparência Absoluta:** As predições são geradas e congeladas no log público antes do início dos eventos.
