@@ -59,10 +59,10 @@
       "Gyms": "Gyms"
     },
     "taglines": {
-      "ufc": "Stats, rankings and AI win predictions.",
-      "pfl": "Fighters, events and league rankings.",
-      "one": "MMA, Muay Thai, champions and AI win predictions.",
-      "bellator": "Archive 2009–2023: fighters, events and champions."
+      "ufc": "Fight stats, rankings and AI win predictions.",
+      "pfl": "Fighter profiles, official events and league rankings.",
+      "one": "MMA, 4oz open-finger Muay Thai, world champions and AI win predictions.",
+      "bellator": "Historical archive 2009–2023: fighters, events and champions."
     }
   },
   "footer": {

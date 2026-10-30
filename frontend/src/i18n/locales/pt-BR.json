@@ -59,10 +59,10 @@
       "Gyms": "Academias"
     },
     "taglines": {
-      "ufc": "Stats, rankings e AI win predictions.",
-      "pfl": "Fighters, eventos e league rankings.",
-      "one": "MMA, Muay Thai, champions e AI win predictions.",
-      "bellator": "Archive 2009–2023: fighters, eventos e champions."
+      "ufc": "Estatísticas, rankings e previsões de vitória por IA.",
+      "pfl": "Atletas, eventos oficiais e rankings por pontuação da liga.",
+      "one": "MMA, Muay Thai com luvas de 4oz, campeões mundiais e previsões por IA.",
+      "bellator": "Acervo histórico 2009–2023: atletas, eventos e campeões."
     }
   },
   "footer": {

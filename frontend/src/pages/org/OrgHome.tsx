@@ -114,7 +114,7 @@ export function OrgHome() {
                   to={orgPath(org, 'predictor')}
                   className="primary-action inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-white"
                 >
-                  {L(i18n.language, 'Predict', 'Predict a fight', 'Predict')}
+                  {L(i18n.language, 'Simular Combate', 'Predict a fight', 'Prédire un combat')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               ) : null}
@@ -122,36 +122,40 @@ export function OrgHome() {
                 to={orgPath(org, 'events')}
                 className="ghost-action theme-text inline-flex items-center justify-center rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em]"
               >
-                {L(i18n.language, 'Events', 'See fight cards', 'Events')}
+                {L(i18n.language, 'Ver Eventos', 'See fight cards', 'Voir les événements')}
               </Link>
             </div>
           </div>
           <div className={`grid gap-2 ${isArchived ? 'sm:grid-cols-4' : 'sm:grid-cols-3'}`}>
             <Tile
-              label="Fighters"
+              label={L(i18n.language, 'Lutadores', 'Fighters', 'Combattants')}
               value={fighters.length.toLocaleString(localeTag(i18n.language))}
               note={
                 isArchived
-                  ? 'archive 2009–2023'
-                  : `${activeCount.toLocaleString(localeTag(i18n.language))} active`
+                  ? L(i18n.language, 'acervo 2009–2023', 'archive 2009–2023', 'archives 2009–2023')
+                  : `${activeCount.toLocaleString(localeTag(i18n.language))} ${L(i18n.language, 'ativos', 'active', 'actifs')}`
               }
             />
             {isArchived ? (
               <Tile
-                label="Gyms"
+                label={L(i18n.language, 'Academias', 'Gyms', 'Salles')}
                 value={orgGymsCount.toLocaleString(localeTag(i18n.language))}
-                note="gyms tracked"
+                note={L(i18n.language, 'academias mapeadas', 'gyms tracked', 'salles répertoriées')}
               />
             ) : null}
             <Tile
-              label="Events"
+              label={L(i18n.language, 'Eventos', 'Events', 'Événements')}
               value={past.events.length.toLocaleString(localeTag(i18n.language))}
               note={isArchived ? 'Bellator 1 – 301' : undefined}
             />
             <Tile
-              label="Fights"
+              label={L(i18n.language, 'Combates', 'Fights', 'Combats')}
               value={fightCount.toLocaleString(localeTag(i18n.language))}
-              note={isArchived && totalReignsCount > 0 ? `${totalReignsCount} title reigns` : undefined}
+              note={
+                isArchived && totalReignsCount > 0
+                  ? `${totalReignsCount} ${L(i18n.language, 'reinados de título', 'title reigns', 'règnes de titre')}`
+                  : undefined
+              }
             />
           </div>
         </div>

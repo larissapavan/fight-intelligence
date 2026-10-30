@@ -59,10 +59,10 @@
       "Gyms": "Salles"
     },
     "taglines": {
-      "ufc": "Stats, rankings et AI win predictions.",
-      "pfl": "Fighters, événements et league rankings.",
-      "one": "MMA, Muay Thai, champions et AI win predictions.",
-      "bellator": "Archive 2009–2023: fighters, événements et champions."
+      "ufc": "Statistiques, classements et prévisions de victoire par IA.",
+      "pfl": "Profils d’athlètes, événements officiels et classements de la ligue.",
+      "one": "MMA, Muay Thai en gants 4oz, champions du monde et prévisions par IA.",
+      "bellator": "Archives historiques 2009–2023 : combattants, événements et champions."
     }
   },
   "footer": {
