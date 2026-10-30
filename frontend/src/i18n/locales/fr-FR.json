@@ -282,15 +282,15 @@
     "sources": "Sources et crédits"
   },
   "dataIntelligence": {
-    "eyebrow": "Les données",
-    "title": "Des données brutes à un pronostic",
-    "description": "Comment des données publiques de l'UFC deviennent le jeu de données que le modèle apprend. Chaque ligne est réelle.",
-    "lastUpdate": "Dernière mise à jour des données",
-    "fighters": "Lutteurs",
-    "events": "Événements",
-    "fights": "Combats",
-    "pipelineTitle": "Chaîne de données",
-    "pipelineDesc": "Chaque pronostic part de vrais combats, collectés, nettoyés et transformés en variables avant que le modèle ne les voie."
+    "eyebrow": "Ingénierie des Données & Télémétrie",
+    "title": "Des Données Brutes à l’Intelligence de Combat",
+    "description": "Comment les données officielles de l’UFC, du PFL, du ONE Championship et des archives historiques sont collectées, nettoyées et transformées en variables prédictives pour le modèle de machine learning.",
+    "lastUpdate": "Dernière mise à jour",
+    "fighters": "Combattants Catalogués",
+    "events": "Événements Suivis",
+    "fights": "Combats Traités",
+    "pipelineTitle": "Architecture de la Chaîne de Données",
+    "pipelineDesc": "Chaque prévision repose sur des statistiques réelles collectées combat par combat, normalisées entre plusieurs organisations et converties en 46 variables ML."
   },
   "model": {
     "eyebrow": "Le modèle",

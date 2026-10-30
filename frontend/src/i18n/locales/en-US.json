@@ -282,15 +282,15 @@
     "sources": "Sources and credits"
   },
   "dataIntelligence": {
-    "eyebrow": "The data",
-    "title": "From raw data to a prediction",
-    "description": "How public UFC data becomes the dataset the model learns from. Every record in it is real.",
-    "lastUpdate": "Last data update",
-    "fighters": "Fighters",
-    "events": "Events",
-    "fights": "Fights",
-    "pipelineTitle": "Data pipeline",
-    "pipelineDesc": "Every prediction starts from real fight data that is collected, cleaned and turned into features before the model sees it."
+    "eyebrow": "Data Engineering & Telemetry",
+    "title": "From Raw Data to Fight Intelligence",
+    "description": "How official fight data across the UFC, PFL, ONE Championship and historical archives is ingested, cleansed, and transformed into predictive features for machine learning.",
+    "lastUpdate": "Last database update",
+    "fighters": "Cataloged Fighters",
+    "events": "Tracked Events",
+    "fights": "Processed Bouts",
+    "pipelineTitle": "Data Pipeline Architecture",
+    "pipelineDesc": "Every prediction begins with fight-by-fight historical metrics, normalized across multiple organizations and engineered into 46 ML features."
   },
   "model": {
     "eyebrow": "The model",

@@ -110,7 +110,7 @@ export function CardSimulatorModal({ event, pickFor, onClose }: CardSimulatorMod
         `📊 Accord avec le modèle d'IA : ${stats.agreementPct}% (${stats.agreedWithAi}/${stats.totalWithAi} combats)\n`,
       )
     }
-    text += L(i18n.language, `Faça seus palpites no site: https://fight-intelligence.vercel.app/`, `Make your picks at: https://fight-intelligence.vercel.app/`, `Faites vos pronostics sur le site : https://fight-intelligence.vercel.app/`)
+    text += L(i18n.language, `Faça seus palpites no site: https://www.vektormma.com/`, `Make your picks at: https://www.vektormma.com/`, `Faites vos pronostics sur le site : https://www.vektormma.com/`)
 
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true)

@@ -282,15 +282,15 @@
     "sources": "Fontes e agradecimentos"
   },
   "dataIntelligence": {
-    "eyebrow": "Engenharia de Dados",
-    "title": "Dos Dados Brutos à Previsão",
-    "description": "Como os dados públicos de cada luta do UFC são coletados, tratados e transformados em variáveis preditivas para o modelo de machine learning.",
+    "eyebrow": "Engenharia de Dados & Telemetria",
+    "title": "Dos Dados Brutos à Inteligência de Combate",
+    "description": "Como os dados oficiais do UFC, PFL, ONE Championship e o acervo histórico do MMA são coletados, tratados e transformados em variáveis preditivas para o modelo de machine learning.",
     "lastUpdate": "Última atualização da base",
-    "fighters": "Lutadores Catalogados",
-    "events": "Eventos no Histórico",
-    "fights": "Lutas Processadas",
-    "pipelineTitle": "Pipeline de processamento",
-    "pipelineDesc": "Toda previsão começa com estatísticas reais coletadas luta a luta, normalizadas e convertidas em variáveis técnicas (striking, grappling, alcance, idade e ritmo de luta)."
+    "fighters": "Atletas Catalogados",
+    "events": "Eventos Monitorados",
+    "fights": "Combates Processados",
+    "pipelineTitle": "Arquitetura do Pipeline de Dados",
+    "pipelineDesc": "Toda previsão parte de estatísticas reais coletadas luta a luta, normalizadas entre múltiplas organizações e convertidas em 46 variáveis técnicas para o modelo preditivo."
   },
   "model": {
     "eyebrow": "Inteligência Artificial",
