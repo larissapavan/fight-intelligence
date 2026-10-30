@@ -481,19 +481,19 @@ export function Landing() {
         </section>
 
         {/* =========================================================================
-            4. FOOTER EDITORIAL (Sobre o Projeto & Links Rápidos)
+            4. FOOTER EDITORIAL (Sobre o Projeto & Links Rápidos - Compacto e Elegante)
             ========================================================================= */}
-        <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/75 dark:border-white/10 dark:bg-[#08090C] py-5 px-4 sm:px-8 lg:px-16 mt-4 sm:mt-6">
-          <div className="max-w-7xl mx-auto space-y-4">
+        <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/75 dark:border-white/10 dark:bg-[#0B0C10] py-2 sm:py-2.5 px-4 sm:px-8 lg:px-16 mt-2">
+          <div className="max-w-7xl mx-auto space-y-1.5 sm:space-y-2">
             {/* Linha Superior: Marca à esquerda, Navegação e Redes à direita */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
-                <span className="font-bold text-sm text-[var(--text-primary)] dark:text-white tracking-tight">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 sm:gap-4">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+                <span className="font-bold text-xs sm:text-sm text-[var(--text-primary)] dark:text-white tracking-tight">
                   Vektor MMA
                 </span>
                 <span className="text-[var(--text-muted)] dark:text-neutral-500">•</span>
-                <span className="text-xs text-[var(--text-secondary)] dark:text-neutral-400">
+                <span className="text-[11px] sm:text-xs text-[var(--text-secondary)] dark:text-neutral-400">
                   {L(
                     i18n.language,
                     'Telemetria e predições em esportes de combate',
@@ -504,10 +504,10 @@ export function Landing() {
               </div>
 
               {/* Links de navegação + Redes Sociais */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-5">
                 <nav
                   aria-label={L(i18n.language, 'Links do rodapé', 'Footer links', 'Liens de bas de page')}
-                  className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400"
+                  className="flex items-center gap-3 sm:gap-4 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400"
                 >
                   <Link to="/about" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
                     {L(i18n.language, 'Sobre', 'About', 'À propos')}
@@ -523,14 +523,14 @@ export function Landing() {
                   </Link>
                 </nav>
 
-                <div className="hidden sm:block h-3.5 w-px bg-[var(--border-subtle)] dark:bg-white/15" />
+                <div className="hidden sm:block h-3 w-px bg-[var(--border-subtle)] dark:bg-white/15" />
 
                 <SocialLinks />
               </div>
             </div>
 
             {/* Linha Inferior: Disclaimer editorial sutil */}
-            <div className="border-t border-[var(--border-subtle)]/60 dark:border-white/5 pt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-[var(--text-muted)] dark:text-neutral-500 font-sans">
+            <div className="border-t border-[var(--border-subtle)]/50 dark:border-white/5 pt-1 sm:pt-1.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 text-[10px] text-[var(--text-muted)] dark:text-neutral-500 font-sans">
               <p>
                 {L(
                   i18n.language,
@@ -541,13 +541,13 @@ export function Landing() {
               </p>
               <Link
                 to="/about"
-                className="hover:text-[var(--text-primary)] dark:hover:text-neutral-300 underline underline-offset-2 transition"
+                className="hover:text-[var(--text-primary)] dark:hover:text-neutral-300 underline underline-offset-2 transition whitespace-nowrap"
               >
                 {L(
                   i18n.language,
-                  'Saiba mais sobre o projeto e metodologia →',
-                  'Learn more about the project & methodology →',
-                  'En savoir plus sur le projet et la méthodologie →',
+                  'Metodologia do projeto →',
+                  'Project methodology →',
+                  'Méthodologie du projet →',
                 )}
               </Link>
             </div>
