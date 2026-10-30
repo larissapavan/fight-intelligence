@@ -15,11 +15,11 @@
 </p>
 
 <p align="center">
-  ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
-  ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
-  ![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Scikit--learn-F7931E)
-  ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Machine_Learning-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white" alt="Machine Learning" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
 </p>
 
 ---
