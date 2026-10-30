@@ -1,82 +1,211 @@
-# 🥊 Vektor MMA
+# Vektor MMA
 
-### Plataforma Multiorganização de Inteligência Artificial e Telemetria em Esportes de Combate
+<p align="center">
+  <strong>More than fight statistics. A new perspective on MMA intelligence.</strong>
+</p>
 
-[![Acessar Plataforma](https://img.shields.io/badge/Plataforma%20Online-vektormma.com-C8102E?style=for-the-badge&logo=vercel&logoColor=white)](https://www.vektormma.com/)
-[![Trilíngue](https://img.shields.io/badge/Idiomas-PT--BR%20%7C%20EN%20%7C%20FR-F2C230?style=for-the-badge)](https://www.vektormma.com/)
-[![Dataset no Kaggle](https://img.shields.io/badge/Kaggle-Dataset%20UFC%20(1993--2026)-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white)](https://www.kaggle.com/datasets/larissapavan/ufc-historical-fight-dataset-19942026)
-[![Atualização Diária](https://github.com/larissapavan/vektormma/actions/workflows/update-data.yml/badge.svg)](https://github.com/larissapavan/vektormma/actions/workflows/update-data.yml)
+<p align="center">
+  Explore fighters, compare matchups, analyze historical data and discover the science behind every prediction.
+</p>
 
-> O **Vektor MMA** é uma plataforma analítica e preditiva independente desenvolvida para fãs, analistas e pesquisadores dos esportes de combate. Indo além de palpites empíricos e odds convencionais, o sistema avalia confrontos através de **46 variáveis técnicas**, calcula probabilidades de vitória estatisticamente calibradas e decompõe o racional de cada prognóstico com **SHAP (SHapley Additive exPlanations)**.
+<p align="center">
+  <a href="https://www.vektormma.com/">
+    <strong>EXPLORE VEKTOR MMA →</strong>
+  </a>
+</p>
 
----
-
-## 🧭 O Que a Plataforma Oferece
-
-### 🧠 1. Preditor & Inteligência de Confrontos (Matchup Intelligence)
-- **Modelagem Preditiva Calibrada:** Algoritmo `HistGradientBoostingClassifier` treinado sobre mais de 30 anos de combates oficiais, com calibração isotônica de probabilidades e avaliação bidirecional simétrica (neutralidade de córner).
-- **Explicabilidade por SHAP:** Cada predição detalha quais fatores (diferencial de golpes significativos por minuto, precisão de quedas, envergadura, idade, tempo médio de luta, etc.) impulsionaram o resultado a favor do vencedor previsto.
-- **Simulador Personalizado:** Permite testar combates oficiais futuros ou confrontos hipotéticos entre quaisquer atletas cadastrados.
-
-### 🥋 2. Dossiê Editorial do Atleta (Fighter Dossier)
-- **Duplo Cartel Integrado:** O cartel oficial no octógono do **UFC é exibido em grande destaque visual**, complementado pelo **cartel profissional completo de MMA**, abrangendo todas as organizações disputadas ao longo da carreira (Jungle Fight, WSOF, WEC, Strikeforce, Bellator, Cage Warriors, LFA, etc.).
-- **Atributos Físicos & Biometria Oficial:** Exibição precisa de altura (cm e pés/polegadas), peso (lb e kg), envergadura (cm e polegadas), idade, status na organização e postura técnica de guarda (destro, canhoto, switch).
-- **Régua Cronológica de Temporadas:** Navegação temporal horizontal que agrupa os combates ano a ano. Ao clicar em qualquer temporada, abre-se o painel detalhado de lutas com método de vitória, round, tempo de interrupção, divisão de peso e selos de disputa de cinturão linear, interino ou BMF.
-
-### 🏆 3. Rankings Oficiais & Galeria de Campeões
-- **Classificações Divisionais & Pound-for-Pound (P4P):** Rankings das categorias de peso masculinas e femininas acompanhados de taxas oficiais de vitória, recordes recentes e movimentação no plantel.
-- **Histórico e Linhagem de Títulos:** Detalhamento completo dos atuais campeões, ex-campeões de cada divisão, disputas interinas e detentores de cinturões honorários.
-
-### 📅 4. Calendário de Eventos & Histórico Round a Round
-- **Cards Futuros e Passados:** Visualização cronológica dos próximos cards do UFC e de outras organizações com horários, locais e status de casamentos de luta.
-- **Telemetria de Luta:** Acompanhamento de finalizações, nocautes, decisões e detalhes dos árbitros e juízes.
-
-### 🌐 5. Ecossistema Multiorganização
-Páginas e dados integrados cobrindo múltiplos cenários do MMA e esportes de combate:
-- **UFC (Ultimate Fighting Championship):** Núcleo analítico principal com dataset histórico de 1993 a 2026.
-- **PFL (Professional Fighters League):** Formato de torneio regular e playoffs.
-- **ONE Championship:** Modalidades de MMA e Muay Thai em luvas abertas de 4oz.
-- **Bellator MMA:** Acervo documental e histórico completo (2009–2023).
-
-### 📈 6. Auditoria Pública de Acurácia (Track Record)
-- **Transparência Absoluta:** As predições são geradas e congeladas no log público antes do início dos eventos.
-- **Métricas Científicas:** Acurácia global, Brier Score, curva de calibração e comparação com linhas de base públicas.
-
-### 🏢 7. Mapeamento de Centros de Treinamento (Gyms)
-- Diretório de academias e equipes de elite (City Kickboxing, American Top Team, Chute Boxe Diego Lima, Nova União, Kill Cliff FC, etc.), identificando os principais atletas e treinadores afiliados.
-
-### 🌍 8. Suporte Trilíngue Nativo
-- Interface completa com troca dinâmica entre **Português Brasileiro (pt-BR)**, **Inglês (en-US)** e **Francês (fr-FR)**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Machine_Learning-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white" alt="Machine Learning" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
+</p>
 
 ---
 
-## 🛠️ Stack Tecnológica
+## About Vektor MMA
 
-| Camada | Ferramentas |
-| :--- | :--- |
-| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS, Framer Motion, Lucide Icons, Recharts |
-| **Backend & APIs** | Python, FastAPI, Uvicorn, Pydantic, SlowAPI |
-| **Inteligência Artificial** | Scikit-learn (`HistGradientBoostingClassifier`, `CalibratedClassifierCV`), SHAP, Pandas, NumPy |
-| **Automação & Dados** | GitHub Actions diárias, Web Scraping (BeautifulSoup), Kaggle API |
+**Vektor MMA** is an independent MMA intelligence platform built to transform combat sports data into meaningful insights.
+
+Combining historical fight records, statistical analysis, Machine Learning and explainable AI, the platform provides an interactive environment for exploring the world of mixed martial arts.
+
+From individual fighter profiles to predictive matchup analysis, Vektor MMA brings together the information, context and technology behind the sport.
+
+Whether you're an MMA enthusiast, analyst or researcher, the platform offers a deeper way to understand fighters, organizations and the dynamics of combat sports.
+
+## Explore the Platform
+
+### Fight Predictions & Matchup Intelligence
+
+Explore predictive analysis for matchups between professional fighters.
+
+- Machine Learning-based fight predictions.
+- Estimated winning probabilities for both fighters.
+- Statistical comparison of fighter attributes.
+- Hypothetical matchup simulations.
+- SHAP-powered explanations highlighting the factors influencing predictions.
+
+Understand not only who the model favors, but also which statistical characteristics contribute to its assessment.
+
+### Fighter Profiles
+
+Discover detailed information about professional MMA athletes.
+
+- Complete professional career records.
+- UFC-specific fight history.
+- Physical attributes and fighting stance.
+- Career timelines organized by year.
+- Fight results, methods of victory and championship appearances.
+- Historical participation across multiple organizations.
+
+Explore each fighter's career beyond their most recent performance.
+
+### Rankings & Champions
+
+Follow the competitive landscape of MMA.
+
+- Divisional rankings.
+- Pound-for-Pound rankings.
+- Current and former champions.
+- Championship history and title lineage.
+- Performance statistics and fighter records.
+
+### Events & Fight History
+
+Stay connected to the sport through historical and upcoming events.
+
+- Upcoming fight cards.
+- Historical event information.
+- Fight results and methods of victory.
+- Championship bouts and special title designations.
+- Referee and judging information where available.
+
+### Multi-Organization Coverage
+
+Explore information from different organizations across the combat sports ecosystem.
+
+| Organization | Coverage |
+|---|---|
+| UFC | Historical fights, fighters, rankings and predictive analysis |
+| PFL | Events, athletes and tournament information |
+| ONE Championship | Fighters, events and organizational data |
+| Bellator MMA | Historical records and organizational information |
+
+### Prediction Track Record
+
+Transparency is an important part of predictive modeling.
+
+The platform includes historical prediction records and evaluation metrics to help users understand model performance.
+
+- Historical predictions.
+- Overall accuracy.
+- Brier Score.
+- Probability calibration.
+- Model performance analysis.
+
+### Gyms & Training Teams
+
+Explore the connections between professional fighters and their training environments.
+
+Discover teams, gyms and fighter affiliations from different parts of the MMA world.
+
+### Multilingual Experience
+
+Vektor MMA is available in three languages:
+
+- Portuguese (Brazil)
+- English
+- French
 
 ---
 
-## 📚 Fontes de Dados e Créditos
+## The Technology Behind the Platform
 
-Os dados da plataforma são consolidados, auditados e sincronizados a partir de referências públicas oficiais:
-- [**UFCStats.com**](http://ufcstats.com/) & [**UFC.com**](https://www.ufc.com/rankings) — Resultados oficiais, métricas detalhadas de golpes e quedas round a round, rankings e dados do plantel.
-- [**Tapology**](https://www.tapology.com/) — Cartéis completos do MMA profissional em circuitos nacionais e internacionais.
-- [**Sherdog**](https://www.sherdog.com/) — Arquivo histórico de combates de carreira e biografias técnicas.
-- [**Wikipedia**](https://en.wikipedia.org/) — Linhas do tempo de torneios mundiais e títulos de organizações históricas (CC BY-SA 4.0).
-- [**ESPN MMA**](https://www.espn.com/mma/) & [**Next-Fight**](https://next-fight.com/) — Notícias esportivas e registros de eventos.
-- [**PFL MMA**](https://pflmma.com/) & [**ONE Championship**](https://www.onefc.com/) — Estruturas de torneios, eventos e atletas.
-- [**FightHub**](https://fighthub-app.com/) — Vínculo de academias e equipes mundiais.
-- [**UFC Data by scarekrow (Kaggle)**](https://www.kaggle.com/datasets/scarekrow/ufc-data) — Pontuações de juízes e registros de arbitragem histórica.
+Vektor MMA combines modern web development with data science and artificial intelligence.
+
+| Area | Technologies |
+|---|---|
+| Frontend | React, TypeScript, Vite |
+| Backend | Python, FastAPI |
+| Machine Learning | Scikit-learn |
+| Explainable AI | SHAP |
+| Data Processing | Pandas, NumPy |
+| Data Visualization | Recharts |
+| Styling & Animation | Tailwind CSS, Framer Motion |
+| Automated Data Updates | GitHub Actions |
+| Deployment | Vercel, Render |
+
+### Machine Learning & Explainable AI
+
+The predictive engine uses a HistGradientBoostingClassifier model to estimate fight outcomes based on historical data and fighter attributes.
+
+Probability calibration helps produce more meaningful estimates, while SHAP provides insights into the contribution of individual features.
+
+The system also evaluates matchups in both fighter orders to reduce red/blue corner positional bias.
+
+The goal is to make predictive analysis more transparent and understandable, rather than presenting predictions as unquestionable results.
+
+### Data & Automation
+
+The platform integrates information from multiple public sources, supported by automated data collection, validation and scheduled updates.
+
+Data sources include:
+
+- [UFCStats](http://ufcstats.com/)
+- [UFC](https://www.ufc.com/)
+- [ESPN MMA](https://www.espn.com/mma/)
+- [Tapology](https://www.tapology.com/)
+- [Sherdog](https://www.sherdog.com/)
+- [PFL](https://pflmma.com/)
+- [ONE Championship](https://www.onefc.com/)
+
+Source availability and data coverage may vary.
 
 ---
 
-## 👤 Autoria
+## Why Vektor MMA?
 
-Desenvolvido e mantido por **[Larissa Pavan](https://github.com/larissapavan)** ([LinkedIn](https://www.linkedin.com/in/larissacpavan/) • [Kaggle Dataset](https://www.kaggle.com/datasets/larissapavan/ufc-historical-fight-dataset-19942026)).
+MMA is more than wins and losses.
 
-*Aviso: O Fight Intelligence é um projeto analítico independente e não comercial, sem afiliação oficial, patrocínio ou endosso por parte do UFC, PFL, ONE Championship, Bellator MMA ou ESPN.*
+Every matchup involves different fighting styles, physical attributes, technical skills and historical performances.
+
+Vektor MMA brings these elements together in one platform, combining sports knowledge with data-driven analysis.
+
+**Explore the numbers. Understand the matchups. Discover the intelligence behind the fight.**
+
+---
+
+## Visit Vektor MMA
+
+<p align="center">
+  <a href="https://www.vektormma.com/">
+    <strong>ACCESS THE PLATFORM →</strong>
+  </a>
+</p>
+
+Explore the platform, discover your favorite fighters and experience a different approach to MMA analytics.
+
+---
+
+## Disclaimer
+
+Vektor MMA is an independent project and is not affiliated with, sponsored by or officially endorsed by the UFC, PFL, ONE Championship, Bellator MMA or ESPN.
+
+All predictions are statistical estimates provided for informational and analytical purposes. They do not guarantee fight outcomes.
+
+All third-party trademarks and names belong to their respective owners.
+
+---
+
+## Author
+
+**Larissa Pavan**
+
+Software Developer | Python | Artificial Intelligence | Machine Learning
+
+[GitHub](https://github.com/larissapavan) · [LinkedIn](https://www.linkedin.com/in/larissacpavan/)
+
+<p align="center">
+  <strong>Built with technology, data and passion for combat sports.</strong>
+</p>
