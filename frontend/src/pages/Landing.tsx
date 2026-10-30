@@ -369,49 +369,71 @@ export function Landing() {
         {/* =========================================================================
             4. FOOTER EDITORIAL (Sobre o Projeto & Links Rápidos)
             ========================================================================= */}
-        <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/75 dark:border-white/10 dark:bg-[#08090C] py-3.5 sm:py-4 px-4 sm:px-8 lg:px-16 mt-3 sm:mt-4">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--text-secondary)] dark:text-neutral-400 font-sans">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
-              <span className="font-bold text-[var(--text-primary)] dark:text-white tracking-tight">Vektor MMA</span>
-              <span>•</span>
-              <span>
+        <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/75 dark:border-white/10 dark:bg-[#08090C] py-5 px-4 sm:px-8 lg:px-16 mt-4 sm:mt-6">
+          <div className="max-w-7xl mx-auto space-y-4">
+            {/* Linha Superior: Marca à esquerda, Navegação e Redes à direita */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
+                <span className="font-bold text-sm text-[var(--text-primary)] dark:text-white tracking-tight">
+                  Vektor MMA
+                </span>
+                <span className="text-[var(--text-muted)] dark:text-neutral-500">•</span>
+                <span className="text-xs text-[var(--text-secondary)] dark:text-neutral-400">
+                  {L(
+                    i18n.language,
+                    'Telemetria e predições em esportes de combate',
+                    'Combat sports analytics & AI predictions',
+                    'Télémétrie et prédictions en sports de combat',
+                  )}
+                </span>
+              </div>
+
+              {/* Links de navegação + Redes Sociais */}
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                <nav
+                  aria-label={L(i18n.language, 'Links do rodapé', 'Footer links', 'Liens de bas de page')}
+                  className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400"
+                >
+                  <Link to="/about" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
+                    {L(i18n.language, 'Sobre', 'About', 'À propos')}
+                  </Link>
+                  <Link to="/data" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
+                    {L(i18n.language, 'Dados', 'Data', 'Données')}
+                  </Link>
+                  <Link to="/model" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
+                    {L(i18n.language, 'Sistema ML', 'ML System', 'Système ML')}
+                  </Link>
+                  <Link to="/track-record" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
+                    {L(i18n.language, 'Acurácia', 'Track Record', 'Historique')}
+                  </Link>
+                </nav>
+
+                <div className="hidden sm:block h-3.5 w-px bg-[var(--border-subtle)] dark:bg-white/15" />
+
+                <SocialLinks />
+              </div>
+            </div>
+
+            {/* Linha Inferior: Disclaimer editorial sutil */}
+            <div className="border-t border-[var(--border-subtle)]/60 dark:border-white/5 pt-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px] text-[var(--text-muted)] dark:text-neutral-500 font-sans">
+              <p>
                 {L(
                   i18n.language,
-                  'Telemetria e predições em esportes de combate',
-                  'Combat sports analytics & AI predictions',
-                  'Télémétrie et prédictions en sports de combat',
+                  'Projeto analítico independente. Não afiliado ao UFC, PFL, Bellator ou ONE Championship.',
+                  'Independent analytics project. Not affiliated with UFC, PFL, Bellator, or ONE Championship.',
+                  'Projet analytique indépendant. Non affilié à l’UFC, au PFL, au Bellator ou au ONE Championship.',
                 )}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 my-1 sm:my-0">
-              <SocialLinks />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 font-mono text-[11px] uppercase tracking-wider">
-              <Link to="/about" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
-                {L(i18n.language, 'Sobre', 'About', 'À propos')}
-              </Link>
-              <Link to="/data" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
-                {L(i18n.language, 'Dados', 'Data', 'Données')}
-              </Link>
-              <Link to="/model" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
-                {L(i18n.language, 'Sistema ML', 'ML System', 'Système ML')}
-              </Link>
-              <Link to="/track-record" className="hover:text-[var(--text-primary)] dark:hover:text-white transition">
-                {L(i18n.language, 'Acurácia', 'Track Record', 'Historique')}
-              </Link>
-              <span className="hidden md:inline text-[var(--border-subtle)] dark:text-white/20">•</span>
+              </p>
               <Link
                 to="/about"
-                className="hover:text-[var(--text-primary)] dark:hover:text-white transition normal-case font-sans text-[11px] opacity-75 hover:opacity-100"
+                className="hover:text-[var(--text-primary)] dark:hover:text-neutral-300 underline underline-offset-2 transition"
               >
                 {L(
                   i18n.language,
-                  'Projeto independente, sem afiliação com nenhuma dessas organizações',
-                  'Independent project, not affiliated with any of these organizations',
-                  'Projet indépendant, sans affiliation avec ces organisations',
+                  'Saiba mais sobre o projeto e metodologia →',
+                  'Learn more about the project & methodology →',
+                  'En savoir plus sur le projet et la méthodologie →',
                 )}
               </Link>
             </div>
