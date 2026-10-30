@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ArrowDown, ArrowRight, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
@@ -145,10 +145,18 @@ export function Landing() {
                 </a>
 
                 <Link
-                  to="/about"
-                  className="group inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] dark:border-white/10 dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white px-4 py-2.5 font-mono text-xs uppercase tracking-widest transition-all duration-300 shadow-xs"
+                  to="/model"
+                  className="group inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)] hover:border-[#FF2E54]/40 dark:border-white/10 dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white px-4 py-2.5 font-mono text-xs uppercase tracking-widest transition-all duration-300 shadow-xs"
                 >
-                  <span>{L(i18n.language, 'SOBRE O PROJETO', 'ABOUT PLATFORM', 'À PROPOS')}</span>
+                  <Sparkles className="h-3.5 w-3.5 text-[#FF2E54] transition-transform duration-300 group-hover:scale-110" />
+                  <span>
+                    {L(
+                      i18n.language,
+                      'VER MODELO PREDITIVO',
+                      'EXPLORE AI MODEL',
+                      'MODÈLE PRÉDICTIF',
+                    )}
+                  </span>
                   <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </div>

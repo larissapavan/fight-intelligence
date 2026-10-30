@@ -110,16 +110,48 @@ export function Header() {
             {landing || isAbout ? (
               <nav
                 aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
-                className="flex items-center gap-1.5"
+                className="flex items-center gap-1 sm:gap-1.5"
               >
+                <a
+                  href="/#organizations-grid"
+                  onClick={(e) => {
+                    if (landing) {
+                      e.preventDefault()
+                      document.getElementById('organizations-grid')?.scrollIntoView({ behavior: 'smooth' })
+                    }
+                  }}
+                  className="rounded-lg px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/5 dark:hover:bg-white/10"
+                >
+                  {L(i18n.language, 'Organizações', 'Organizations', 'Organisations')}
+                </a>
+                <NavLink
+                  to="/model"
+                  className={({ isActive }) =>
+                    `rounded-lg px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
+                      isActive ? 'text-white bg-[#C8102E] shadow-xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                    }`
+                  }
+                >
+                  {L(i18n.language, 'Sistema ML', 'ML System', 'Système ML')}
+                </NavLink>
+                <NavLink
+                  to="/track-record"
+                  className={({ isActive }) =>
+                    `hidden sm:inline-flex rounded-lg px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
+                      isActive ? 'text-white bg-[#C8102E] shadow-xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                    }`
+                  }
+                >
+                  {L(i18n.language, 'Acurácia', 'Track Record', 'Historique')}
+                </NavLink>
                 <NavLink
                   to="/about"
                   style={{
-                    color: isAbout ? '#ffffff' : 'var(--text-primary)',
+                    color: isAbout ? '#ffffff' : undefined,
                     backgroundColor: isAbout ? '#C8102E' : undefined,
                   }}
-                  className={`rounded-lg px-3 py-1 sm:px-3.5 sm:py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap shadow-xs hover:bg-black/5 dark:hover:bg-white/10 ${
-                    isAbout ? 'shadow-xs' : ''
+                  className={`rounded-lg px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
+                    isAbout ? 'shadow-xs' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   {t('nav.about', 'About')}
