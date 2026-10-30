@@ -73,9 +73,9 @@ export function MainLayout({ children }: { children: ReactNode }) {
       >
         {t('common.skipToContent', 'Skip to content')}
       </a>
-      {/* Pinned Sticky Header: Always visible across all scroll positions */}
-      <div className="sticky top-0 z-50 w-full bg-[var(--bg-app)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]/40 px-2 py-1.5 sm:px-[clamp(0.75rem,1.4vw,2rem)] sm:py-2">
-        <div className="mx-auto w-full max-w-[min(100%,2560px)]">
+      {/* Pinned Sticky Header: Seamless Glassmorphism Navigation Bar */}
+      <div className="sticky top-0 z-50 w-full bg-[var(--bg-surface)]/80 dark:bg-[#0B0C10]/85 backdrop-blur-xl border-b border-[var(--border-subtle)] dark:border-white/[0.08] transition-colors duration-200">
+        <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8">
           <Header />
         </div>
       </div>
