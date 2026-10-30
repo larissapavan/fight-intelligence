@@ -210,7 +210,7 @@ export function Landing() {
               </div>
             </motion.div>
 
-            {/* Lado Direito: Luva Oficial de MMA Transparente com Espaço Completo */}
+            {/* Lado Direito: Cinturão de Campeonato Flutuante */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -218,7 +218,7 @@ export function Landing() {
               className="lg:col-span-6 relative flex flex-col items-center justify-center"
             >
               <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px] aspect-square flex items-center justify-center p-2">
-                {/* Brilho radial ambiente sutil atrás da luva */}
+                {/* Brilho radial ambiente sutil atrás do cinturão */}
                 <div className="absolute inset-0 rounded-full bg-[#E11D48]/[0.1] blur-3xl pointer-events-none" />
 
                 {/* Levitação suave via Framer Motion */}
@@ -232,9 +232,9 @@ export function Landing() {
                   className="relative z-10 w-full h-full flex items-center justify-center"
                 >
                   <img
-                    src="/ufc-glove-hero.png?v=clean"
-                    alt="Luva Oficial MMA 3D"
-                    className="h-full w-full object-contain filter drop-shadow-[0_20px_35px_rgba(225,29,72,0.25)] select-none pointer-events-none"
+                    src="/vektor_mma_championship_belt.png"
+                    alt="Cinturão de Campeonato Vektor MMA"
+                    className="h-auto w-full object-contain filter drop-shadow-[0_20px_35px_rgba(225,29,72,0.25)] select-none pointer-events-none"
                   />
                 </motion.div>
 
@@ -430,9 +430,12 @@ export function Landing() {
                       <motion.img
                         src={card.gloveImage}
                         alt={`${card.shortName} 3D Glove`}
-                        animate={{ y: [-4, 4, -4], rotate: [-1.2, 1.2, -1.2] }}
+                        animate={{ y: [-3, 3, -3], rotate: [-1, 1, -1] }}
                         transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-                        className="relative z-10 h-22 sm:h-24 w-auto object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.5)] select-none pointer-events-none transition-transform duration-300 group-hover:scale-110"
+                        className="relative z-10 h-22 sm:h-24 w-auto object-contain select-none pointer-events-none transition-transform duration-300 group-hover:scale-110"
+                        style={{
+                          filter: `drop-shadow(0 12px 24px ${card.accentColor}66)`,
+                        }}
                       />
                       {/* 4. Sombra sutil de levitação no piso do card */}
                       <motion.div
@@ -479,7 +482,7 @@ export function Landing() {
             })}
           </div>
         </section>
-
+        
         {/* =========================================================================
             4. FOOTER EDITORIAL (Sobre o Projeto & Links Rápidos - Compacto e Elegante)
             ========================================================================= */}
