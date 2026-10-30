@@ -17,6 +17,13 @@ interface OrgMetric {
   valueFr: string
 }
 
+interface OrgStatusBadge {
+  labelPt: string
+  labelEn: string
+  labelFr: string
+  pulse?: boolean
+}
+
 interface OrgCardInfo {
   id: OrgId
   watermark: string
@@ -27,6 +34,7 @@ interface OrgCardInfo {
   accentColor: string
   hoverBorder: string
   gloveImage: string
+  statusBadge: OrgStatusBadge
   metrics: [OrgMetric, OrgMetric]
 }
 
@@ -37,8 +45,14 @@ const ORG_CARDS: OrgCardInfo[] = [
     shortName: 'UFC',
     fullName: 'Ultimate Fighting Championship',
     accentColor: '#E11D48',
-    hoverBorder: 'hover:border-[#E11D48]',
+    hoverBorder: 'hover:border-[#E11D48]/60 hover:shadow-[0_12px_32px_rgba(225,29,72,0.18)]',
     gloveImage: '/mma-glove-ufc.png',
+    statusBadge: {
+      labelPt: 'Previsões IA',
+      labelEn: 'AI Predictions',
+      labelFr: 'Pronostics IA',
+      pulse: true,
+    },
     metrics: [
       { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '12', valueEn: '12', valueFr: '12' },
       { labelPt: 'Lutas', labelEn: 'Bouts', labelFr: 'Combats', valuePt: '8.9k+', valueEn: '8.9k+', valueFr: '8.9k+' },
@@ -50,11 +64,17 @@ const ORG_CARDS: OrgCardInfo[] = [
     shortName: 'PFL',
     fullName: 'Professional Fighters League',
     accentColor: '#2563EB',
-    hoverBorder: 'hover:border-[#2563EB]',
+    hoverBorder: 'hover:border-[#2563EB]/60 hover:shadow-[0_12px_32px_rgba(37,99,235,0.18)]',
     gloveImage: '/mma-glove-pfl.png',
+    statusBadge: {
+      labelPt: 'Liga & Torneio',
+      labelEn: 'Tournament',
+      labelFr: 'Tournoi Actif',
+      pulse: false,
+    },
     metrics: [
       { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '10', valueEn: '10', valueFr: '10' },
-      { labelPt: 'Estrutura', labelEn: 'Format', labelFr: 'Format', valuePt: 'Torneio', valueEn: 'Tournament', valueFr: 'Tournoi' },
+      { labelPt: 'Formato', labelEn: 'Format', labelFr: 'Format', valuePt: 'Torneio', valueEn: 'Tournament', valueFr: 'Tournoi' },
     ],
   },
   {
@@ -63,23 +83,35 @@ const ORG_CARDS: OrgCardInfo[] = [
     shortName: 'ONE',
     fullName: 'ONE Championship',
     accentColor: '#F59E0B',
-    hoverBorder: 'hover:border-[#F59E0B]',
+    hoverBorder: 'hover:border-[#F59E0B]/60 hover:shadow-[0_12px_32px_rgba(245,158,11,0.18)]',
     gloveImage: '/mma-glove-one.png',
+    statusBadge: {
+      labelPt: 'Previsões IA',
+      labelEn: 'AI Predictions',
+      labelFr: 'Pronostics IA',
+      pulse: true,
+    },
     metrics: [
       { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '10', valueEn: '10', valueFr: '10' },
-      { labelPt: 'Modalidades', labelEn: 'Disciplines', labelFr: 'Disciplines', valuePt: 'MMA + Muay Thai', valueEn: 'MMA + Muay Thai', valueFr: 'MMA + Muay Thai' },
+      { labelPt: 'Modalidades', labelEn: 'Disciplines', labelFr: 'Disciplines', valuePt: 'MMA & Muay Thai', valueEn: 'MMA & Muay Thai', valueFr: 'MMA & Muay Thai' },
     ],
   },
   {
     id: 'bellator',
     watermark: '04',
     shortName: 'BELLATOR',
-    fullName: 'Bellator MMA (Arquivo Histórico)',
-    fullNameEn: 'Bellator MMA (Historical Archive)',
-    fullNameFr: 'Bellator MMA (Archives Historiques)',
+    fullName: 'Bellator MMA',
+    fullNameEn: 'Bellator MMA',
+    fullNameFr: 'Bellator MMA',
     accentColor: '#10B981',
-    hoverBorder: 'hover:border-[#10B981]',
+    hoverBorder: 'hover:border-[#10B981]/60 hover:shadow-[0_12px_32px_rgba(16,185,129,0.18)]',
     gloveImage: '/mma-glove-bellator.png',
+    statusBadge: {
+      labelPt: 'Arquivo Histórico',
+      labelEn: 'Historical Archive',
+      labelFr: 'Archives',
+      pulse: false,
+    },
     metrics: [
       { labelPt: 'Divisões', labelEn: 'Divisions', labelFr: 'Divisions', valuePt: '10', valueEn: '10', valueFr: '10' },
       { labelPt: 'Campeões', labelEn: 'Champions', labelFr: 'Champions', valuePt: '71', valueEn: '71', valueFr: '71' },
@@ -279,8 +311,12 @@ export function Landing() {
             </h2>
           </div>
 
-          {/* Grade de Organizações contínua sem espaço entre cards (Connected Editorial Strip) */}
-          <div role="list" aria-label="Organizations" className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] dark:border-white/10 dark:bg-[#0A0B10]/90 backdrop-blur-xl overflow-hidden shadow-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[var(--border-subtle)] dark:divide-white/10">
+          {/* Grade de Organizações com Cards Individuais Modernos e Luvas 3D Destacadas */}
+          <div
+            role="list"
+            aria-label="Organizations"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
+          >
             {ORG_CARDS.map((card) => {
               const orgConfig = ORGS[card.id]
               return (
@@ -288,54 +324,73 @@ export function Landing() {
                   key={card.id}
                   to={orgPath(orgConfig)}
                   aria-label={`Open ${card.fullName}`}
-                  className="group relative flex flex-col justify-between p-4 sm:p-5 transition-all duration-300 hover:bg-[var(--bg-surface-hover)] dark:hover:bg-white/[0.04] cursor-pointer min-w-0 overflow-hidden"
+                  className={`group relative flex flex-col justify-between rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] dark:border-white/10 dark:bg-[#0c0e14]/90 backdrop-blur-xl p-5 sm:p-5.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${card.hoverBorder} cursor-pointer min-w-0 overflow-hidden`}
                 >
                   {/* Linha de acento sutil no topo do card ao passar o cursor */}
                   <div
-                    className="absolute top-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute top-0 left-0 right-0 h-[2px] opacity-30 group-hover:opacity-100 transition-opacity duration-300"
                     style={{ backgroundColor: card.accentColor }}
                   />
 
-                  {/* Top: Header e Marca d'água */}
+                  {/* Top: Índice e Badge de Status Alinhados */}
                   <div>
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-display font-black text-lg sm:text-xl uppercase tracking-tight text-[var(--text-primary)] dark:text-white leading-tight transition-transform duration-300 group-hover:translate-x-0.5 truncate">
-                          {card.shortName}
-                        </h3>
-                        <p className="font-sans text-[11px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium truncate mt-0.5">
-                          {L(i18n.language, card.fullName, card.fullNameEn ?? card.fullName, card.fullNameFr ?? card.fullName)}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-end gap-1 shrink-0">
-                        <span className="pointer-events-none font-display font-black text-2xl text-black/[0.08] dark:text-white/[0.06] group-hover:text-black/[0.14] dark:group-hover:text-white/[0.12] transition-colors select-none leading-none">
-                          {card.watermark}
-                        </span>
-                        {orgConfig.hasPredictions ? (
-                          <span className="rounded-full bg-rose-500/15 border border-rose-500/30 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-rose-500">
-                            {L(i18n.language, 'Previsões de vitória', 'Win predictions', 'Pronostics')}
-                          </span>
-                        ) : null}
-                        {orgConfig.archived ? (
-                          <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-500">
-                            {L(i18n.language, 'Arquivo', 'Archive', 'Archive')}
-                          </span>
-                        ) : null}
-                      </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs font-semibold text-[var(--text-muted)] dark:text-neutral-500 tracking-wider">
+                        {`// ${card.watermark}`}
+                      </span>
+                      <span
+                        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider"
+                        style={{
+                          backgroundColor: `${card.accentColor}18`,
+                          borderColor: `${card.accentColor}35`,
+                          color: card.accentColor,
+                          borderWidth: 1,
+                        }}
+                      >
+                        {card.statusBadge.pulse && (
+                          <span
+                            className="h-1.5 w-1.5 rounded-full animate-pulse"
+                            style={{ backgroundColor: card.accentColor }}
+                          />
+                        )}
+                        {L(
+                          i18n.language,
+                          card.statusBadge.labelPt,
+                          card.statusBadge.labelEn,
+                          card.statusBadge.labelFr,
+                        )}
+                      </span>
                     </div>
 
-                    {/* Luva 3D da Organização em TODOS os cards - Altura e Alinhamento Idênticos */}
-                    <div className="relative my-3.5 h-16 sm:h-20 w-full flex items-center justify-center overflow-hidden rounded-xl bg-black/[0.02] dark:bg-white/[0.02]">
+                    {/* Título e Subtítulo Claros sem Truncamento */}
+                    <div className="mt-3">
+                      <h3 className="font-display font-black text-xl sm:text-2xl uppercase tracking-tight text-[var(--text-primary)] dark:text-white leading-none">
+                        {card.shortName}
+                      </h3>
+                      <p className="font-sans text-[11px] sm:text-xs text-[var(--text-secondary)] dark:text-neutral-400 font-medium leading-snug mt-1">
+                        {L(
+                          i18n.language,
+                          card.fullName,
+                          card.fullNameEn ?? card.fullName,
+                          card.fullNameFr ?? card.fullName,
+                        )}
+                      </p>
+                    </div>
+
+                    {/* Luva 3D da Organização Destacada com Efeito Ambiente Radial */}
+                    <div className="relative my-4 sm:my-5 h-24 sm:h-28 w-full flex items-center justify-center">
                       <div
-                        className="absolute inset-0 blur-md pointer-events-none opacity-25 group-hover:opacity-45 transition-opacity"
-                        style={{ backgroundColor: card.accentColor }}
+                        className="absolute inset-0 rounded-2xl opacity-15 group-hover:opacity-35 transition-opacity duration-500 blur-xl pointer-events-none"
+                        style={{
+                          background: `radial-gradient(circle, ${card.accentColor} 0%, transparent 70%)`,
+                        }}
                       />
                       <motion.img
                         src={card.gloveImage}
                         alt={`${card.shortName} 3D Glove`}
-                        animate={{ y: [-2, 2, -2], rotate: [-1.5, 1.5, -1.5] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                        className="relative z-10 h-12 sm:h-14 w-auto object-contain filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.3)] select-none pointer-events-none transition-transform duration-300 group-hover:scale-110"
+                        animate={{ y: [-3, 3, -3], rotate: [-1, 1, -1] }}
+                        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+                        className="relative z-10 h-20 sm:h-22 w-auto object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.35)] select-none pointer-events-none transition-transform duration-300 group-hover:scale-110"
                       />
                     </div>
                   </div>
@@ -344,25 +399,25 @@ export function Landing() {
                   <div className="mt-auto">
                     <div className="my-3 grid grid-cols-2 gap-2 border-y border-[var(--border-subtle)] dark:border-white/5 py-2.5">
                       <div>
-                        <span className="font-sans text-[10px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium block truncate">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium block">
                           {L(i18n.language, card.metrics[0].labelPt, card.metrics[0].labelEn, card.metrics[0].labelFr)}
                         </span>
-                        <p className="mt-0.5 font-display font-bold text-sm sm:text-base text-[var(--text-primary)] dark:text-white tabular-nums truncate">
+                        <p className="mt-0.5 font-display font-bold text-sm sm:text-base text-[var(--text-primary)] dark:text-white tabular-nums">
                           {L(i18n.language, card.metrics[0].valuePt, card.metrics[0].valueEn, card.metrics[0].valueFr)}
                         </p>
                       </div>
                       <div>
-                        <span className="font-sans text-[10px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium block truncate">
+                        <span className="font-mono text-[10px] uppercase tracking-wider text-[var(--text-secondary)] dark:text-neutral-400 font-medium block">
                           {L(i18n.language, card.metrics[1].labelPt, card.metrics[1].labelEn, card.metrics[1].labelFr)}
                         </span>
-                        <p className="mt-0.5 font-display font-bold text-sm sm:text-base text-[var(--text-primary)] dark:text-white tabular-nums truncate">
+                        <p className="mt-0.5 font-display font-bold text-xs sm:text-[13px] text-[var(--text-primary)] dark:text-white leading-tight">
                           {L(i18n.language, card.metrics[1].valuePt, card.metrics[1].valueEn, card.metrics[1].valueFr)}
                         </p>
                       </div>
                     </div>
 
                     <div className="pt-1">
-                      <span className="inline-flex w-full items-center justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-3 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-[var(--text-primary)] transition-all duration-300 group-hover:bg-[#0E0E0E] group-hover:text-white group-hover:border-[#0E0E0E] dark:border-white/10 dark:bg-white/5 dark:text-neutral-300 dark:group-hover:bg-white dark:group-hover:text-black shadow-xs">
+                      <span className="inline-flex w-full items-center justify-between rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-3.5 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-[var(--text-primary)] transition-all duration-300 group-hover:bg-[#0E0E0E] group-hover:text-white group-hover:border-[#0E0E0E] dark:border-white/10 dark:bg-white/5 dark:text-neutral-300 dark:group-hover:bg-white dark:group-hover:text-black dark:group-hover:border-white shadow-xs">
                         <span>{L(i18n.language, 'Entrar', 'Enter', 'Entrer')}</span>
                         <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                       </span>
