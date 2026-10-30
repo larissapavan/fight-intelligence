@@ -14,7 +14,7 @@ const contactLinks = [
     label: 'GitHub Repository',
     labelPt: 'Repositório GitHub',
     labelFr: 'Dépôt GitHub',
-    href: 'https://github.com/larissapavan/fight-intelligence',
+    href: 'https://github.com/larissapavan/vektormma',
     icon: FolderGit2,
   },
   {

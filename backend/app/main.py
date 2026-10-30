@@ -43,6 +43,8 @@ def build_allowed_origins() -> list[str]:
         "https://ufc-predictor.vercel.app",
         "https://ufcfightpredictor.vercel.app",
         "https://fight-intelligence.vercel.app",
+        "https://www.vektormma.com",
+        "https://vektormma.com",
     ]
     return list(dict.fromkeys(defaults + env_origins))
 
@@ -87,7 +89,7 @@ app.add_middleware(
     allow_origins=build_allowed_origins(),
     # Scoped to this project's own Vercel preview deployments (e.g.
     # ufc-predictor-git-<branch>-<team>.vercel.app, fight-intelligence-git-...), not any *.vercel.app site.
-    allow_origin_regex=r"https://(ufc-predictor|ufcfightpredictor|fight-intelligence)[a-z0-9-]*\.vercel\.app",
+    allow_origin_regex=r"https://(ufc-predictor|ufcfightpredictor|fight-intelligence|vektormma)[a-z0-9-]*\.vercel\.app",
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],

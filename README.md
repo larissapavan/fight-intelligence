@@ -1,13 +1,13 @@
-# 🥊 Fight Intelligence
+# 🥊 Vektor MMA
 
 ### Plataforma Multiorganização de Inteligência Artificial e Telemetria em Esportes de Combate
 
-[![Acessar Plataforma](https://img.shields.io/badge/Plataforma%20Online-fight--intelligence.vercel.app-C8102E?style=for-the-badge&logo=vercel&logoColor=white)](https://fight-intelligence.vercel.app/)
-[![Trilíngue](https://img.shields.io/badge/Idiomas-PT--BR%20%7C%20EN%20%7C%20FR-F2C230?style=for-the-badge)](https://fight-intelligence.vercel.app/)
+[![Acessar Plataforma](https://img.shields.io/badge/Plataforma%20Online-vektormma.com-C8102E?style=for-the-badge&logo=vercel&logoColor=white)](https://www.vektormma.com/)
+[![Trilíngue](https://img.shields.io/badge/Idiomas-PT--BR%20%7C%20EN%20%7C%20FR-F2C230?style=for-the-badge)](https://www.vektormma.com/)
 [![Dataset no Kaggle](https://img.shields.io/badge/Kaggle-Dataset%20UFC%20(1993--2026)-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white)](https://www.kaggle.com/datasets/larissapavan/ufc-historical-fight-dataset-19942026)
-[![Atualização Diária](https://github.com/larissapavan/fight-intelligence/actions/workflows/update-data.yml/badge.svg)](https://github.com/larissapavan/fight-intelligence/actions/workflows/update-data.yml)
+[![Atualização Diária](https://github.com/larissapavan/vektormma/actions/workflows/update-data.yml/badge.svg)](https://github.com/larissapavan/vektormma/actions/workflows/update-data.yml)
 
-> O **Fight Intelligence** é uma plataforma analítica e preditiva independente desenvolvida para fãs, analistas e pesquisadores dos esportes de combate. Indo além de palpites empíricos e odds convencionais, o sistema avalia confrontos através de **46 variáveis técnicas**, calcula probabilidades de vitória estatisticamente calibradas e decompõe o racional de cada prognóstico com **SHAP (SHapley Additive exPlanations)**.
+> O **Vektor MMA** é uma plataforma analítica e preditiva independente desenvolvida para fãs, analistas e pesquisadores dos esportes de combate. Indo além de palpites empíricos e odds convencionais, o sistema avalia confrontos através de **46 variáveis técnicas**, calcula probabilidades de vitória estatisticamente calibradas e decompõe o racional de cada prognóstico com **SHAP (SHapley Additive exPlanations)**.
 
 ---
 
