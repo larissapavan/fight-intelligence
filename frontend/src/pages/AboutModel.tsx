@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 
 import { L } from '../i18n/lang'
+import { YouTubeIcon, InstagramIcon, TikTokIcon } from '../shared/components/SocialLinks'
 import { LoadingSkeleton } from '../shared/components/LoadingSkeleton'
 import { SectionHeading } from '../shared/components/SectionHeading'
 import { shownMetrics } from '../shared/data/modelAccuracy'
@@ -16,6 +17,27 @@ const contactLinks = [
     labelFr: 'Dépôt GitHub',
     href: 'https://github.com/larissapavan/vektormma',
     icon: FolderGit2,
+  },
+  {
+    label: 'YouTube Channel',
+    labelPt: 'Canal Oficial no YouTube (@Vektor-MMA)',
+    labelFr: 'Chaîne Officielle YouTube (@Vektor-MMA)',
+    href: 'https://www.youtube.com/@Vektor-MMA',
+    icon: YouTubeIcon,
+  },
+  {
+    label: 'Instagram',
+    labelPt: 'Instagram Oficial (@vektormma)',
+    labelFr: 'Instagram Officiel (@vektormma)',
+    href: 'https://www.instagram.com/vektormma',
+    icon: InstagramIcon,
+  },
+  {
+    label: 'TikTok',
+    labelPt: 'TikTok Oficial (@vektormma)',
+    labelFr: 'TikTok Officiel (@vektormma)',
+    href: 'https://www.tiktok.com/@vektormma',
+    icon: TikTokIcon,
   },
   {
     label: 'GitHub Profile',

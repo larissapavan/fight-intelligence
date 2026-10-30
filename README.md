@@ -22,6 +22,12 @@
   <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
 </p>
 
+<p align="center">
+  <a href="https://www.youtube.com/@Vektor-MMA"><img src="https://img.shields.io/badge/YouTube-@Vektor--MMA-FF0000?style=flat-square&logo=youtube&logoColor=white" alt="YouTube" /></a>
+  <a href="https://www.instagram.com/vektormma"><img src="https://img.shields.io/badge/Instagram-@vektormma-E4405F?style=flat-square&logo=instagram&logoColor=white" alt="Instagram" /></a>
+  <a href="https://www.tiktok.com/@vektormma"><img src="https://img.shields.io/badge/TikTok-@vektormma-000000?style=flat-square&logo=tiktok&logoColor=white" alt="TikTok" /></a>
+</p>
+
 ---
 
 ## About Vektor MMA
@@ -205,6 +211,11 @@ All third-party trademarks and names belong to their respective owners.
 Software Developer | Python | Artificial Intelligence | Machine Learning
 
 [GitHub](https://github.com/larissapavan) · [LinkedIn](https://www.linkedin.com/in/larissacpavan/)
+
+### Vektor MMA Oficial
+- **YouTube**: [@Vektor-MMA](https://www.youtube.com/@Vektor-MMA)
+- **Instagram**: [@vektormma](https://www.instagram.com/vektormma)
+- **TikTok**: [@vektormma](https://www.tiktok.com/@vektormma)
 
 <p align="center">
   <strong>Built with technology, data and passion for combat sports.</strong>

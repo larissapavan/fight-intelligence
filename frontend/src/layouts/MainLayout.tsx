@@ -7,6 +7,7 @@ import { L } from '../i18n/lang'
 import { Header } from '../shared/components/Header'
 import { ScrollToTop } from '../shared/components/ScrollToTop'
 import { PageMeta } from '../shared/components/PageMeta'
+import { SocialLinks } from '../shared/components/SocialLinks'
 import { isLandingPath } from '../shared/data/orgs'
 import { useOrg } from '../shared/hooks/useOrg'
 import { ServerLoadingState } from '../shared/components/ServerLoadingState'
@@ -106,7 +107,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
           )}
         </motion.main>
         {landing ? null : (
-          <footer className="mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-xs">
+          <footer className="mt-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-3.5 text-sm font-medium text-[var(--text-primary)] shadow-xs">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="type-tech text-xs uppercase tracking-[0.14em]">
@@ -131,6 +132,13 @@ export function MainLayout({ children }: { children: ReactNode }) {
                     })}
                   </Link>
                 </p>
+              </div>
+
+              <div className="flex items-center gap-1 sm:gap-2 self-start sm:self-center border-t border-[var(--border-subtle)]/40 pt-2 sm:border-t-0 sm:pt-0">
+                <span className="font-mono text-[11px] text-[var(--text-muted)] uppercase tracking-wider hidden md:inline mr-1">
+                  {L(i18n.language, 'Canais oficiais:', 'Official channels:', 'Canaux officiels :')}
+                </span>
+                <SocialLinks />
               </div>
             </div>
           </footer>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { AlertTriangle, Database, ExternalLink, Mail, Users } from 'lucide-react'
 
 import { L } from '../i18n/lang'
+import { YouTubeIcon, InstagramIcon, TikTokIcon } from '../shared/components/SocialLinks'
 
 const GITHUB_PROFILE = 'https://github.com/larissapavan'
 const LINKEDIN_PROFILE = 'https://www.linkedin.com/in/larissacpavan/'
@@ -179,6 +180,41 @@ export function About() {
           {L(i18n.language, 'ou', 'or', 'ou')}{' '}
           <ExternalAnchor href={LINKEDIN_PROFILE}>LinkedIn</ExternalAnchor>.
         </p>
+
+        <div className="mt-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3.5">
+          <p className="font-mono text-xs uppercase tracking-wider text-[var(--text-main)] font-bold mb-2.5">
+            {L(i18n.language, 'Canais Oficiais // Vektor MMA', 'Official Channels // Vektor MMA', 'Canaux Officiels // Vektor MMA')}
+          </p>
+          <div className="flex flex-wrap gap-4 text-xs font-medium">
+            <a
+              href="https://www.youtube.com/@Vektor-MMA"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-[var(--text-main)] hover:text-[#FF0000] transition"
+            >
+              <YouTubeIcon className="h-4 w-4 text-[#FF0000]" />
+              <span>YouTube: @Vektor-MMA</span>
+            </a>
+            <a
+              href="https://www.instagram.com/vektormma"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-[var(--text-main)] hover:text-[#E4405F] transition"
+            >
+              <InstagramIcon className="h-4 w-4 text-[#E4405F]" />
+              <span>Instagram: @vektormma</span>
+            </a>
+            <a
+              href="https://www.tiktok.com/@vektormma"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-[var(--text-main)] hover:text-[#25F4EE] transition"
+            >
+              <TikTokIcon className="h-4 w-4 text-[#25F4EE]" />
+              <span>TikTok: @vektormma</span>
+            </a>
+          </div>
+        </div>
 
         <h3 className="broadcast-label mt-5 text-xs text-[var(--text-main)]">{t('about.sources')}</h3>
         <ul className="mt-2 grid gap-2 sm:grid-cols-2">

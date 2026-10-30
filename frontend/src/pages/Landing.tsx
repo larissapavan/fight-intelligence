@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { L } from '../i18n/lang'
 import { ORGS, orgPath, type OrgId } from '../shared/data/orgs'
 import { AnimatedCounter } from '../shared/components/editorial/AnimatedCounter'
+import { SocialLinks } from '../shared/components/SocialLinks'
 
 interface OrgMetric {
   labelPt: string
@@ -382,6 +383,10 @@ export function Landing() {
                   'Télémétrie et prédictions en sports de combat',
                 )}
               </span>
+            </div>
+
+            <div className="flex items-center gap-2 my-1 sm:my-0">
+              <SocialLinks />
             </div>
 
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 font-mono text-[11px] uppercase tracking-wider">

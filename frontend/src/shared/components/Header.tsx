@@ -9,6 +9,7 @@ import { useOrg } from '../hooks/useOrg'
 import { useTheme } from '../context/ThemeContext'
 import { BrandMark } from './BrandMark'
 import { FighterSearch } from './FighterSearch'
+import { SocialLinks } from './SocialLinks'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { OrgSwitcher } from './OrgSwitcher'
 
@@ -181,6 +182,10 @@ export function Header() {
               >
                 {isLight ? <Moon className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Sun className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
               </button>
+
+              <div className="hidden xl:inline-flex items-center gap-0.5">
+                <SocialLinks />
+              </div>
 
               <a
                 href="https://github.com/larissapavan"
