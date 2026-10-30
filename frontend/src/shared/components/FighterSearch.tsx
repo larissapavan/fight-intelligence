@@ -101,7 +101,7 @@ export function FighterSearch() {
           if (!open) setText('')
           setOpen(!open)
         }}
-        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-2.5 text-xs transition cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
+        className="inline-flex h-7.5 sm:h-8 items-center justify-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-2 sm:px-2.5 text-xs transition cursor-pointer text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
         aria-label={L(i18n.language, 'Buscar lutadores', 'Search fighters', 'Chercher des combattants')}
         aria-expanded={open}
         title={L(i18n.language, 'Buscar lutadores (pressione / ou ⌘K)', 'Search fighters (press / or ⌘K)', 'Chercher des combattants (appuyez sur / ou ⌘K)')}
@@ -116,7 +116,7 @@ export function FighterSearch() {
       </button>
 
       {open ? (
-        <div className="surface-card-elevated absolute right-0 top-full z-50 mt-2 w-[22rem] sm:w-[26rem] p-2 backdrop-blur-xl animate-in fade-in-0 zoom-in-95">
+        <div className="surface-card-elevated fixed inset-x-2 top-2 z-50 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 w-auto sm:w-[26rem] max-w-[calc(100vw-1rem)] p-2 backdrop-blur-xl animate-in fade-in-0 zoom-in-95 shadow-2xl">
           <div className="soft-input flex items-center gap-2 rounded-lg px-2.5">
             <Search className="h-4 w-4 shrink-0 text-[var(--text-muted)]" aria-hidden />
             <input

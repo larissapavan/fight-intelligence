@@ -1,7 +1,7 @@
 {
-  "name": "Fight Intelligence",
-  "short_name": "Fight Intel",
-  "description": "Predict UFC fight outcomes with a machine learning model trained on real historical fight data.",
+  "name": "Vektor MMA",
+  "short_name": "Vektor MMA",
+  "description": "A ciência dos dados aplicada ao combate. Previsões por machine learning, cartéis históricos e estatísticas avançadas.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

@@ -84,48 +84,124 @@ export function Header() {
 
   return (
     <header className="w-full shrink-0">
-      <div className="relative flex h-14 sm:h-16 w-full items-center justify-between gap-3 sm:gap-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)]/85 px-3 sm:px-5 backdrop-blur-md transition-colors duration-200 shadow-sm text-[var(--text-primary)]">
-        {/* Left: Native Brand Identity */}
-        <div className="flex shrink-0 items-center gap-4 xl:gap-8">
-          <Link
-            to={LANDING_PATH}
-            aria-label={L(i18n.language, 'Fight Intelligence • Início', 'Fight Intelligence home', 'Fight Intelligence • Accueil')}
-            className="flex items-center gap-2.5 transition opacity-95 hover:opacity-100"
-          >
-            <BrandMark className="h-7 w-7 shrink-0 rounded-none xs:h-8 xs:w-8" />
-            <span className="flex flex-col items-start justify-center leading-tight">
-              <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                {t('header.matchupAnalytics', 'Matchup Analytics')}
-              </span>
-              <span className="text-sm xs:text-base font-bold tracking-tight whitespace-nowrap text-[var(--text-primary)]">
-                Fight Intelligence
-              </span>
-            </span>
-          </Link>
-
-          {/* Center-Left: Desktop Single-Bar Navigation */}
-          {landing || isAbout ? (
-            <nav
-              aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
-              className="flex items-center gap-1.5"
+      <div className="relative w-full rounded-xl sm:rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)]/90 backdrop-blur-md transition-colors duration-200 shadow-sm text-[var(--text-primary)]">
+        {/* Main Navbar Row */}
+        <div className="flex h-12 sm:h-16 w-full items-center justify-between gap-2 sm:gap-6 px-2.5 sm:px-5">
+          {/* Left: Native Brand Identity */}
+          <div className="flex shrink-0 items-center gap-3 xl:gap-8 min-w-0">
+            <Link
+              to={LANDING_PATH}
+              aria-label={L(i18n.language, 'Vektor MMA • Início', 'Vektor MMA home', 'Vektor MMA • Accueil')}
+              className="flex items-center gap-2 sm:gap-2.5 transition opacity-95 hover:opacity-100 min-w-0"
             >
-              <NavLink
-                to="/about"
-                style={{
-                  color: isAbout ? '#ffffff' : 'var(--text-primary)',
-                  backgroundColor: isAbout ? '#C8102E' : undefined,
-                }}
-                className={`rounded-lg px-3.5 py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap shadow-xs hover:bg-black/5 dark:hover:bg-white/10 ${
-                  isAbout ? 'shadow-xs' : ''
-                }`}
+              <BrandMark className="h-7 w-7 xs:h-8 xs:w-8 sm:h-9 sm:w-9 shrink-0 drop-shadow-sm" />
+              <span className="flex flex-col items-start justify-center leading-tight min-w-0">
+                <span className="hidden sm:block font-mono text-[9px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                  {t('header.matchupAnalytics', 'Análise de Combates')}
+                </span>
+                <span className="text-xs xs:text-sm sm:text-base font-bold tracking-tight whitespace-nowrap text-[var(--text-primary)]">
+                  VEKTOR <span className="text-[#FF2E54]">MMA</span>
+                </span>
+              </span>
+            </Link>
+
+            {/* Center-Left: Desktop Single-Bar Navigation */}
+            {landing || isAbout ? (
+              <nav
+                aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
+                className="flex items-center gap-1.5"
               >
-                {t('nav.about', 'About')}
-              </NavLink>
-            </nav>
-          ) : (
+                <NavLink
+                  to="/about"
+                  style={{
+                    color: isAbout ? '#ffffff' : 'var(--text-primary)',
+                    backgroundColor: isAbout ? '#C8102E' : undefined,
+                  }}
+                  className={`rounded-lg px-3 py-1 sm:px-3.5 sm:py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap shadow-xs hover:bg-black/5 dark:hover:bg-white/10 ${
+                    isAbout ? 'shadow-xs' : ''
+                  }`}
+                >
+                  {t('nav.about', 'About')}
+                </NavLink>
+              </nav>
+            ) : (
+              <nav
+                aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
+                className="hidden lg:flex items-center gap-1.5"
+              >
+                {navItems.map((item) => {
+                  const active = isItemActive(item, pathname)
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      style={{
+                        color: active ? '#ffffff' : 'var(--text-primary)',
+                        backgroundColor: active ? '#C8102E' : undefined,
+                      }}
+                      className={`rounded-lg px-3.5 py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
+                        active ? 'shadow-xs' : ''
+                      }`}
+                    >
+                      {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
+                    </NavLink>
+                  )
+                })}
+              </nav>
+            )}
+          </div>
+
+          {/* Right: Modern SaaS Utility Toolbar */}
+          <div className="flex shrink-0 items-center gap-1 sm:gap-3">
+            {!landing && !isAbout && <OrgSwitcher className="shrink-0" />}
+
+            {!landing && !isAbout && <FighterSearch />}
+
+            {/* Minimalist LIVE Status Pill */}
+            <div
+              title={apiTitle}
+              className="hidden sm:inline-flex items-center gap-1.5 px-1.5 py-1 text-xs font-medium cursor-default text-[var(--text-muted)]"
+            >
+              <span className={`h-2 w-2 rounded-full ${apiDotColor}`} aria-hidden="true" />
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                {apiLabel}
+              </span>
+            </div>
+
+            <LanguageSwitcher />
+
+            {/* Theme Toggle & GitHub in subtle outline style */}
+            <div className="inline-flex items-center gap-0.5 border-l border-[var(--border-default)] pl-1 sm:pl-2">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="inline-flex h-7.5 w-7.5 sm:h-8 sm:w-8 items-center justify-center rounded-lg transition cursor-pointer text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
+                aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
+                title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
+              >
+                {isLight ? <Moon className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> : <Sun className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+              </button>
+
+              <a
+                href="https://github.com/larissapavan"
+                target="_blank"
+                rel="noreferrer"
+                title="GitHub"
+                aria-label="GitHub"
+                className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-lg transition text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
+              >
+                <FolderGit2 className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation: Seamless integrated sub-bar */}
+        {!landing && !isAbout && (
+          <div className="lg:hidden border-t border-[var(--border-subtle)] px-2 py-1 overflow-x-auto no-scrollbar">
             <nav
-              aria-label={L(i18n.language, 'Navegação principal', 'Main navigation', 'Navigation principale')}
-              className="hidden lg:flex items-center gap-1.5"
+              aria-label={L(i18n.language, 'Navegação móvel', 'Mobile navigation', 'Navigation mobile')}
+              className="flex items-center gap-1 w-max"
             >
               {navItems.map((item) => {
                 const active = isItemActive(item, pathname)
@@ -137,8 +213,8 @@ export function Header() {
                       color: active ? '#ffffff' : 'var(--text-primary)',
                       backgroundColor: active ? '#C8102E' : undefined,
                     }}
-                    className={`rounded-lg px-3.5 py-1.5 text-xs xl:text-[13px] font-bold transition duration-150 whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
-                      active ? 'shadow-xs' : ''
+                    className={`rounded-md px-2.5 py-1 text-xs font-semibold transition whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
+                      active ? 'shadow-xs font-bold' : 'text-[var(--text-secondary)]'
                     }`}
                   >
                     {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
@@ -146,82 +222,9 @@ export function Header() {
                 )
               })}
             </nav>
-          )}
-        </div>
-
-        {/* Right: Modern SaaS Utility Toolbar */}
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          {!landing && !isAbout && <OrgSwitcher className="shrink-0" />}
-
-          {!landing && !isAbout && <FighterSearch />}
-
-          {/* Minimalist LIVE Status Pill */}
-          <div
-            title={apiTitle}
-            className="hidden sm:inline-flex items-center gap-1.5 px-1.5 py-1 text-xs font-medium cursor-default text-[var(--text-muted)]"
-          >
-            <span className={`h-2 w-2 rounded-full ${apiDotColor}`} aria-hidden="true" />
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
-              {apiLabel}
-            </span>
           </div>
-
-          <LanguageSwitcher />
-
-          {/* Theme Toggle & GitHub in subtle outline style */}
-          <div className="inline-flex items-center gap-0.5 border-l border-[var(--border-default)] pl-2">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
-              aria-label={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
-              title={t('header.switchTheme', { theme: isLight ? t('header.themeDark') : t('header.themeLight') })}
-            >
-              {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            </button>
-
-            <a
-              href="https://github.com/larissapavan"
-              target="_blank"
-              rel="noreferrer"
-              title="GitHub"
-              aria-label="GitHub"
-              className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-lg transition text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
-            >
-              <FolderGit2 className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
+        )}
       </div>
-
-      {/* Mobile-Only Horizontal Scroll Navigation (narrow screens below lg) */}
-      {!landing && !isAbout && (
-        <div className="mt-1.5 lg:hidden overflow-x-auto no-scrollbar py-1">
-          <nav
-            aria-label={L(i18n.language, 'Navegação móvel', 'Mobile navigation', 'Navigation mobile')}
-            className="flex items-center gap-1 w-max rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-1 backdrop-blur-md shadow-xs"
-          >
-            {navItems.map((item) => {
-              const active = isItemActive(item, pathname)
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  style={{
-                    color: active ? '#ffffff' : 'var(--text-primary)',
-                    backgroundColor: active ? '#C8102E' : undefined,
-                  }}
-                  className={`rounded-lg px-3 py-1 text-xs font-bold transition whitespace-nowrap hover:bg-black/5 dark:hover:bg-white/10 ${
-                    active ? 'shadow-xs' : ''
-                  }`}
-                >
-                  {t(NAV_I18N_KEYS[item.label] ?? item.label, item.label)}
-                </NavLink>
-              )
-            })}
-          </nav>
-        </div>
-      )}
     </header>
   )
 }

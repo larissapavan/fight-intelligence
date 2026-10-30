@@ -216,7 +216,7 @@ function Masthead({ dataThrough }: { dataThrough: string | null }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 py-2 text-[var(--text-secondary)] sm:px-8">
       <span className="text-xs font-bold uppercase tracking-[0.25em]">
-        {L(i18n.language, 'Inteligência de Combate · Mesa de Análise', 'Fight Intelligence · Matchup desk', 'Fight Intelligence · Table d’analyse')}
+        {L(i18n.language, 'Inteligência de Combate · Mesa de Análise', 'Vektor MMA · Matchup desk', 'Vektor MMA · Table d’analyse')}
       </span>
       {label ? (
         <span className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-muted)]">

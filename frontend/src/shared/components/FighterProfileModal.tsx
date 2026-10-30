@@ -406,7 +406,7 @@ export function FighterProfileModal({
               <div className="inline-flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 font-semibold">
-                  {L(i18n.language, 'ATLETA ATIVO // FIGHT INTELLIGENCE', 'ACTIVE ATHLETE // FIGHT INTELLIGENCE', 'ATHLÈTE ACTIF // FIGHT INTELLIGENCE')}
+                  {L(i18n.language, 'ATLETA ATIVO // VEKTOR MMA', 'ACTIVE ATHLETE // VEKTOR MMA', 'ATHLÈTE ACTIF // VEKTOR MMA')}
                 </span>
               </div>
 

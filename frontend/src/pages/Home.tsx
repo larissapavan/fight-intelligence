@@ -91,7 +91,7 @@ export function Home() {
         </div>
 
         <h1 className="mt-3 text-3xl font-black uppercase leading-tight tracking-tight text-[var(--text-main)] sm:text-5xl">
-          Fight Intelligence
+          Vektor MMA
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--text-muted)] sm:text-base font-normal">
           {L(

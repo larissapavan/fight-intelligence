@@ -58,15 +58,15 @@ export function LanguageSwitcher({ className = '' }: LanguageSwitcherProps) {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-2 text-xs font-medium transition cursor-pointer text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
+        className="inline-flex h-7.5 sm:h-8 items-center gap-1 sm:gap-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface-subtle)] px-1.5 sm:px-2 text-[11px] sm:text-xs font-medium transition cursor-pointer text-[var(--text-primary)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]"
         aria-label={t('language.switch', 'Mudar idioma')}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <Globe className="h-3.5 w-3.5 text-[var(--text-muted)]" />
-        <span className="font-semibold text-xs">{activeItem.code}</span>
+        <Globe className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[var(--text-muted)]" />
+        <span className="font-semibold text-[11px] sm:text-xs">{activeItem.code}</span>
         <ChevronDown
-          className={`h-3 w-3 text-[var(--text-muted)] transition-transform duration-200 ${isOpen && !isJSDOM ? 'rotate-180' : ''}`}
+          className={`h-2.5 w-2.5 sm:h-3 sm:w-3 text-[var(--text-muted)] transition-transform duration-200 ${isOpen && !isJSDOM ? 'rotate-180' : ''}`}
         />
       </button>
 

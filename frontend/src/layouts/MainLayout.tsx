@@ -73,7 +73,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         {t('common.skipToContent', 'Skip to content')}
       </a>
       {/* Pinned Sticky Header: Always visible across all scroll positions */}
-      <div className="sticky top-0 z-50 w-full bg-[var(--bg-app)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]/40 px-[clamp(0.75rem,1.4vw,2rem)] py-2">
+      <div className="sticky top-0 z-50 w-full bg-[var(--bg-app)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]/40 px-2 py-1.5 sm:px-[clamp(0.75rem,1.4vw,2rem)] sm:py-2">
         <div className="mx-auto w-full max-w-[min(100%,2560px)]">
           <Header />
         </div>
@@ -92,7 +92,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
           className={
             landing
               ? 'flex-1 flex flex-col w-full max-w-full my-1.5 sm:my-2'
-              : 'flex-1 border-t border-[var(--border-subtle)] mt-4 pt-5 sm:mt-5 sm:pt-6 w-full max-w-full min-w-0'
+              : 'flex-1 border-t border-[var(--border-subtle)] mt-3 pt-3 sm:mt-5 sm:pt-6 w-full max-w-full min-w-0'
           }
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -112,7 +112,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <div className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
               <span className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-                Fight Intelligence • {t('footer.tagline', 'AI sports analytics for matchup analysis')}
+                Vektor MMA • {t('footer.tagline', 'AI sports analytics for matchup analysis')}
               </span>
             </div>
             <div className="flex items-center gap-3 text-xs">
@@ -132,7 +132,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="type-tech text-xs uppercase tracking-[0.14em]">
-                  {t('footer.tagline', 'Fight Intelligence • AI sports analytics for matchup analysis')}
+                  {t('footer.tagline', 'Vektor MMA • AI sports analytics for matchup analysis')}
                 </p>
                 {footerDate ? (
                   <p className="mt-1.5">{t('footer.dataUpTo', { date: footerDate, defaultValue: `Data up to ${footerDate}` })}</p>

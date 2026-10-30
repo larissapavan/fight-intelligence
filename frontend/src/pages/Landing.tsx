@@ -74,19 +74,6 @@ const ORG_CARDS: OrgCardInfo[] = [
       { label: 'Campeões', value: '71' },
     ],
   },
-  {
-    id: 'zuffa',
-    watermark: '05',
-    shortName: 'ZUFFA BOXING',
-    fullName: 'Zuffa Boxing Promotions',
-    accentColor: '#E2E8F0',
-    hoverBorder: 'hover:border-[#E2E8F0]',
-    gloveImage: '/boxing-glove-3d.png',
-    metrics: [
-      { label: 'Divisões', value: '8' },
-      { label: 'Duração', value: '10–12 Rounds' },
-    ],
-  },
 ]
 
 export function Landing() {
@@ -114,19 +101,18 @@ export function Landing() {
               transition={{ duration: 0.6 }}
               className="lg:col-span-6 space-y-5 text-left"
             >
-              {/* Título em Syne com escala tipográfica calibrada para não truncar e acomodar a luva */}
-              <h1 className="font-display font-black uppercase tracking-tight text-3xl sm:text-4xl md:text-5xl lg:text-5xl text-[var(--text-primary)] dark:text-white leading-[0.94] drop-shadow-sm">
-                <span className="block">FIGHT</span>
-                <span className="block">INTELLIGENCE</span>
+              {/* Título com VEKTOR MMA */}
+              <h1 className="font-display font-black uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl lg:text-6xl text-[var(--text-primary)] dark:text-white leading-[0.92] drop-shadow-sm">
+                <span className="block">VEKTOR <span className="text-[#FF2E54]">MMA</span></span>
               </h1>
 
               {/* Subtítulo Editorial em Plus Jakarta Sans */}
               <p className="font-sans text-sm sm:text-base text-[var(--text-secondary)] dark:text-neutral-400 font-normal max-w-lg leading-relaxed">
                 {L(
                   i18n.language,
-                  'A ciência dos dados aplicada ao combate. Previsões por machine learning, cartéis históricos e telemetria analítica.',
-                  'Data science applied to combat sports. Machine learning predictions, official records, and analytical telemetry.',
-                  'La science des données appliquée au combat. Prédictions par machine learning, historiques et télémétrie analytique.',
+                  'A ciência dos dados aplicada ao combate. Previsões por machine learning, cartéis históricos e telemetria analítica com a inteligência da Vektor MMA.',
+                  'Data science applied to combat sports. Machine learning predictions, official records, and analytical telemetry with Vektor MMA intelligence.',
+                  'La science des données appliquée au combat. Prédictions par machine learning, historiques et télémétrie analytique avec l\'intelligence Vektor MMA.',
                 )}
               </p>
 
@@ -179,8 +165,8 @@ export function Landing() {
                   className="relative z-10 w-full h-full flex items-center justify-center"
                 >
                   <img
-                    src="/ufc-glove-hero.png"
-                    alt="Official 4oz UFC Fight Glove"
+                    src="/ufc-glove-hero.png?v=clean"
+                    alt="Luva Oficial MMA 3D"
                     className="h-full w-full object-contain filter drop-shadow-[0_20px_35px_rgba(225,29,72,0.25)] select-none pointer-events-none"
                   />
                 </motion.div>
@@ -275,7 +261,7 @@ export function Landing() {
           </div>
 
           {/* Grade de Organizações contínua sem espaço entre cards (Connected Editorial Strip) */}
-          <div role="list" aria-label="Organizations" className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] dark:border-white/10 dark:bg-[#0A0B10]/90 backdrop-blur-xl overflow-hidden shadow-lg grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-[var(--border-subtle)] dark:divide-white/10">
+          <div role="list" aria-label="Organizations" className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] dark:border-white/10 dark:bg-[#0A0B10]/90 backdrop-blur-xl overflow-hidden shadow-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[var(--border-subtle)] dark:divide-white/10">
             {ORG_CARDS.map((card) => {
               const orgConfig = ORGS[card.id]
               return (
@@ -375,7 +361,7 @@ export function Landing() {
         <footer className="border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/75 dark:border-white/10 dark:bg-[#08090C] py-8 px-4 sm:px-8 lg:px-16 mt-6">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--text-secondary)] dark:text-neutral-400 font-sans">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-bold text-[var(--text-primary)] dark:text-white">Fight Intelligence</span>
+              <span className="font-bold text-[var(--text-primary)] dark:text-white">Vektor MMA</span>
               <span>•</span>
               <span>
                 {L(

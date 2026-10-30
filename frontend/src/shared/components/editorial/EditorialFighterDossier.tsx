@@ -266,7 +266,7 @@ export function EditorialFighterDossier({
                 {L(i18n.language, 'DOSSIÊ DE ATLETA // EDIÇÃO 2026', 'ATHLETE DOSSIER // 2026 EDITION', "DOSSIER D'ATHLÈTE // ÉDITION 2026")}
               </span>
               <span className="text-xs font-semibold uppercase tracking-wider text-white">
-                FIGHT INTELLIGENCE • HAUTE PERFORMANCE
+                VEKTOR MMA • HAUTE PERFORMANCE
               </span>
             </div>
           </div>

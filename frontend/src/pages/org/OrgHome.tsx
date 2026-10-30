@@ -105,7 +105,7 @@ export function OrgHome() {
             <SectionHeading
               level={1}
               eyebrow={isArchived ? `${org.name} • Archive (2009–2023)` : org.name}
-              title={L(i18n.language, `${org.shortName} • Fight Intelligence`, `${org.shortName} fight intelligence`, `${org.shortName} • Fight Intelligence`)}
+              title={L(i18n.language, `${org.shortName} • Vektor MMA`, `${org.shortName} Vektor MMA`, `${org.shortName} • Vektor MMA`)}
               description={t(`landing.taglines.${org.id}`, { defaultValue: org.tagline })}
             />
             <div className="mt-4 flex flex-wrap items-center gap-2">
